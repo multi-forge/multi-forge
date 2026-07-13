@@ -62,7 +62,7 @@ TV Box ➔ Detecção ➔ Banco de Compatibilidade ➔ Imagem Recomendada ➔ In
 | **ForgeHub** | Catálogo de módulos e serviços de software open-source. |
 | **ForgeOS** | Imagens Linux otimizadas nativamente para hardware legado. |
 
-## 🔍 <a id="compatibilidade"/>Banco de Compatibilidade (Exemplo)
+## 🔍 <a id="compatibilidade"/>Banco de Compatibilidade
 
 > Este é um exemplo de como documentaremos as TV Boxes suportadas pelo projeto e sua viabilidade de hardware.
 
