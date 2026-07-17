@@ -1,4 +1,4 @@
-# 🛠️ MultiForge
+#  MultiForge
 
 <p align="center">
   <img src="imagens/logo.png" width="1280" alt="MultiForge Logo/Banner">
