@@ -16,7 +16,7 @@ O BTV E10 é construído sobre uma arquitetura estável e robusta baseada em Aml
 ### Status de Suporte MultiForge
 * **Status**: 🟢 Totalmente Suportado (a partir do MVP da Fase 1)
 * **Arquitetura Alvo**: `arm64` (ARMv8-A)
-* **Imagem Principal**: Educabox / Armbian (kernel customizado `6.1.y`)
+* **Imagem Principal**: ForgeOS / Armbian (kernel customizado `6.1.y`)
 * **Perfil de Implantação**: Servidor Headless, IoT Gateway ou Estação de Mídia (Kodi)
 
 ---
@@ -113,7 +113,7 @@ O BTV E10 padrão vem com uma versão customizada proprietária do sistema Andro
 
 | Distribuição | Status | Alvo DTB | Notas |
 |--------------|--------|----------|-------|
-| **Educabox** | 🟢 Suportado | `meson-g12a-sei510.dtb` | Recomendado. Funciona sem configurações adicionais. |
+| **ForgeOS** | 🟢 Suportado | `meson-g12a-sei510.dtb` | Recomendado. Funciona sem configurações adicionais. |
 | **Armbian** | 🟢 Suportado | `meson-g12a-sei510.dtb` | Requer configuração manual de scripts. |
 | **Debian** | 🟡 Provável | `meson-g12a-sei510.dtb` | Funciona com kernel contendo patches do fabricante. |
 | **Ubuntu** | 🟡 Provável | `meson-g12a-sei510.dtb` | Funciona com kernel contendo patches do fabricante. |

@@ -69,7 +69,7 @@ linux:
   firmware_packages: []
   overlays: []
   supported_distributions:
-    - Educabox
+    - ForgeOS
     - Armbian
     - ForgeOS
 compatibility:
@@ -78,7 +78,7 @@ compatibility:
     notes: "ForgeOS Server (Bullseye ARM64), ForgeOS IoT Gateway (Alpine ARM64), ForgeOS Media Station (Kodi ARM64)"
   armbian:
     status: supported
-  educabox:
+  forgeos:
     status: supported
   debian:
     status: null
@@ -110,7 +110,7 @@ installation:
   requires_uart: false
   requires_maskrom: false
   tutorials:
-    - "Como Instalar nossa Imagem Educabox?: https://github.com/educabox/educabox/blob/main/instalacao/instalacao-educabox-live.md"
+    - "Como Instalar nossa Imagem ForgeOS?: https://github.com/educabox/educabox/blob/main/instalacao/instalacao-educabox-live.md"
     - "Como gravar uma Imagem no balenaEtcher?: https://github.com/educabox/educabox/blob/main/instalacao/gravacao-balenaecther.md"
   recovery: null
 downloads:
@@ -119,8 +119,8 @@ downloads:
   firmware: null
   dtb: https://drive.google.com/uc?export=download&id=1aaxBDKcvh3FGpS1LabSoefU0TTAFl4Mt
 images:
-  - id: educabox-23.8.1
-    distribution: Educabox
+  - id: forgeos-23.8.1
+    distribution: ForgeOS
     version: 23.8.1
     kernel: 6.1.50
     url: https://drive.google.com/uc?export=download&id=1GMTTM88uvnXYpHC2hlzQGaLKLA0Rq2jx
@@ -289,7 +289,7 @@ raw:
     - |
       | S.O | Kernel | Versão | Interface | Download |
       |---------|:------:|:------:|:---------:|:--------:|
-      | Educabox | 6.1.50 | 23.8.1| XFCE | [.img](https://drive.google.com/uc?export=download&id=1GMTTM88uvnXYpHC2hlzQGaLKLA0Rq2jx)|
+      | ForgeOS | 6.1.50 | 23.8.1| XFCE | [.img](https://drive.google.com/uc?export=download&id=1GMTTM88uvnXYpHC2hlzQGaLKLA0Rq2jx)|
       | Armbian | 6.1.50 | 23.8.1| XFCE | [.img](https://drive.google.com/uc?export=download&id=16XfAspTprQX2QKNFBrFKEcHLAQbMXLjE)|
       | Armbian | 6.1.50 | 23.8.1| XFCE | [Torrent](https://drive.google.com/uc?export=download&id=10nbA5OmPXiTydt9d8HHTb1Cm_RJv1YWm)|
     - |

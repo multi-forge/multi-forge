@@ -16,7 +16,7 @@ The BTV E10 is built on a stable, robust Amlogic G12A-based architecture. The de
 ### MultiForge Support Status
 * **Status**: 🟢 Fully Supported (as of Phase 1 MVP)
 * **Target Architecture**: `arm64` (ARMv8-A)
-* **Primary Image**: Educabox / Armbian (customized kernel `6.1.y`)
+* **Primary Image**: ForgeOS / Armbian (customized kernel `6.1.y`)
 * **Deployment Profile**: Headless Server, IoT Gateway, or Media Station (Kodi)
 
 ---
@@ -113,7 +113,7 @@ The stock BTV E10 ships with a customized proprietary Android TV build:
 
 | Distribution | Status | DTB Target | Notes |
 |--------------|--------|------------|-------|
-| **Educabox** | 🟢 Supported | `meson-g12a-sei510.dtb` | Recommended. Works out-of-the-box. |
+| **ForgeOS** | 🟢 Supported | `meson-g12a-sei510.dtb` | Recommended. Works out-of-the-box. |
 | **Armbian** | 🟢 Supported | `meson-g12a-sei510.dtb` | Requires manual configuration of scripts. |
 | **Debian** | 🟡 Likely | `meson-g12a-sei510.dtb` | Working with vendor-patched kernel. |
 | **Ubuntu** | 🟡 Likely | `meson-g12a-sei510.dtb` | Working with vendor-patched kernel. |

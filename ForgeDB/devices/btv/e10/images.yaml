@@ -1,6 +1,6 @@
 images:
-  - id: educabox-23.8.1
-    distribution: Educabox
+  - id: forgeos-23.8.1
+    distribution: ForgeOS
     version: 23.8.1
     kernel: 6.1.50
     url: https://drive.google.com/uc?export=download&id=1GMTTM88uvnXYpHC2hlzQGaLKLA0Rq2jx
