@@ -234,9 +234,9 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    app.setOrganizationName("Raspberry Pi");
-    app.setOrganizationDomain("raspberrypi.com");
-    app.setApplicationName("Raspberry Pi Imager");
+    app.setOrganizationName("MultiForge");
+    app.setOrganizationDomain("github.com/multi-forge");
+    app.setApplicationName("MultiForge Imager");
     app.setApplicationVersion(ImageWriter::staticVersion());
     app.setWindowIcon(QIcon(":/icons/rpi-imager.ico"));
 
@@ -334,7 +334,7 @@ int main(int argc, char *argv[])
     int cliRefreshJitter = -1;
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("Raspberry Pi Imager GUI");
+    parser.setApplicationDescription("MultiForge Imager GUI");
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOptions({

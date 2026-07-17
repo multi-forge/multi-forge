@@ -54,7 +54,7 @@ DownloadStatsTelemetry::DownloadStatsTelemetry(const QByteArray &url, const QByt
 #endif
 }
 
-void DownloadStatsTelemetry::run()
+void DownloadStatsTelemetry::run() { return; } void DownloadStatsTelemetry::ignored_run()
 {
     QSettings settings;
     if (!settings.value("telemetry", TELEMETRY_ENABLED_DEFAULT).toBool())

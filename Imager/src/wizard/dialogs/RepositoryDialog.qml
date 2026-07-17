@@ -92,8 +92,8 @@ BaseDialog {
 
             ImRadioButton {
                 id: radioOfficial
-                text: qsTr("Blank catalog (built in)")
-                accessibleDescription: qsTr("Use the built-in empty catalog")
+                text: qsTr("MultiForge catalog (built in)")
+                accessibleDescription: qsTr("Use the built-in MultiForge catalog")
                 checked: true
                 ButtonGroup.group: repoGroup
                 Layout.fillWidth: true  // Enable text wrapping for long translations

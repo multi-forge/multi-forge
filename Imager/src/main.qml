@@ -39,7 +39,7 @@ ApplicationWindow {
     property bool isOffline: ImageWriterSingleton.isOsListUnavailable
     
     title: {
-        var baseTitle = qsTr("Blank Imager %1").arg(ImageWriterSingleton.constantVersion())
+        var baseTitle = qsTr("MultiForge Imager %1").arg(ImageWriterSingleton.constantVersion())
         if (isOffline) {
             baseTitle += " — " + qsTr("Offline")
         }

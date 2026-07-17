@@ -1,6 +1,6 @@
-#define MyAppName "Blank Imager"
+#define MyAppName "MultiForge Imager"
 #define MyAppVersion "@IMAGER_VERSION_STR@"
-#define MyAppPublisher "Blank Imager"
+#define MyAppPublisher "MultiForge"
 #define RaspberryPiSoftwareURL "https://www.raspberrypi.com/software"
 #define ImagerRepoRootURL "https://github.com/raspberrypi/rpi-imager"
 #define ImagerRepoIssuesURL "https://github.com/raspberrypi/rpi-imager/issues"
@@ -14,7 +14,7 @@ AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 ; This starter application deliberately has no product web links.
 DefaultDirName={autopf}\{#MyAppPublisher}\Imager
-DefaultGroupName=Blank Imager
+DefaultGroupName=MultiForge Imager
 AllowNoIcons=yes
 LicenseFile=@CMAKE_BINARY_DIR@\deploy\license.txt
 OutputDir=@CMAKE_BINARY_DIR@\installer

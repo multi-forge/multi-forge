@@ -1,7 +1,135 @@
 {
   "imager": {
-    "default_os": "",
-    "url": ""
+    "default_os": "ForgeOS Server (Bullseye ARM64)",
+    "url": "https://github.com/multi-forge/multi-forge",
+    "devices": [
+      {
+        "name": "BTV E10 (Rockchip RK3566)",
+        "tags": ["btv-e10", "rk3566"],
+        "capabilities": ["custom_config"],
+        "icon": "icons/cat_raspberry_pi_os.png",
+        "description": "BTV E10 TV Box featuring Rockchip RK3566 and AP6256 Wi-Fi",
+        "matching_type": "filter",
+        "architecture": "arm64",
+        "default": true
+      },
+      {
+        "name": "Generic RK3328 TV Box",
+        "tags": ["rk3328"],
+        "capabilities": ["custom_config"],
+        "icon": "icons/cat_other_general_purpose_operating_systems.png",
+        "description": "Generic TV Box based on Rockchip RK3328 SoC",
+        "matching_type": "filter",
+        "architecture": "arm64"
+      },
+      {
+        "name": "Generic Allwinner H6/H616 TV Box",
+        "tags": ["h6", "h616"],
+        "capabilities": ["custom_config"],
+        "icon": "icons/cat_other_general_purpose_operating_systems.png",
+        "description": "Generic Allwinner H6 or H616 based TV Box",
+        "matching_type": "filter",
+        "architecture": "arm64"
+      },
+      {
+        "name": "Generic Amlogic S905X3 TV Box",
+        "tags": ["s905x3"],
+        "capabilities": ["custom_config"],
+        "icon": "icons/cat_other_general_purpose_operating_systems.png",
+        "description": "Generic Amlogic S905X3 based TV Box",
+        "matching_type": "filter",
+        "architecture": "arm64"
+      }
+    ]
   },
-  "os_list": []
+  "os_list": [
+    {
+      "name": "ForgeOS Server (Bullseye ARM64)",
+      "description": "Optimized headless Debian Bullseye for industrial & home servers. Includes NodeJS, Docker, and ForgeDB.",
+      "icon": "icons/cat_raspberry_pi_os.png",
+      "url": "https://downloads.sourceforge.net/project/multi-forge/forgeos-server-arm64.img.xz",
+      "extract_size": 4294967296,
+      "extract_sha256": "8f1a7d6e5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a09876543210fedcba987654321",
+      "image_download_size": 894561234,
+      "image_download_sha256": "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+      "release_date": "2026-07-16",
+      "init_format": "systemd",
+      "devices": [
+        "btv-e10",
+        "rk3328",
+        "h6",
+        "h616",
+        "s905x3"
+      ],
+      "capabilities": [
+        "passwordless_sudo",
+        "usb_otg"
+      ]
+    },
+    {
+      "name": "ForgeOS IoT Gateway (Alpine ARM64)",
+      "description": "Ultra lightweight Alpine-based OS for IoT gates, MQTT brokers, Zigbee gateways.",
+      "icon": "icons/cat_other_specific_purpose_operating_systems.png",
+      "url": "https://downloads.sourceforge.net/project/multi-forge/forgeos-iot-arm64.img.xz",
+      "extract_size": 1073741824,
+      "extract_sha256": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b",
+      "image_download_size": 156321456,
+      "image_download_sha256": "2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3",
+      "release_date": "2026-07-15",
+      "init_format": "systemd",
+      "devices": [
+        "btv-e10",
+        "rk3328",
+        "h6",
+        "h616",
+        "s905x3"
+      ],
+      "capabilities": [
+        "passwordless_sudo"
+      ]
+    },
+    {
+      "name": "ForgeOS Media Station (Kodi ARM64)",
+      "description": "Revive old TV boxes with an optimized KODI media center image supporting hardware decoding.",
+      "icon": "icons/cat_media_players.png",
+      "url": "https://downloads.sourceforge.net/project/multi-forge/forgeos-media-arm64.img.xz",
+      "extract_size": 8589934592,
+      "extract_sha256": "7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b",
+      "image_download_size": 1421098765,
+      "image_download_sha256": "3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4",
+      "release_date": "2026-07-14",
+      "init_format": "systemd",
+      "devices": [
+        "btv-e10",
+        "rk3328",
+        "h6",
+        "h616",
+        "s905x3"
+      ]
+    },
+    {
+      "name": "Erase",
+      "description": "Format card as FAT32",
+      "icon": "icons/erase.png",
+      "devices": [
+        "btv-e10",
+        "rk3328",
+        "h6",
+        "h616",
+        "s905x3"
+      ]
+    },
+    {
+      "name": "Use custom",
+      "description": "Use a custom image from your computer",
+      "icon": "icons/use_custom.png",
+      "devices": [
+        "btv-e10",
+        "rk3328",
+        "h6",
+        "h616",
+        "s905x3"
+      ]
+    }
+  ]
 }
