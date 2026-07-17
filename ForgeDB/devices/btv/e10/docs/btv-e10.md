@@ -183,8 +183,8 @@ Se o bootloader estiver completamente corrompido:
 
 ## Análise de Desmontagem (Teardown)
 
-### Vídeo de Referência
-A desmontagem principal e o procedimento de conversão de software baseiam-se no vídeo produzido pelo Instituto Federal de São Paulo (IFSP): [Procedimento para conversão TVBox BTV](https://www.youtube.com/watch?v=xAo_zRkePls).
+### Referência de Instalação
+O procedimento de conversão de software e instalação baseia-se no vídeo produzido pelo Instituto Federal de São Paulo (IFSP): [Procedimento para conversão TVBox BTV](https://www.youtube.com/watch?v=xAo_zRkePls). As informações de desmontagem (teardown) são derivadas da comunidade.
 
 ### Layout Interno e Carcaça
 * **Carcaça**: Construída em plástico ABS e fixada por travas plásticas de pressão. Não há parafusos externos fixando a tampa superior à inferior.
@@ -224,7 +224,7 @@ A desmontagem principal e o procedimento de conversão de software baseiam-se no
 ## Referências
 
 ### Primárias
-* IFSP Campus Sorocaba - Vídeo tutorial de desmontagem e conversão: [Procedimento para conversão TVBox BTV](https://www.youtube.com/watch?v=xAo_zRkePls).
+* IFSP Campus Sorocaba - Vídeo tutorial de instalação e conversão: [Procedimento para conversão TVBox BTV](https://www.youtube.com/watch?v=xAo_zRkePls).
 
 ### Documentação Oficial
 * Datasheet e manual de hardware do Amlogic S905X2.

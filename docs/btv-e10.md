@@ -183,8 +183,8 @@ If the bootloader is completely corrupted, the SoC can be forced into MaskROM mo
 
 ## Teardown Analysis
 
-### Teardown Reference Video
-The primary teardown and software conversion documentation is sourced from the academic research video by the Federal Institute of São Paulo (IFSP): [Procedimento para conversão TVBox BTV](https://www.youtube.com/watch?v=xAo_zRkePls).
+### Installation Reference Video
+The software conversion documentation is sourced from the academic research video by the Federal Institute of São Paulo (IFSP): [Procedimento para conversão TVBox BTV](https://www.youtube.com/watch?v=xAo_zRkePls). Teardown details are derived from community hardware inspections.
 
 ### Internal Layout and Casing
 * **Casing**: Constructed of ABS plastic held together with plastic tabs. There are no external screws holding the top and bottom covers.
@@ -224,7 +224,7 @@ The primary teardown and software conversion documentation is sourced from the a
 ## References
 
 ### Primary
-* IFSP Campus Sorocaba - Teardown and Conversion Tutorial Video: [Procedimento para conversão TVBox BTV](https://www.youtube.com/watch?v=xAo_zRkePls).
+* IFSP Campus Sorocaba - OS Installation and Conversion Tutorial Video: [Procedimento para conversão TVBox BTV](https://www.youtube.com/watch?v=xAo_zRkePls).
 
 ### Official Documentation
 * Amlogic S905X2 Datasheet and Hardware Manual.
