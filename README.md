@@ -1,5 +1,9 @@
 # 🛠️ MultiForge
 
+<p align="center">
+  <img src="imagens/logo.png" width="1280" alt="MultiForge Logo/Banner">
+</p>
+
 Plataforma open-source para identificação, compatibilização, provisionamento e modularização de hardware reaproveitado (TV Boxes e dispositivos ARM legados).
 
 > **O núcleo do projeto**: MultiForge é uma plataforma para identificar, compatibilizar, provisionar e modularizar TV Boxes reaproveitadas, com o **ForgeDB** como base de conhecimento, o **ForgeHub** como ecossistema de módulos, o **ForgeImager** como interface de gravação, o **Forge Provisioner** como configuração inicial e o **Forge Agent** como inventário contínuo.
@@ -180,13 +184,6 @@ O sistema utiliza imagens base pequenas e estende suas capacidades por meio de p
     - open-webui
     - whisper
   ```
-
----
-
-## 🆚 EducaBox vs MultiForge
-
-* **EducaBox**: Foca principalmente em fornecer uma imagem Linux consolidada e pronta para TV Boxes específicas (LXDE/XFCE baseados em Armbian). Não possui um ecossistema modular descentralizado.
-* **MultiForge**: Foca em ser uma plataforma de compatibilidade, orquestração e gerenciamento. Permite usar imagens de terceiros (incluindo o próprio EducaBox ou Armbian) e o seu grande diferencial estratégico é o **ecossistema dinâmico de módulos (ForgeHub)**.
 
 ---
 
