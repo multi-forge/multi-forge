@@ -1,80 +1,217 @@
-![GitHub followers](https://img.shields.io/github/followers/multi-forge?style=social) ![GitHub User's stars](https://img.shields.io/github/stars/multi-forge?style=social) <img src="https://img.shields.io/badge/Linux-FCC624?style=social&logo=linux&logoColor=black" alt="multiforge" />
+# 🛠️ MultiForge
 
-<p align="center">
-  <img src="https://github.com/multi-forge/multiforge/blob/main/imagens/logo.png?raw=true" width="1280" alt="MultiForge Logo/Banner">
-</p>
+Plataforma open-source para identificação, compatibilização, provisionamento e modularização de hardware reaproveitado (TV Boxes e dispositivos ARM legados).
 
-<h4 align="center">O projeto "MultiForge" visa transformar TV Boxes e hardware reaproveitado em infraestrutura digital modular. <a href="https://github.com/multi-forge/multiforge" target="_blank">MultiForge</a>.</h4>
-
-> Acreditamos que milhares de TV Boxes descartadas ou apreendidas podem deixar de ser lixo eletrônico e se tornar equipamentos úteis. Ao detectar automaticamente o hardware e provisionar o sistema correto, estamos democratizando o acesso a servidores de borda, bibliotecas digitais e nós IoT, transformando hardware reaproveitado em ferramentas ativas para escolas, universidades e makerspaces.
-
-
-
-### Ajustes e melhorias
-
-O projeto está em pleno desenvolvimento. As próximas etapas incluem:
-
-- [x] Criação da estrutura de módulos base (Mina, Scraping, NoNail).
-- [x] Estruturação do repositório MultiForge.
-- [ ] Construção do ForgeDB (Banco de compatibilidade de hardware).
-- [ ] Desenvolvimento da CLI para detecção automática (SoC, Memória, Wi-Fi).
-- [ ] Automação de provisionamento inteligente (ForgeOS / Armbian).
-- [ ] Disponibilização de catálogo expansível no ForgeHub.
-
-## 📗 Sumário
-
- 1. 🌍 [Sobre a Plataforma](#sobre)
- 2. 🎯 [Objetivos Principais](#objetivos)
- 3. ✨ [Recursos e Funcionamento](#recursos)
- 4. 📦 [Ecossistema](#ecossistema)
- 5. 🔍 [Banco de Compatibilidade (Exemplo)](#compatibilidade)
- 6. 🤝 [Contribuindo](#contribuindo)
- 7. 📜 [Licença](#licenca)
+> **O núcleo do projeto**: MultiForge é uma plataforma para identificar, compatibilizar, provisionar e modularizar TV Boxes reaproveitadas, com o **ForgeDB** como base de conhecimento, o **ForgeHub** como ecossistema de módulos, o **ForgeImager** como interface de gravação, o **Forge Provisioner** como configuração inicial e o **Forge Agent** como inventário contínuo.
 
 ---
 
-## 🌍 <a id="sobre"/>Sobre a Plataforma
+## 🗺️ Visão Geral
 
-O **MultiForge** é uma plataforma open source criada para simplificar o reaproveitamento de TV Boxes e outros dispositivos ARM. Seu objetivo é eliminar a complexidade na instalação de sistemas, oferecendo uma arquitetura onde: **Você constrói uma vez, detecta automaticamente e implanta em qualquer lugar.**
-
-## 🎯 <a id="objetivos"/>Objetivos Principais
-
-- 🔍 **Detectar automaticamente** o hardware da TV Box.
-- ⚙️ **Selecionar a imagem Linux** mais compatível baseada na base de dados.
-- 📦 **Automatizar o processo** de instalação de forma amigável.
-- 🧩 **Oferecer módulos** instaláveis facilmente (Assistentes IA, Dashboards, MQTT, etc).
-
-## ✨ <a id="recursos"/>Recursos e Funcionamento
+O MultiForge não é apenas uma distribuição Linux ou um instalador isolado. É uma plataforma projetada para reaproveitar hardware de TV Boxes descartadas ou apreendidas (como a **BTV E10**), transformando-as em equipamentos úteis (servidores de borda, bibliotecas digitais, nós de IoT e inteligência ativa) com baixa complexidade de compatibilidade e instalação guiada.
 
 ```text
-TV Box ➔ Detecção ➔ Banco de Compatibilidade ➔ Imagem Recomendada ➔ Instalação ➔ Marketplace (Hub)
+TV Box apreendida/legada
+  │
+  ▼
+Identificação & Compatibilidade
+  │
+  ▼
+Imagem Compatível Selecionada
+  │
+  ▼
+Provisionamento Inteligente
+  │
+  ▼
+Instalação de Módulos (Profiles)
+  │
+  ▼
+Equipamento Útil e Ativo
 ```
-- **Detecção H/W**: Identificação de SoC, memória, Wi-Fi e periféricos essenciais.
-- **Instalação Simplificada**: Fluxos consistentes para gravação via eMMC, SD, ou MaskROM.
-- **Provisionamento Inteligente**: Configuração aplicada automaticamente baseada na board detectada.
 
-## 📦 <a id="ecossistema"/>Ecossistema
+---
 
-| Projeto | Descrição |
-|---------|-----------|
-| **MultiForge CLI** | Interface de linha de comando (`multi detect`, `multi install`). |
-| **ForgeDB** | Banco robusto de compatibilidade de hardware (DTBs, drivers). |
-| **ForgeHub** | Catálogo de módulos e serviços de software open-source. |
-| **ForgeOS** | Imagens Linux otimizadas nativamente para hardware legado. |
+## 🔍 Detalhamento do Ecossistema
 
-## 🔍 <a id="compatibilidade"/>Banco de Compatibilidade
+### 1. 🗄️ ForgeDB (Banco de Compatibilidade)
+O ForgeDB é o coração da plataforma. Ele **não é** apenas uma lista de imagens ou um repositório de firmwares copiados, mas sim um banco de dados de metadados, links de referência, rastreabilidade e evidências de hardware.
+* **Dados Armazenados**: Nome do dispositivo, fabricante, modelo, revisão da placa, SoC, GPU, RAM, armazenamento, Wi-Fi, Bluetooth, Ethernet, USB, HDMI, boot modes, método de flash, kernel recomendado, DTB, firmwares, imagens compatíveis, problemas conhecidos, tutoriais, fotos e fontes.
 
-> Este é um exemplo de como documentaremos as TV Boxes suportadas pelo projeto e sua viabilidade de hardware.
+```text
+forgedb/
+├── devices/
+│   └── btv/
+│       └── e10/
+│           ├── device.yaml
+│           ├── docs/
+│           ├── photos/
+│           ├── revisions/
+│           └── images.yaml
+├── soc/
+├── boards/
+├── kernels/
+├── bootloaders/
+├── dtbs/
+├── firmwares/
+├── flash/
+├── schemas/
+├── evidence/
+└── sources/
+```
 
-| TV BOX      | Processador     | Memória | Wi-Fi       | Instalação / Status |
-|-------------|-----------------|:-------:|-------------|:-------------------:|
-| BTV E10     | Rockchip RK3566 | 2GB     | ✅ AP6256   | Suportado ✅        |
-**Mais em breve...**
+### 2. 🔌 ForgeHub (Catálogo de Módulos)
+Catálogo/marketplace que gerencia a instalação de pacotes opcionais que rodam sobre o sistema operacional.
+* **Níveis de Confiança/Origem**:
+  * `Official`: Módulos desenvolvidos pela equipe MultiForge.
+  * `Verified`: Módulos de terceiros auditados na CI.
+  * `Community`: Módulos mantidos pela comunidade.
+  * `Private`: Módulos internos/locais do usuário.
+* **Manifesto do Módulo**: Cada módulo possui um arquivo descritivo com id, nome, versão, autor/publicador, licença, arquitetura suportada, dependências, permissões, serviços instalados e scripts de ciclo de vida.
+* **Exemplos de Módulos**: Docker, Home Assistant, Jellyfin, Kodi, Ollama, Node-RED, Pi-hole, Tailscale, Samba, Assistente IA, Dashboard.
 
-## 🤝 <a id="contribuindo"/>Contribuindo
+### 3. 💿 ForgeOS (Sistema Operacional)
+A camada mínima e padrão de sistema operacional.
+* **Estratégia**: Iniciar utilizando imagens estáveis existentes (Armbian, Educabox, Debian) como base e evoluir para uma imagem customizada própria no futuro.
+* **Características**: Imagem base pequena contendo kernel, DTB, drivers, bootloader compatível, gerenciador de módulos, atualizador, CLI, Forge Agent e Forge Provisioner. As capacidades completas são ativadas sob demanda por meio de perfis de módulos.
 
-Toda contribuição é bem-vinda para catalogar e suportar novos hardwares! Colabore testando TV Boxes, relatando bugs, descobrindo DTBs compatíveis ou criando novos módulos.
+### 4. 💾 ForgeImager (Ferramenta de Gravação)
+Interface gráfica para preparar a mídia de instalação (Cartão SD ou eMMC).
+* **Estratégia de Injeção**: Em vez de reconstruir ou editar arquivos internos da imagem a cada gravação (o que gera complexidade com senhas e incompatibilidades), o ForgeImager apenas grava a imagem limpa e injeta um manifesto `forge.yaml` na partição de boot contendo as definições de rede (Wi-Fi, IP), credenciais locais (usuário e senhas com hash) e perfil desejado.
 
-## 📜 <a id="licenca"/>Licença
+### 5. ⚙️ Forge Provisioner (Provisionador)
+Componente ativo executado automaticamente no primeiro boot do dispositivo.
+* **Função**: Lê o manifesto `forge.yaml` injetado pelo ForgeImager, cria os usuários com credenciais seguras, define hostname/locale/timezone, conecta à rede Wi-Fi/SSH, instala os módulos solicitados e executa a limpeza pós-instalação (apagando o manifesto).
 
-Projeto distribuído sob a licença **MIT**.
+### 6. 🕵️ Forge Agent (Agente Local)
+Serviço executado continuamente em background no dispositivo.
+* **Função**: Realiza o inventário do hardware real e coleta dados de diagnóstico após o Linux subir (método mais seguro do que tentar descobrir tudo antes da instalação). Permite o envio opcional de relatórios de conformidade e telemetria para o ForgeDB.
+
+### 7. 💻 Forge CLI (Interface de Terminal)
+Comando unificado para interação local e depuração no dispositivo:
+```bash
+multiforge detect        # Detecção de periféricos e plataforma
+multiforge info          # Exibe dados detalhados da plataforma
+multiforge search        # Busca de módulos no ForgeHub
+multiforge install       # Instala componentes adicionais
+multiforge modules       # Gerencia os módulos ativos
+multiforge doctor        # Diagnóstico completo (SoC, DTB, firmware, Wi-Fi, etc)
+```
+
+---
+
+## 📡 Identificação de Hardware Realista
+
+Após testes de arquitetura, foram estabelecidas as seguintes premissas de design:
+* **Descartado**: Depender de SSH ativo, varredura de IP, Android com ADB, ou USB tethering para a descoberta inicial do dispositivo (métodos frágeis).
+* **Viável (Duas Fases)**:
+  * **Fase 1 (Descoberta Superficial)**: O ForgeImager/CLI detecta apenas as informações necessárias para um flash seguro (SoC, fabricante e status do boot mode: MaskROM, FEL, USB Burning ou Fastboot).
+  * **Fase 2 (Descoberta Completa)**: Após a primeira inicialização do Linux, o **Forge Agent** executa a identificação completa de barramentos, chips de Wi-Fi/Bluetooth e memória interna.
+
+---
+
+## 🔄 Fluxo de Trabalho Integrado
+
+```text
+Usuário abre o ForgeImager 
+  │
+  ▼
+Seleciona o dispositivo ou consulta o guia
+  │
+  ▼
+ForgeDB filtra as imagens e DTBs compatíveis
+  │
+  ▼
+Usuário escolhe a Imagem Base e o Perfil de Módulos (ex: media-center)
+  │
+  ▼
+ForgeImager grava a mídia e injeta o arquivo "forge.yaml"
+  │
+  ▼
+Primeiro Boot no dispositivo ➔ Forge Provisioner aplica credenciais, rede e instala módulos
+  │
+  ▼
+Forge Agent roda em background, cataloga o hardware e atualiza o status
+```
+
+---
+
+## 🎯 Caso Piloto: BTV E10
+
+A **BTV E10** serve como o dispositivo de referência e prova de conceito do projeto para validação prática.
+
+| Atributo | Especificação Catalogada |
+| :--- | :--- |
+| **Codename / Modelo** | BTVE10 / E10 |
+| **Fabricante** | BTV |
+| **Placa Mãe** | BTVE E10-LPDDR4 V.10 201-03-08 |
+| **SoC / CPU** | Amlogic S905X2 (Cortex-A53) [Conflito: Rockchip RK3566 em README] |
+| **GPU** | Mali-G31 MC1 |
+| **Wi-Fi** | RTL8189FTV [Conflito: AP6256 em README] |
+| **Memória / Flash** | 2GB RAM / 8GB eMMC |
+| **DTB Recomendada** | `meson-g12a-sei510.dtb` (Placa DTB: `g12a_u212_2g`) |
+
+---
+
+## 🎨 Perfis e Módulos do Sistema
+
+O sistema utiliza imagens base pequenas e estende suas capacidades por meio de perfis funcionais que agrupam módulos do **ForgeHub**:
+
+* **Perfil: `media-center`**
+  ```yaml
+  profile: media-center
+  modules:
+    - kodi
+    - jellyfin
+    - samba
+  ```
+* **Perfil: `iot-gateway`**
+  ```yaml
+  profile: iot-gateway
+  modules:
+    - mosquitto
+    - node-red
+    - homeassistant
+  ```
+* **Perfil: `ai-node`**
+  ```yaml
+  profile: ai-node
+  modules:
+    - ollama
+    - open-webui
+    - whisper
+  ```
+
+---
+
+## 🆚 EducaBox vs MultiForge
+
+* **EducaBox**: Foca principalmente em fornecer uma imagem Linux consolidada e pronta para TV Boxes específicas (LXDE/XFCE baseados em Armbian). Não possui um ecossistema modular descentralizado.
+* **MultiForge**: Foca em ser uma plataforma de compatibilidade, orquestração e gerenciamento. Permite usar imagens de terceiros (incluindo o próprio EducaBox ou Armbian) e o seu grande diferencial estratégico é o **ecossistema dinâmico de módulos (ForgeHub)**.
+
+---
+
+## 📁 Estrutura Organizacional do Repositório
+
+```text
+multiforge/
+├── README.md           # Visão geral e documentação principal
+├── LICENSE             # Licença MIT
+├── docs/               # Documentação técnica e guias de identificação
+├── cli/                # Código-fonte da ferramenta Forge CLI
+├── detector/           # Ferramentas de detecção superficial de hardware
+├── database/           # Modelos de dados e esquemas do ForgeDB
+├── provisioner/        # Lógicas do Forge Provisioner (primeiro boot)
+├── builder/            # Scripts de build e compilação de imagens
+├── agent/              # Daemon do Forge Agent
+├── modules/            # Definições e manifestos dos módulos do ForgeHub
+├── server/             # Backend do ForgeDB e ForgeHub
+├── web/                # Interface web do catálogo
+├── tests/              # Testes unitários e de integração
+└── scripts/            # Scripts de automação do repositório
+```
+
+---
+
+## 📜 Licença
+
+Este projeto está sob a licença **MIT**.
