@@ -1,61 +1,53 @@
-/build**
-src/build/*
-src/build/**
-compile_commands.json
-src/.cache/clangd
-obj-**
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# IDE Configurations
-.vscode
-.zed
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+dist-ssr
+/releases/
+/dist-releases/
+
+# Local env files
+*.local
+.env
+.env.*
+!.env.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Debian packaging
-debian/rpi-imager/**
-debian/rpi-imager-amd64/**
-debian/rpi-imager-embedded/**
-debian/rpi-imager-cli/**
-debian/.debhelper**
-debian/*.debhelper**
-debian/files
-debian/*.substvars
-debian/debhelper**
-debian/tmp
-debian/com.raspberrypi.rpi-imager.metainfo.xml
-
-# macOS
+# OS files
 .DS_Store
-*.DS_Store
-# editor backups
-*.*swp*
+Thumbs.db
 
-# AppImage related
-*.AppImage*
-*.appimagecraft*
-AppDir-*
-appimage-*
+# Tauri
+src-tauri/target/
+src-tauri/gen/
 
-# Embedded .deb build tree (created by create-embedded.sh)
-debroot-embedded-*
-rpi-imager-embedded*.deb
-screenshot.png
+# Rust crates build artifacts
+crates/*/target/
 
-# Qt related
-qt-build**
-qt-src**
-qt/language_filters.json
-build
-build-**
+# Test coverage
+coverage/
 
-# IANA Timezone database generated as part of build
-timezones.txt
-
-# build-cli-only related
-test-cli-**
-
-# clangd related
-.cache/clangd
-
-# Python tooling
-.venv
-**/.venv
+# Temporary files
+*.tmp
+*.temp
+.cache

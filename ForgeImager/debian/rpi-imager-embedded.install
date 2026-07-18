@@ -1,3 +1,0 @@
-#!/usr/bin/dh-exec
-
-src/linux/icon/rpi-imager.svg /usr/share/icons/hicolor/scalable/apps/

@@ -1,114 +1,65 @@
-## Contributing
+# Contributing to Armbian Imager
 
-### Linux
+Contributions are welcome. A few ways to help:
 
-#### Get dependencies
+- Report bugs by [opening an issue](https://github.com/armbian/imager/issues)
+- Suggest features, and open a discussion first if it's a big one
+- Send pull requests for fixes and improvements
+- Add or improve translations in `src/locales/`
+- Improve the docs so the next person has an easier start
 
-- Install the build dependencies (Debian used as an example):
+For environment setup, build instructions, and project structure, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
-```sh
-sudo apt install --no-install-recommends build-essential cmake git libgnutls28-dev
+## Development Workflow
+
+1. Fork the repository.
+2. Create a branch (`git checkout -b feature/amazing-feature`).
+3. Make your changes and run the quality checks below.
+4. Commit with a conventional commit message.
+5. Push the branch (`git push origin feature/amazing-feature`).
+6. Open a pull request.
+
+### Branch naming
+
+Prefix the branch with the kind of change: `feature/` for new functionality, `fix/` for bug fixes, `docs/` for documentation, `refactor/` for restructuring.
+
+### Commit messages
+
+Use [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<scope>): <subject>`.
+
+Types are `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `build`, `ci`. Common scopes are `frontend`, `backend`, `flash`, `device`, `i18n`, `build`, `ci`, `docs`. Keep each commit to one logical change, and write the subject in the imperative ("add dark mode", not "added dark mode").
+
+## Quality Checks
+
+CI runs these on every pull request, so run them locally first.
+
+Frontend, after touching anything under `src/`:
+
+```bash
+npm run lint        # ESLint
+npx tsc --noEmit    # TypeScript type check
 ```
 
-#### Get the source
+Backend, after touching anything under `src-tauri/`:
 
-```sh
-git clone --depth 1 https://github.com/raspberrypi/rpi-imager
+```bash
+cd src-tauri
+cargo fmt           # must produce no diff
+cargo clippy --all-targets --all-features -- -D warnings
 ```
 
-#### Build Qt
+A PR needs zero lint errors and zero warnings to merge.
 
-```sh
-sudo ./qt/build-qt.sh
-```
+## Translations
 
-This will build and install the version of Qt preferred for Raspberry Pi Imager into /opt/Qt/<version>. You must use `sudo` for the installation step to complete.
+The app ships 18 languages: `de`, `en`, `es`, `fr`, `hr`, `it`, `ja`, `ko`, `nl`, `pl`, `pt`, `pt-BR`, `ru`, `sl`, `sv`, `tr`, `uk`, `zh`. Note that `pt` and `pt-BR` are separate locales.
 
-#### Build the AppImage
+When you add or remove a translation key, change all 18 files in `src/locales/` so they keep the same set of keys. PRs that leave keys missing in some files won't pass review.
 
-```sh
-./create-appimage.sh
-./Raspberry_Pi_Imager-*.AppImage
-```
+## Other ways to contribute
 
-### Windows
-
-#### Get dependencies
-
-- Get the Qt online installer from: https://www.qt.io/download-open-source
-  - During installation, choose Qt 6.9 with Mingw64 64-bit toolchain.
-- For building the installer, install Inno Setup scriptable install system: https://jrsoftware.org/isdl.php
-- Install Visual Studio Code (or a derivative) and the Qt Extension Pack.
-- It is assumed you already have a valid code signing certificate, and the Windows 10 Kit (SDK) installed.
-
-#### Building
-
-Building Raspberry Pi Imager on Windows is best done with Visual Studio Code (or a derivative).
-
-- Open Visual Studio Code, and select 'Clone repo'. Give it the git url of this project.
-- Open the CMake plugin settings, and set the following Configure Args:
-  - `-DQt6_ROOT=C:\Qt\6.9.0\mingw_64` - or the equivalent path you installed Qt 6.9 to.
-  - `-DMINGW64_ROOT=C:\Qt\Tools\mingw1310_64` - or the equivalent path you installed mingw64 to.
-  - `-DENABLE_INNO_INSTALLER=ON` - to enable the Inno Setup installer, rather than the legacy NSIS installer.
-  - `-DIMAGER_SIGNED_APP=ON` - to enable code signing for redistribution.
-- In the CMake plugin tab, ensure you have selected the `MinSizeRel` variant if you intend to distribute to others.
-- In the CMake plugin tab, select the 'inno_installer' target, and build it
-- Your resultant installer will be located in `%WORKSPACE%\build\installer`
-
-### macOS
-
-#### Get dependencies
-
-- Build a minimal Qt from source using our build script:
-  ```bash
-  ./qt/build-qt-macos.sh
-  ```
-  - This builds only what's needed for rpi-imager, resulting in faster builds and smaller size
-  - See `qt/README-qt-build-macos.md` for detailed instructions
-- Install Visual Studio Code (or a derivative), and the Qt Extension Pack.
-- It is assumed you have an Apple developer subscription, and already have a "Developer ID" code signing certificate for distribution outside the Mac Store.
-
-#### Building
-
-Building Raspberry Pi Imager on macOS is best done with Visual Studio Code (or a derivative).
-
-- Open Visual Studio Code, and select 'Clone repo'. Give it the git url of this project.
-- Open the CMake plugin settings, and set the following Configure Args:
-  - `-DQt6_ROOT=/opt/Qt/6.9.1/macos` - or the equivalent path you installed Qt 6.9 to.
-  - `-DIMAGER_SIGNED_APP=ON` - to enable code signing.
-  - `-DIMAGER_SIGNING_IDENTITY=$cn` - to specify the Developer ID Certificate Common Name.
-  - `-DIMAGER_NOTARIZE_APP=ON` - to enable automatic notarization for distribution to others.
-  - `-DIMAGER_NOTARIZE_KEYCHAIN_PROFILE=notarytool-password` - specify the name of the keychain item containing your Apple ID credentials for notarizing.
-- In the CMake plugin tab, ensure you have selected the `MinSizeRel` variant if you intend to distribute to others.
-- In the CMake plugin tab, select the 'rpi_imager' target, and build it
-- Your resultant DMG will be located at `$WORKSPACE/build/Raspberry Pi Imager-$VERSION.dmg`
-
-### Linux embedded (netboot) build
-
-The Raspberry Pi Network installer (embedded imager) runs inside an operating system created by [pi-gen-micro](https://github.com/raspberrypi/pi-gen-micro/tree/main/configurations/rpi-imager-embedded).
-
-To build the entire system, you must first build our customised embedded qt:
-
-```sh
-./qt/build-qt-embedded.sh
-```
-
-Then build the embedded AppImage:
-
-```sh
-./create-embedded.sh
-```
-
-Package the appImage for use with pi-gen-micro and other Debian systems:
-
-```sh
-dpkg-buildpackage -uc -us --profile=embedded
-```
-
-And finally, import your new embedded imager into pi-gen-micro for packaging:
-
-```sh
-rm ${pi-gen-micro-root}/packages/rpi-imager-embedded*.deb
-cp ../rpi-imager-embedded*.deb ${pi-gen-micro-root}/packages/
-pushd ${pi-gen-micro-root}/packages/ && dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz && popd
-```
+* [Become a new board maintainer](https://docs.armbian.com/Board_Maintainers_Procedures_and_Guidelines/)
+* [Apply for an open position](https://forum.armbian.com/staffapplications/)
+* [Help cover running costs](https://forum.armbian.com/subscriptions/)
+* [Help community members in the forum](https://forum.armbian.com/)
+* [Check the forum announcements for requests for help](https://forum.armbian.com/forum/37-announcements/)
