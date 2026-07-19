@@ -1,4 +1,4 @@
-//! Fetching board, image, and vendor data from the Armbian REST API, with
+//! Fetching board, image, and vendor data from the Forge REST API, with
 //! on-disk caching of responses for offline use.
 
 #![allow(dead_code)]
@@ -19,7 +19,7 @@ use once_cell::sync::Lazy;
 use reqwest::header::{HeaderMap, HeaderValue};
 use std::path::PathBuf;
 
-/// Shared HTTP client for JSON API endpoints (10s timeout, X-Armbian-Client header).
+/// Shared HTTP client for JSON API endpoints (10s timeout, X-Forge-Client header).
 /// Large image downloads use a separate client with longer timeouts.
 static API_CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
     let mut headers = HeaderMap::new();
@@ -132,7 +132,7 @@ pub fn cleanup_legacy_cache() {
     }
 }
 
-/// Fetch all boards from the Armbian REST API (paginated), caching to disk
+/// Fetch all boards from the Forge REST API (paginated), caching to disk
 /// on success and falling back to that cache on failure.
 pub async fn fetch_boards() -> Result<Vec<ApiBoardSummary>, String> {
     Ok(vec![
@@ -184,7 +184,7 @@ pub async fn fetch_boards() -> Result<Vec<ApiBoardSummary>, String> {
     ])
 }
 
-/// Fetch a board's images from the Armbian REST API (optional query filters),
+/// Fetch a board's images from the Forge REST API (optional query filters),
 /// caching to disk on success and falling back to that cache on failure.
 pub async fn fetch_images_for_board(
     slug: &str,
@@ -310,7 +310,7 @@ pub async fn fetch_images_for_board(
     }
 }
 
-/// Fetch all vendors from the Armbian REST API, caching to disk on success
+/// Fetch all vendors from the Forge REST API, caching to disk on success
 /// and falling back to that cache on failure.
 pub async fn fetch_vendors() -> Result<Vec<ApiVendor>, String> {
     Ok(vec![

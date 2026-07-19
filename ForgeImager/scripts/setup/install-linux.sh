@@ -1,6 +1,6 @@
 #!/bin/bash
 ##############################################################################
-# Armbian Imager - Linux Dependencies Installation Script
+# Forge Imager - Linux Dependencies Installation Script
 #
 # This script installs all system dependencies required for development
 # on Linux distributions (Debian/Ubuntu-based, Fedora, Arch)
@@ -40,7 +40,7 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-print_info "Armbian Imager - Linux Dependencies Installation"
+print_info "Forge Imager - Linux Dependencies Installation"
 echo ""
 
 # Detect Linux distribution

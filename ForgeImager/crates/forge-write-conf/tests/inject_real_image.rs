@@ -1,22 +1,22 @@
-//! Integration test against a real Armbian RAW image at ARMBIAN_TEST_IMAGE (with a default); if absent it prints a
+//! Integration test against a real Forge RAW image at Forge_TEST_IMAGE (with a default); if absent it prints a
 //! skip notice and passes so CI without the large image doesn't fail. The write always targets a temp copy.
 
 use std::env;
 use std::path::{Path, PathBuf};
 
-use armbian_write_conf::write_file_into_image;
+use forge_write_conf::write_file_into_image;
 
-const DEFAULT_IMAGE: &str = "/Users/danielebriguglio/Downloads/Armbian-unofficial_26.05.0-trunk_Nanopi-r76s_trixie_edge_7.0.10_minimal.img";
+const DEFAULT_IMAGE: &str = "/Users/danielebriguglio/Downloads/Forge-unofficial_26.05.0-trunk_Nanopi-r76s_trixie_edge_7.0.10_minimal.img";
 const DEST: &str = "/root/.not_logged_in_yet";
 const CONTENT: &[u8] = b"PRESET_NET_CHANGE_DEFAULTS=\"1\"\n";
 
 #[test]
 fn inject_into_real_image() {
-    let image = env::var("ARMBIAN_TEST_IMAGE").unwrap_or_else(|_| DEFAULT_IMAGE.to_string());
+    let image = env::var("Forge_TEST_IMAGE").unwrap_or_else(|_| DEFAULT_IMAGE.to_string());
     let src = Path::new(&image);
 
     if !src.exists() {
-        eprintln!("SKIP: test image not found at {image} (set ARMBIAN_TEST_IMAGE to run)");
+        eprintln!("SKIP: test image not found at {image} (set Forge_TEST_IMAGE to run)");
         return;
     }
 

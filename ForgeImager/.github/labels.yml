@@ -166,7 +166,7 @@
 
 - name: "component: api"
   color: "bfd4f2"
-  description: Armbian API integration
+  description: Forge API integration
 
 - name: "component: tauri-ipc"
   color: "d4c5f9"

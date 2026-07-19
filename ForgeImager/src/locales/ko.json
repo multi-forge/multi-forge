@@ -10,7 +10,7 @@
     "chooseStorage": "저장 장치 선택",
     "device": "장치",
     "chooseDevice": "장치 선택",
-    "welcomeHeading": "Armbian Imager에 오신 것을 환영합니다",
+    "welcomeHeading": "Forge Imager에 오신 것을 환영합니다",
     "welcomeIntro": "보드와 이미지를 고르기만 하세요. 다운로드부터 SD 카드나 USB 드라이브 기록, 검사까지 저희가 알아서 처리합니다.",
     "startNow": "지금 시작",
     "useCustomImage": "사용자 지정 이미지 사용",
@@ -73,7 +73,7 @@
     "noManufacturers": "제조사를 찾을 수 없습니다",
     "noBoards": "보드를 찾을 수 없습니다",
     "boardUpdateRequired": "업데이트 필요",
-    "boardUpdateRequiredHint": "이 보드는 이 버전의 Armbian Imager에서 지원되지 않습니다. 업데이트하세요.",
+    "boardUpdateRequiredHint": "이 보드는 이 버전의 Forge Imager에서 지원되지 않습니다. 업데이트하세요.",
     "noImages": "이미지를 찾을 수 없습니다",
     "noDevices": "장치를 찾을 수 없습니다",
     "promoted": "추천",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "사용자 지정 이미지"
   },
-  "armbian": {
-    "description": "이 기기는 Armbian으로 실행 중입니다. 이 보드를 미리 선택하고 수동 단계를 건너뛸까요?",
+  "Forge": {
+    "description": "이 기기는 Forge으로 실행 중입니다. 이 보드를 미리 선택하고 수동 단계를 건너뛸까요?",
     "cancelHint": "취소하면 보드 자동 감지가 꺼집니다.",
     "disabledToast": "보드 자동 감지를 껐습니다. 설정에서 다시 켤 수 있습니다."
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "언어 선택",
     "languageAuto": "자동",
     "searchLanguage": "언어 검색...",
-    "appDescription": "SD 카드와 USB 드라이브에 Armbian OS를 기록합니다",
+    "appDescription": "SD 카드와 USB 드라이브에 Forge OS를 기록합니다",
     "version": "버전",
     "platform": "플랫폼",
     "arch": "아키텍처",
@@ -236,10 +236,10 @@
     "devices": "장치",
     "allowSystemDevices": "시스템 드라이브 허용",
     "allowSystemDevicesDescription": "위험: 실행 중인 OS를 덮어쓸 수 있습니다.",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "보드 자동 감지",
-      "description": "이 기기가 Armbian으로 실행될 때 보드를 자동으로 인식합니다",
+      "description": "이 기기가 Forge으로 실행될 때 보드를 자동으로 인식합니다",
       "mode_disabled": "사용 안 함",
       "mode_modal": "대화형",
       "mode_auto": "자동"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "프로필",
       "title": "자동 구성 프로필",
-      "description": "Armbian 첫 부팅 설정을 미리 지정합니다. 프로필은 기록 전에 선택한 경우에만 적용됩니다.",
+      "description": "Forge 첫 부팅 설정을 미리 지정합니다. 프로필은 기록 전에 선택한 경우에만 적용됩니다.",
       "newProfile": "새 프로필",
       "emptyTitle": "프로필 없음",
       "emptyHint": "프로필을 만들어 첫 부팅 시 네트워크, 로캘, 계정을 미리 설정하세요.",
@@ -309,7 +309,7 @@
       "rootPassword": "root 비밀번호",
       "rootKeyUrl": "root SSH 키 URL",
       "userName": "사용자 이름",
-      "userHint": "사용자 이름을 비워 두어도 Armbian은 첫 부팅 시 사용자를 생성하도록 요청합니다.",
+      "userHint": "사용자 이름을 비워 두어도 Forge은 첫 부팅 시 사용자를 생성하도록 요청합니다.",
       "userPassword": "사용자 비밀번호",
       "userKeyUrl": "사용자 SSH 키 URL",
       "userShell": "로그인 셸",

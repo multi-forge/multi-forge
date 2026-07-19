@@ -14,12 +14,12 @@ pub mod app {
 
 /// API endpoints and URLs
 pub mod urls {
-    const API_BASE_DEFAULT: &str = "https://api.armbian.com/api/v1";
+    const API_BASE_DEFAULT: &str = "https://api.Forge.com/api/v1";
 
-    /// Armbian REST API base. Overridable at runtime via `ARMBIAN_API_BASE` so a
+    /// Forge API base. Overridable at runtime via `FORGE_API_BASE` so a
     /// dev/test build can be pointed at a local API without a rebuild.
     pub fn api_base() -> String {
-        std::env::var("ARMBIAN_API_BASE").unwrap_or_else(|_| API_BASE_DEFAULT.to_string())
+        std::env::var("FORGE_API_BASE").unwrap_or_else(|_| API_BASE_DEFAULT.to_string())
     }
 
     /// Health check endpoint (no auth required)
@@ -27,14 +27,14 @@ pub mod urls {
         format!("{}/health", api_base())
     }
 
-    /// Base URL for board images (api.armbian.com/api/v1/images/boards/{size}/{slug}.png)
-    pub const BOARD_IMAGES_BASE: &str = "https://api.armbian.com/api/v1/images/boards/";
+    /// Base URL for board images (api.Forge.com/api/v1/images/boards/{size}/{slug}.png)
+    pub const BOARD_IMAGES_BASE: &str = "https://api.Forge.com/api/v1/images/boards/";
 
     /// Default image size for board photos (480px width, natural aspect ratio)
     pub const BOARD_IMAGE_SIZE: &str = "480";
 
-    /// Base URL for vendor logos (api.armbian.com/api/v1/images/vendors/{size}/{slug}.png)
-    pub const VENDOR_IMAGES_BASE: &str = "https://api.armbian.com/api/v1/images/vendors/480/";
+    /// Base URL for vendor logos (api.Forge.com/api/v1/images/vendors/{size}/{slug}.png)
+    pub const VENDOR_IMAGES_BASE: &str = "https://api.Forge.com/api/v1/images/vendors/480/";
 
     /// Base URL for QDL firehose loaders / provisioning XML, served by the API blob
     /// proxy ({base}{family}/{path}). Follows `api_base` so it routes locally in dev.
@@ -111,11 +111,11 @@ pub mod http {
     /// Short timeout for quick requests like board info (10 seconds)
     pub const SHORT_TIMEOUT_SECS: u64 = 10;
 
-    /// Client identification header name for the Armbian REST API
-    pub const CLIENT_HEADER_NAME: &str = "X-Armbian-Client";
+    /// Client identification header name for the Forge API
+    pub const CLIENT_HEADER_NAME: &str = "X-Forge-Client";
 
-    /// Client identification header value for the Armbian Imager
-    pub const CLIENT_HEADER_VALUE: &str = "armbian-imager";
+    /// Client identification header value for Forge Imager
+    pub const CLIENT_HEADER_VALUE: &str = "forge-imager";
 }
 
 /// Image filtering constants

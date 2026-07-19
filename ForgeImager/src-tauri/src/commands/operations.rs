@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use tauri::{AppHandle, State};
 use tauri_plugin_store::StoreExt;
 
-use armbian_write_conf::WriteConfError;
+use forge_write_conf::WriteConfError;
 
 use crate::autoconfig::AutoconfigConfig;
 use crate::download::download_image as do_download;
@@ -110,7 +110,7 @@ pub async fn download_image(
     }
 }
 
-/// Start flashing an image to a device. With `autoconfig` Some, injects the Armbian first-boot preset
+/// Start flashing an image to a device. With `autoconfig` Some, injects the Forge first-boot preset
 /// into a per-flash copy (original never mutated) and flashes that; None flashes the original directly.
 #[tauri::command]
 pub async fn flash_image(

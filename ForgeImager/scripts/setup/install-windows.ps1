@@ -1,5 +1,5 @@
 ##############################################################################
-# Armbian Imager - Windows Dependencies Installation Script
+# Forge Imager - Windows Dependencies Installation Script
 #
 # This script installs all system dependencies required for development
 # on Windows
@@ -37,7 +37,7 @@ function Print-Error {
     Write-Host " $Message" -ForegroundColor Red
 }
 
-Print-Info "Armbian Imager - Windows Dependencies Installation"
+Print-Info "Forge Imager - Windows Dependencies Installation"
 Write-Host ""
 
 # Check if running on Windows

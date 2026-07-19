@@ -14,15 +14,15 @@ import {
   setForceOffline,
   getAllowSystemDevices,
   setAllowSystemDevices,
-  getArmbianBoardDetection,
-  setArmbianBoardDetection,
+  getForgeBoardDetection,
+  setForgeBoardDetection,
 } from '../../hooks/useSettings';
-import { getSystemInfo, getArmbianRelease } from '../../hooks/useTauri';
+import { getSystemInfo, getForgeRelease } from '../../hooks/useTauri';
 import { useToasts } from '../../hooks/useToasts';
 import { useSettingsGroup } from '../../hooks/useSettingsGroup';
 import { EVENTS } from '../../config';
 
-/** Preferences tab (notification/verification/connectivity/Armbian board-detection cards). Notifications use set-after-await; skip-verify & force-offline use optimistic update+rollback under a shared `isToggling` guard; the Armbian select uses optimistic update+rollback and is force-disabled (`'disabled'`) on non-Armbian/non-Linux hosts.
+/** Preferences tab (notification/verification/connectivity/Forge board-detection cards). Notifications use set-after-await; skip-verify & force-offline use optimistic update+rollback under a shared `isToggling` guard; the Forge select uses optimistic update+rollback and is force-disabled (`'disabled'`) on non-Forge/non-Linux hosts.
  * MOTD changes dispatch `MOTD_CHANGED`, all others `SETTINGS_CHANGED`; rendering gated until settings load to avoid toggle flicker on mount. */
 export function PreferencesSection() {
   const { t } = useTranslation();
@@ -35,8 +35,8 @@ export function PreferencesSection() {
     skipVerify: boolean;
     forceOffline: boolean;
     allowSystemDevices: boolean;
-    armbianDetection: string;
-    isArmbian: boolean;
+    ForgeDetection: string;
+    isForge: boolean;
   }>({
     showMotd: getShowMotd,
     showUpdaterModal: getShowUpdaterModal,
@@ -44,11 +44,11 @@ export function PreferencesSection() {
     skipVerify: getSkipVerify,
     forceOffline: getForceOffline,
     allowSystemDevices: getAllowSystemDevices,
-    armbianDetection: getArmbianBoardDetection,
-    isArmbian: async () => {
+    ForgeDetection: getForgeBoardDetection,
+    isForge: async () => {
       const info = await getSystemInfo();
       if (info.platform !== 'linux') return false;
-      const release = await getArmbianRelease();
+      const release = await getForgeRelease();
       return release !== null;
     },
   });
@@ -62,7 +62,7 @@ export function PreferencesSection() {
   const [skipVerify, setSkipVerifyState] = useState<boolean>(false);
   const [forceOffline, setForceOfflineState] = useState<boolean>(false);
   const [allowSystemDevices, setAllowSystemDevicesState] = useState<boolean>(false);
-  const [armbianDetection, setArmbianDetection] = useState<string>('disabled');
+  const [ForgeDetection, setForgeDetection] = useState<string>('disabled');
   const [isToggling, setIsToggling] = useState<boolean>(false);
   const [initialized, setInitialized] = useState(false);
 
@@ -75,7 +75,7 @@ export function PreferencesSection() {
     if (settingsGroup.skipVerify !== undefined) setSkipVerifyState(settingsGroup.skipVerify);
     if (settingsGroup.forceOffline !== undefined) setForceOfflineState(settingsGroup.forceOffline);
     if (settingsGroup.allowSystemDevices !== undefined) setAllowSystemDevicesState(settingsGroup.allowSystemDevices);
-    if (settingsGroup.armbianDetection !== undefined) setArmbianDetection(settingsGroup.armbianDetection);
+    if (settingsGroup.ForgeDetection !== undefined) setForgeDetection(settingsGroup.ForgeDetection);
     setInitialized(true);
   }, [loaded, settingsGroup]);
 
@@ -187,19 +187,19 @@ export function PreferencesSection() {
     }
   };
 
-  /** Updates Armbian board-detection mode (from select `e`) optimistically, rolling back on failure. */
-  const handleArmbianDetectionChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const previousMode = armbianDetection;
+  /** Updates Forge board-detection mode (from select `e`) optimistically, rolling back on failure. */
+  const handleForgeDetectionChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const previousMode = ForgeDetection;
     const newMode = e.target.value;
 
     try {
-      await setArmbianBoardDetection(newMode);
-      setArmbianDetection(newMode);
+      await setForgeBoardDetection(newMode);
+      setForgeDetection(newMode);
       window.dispatchEvent(new Event(EVENTS.SETTINGS_CHANGED));
       showSuccess(t('settings.toast.detectionUpdated'));
     } catch (error) {
-      console.error('Failed to set Armbian detection preference:', error);
-      setArmbianDetection(previousMode);
+      console.error('Failed to set Forge detection preference:', error);
+      setForgeDetection(previousMode);
       showError(t('settings.toast.detectionError'));
     }
   };
@@ -373,9 +373,9 @@ export function PreferencesSection() {
         </div>
       </div>
 
-      {/* Armbian: board-detection mode (disabled on non-Armbian/non-Linux hosts) */}
+      {/* Forge: board-detection mode (disabled on non-Forge/non-Linux hosts) */}
       <div className="settings-group">
-        <h4 className="settings-group__title">{t('settings.armbian.title')}</h4>
+        <h4 className="settings-group__title">{t('settings.Forge.title')}</h4>
         <div className="settings-group__card">
           <div className="settings-row">
             <div className="settings-row__main">
@@ -383,22 +383,22 @@ export function PreferencesSection() {
                 <Cpu size={18} />
               </div>
               <div className="settings-row__text">
-                <div className="settings-row__label">{t('settings.armbian.label')}</div>
+                <div className="settings-row__label">{t('settings.Forge.label')}</div>
                 <div className="settings-row__desc">
-                  {t('settings.armbian.description')}
+                  {t('settings.Forge.description')}
                 </div>
               </div>
             </div>
             <select
               className="settings-select"
-              value={settingsGroup.isArmbian ? armbianDetection : 'disabled'}
-              onChange={handleArmbianDetectionChange}
-              disabled={!settingsGroup.isArmbian}
-              aria-label={t('settings.armbian.label')}
+              value={settingsGroup.isForge ? ForgeDetection : 'disabled'}
+              onChange={handleForgeDetectionChange}
+              disabled={!settingsGroup.isForge}
+              aria-label={t('settings.Forge.label')}
             >
-              <option value="disabled">{t('settings.armbian.mode_disabled')}</option>
-              <option value="modal">{t('settings.armbian.mode_modal')}</option>
-              <option value="auto">{t('settings.armbian.mode_auto')}</option>
+              <option value="disabled">{t('settings.Forge.mode_disabled')}</option>
+              <option value="modal">{t('settings.Forge.mode_modal')}</option>
+              <option value="auto">{t('settings.Forge.mode_auto')}</option>
             </select>
           </div>
         </div>

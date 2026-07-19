@@ -1,5 +1,5 @@
 //! Write a config file into a RAW disk image's ext4 rootfs in userspace (no mount/privileges), then validate.
-//! Parses partition scheme (GPT/MBR), locates the Linux ext4 rootfs, writes via `armbian-ext4fs`, re-validates read-only with `ext4-view`.
+//! Parses partition scheme (GPT/MBR), locates the Linux ext4 rootfs, writes via `Forge-ext4fs`, re-validates read-only with `ext4-view`.
 
 use std::fmt;
 use std::fs::OpenOptions;
@@ -7,7 +7,7 @@ use std::io::{Seek, SeekFrom, Write};
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 
-use armbian_ext4fs::{BlockDevice, Ext4, BLOCK_SIZE};
+use forge_ext4fs::{BlockDevice, Ext4, BLOCK_SIZE};
 
 mod detect;
 mod validate;
@@ -141,7 +141,7 @@ pub fn write_file_into_image(
     })
 }
 
-/// Write `content` to `dest_path` in a BARE ext4 image (no partition table, superblock at byte 0; e.g. Armbian QDL `disk-sdcard.img.root` blobs). Confirms ext4 magic at 0, writes via `armbian-ext4fs`, validates read-only.
+/// Write `content` to `dest_path` in a BARE ext4 image (no partition table, superblock at byte 0; e.g. Forge QDL `disk-sdcard.img.root` blobs). Confirms ext4 magic at 0, writes via `Forge-ext4fs`, validates read-only.
 /// Errors ([`WriteConfError`]) on non-bare-ext4 image, write failure, or bad validation.
 pub fn write_file_into_bare_ext4_image(
     image_path: &Path,

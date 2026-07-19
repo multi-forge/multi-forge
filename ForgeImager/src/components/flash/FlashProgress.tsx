@@ -56,7 +56,7 @@ export function FlashProgress({
       });
   }, [board.slug]);
 
-  /** Branded OS identity, matching the sidebar/OS card (e.g. "Armbian 26.2.0 GNOME"). */
+  /** Branded OS identity, matching the sidebar/OS card (e.g. "Forge 26.2.0 GNOME"). */
   function getImageDisplayText(): string {
     return formatImageIdentity(image, t).title;
   }

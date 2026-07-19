@@ -1,4 +1,4 @@
-//! Resolves a board's QDL facts from the Armbian API (the served `qdl` block),
+//! Resolves a board's QDL facts from the Forge API (the served `qdl` block),
 //! falling back to the bundled default registry when the API has no metadata
 //! (offline, older API). The API is authoritative; the bundle keeps known
 //! boards flashable without a network round-trip.
@@ -76,10 +76,10 @@ mod tests {
         assert_eq!(QdlStorage::from_storage_str("nvme"), None);
     }
 
-    // Integration check against a local API: `ARMBIAN_API_BASE=http://localhost/api/v1
+    // Integration check against a local API: `FORGE_API_BASE=http://localhost/api/v1
     // cargo test resolves_and_fetches_from_local_api -- --ignored --nocapture`.
     #[tokio::test]
-    #[ignore = "requires a running API at ARMBIAN_API_BASE"]
+    #[ignore = "requires a running API at FORGE_API_BASE"]
     async fn resolves_and_fetches_from_local_api() {
         let r = resolve("radxa-dragon-q6a").await.expect("q6a resolves");
         assert_eq!(r.family, "Kodiak");

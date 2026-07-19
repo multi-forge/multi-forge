@@ -1,4 +1,4 @@
-//! Downloading Armbian images from the web.
+//! Downloading Forge images from the web.
 
 use futures_util::StreamExt;
 use reqwest::Client;
@@ -199,7 +199,7 @@ async fn verify_sha256(
     }
 }
 
-/// Download and decompress an Armbian image; when sha_url is given, verifies the compressed file first.
+/// Download and decompress an Forge image; when sha_url is given, verifies the compressed file first.
 pub async fn download_image(
     url: &str,
     sha_url: Option<&str>,

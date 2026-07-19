@@ -15,7 +15,7 @@ import vscodeMono from '../assets/os-logos/mono/vscode.svg';
 
 /** Preinstalled-application marks, matched against the application substring. */
 const APP_MONO: Record<string, string> = {
-  // The Armbian SDK ships code-server, so it uses the VS Code mark.
+  // The Forge SDK ships code-server, so it uses the VS Code mark.
   sdk: vscodeMono,
   homeassistant: homeassistantMono,
   openmediavault: openmediavaultMono,
@@ -40,7 +40,7 @@ export function getMonoLogo(distroRelease: string, app?: string | null): string 
   if (distro.includes('ubuntu')) return ubuntuMono;
   if (distro.includes('debian')) return debianMono;
 
-  // Ubuntu/Debian codenames used by the Armbian API.
+  // Ubuntu/Debian codenames used by the Forge API.
   if (/(noble|jammy|resolute|plucky|oracular|focal|mantic|lunar)/.test(distro)) return ubuntuMono;
   if (/(bookworm|bullseye|trixie|forky|sid)/.test(distro)) return debianMono;
 

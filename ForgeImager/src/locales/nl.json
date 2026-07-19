@@ -10,7 +10,7 @@
     "chooseStorage": "Kies opslag",
     "device": "Apparaat",
     "chooseDevice": "Kies apparaat",
-    "welcomeHeading": "Welkom bij Armbian Imager",
+    "welcomeHeading": "Welkom bij Forge Imager",
     "welcomeIntro": "Kies je board en een image. Wij downloaden het, schrijven het naar je SD-kaart of USB-stick en controleren het voor je.",
     "startNow": "Nu beginnen",
     "useCustomImage": "Aangepaste image gebruiken",
@@ -73,7 +73,7 @@
     "noManufacturers": "Geen fabrikanten gevonden",
     "noBoards": "Geen boards gevonden",
     "boardUpdateRequired": "Update vereist",
-    "boardUpdateRequiredHint": "Dit board wordt niet ondersteund door deze versie van Armbian Imager. Werk de app bij.",
+    "boardUpdateRequiredHint": "Dit board wordt niet ondersteund door deze versie van Forge Imager. Werk de app bij.",
     "noImages": "Geen images gevonden",
     "noDevices": "Geen apparaten gevonden",
     "promoted": "Aanbevolen",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "Aangepaste image"
   },
-  "armbian": {
-    "description": "Dit apparaat draait Armbian. Wil je dit board alvast selecteren en de handmatige stappen overslaan?",
+  "Forge": {
+    "description": "Dit apparaat draait Forge. Wil je dit board alvast selecteren en de handmatige stappen overslaan?",
     "cancelHint": "Als je annuleert, wordt automatische boarddetectie uitgeschakeld.",
     "disabledToast": "Automatische detectie uitgeschakeld. Schakel het opnieuw in bij Instellingen."
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "Kies je taal",
     "languageAuto": "Automatisch",
     "searchLanguage": "Talen zoeken...",
-    "appDescription": "Schrijft Armbian OS naar SD-kaarten en USB-sticks",
+    "appDescription": "Schrijft Forge OS naar SD-kaarten en USB-sticks",
     "version": "Versie",
     "platform": "Platform",
     "arch": "Architectuur",
@@ -236,10 +236,10 @@
     "devices": "Apparaten",
     "allowSystemDevices": "Systeemschijven toestaan",
     "allowSystemDevicesDescription": "Riskant: je kunt het draaiende besturingssysteem overschrijven.",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "Board automatisch detecteren",
-      "description": "Automatisch het board van dit apparaat identificeren bij gebruik van Armbian",
+      "description": "Automatisch het board van dit apparaat identificeren bij gebruik van Forge",
       "mode_disabled": "Uitgeschakeld",
       "mode_modal": "Interactief",
       "mode_auto": "Stil"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "Profielen",
       "title": "Autoconfig-profielen",
-      "description": "Stel de eerste Armbian-installatie vooraf in. Een profiel wordt alleen toegepast als je het vóór het schrijven selecteert.",
+      "description": "Stel de eerste Forge-installatie vooraf in. Een profiel wordt alleen toegepast als je het vóór het schrijven selecteert.",
       "newProfile": "Nieuw profiel",
       "emptyTitle": "Nog geen profielen",
       "emptyHint": "Maak een profiel om netwerk, taal en accounts vooraf in te stellen bij de eerste keer opstarten.",
@@ -309,7 +309,7 @@
       "rootPassword": "Root-wachtwoord",
       "rootKeyUrl": "URL van root-SSH-sleutel",
       "userName": "Gebruikersnaam",
-      "userHint": "Laat de gebruikersnaam leeg en Armbian vraagt je toch om bij de eerste keer opstarten een gebruiker aan te maken.",
+      "userHint": "Laat de gebruikersnaam leeg en Forge vraagt je toch om bij de eerste keer opstarten een gebruiker aan te maken.",
       "userPassword": "Gebruikerswachtwoord",
       "userKeyUrl": "URL van gebruikers-SSH-sleutel",
       "userShell": "Login-shell",

@@ -1,6 +1,6 @@
 #!/bin/bash
 ##############################################################################
-# Armbian Imager - macOS Dependencies Installation Script
+# Forge Imager - macOS Dependencies Installation Script
 #
 # This script installs all system dependencies required for development
 # on macOS
@@ -34,7 +34,7 @@ print_error() {
     echo -e "${RED}✗${NC} $1"
 }
 
-print_info "Armbian Imager - macOS Dependencies Installation"
+print_info "Forge Imager - macOS Dependencies Installation"
 echo ""
 
 # Check if running on macOS

@@ -78,7 +78,7 @@ pub async fn flash_qdl_image(
 
 /// Flash a UFS image (a downloaded + decompressed `.img`) to a device in EDL mode via a
 /// single raw Firehose write. The loader is resolved from `soc`, then from `board_slug`,
-/// since the Armbian API reports `soc` as null for these boards.
+/// since the Forge API reports `soc` as null for these boards.
 #[tauri::command]
 pub async fn flash_qdl_ufs_image(
     image_path: String,

@@ -91,7 +91,7 @@ function SideStep({ step }: { step: Step }) {
   );
 }
 
-/** Branded OS identity string (e.g. "Armbian 26.5.1 GNOME"); shared with the flash header. */
+/** Branded OS identity string (e.g. "Forge 26.5.1 GNOME"); shared with the flash header. */
 function osLabelText(image: ImageInfo, t: (key: string) => string): string {
   return formatImageIdentity(image, t).title;
 }
@@ -357,7 +357,7 @@ export function HomePage({
     );
   }
 
-  // Custom/cached Armbian image with detected board: read-only rows + change image.
+  // Custom/cached Forge image with detected board: read-only rows + change image.
   if (isCustomImage && hasDetectedBoard && selectedImage && selectedBoard) {
     const isCached = selectedImage.image_variant === IMAGE_VARIANT.CACHED;
     const steps: Step[] = [

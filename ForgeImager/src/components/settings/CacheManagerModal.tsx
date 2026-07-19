@@ -11,7 +11,7 @@ import { ConfirmationDialog } from '../shared/ConfirmationDialog';
 import { BoardBadges } from '../shared/BoardBadges';
 import { BoardImage } from '../shared/BoardImage';
 import { useToasts } from '../../hooks/useToasts';
-import { formatBytes, parseArmbianFilename, formatRelativeTime, splitArmbianVersion } from '../../utils';
+import { formatBytes, parseForgeFilename, formatRelativeTime, splitForgeVersion } from '../../utils';
 import { EVENTS } from '../../config';
 import { getOsInfo } from '../../config/os-info';
 import { getMonoLogo } from '../../config/mono-logos';
@@ -302,7 +302,7 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
                     </div>
 
                     {selectedGroup.images.map((image, index) => {
-                      const parsed = parseArmbianFilename(image.filename);
+                      const parsed = parseForgeFilename(image.filename);
                       const osInfo = parsed?.distro ? getOsInfo(parsed.distro) : null;
                       const monoLogo = getMonoLogo(parsed?.distro ?? '', parsed?.desktop);
                       const desktopEnv = parsed?.desktop ? getDesktopEnv(parsed.desktop) : null;
@@ -311,7 +311,7 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
                       const isUfs = !!parsed?.kernel && parsed.kernel.toLowerCase().endsWith('-ufs');
                       const kernelVersion = isUfs ? parsed!.kernel!.slice(0, -4) : parsed?.kernel ?? null;
                       // Split "26.2.0-trunk.904" → base headline + build suffix (shown in meta).
-                      const { base: baseVersion, build } = splitArmbianVersion(parsed?.version ?? '');
+                      const { base: baseVersion, build } = splitForgeVersion(parsed?.version ?? '');
 
                       return (
                         <div
@@ -337,7 +337,7 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
 
                           <div className="list-item-content">
                             <div className="cache-image-ver">
-                              {parsed?.version ? `Armbian ${baseVersion}` : image.filename}
+                              {parsed?.version ? `Forge ${baseVersion}` : image.filename}
                             </div>
 
                             <div className="image-info-side-panel">

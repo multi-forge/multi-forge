@@ -1,5 +1,5 @@
-//! Armbian Imager: cross-platform Tauri app for downloading and flashing
-//! Armbian OS images to SD cards and USB drives.
+//! Forge Imager: cross-platform Tauri app for downloading and flashing
+//! Forge OS images to SD cards and USB drives.
 
 // Prevents additional console window on Windows in release
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
@@ -99,7 +99,7 @@ fn is_appimage() -> bool {
 fn main() {
     logging::init();
 
-    log_info!("main", "=== Armbian Imager Starting ===");
+    log_info!("main", "=== Forge Imager Starting ===");
     log_info!("main", "Version: {}", env!("CARGO_PKG_VERSION"));
     log_info!(
         "main",
@@ -174,7 +174,7 @@ fn main() {
             commands::system::log_from_frontend,
             commands::system::log_warn_from_frontend,
             commands::system::log_debug_from_frontend,
-            commands::system::get_armbian_release,
+            commands::system::get_FORGE_release,
             commands::system::check_connectivity,
             commands::update::get_github_release,
             commands::update::is_app_in_applications,

@@ -785,7 +785,7 @@ button.list-item:disabled:hover {
 }
 
 .device-warning-banner-icon svg {
-  color: var(--armbian-red);
+  color: var(--Forge-red);
 }
 
 .device-warning-banner-title {
@@ -819,7 +819,7 @@ button.list-item:disabled:hover {
 .system-devices-badge.active {
   background-color: rgba(var(--color-error-rgb), 0.12);
   border-color: rgba(var(--color-error-rgb), 0.3);
-  color: var(--armbian-red);
+  color: var(--Forge-red);
   animation: badge-pulse 2s infinite;
 }
 
@@ -1052,7 +1052,7 @@ button.list-item:disabled:hover {
   width: 60px;
   height: 60px;
   margin: 0 auto 18px;
-  background: linear-gradient(160deg, #ff8052 0%, var(--armbian-orange) 100%);
+  background: linear-gradient(160deg, #ff8052 0%, var(--Forge-orange) 100%);
   border-radius: 17px;
   color: white;
   box-shadow:
@@ -1384,7 +1384,7 @@ button.list-item:disabled:hover {
 
 .update-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--armbian-orange) 0%, #ff8052 100%);
+  background: linear-gradient(90deg, var(--Forge-orange) 0%, #ff8052 100%);
   border-radius: var(--radius-sm);
   transition: width var(--dur-medium) ease;
 }
@@ -1620,7 +1620,7 @@ button.list-item:disabled:hover {
   width: 30px;
   height: 30px;
   border-radius: 9px;
-  background: linear-gradient(160deg, #ff8052 0%, var(--armbian-orange) 100%);
+  background: linear-gradient(160deg, #ff8052 0%, var(--Forge-orange) 100%);
   color: #fff;
   box-shadow: 0 4px 12px -4px rgba(var(--accent-rgb), 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   flex-shrink: 0;

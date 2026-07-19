@@ -1,2 +1,2 @@
 export { Modal } from './Modal';
-export { ArmbianBoardModal } from './ArmbianBoardModal';
+export { ForgeBoardModal } from './ForgeBoardModal';

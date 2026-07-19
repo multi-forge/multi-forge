@@ -10,7 +10,7 @@
     "chooseStorage": "Depolama seç",
     "device": "Cihaz",
     "chooseDevice": "Cihaz seç",
-    "welcomeHeading": "Armbian Imager'a hoş geldiniz",
+    "welcomeHeading": "Forge Imager'a hoş geldiniz",
     "welcomeIntro": "Kartınızı ve bir imajı seçin. İndirme, SD karta ya da USB sürücüye yazma ve doğrulama işini biz hallederiz.",
     "startNow": "Hemen başla",
     "useCustomImage": "Özel imaj kullan",
@@ -73,7 +73,7 @@
     "noManufacturers": "Üretici bulunamadı",
     "noBoards": "Kart bulunamadı",
     "boardUpdateRequired": "Güncelleme gerekli",
-    "boardUpdateRequiredHint": "Bu kart bu Armbian Imager sürümü tarafından desteklenmiyor. Lütfen güncelleyin.",
+    "boardUpdateRequiredHint": "Bu kart bu Forge Imager sürümü tarafından desteklenmiyor. Lütfen güncelleyin.",
     "noImages": "İmaj bulunamadı",
     "noDevices": "Cihaz bulunamadı",
     "promoted": "Önerilen",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "Özel İmaj"
   },
-  "armbian": {
-    "description": "Bu cihaz Armbian çalıştırıyor. Bu kartı önceden seçip manuel adımları atlamak ister misiniz?",
+  "Forge": {
+    "description": "Bu cihaz Forge çalıştırıyor. Bu kartı önceden seçip manuel adımları atlamak ister misiniz?",
     "cancelHint": "İptal ederseniz kart otomatik algılama kapanır.",
     "disabledToast": "Kart otomatik algılama devre dışı bırakıldı. Ayarlar'dan yeniden açabilirsiniz."
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "Dil seçin",
     "languageAuto": "Otomatik",
     "searchLanguage": "Dilleri ara...",
-    "appDescription": "Armbian işletim sistemini SD kartlara ve USB sürücülere yazar",
+    "appDescription": "Forge işletim sistemini SD kartlara ve USB sürücülere yazar",
     "version": "Sürüm",
     "platform": "Platform",
     "arch": "Mimari",
@@ -236,10 +236,10 @@
     "devices": "Aygıtlar",
     "allowSystemDevices": "Sistem sürücülerine izin ver",
     "allowSystemDevicesDescription": "Riskli: çalışan işletim sistemini üzerine yazabilirsiniz.",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "Kartı otomatik algıla",
-      "description": "Bu cihaz Armbian çalıştırırken kartı otomatik olarak tanımla",
+      "description": "Bu cihaz Forge çalıştırırken kartı otomatik olarak tanımla",
       "mode_disabled": "Devre dışı",
       "mode_modal": "Etkileşimli",
       "mode_auto": "Sessiz"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "Profiller",
       "title": "Otomatik yapılandırma profilleri",
-      "description": "Armbian ilk açılış kurulumunu önceden ayarlayın. Bir profil yalnızca yazma öncesinde seçtiğinizde uygulanır.",
+      "description": "Forge ilk açılış kurulumunu önceden ayarlayın. Bir profil yalnızca yazma öncesinde seçtiğinizde uygulanır.",
       "newProfile": "Yeni profil",
       "emptyTitle": "Henüz profil yok",
       "emptyHint": "İlk açılışta ağı, yerel ayarı ve hesapları önceden ayarlamak için bir profil oluşturun.",
@@ -291,7 +291,7 @@
       "groupLocalization": "Yerelleştirme",
       "groupRoot": "Root hesabı",
       "groupUser": "İlk kullanıcı",
-      "userHint": "Kullanıcı adını boş bırakın, Armbian ilk açılışta yine de bir kullanıcı oluşturmanızı isteyecektir.",
+      "userHint": "Kullanıcı adını boş bırakın, Forge ilk açılışta yine de bir kullanıcı oluşturmanızı isteyecektir.",
       "groupAdvanced": "Gelişmiş",
       "applyNetwork": "Ağı yapılandır",
       "ethernetEnabled": "Ethernet'i etkinleştir",

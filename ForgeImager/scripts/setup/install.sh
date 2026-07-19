@@ -1,6 +1,6 @@
 #!/bin/bash
 ##############################################################################
-# Armbian Imager - Cross-Platform Dependencies Installation Script
+# Forge Imager - Cross-Platform Dependencies Installation Script
 #
 # This script automatically detects the operating system and runs the
 # appropriate installation script for your platform.
@@ -47,7 +47,7 @@ clear
 echo ""
 print_header "╔════════════════════════════════════════════════════════════╗"
 print_header "║                                                            ║"
-print_header "║        Armbian Imager - Dependency Installation           ║"
+print_header "║        Forge Imager - Dependency Installation           ║"
 print_header "║                                                            ║"
 print_header "╚════════════════════════════════════════════════════════════╝"
 echo ""

@@ -1,18 +1,18 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Header, HomePage, WelcomePage } from './components/layout';
-import { ArmbianBoardModal } from './components/modals';
+import { ForgeBoardModal } from './components/modals';
 import { FlashProgress } from './components/flash';
 import { CacheManagerModal } from './components/settings';
-import { selectCustomImage, detectBoardFromFilename, classifyCustomImage, logInfo, logWarn, getArmbianRelease, getBoards, getSystemInfo, getCachedBoardImage, checkNeedsDecompression, decompressCustomImage } from './hooks/useTauri';
+import { selectCustomImage, detectBoardFromFilename, classifyCustomImage, logInfo, logWarn, getForgeRelease, getBoards, getSystemInfo, getCachedBoardImage, checkNeedsDecompression, decompressCustomImage } from './hooks/useTauri';
 import { useDeviceMonitor } from './hooks/useDeviceMonitor';
 import { useConnectivity } from './hooks/useConnectivity';
 import { ToastProvider, useToasts } from './hooks/useToasts';
 import { UpdateProvider } from './contexts/UpdateContext';
-import { getArmbianBoardDetection, getShowWelcome, getAutoconfigProfile } from './hooks/useSettings';
+import { getForgeBoardDetection, getShowWelcome, getAutoconfigProfile } from './hooks/useSettings';
 import { AUTOCONFIG_PROFILE_SELECTED_EVENT } from './components/layout/DevicePanel';
 import { EVENTS, SLUGS, VENDOR, IMAGE_VARIANT } from './config';
-import type { BoardInfo, ImageInfo, BlockDevice, SelectionStep, Manufacturer, ArmbianReleaseInfo, AutoconfigConfig } from './types';
+import type { BoardInfo, ImageInfo, BlockDevice, SelectionStep, Manufacturer, ForgeReleaseInfo, AutoconfigConfig } from './types';
 import './styles/index.css';
 
 function App() {
@@ -47,15 +47,15 @@ function AppContent() {
   const { isOnline } = useConnectivity();
   const prevOnlineRef = useRef<boolean | null>(null);
 
-  // Armbian board detection state
-  const [armbianInfo, setArmbianInfo] = useState<ArmbianReleaseInfo | null>(null);
+  // Forge board detection state
+  const [ForgeInfo, setForgeInfo] = useState<ForgeReleaseInfo | null>(null);
   const [detectedBoard, setDetectedBoard] = useState<BoardInfo | null>(null);
-  const [armbianBoardImageUrl, setArmbianBoardImageUrl] = useState<string | null>(null);
-  const [showArmbianModal, setShowArmbianModal] = useState(false);
+  const [ForgeBoardImageUrl, setForgeBoardImageUrl] = useState<string | null>(null);
+  const [showForgeModal, setShowForgeModal] = useState(false);
   // Board queued by silent ('auto') detection, applied once the welcome screen is dismissed.
   const [pendingAutoSelect, setPendingAutoSelect] = useState<BoardInfo | null>(null);
   const [showCacheManager, setShowCacheManager] = useState(false);
-  const armbianCheckRef = useRef(false); // Prevent double execution in Strict Mode
+  const ForgeCheckRef = useRef(false); // Prevent double execution in Strict Mode
 
   // Skip the landing page on startup when the user disabled it; defaults to showing it
   useEffect(() => {
@@ -137,7 +137,7 @@ function AppContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnline, showSuccess, t]);
 
-  // Auto-select manufacturer and board from a detected Armbian board
+  // Auto-select manufacturer and board from a detected Forge board
   const autoSelectBoard = useCallback(async (board: BoardInfo) => {
     try {
       const manufacturer: Manufacturer = {
@@ -169,37 +169,37 @@ function AppContent() {
     }
   }, [showWelcome, pendingAutoSelect, autoSelectBoard]);
 
-  // On startup, detect an Armbian host and either show the modal or auto-select
+  // On startup, detect an Forge host and either show the modal or auto-select
   useEffect(() => {
-    const checkArmbianSystem = async () => {
+    const checkForgeSystem = async () => {
       try {
-        if (armbianCheckRef.current) return;
+        if (ForgeCheckRef.current) return;
 
-        // Armbian detection is Linux-only
+        // Forge detection is Linux-only
         const systemInfo = await getSystemInfo();
         if (systemInfo.platform !== 'linux') {
-          armbianCheckRef.current = true;
-          logInfo('app', `Skipping Armbian detection on ${systemInfo.platform}`);
+          ForgeCheckRef.current = true;
+          logInfo('app', `Skipping Forge detection on ${systemInfo.platform}`);
           return;
         }
 
         // Skip if offline, board matching requires API data; don't set ref so it retries when online
         if (!isOnline) {
-          logInfo('app', 'Skipping Armbian board detection: offline');
+          logInfo('app', 'Skipping Forge board detection: offline');
           return;
         }
 
-        armbianCheckRef.current = true;
+        ForgeCheckRef.current = true;
 
-        const info = await getArmbianRelease();
+        const info = await getForgeRelease();
         if (!info) {
-          logInfo('app', 'Not running on Armbian system');
+          logInfo('app', 'Not running on Forge system');
           return;
         }
 
-        setArmbianInfo(info);
+        setForgeInfo(info);
 
-        const detectionMode = await getArmbianBoardDetection();
+        const detectionMode = await getForgeBoardDetection();
         if (detectionMode === 'disabled') {
           return;
         }
@@ -219,7 +219,7 @@ function AppContent() {
         // Load board image from local cache (downloads if online and uncached)
         try {
           const cachedDataUri = await getCachedBoardImage(matchedBoard.slug);
-          setArmbianBoardImageUrl(cachedDataUri);
+          setForgeBoardImageUrl(cachedDataUri);
           if (cachedDataUri) {
             logInfo('app', 'Board image loaded from cache');
           }
@@ -228,17 +228,17 @@ function AppContent() {
         }
 
         if (detectionMode === 'modal') {
-          setShowArmbianModal(true);
+          setShowForgeModal(true);
         } else if (detectionMode === 'auto') {
           // Queue the silent auto-selection; it runs after the welcome screen, never skipping it.
           setPendingAutoSelect(matchedBoard);
         }
       } catch (err) {
-        logWarn('app', `Failed to check for Armbian system: ${err}`);
+        logWarn('app', `Failed to check for Forge system: ${err}`);
       }
     };
 
-    checkArmbianSystem();
+    checkForgeSystem();
   }, [isOnline]);
 
   // Reuse a cached image from the Cache Manager: select its board and image
@@ -459,27 +459,27 @@ function AppContent() {
     resetSelectionsFrom(step);
   }
 
-  // Confirm the Armbian modal: auto-select the detected board (from cache, no refetch)
-  const handleArmbianConfirm = useCallback(async () => {
+  // Confirm the Forge modal: auto-select the detected board (from cache, no refetch)
+  const handleForgeConfirm = useCallback(async () => {
     if (!detectedBoard) {
       logWarn('app', 'No detected board available for auto-selection');
-      setShowArmbianModal(false);
+      setShowForgeModal(false);
       return;
     }
 
     await autoSelectBoard(detectedBoard);
-    setShowArmbianModal(false);
+    setShowForgeModal(false);
   }, [detectedBoard, autoSelectBoard]);
 
-  /** Dismiss the Armbian modal and proceed with manual selection */
-  const handleArmbianCancel = useCallback(() => {
-    logInfo('app', 'User cancelled Armbian board auto-selection');
-    setShowArmbianModal(false);
+  /** Dismiss the Forge modal and proceed with manual selection */
+  const handleForgeCancel = useCallback(() => {
+    logInfo('app', 'User cancelled Forge board auto-selection');
+    setShowForgeModal(false);
   }, []);
 
-  /** Show a toast when board detection is disabled from the Armbian modal */
+  /** Show a toast when board detection is disabled from the Forge modal */
   const handleDetectionDisabled = useCallback(() => {
-    showError(t('armbian.disabledToast'));
+    showError(t('Forge.disabledToast'));
   }, [showError, t]);
 
   return (
@@ -543,15 +543,15 @@ function AppContent() {
         )}
       </main>
 
-      {armbianInfo && (
-        <ArmbianBoardModal
-          isOpen={showArmbianModal && !showWelcome}
-          onClose={handleArmbianCancel}
-          onConfirm={handleArmbianConfirm}
+      {ForgeInfo && (
+        <ForgeBoardModal
+          isOpen={showForgeModal && !showWelcome}
+          onClose={handleForgeCancel}
+          onConfirm={handleForgeConfirm}
           onDetectionDisabled={handleDetectionDisabled}
-          armbianInfo={armbianInfo}
+          ForgeInfo={ForgeInfo}
           boardInfo={detectedBoard}
-          boardImageUrl={armbianBoardImageUrl}
+          boardImageUrl={ForgeBoardImageUrl}
         />
       )}
 

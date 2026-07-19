@@ -1,11 +1,11 @@
-//! Bundled fallback registry of per-board QDL/EDL facts, used when the Armbian API
+//! Bundled fallback registry of per-board QDL/EDL facts, used when the Forge API
 //! carries no `qdl` block for a board (offline, older API). The API is the primary source.
 
 use std::path::Path;
 
 use super::UFS_MARKERS;
 use crate::qdl::QdlStorage;
-use crate::utils::{normalize_slug, parse_armbian_filename};
+use crate::utils::{normalize_slug, parse_FORGE_filename};
 
 pub struct QdlBoard {
     /// Matched case-insensitively as a substring of the board slug.
@@ -42,7 +42,7 @@ pub fn ufs_board_slug_for_filename(filename: &str) -> Option<String> {
         .file_name()
         .and_then(|n| n.to_str())
         .unwrap_or(filename);
-    let parsed = parse_armbian_filename(basename)?;
+    let parsed = parse_FORGE_filename(basename)?;
 
     // The UFS suffix lives in the variant field; fall back to the whole name if absent.
     let variant = parsed.desktop.as_deref().unwrap_or(basename).to_lowercase();
@@ -75,7 +75,7 @@ mod tests {
     fn ufs_marker_and_capable_board_is_ufs() {
         assert_eq!(
             ufs_board_slug_for_filename(
-                "Armbian-unofficial_26.08.0-trunk_Radxa-dragon-q6a_resolute_edge_7.1.3_gnome-ufs_desktop.img",
+                "Forge-unofficial_26.08.0-trunk_Radxa-dragon-q6a_resolute_edge_7.1.3_gnome-ufs_desktop.img",
             ),
             Some("radxa-dragon-q6a".to_string())
         );
@@ -84,7 +84,7 @@ mod tests {
     #[test]
     fn ufs_marker_survives_compression_ext() {
         assert!(ufs_board_slug_for_filename(
-            "Armbian-unofficial_26.08.0-trunk_Radxa-dragon-q6a_resolute_edge_7.1.3_gnome-ufs_desktop.img.xz",
+            "Forge-unofficial_26.08.0-trunk_Radxa-dragon-q6a_resolute_edge_7.1.3_gnome-ufs_desktop.img.xz",
         )
         .is_some());
     }
@@ -92,7 +92,7 @@ mod tests {
     #[test]
     fn sd_variant_of_ufs_board_is_not_ufs() {
         assert!(ufs_board_slug_for_filename(
-            "Armbian-unofficial_26.08.0-trunk_Radxa-dragon-q6a_resolute_edge_7.1.3_gnome_desktop.img",
+            "Forge-unofficial_26.08.0-trunk_Radxa-dragon-q6a_resolute_edge_7.1.3_gnome_desktop.img",
         )
         .is_none());
     }
@@ -101,13 +101,13 @@ mod tests {
     fn ufs_marker_on_non_ufs_board_is_none() {
         // arduino-uno-q storage is eMMC, not UFS => not a raw-UFS target.
         assert!(ufs_board_slug_for_filename(
-            "Armbian_26.02.0_Arduino-uno-q_trixie_edge_6.19.4_minimal-ufs.img",
+            "FORGE_26.02.0_Arduino-uno-q_trixie_edge_6.19.4_minimal-ufs.img",
         )
         .is_none());
     }
 
     #[test]
-    fn non_armbian_name_is_none() {
+    fn non_FORGE_name_is_none() {
         assert!(ufs_board_slug_for_filename("ubuntu-24.04-ufs.img").is_none());
     }
 }

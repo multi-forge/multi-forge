@@ -88,7 +88,7 @@ impl Logger {
         }
 
         let timestamp = Local::now().format("%Y%m%d_%H%M%S");
-        let log_filename = format!("armbian-imager_{}.log", timestamp);
+        let log_filename = format!("forge-imager_{}.log", timestamp);
         let log_path = log_dir.join(&log_filename);
 
         match OpenOptions::new().create(true).append(true).open(&log_path) {
@@ -303,7 +303,7 @@ pub fn init() {
     // Force the lazy static to initialize now.
     drop(LOGGER.lock());
 
-    info("logger", "Armbian Imager logging initialized");
+    info("logger", "Forge Imager logging initialized");
 
     if let Some(path) = get_current_log_path() {
         info("logger", &format!("Log file: {}", path.display()));
@@ -334,7 +334,7 @@ mod tests {
     #[test]
     fn test_log_dir() {
         let log_dir = get_log_dir();
-        assert!(log_dir.to_string_lossy().contains("armbian-imager"));
+        assert!(log_dir.to_string_lossy().contains("forge-imager"));
         assert!(log_dir.to_string_lossy().contains("logs"));
     }
 }

@@ -15,7 +15,7 @@ import { getDeviceColors } from '../../config/deviceColors';
 import { getDeviceType, devicesChanged, sortDevices, qdlToBlockDevice } from '../../utils/deviceUtils';
 
 /** Window event carrying the opt-in autoconfig profile id (or null) picked at flash time. */
-export const AUTOCONFIG_PROFILE_SELECTED_EVENT = 'armbian-autoconfig-profile-selected';
+export const AUTOCONFIG_PROFILE_SELECTED_EVENT = 'Forge-autoconfig-profile-selected';
 
 interface DevicePanelProps {
   /** Pick a device, revealing the confirm summary (does not flash yet). */
@@ -34,7 +34,7 @@ interface DevicePanelProps {
   summary?: { label: string; value: string }[];
   /** Cached board photo shown at the top of the confirm summary. */
   boardImage?: string | null;
-  /** Whether autoconfig profiles apply (Armbian images only; hidden for generic custom images). */
+  /** Whether autoconfig profiles apply (Forge images only; hidden for generic custom images). */
   supportsAutoconfig?: boolean;
 }
 
@@ -70,10 +70,10 @@ export function DevicePanel({
   // Both QDL (TAR) and UFS images flash over EDL, so they share device detection (getQdlDevices).
   const isQdlMode = isEdlMethod(flashMethod);
 
-  // Autoconfig profiles apply to Armbian images (both sd/.img.xz and QDL); hidden for generic custom images.
+  // Autoconfig profiles apply to Forge images (both sd/.img.xz and QDL); hidden for generic custom images.
   const showAutoconfig = supportsAutoconfig;
 
-  // Opt-in autoconfig profile picker (flash-time only, Armbian images).
+  // Opt-in autoconfig profile picker (flash-time only, Forge images).
   const [showProfilePicker, setShowProfilePicker] = useState(false);
   const [selectedProfileId, setSelectedProfileId] = useState('');
 
@@ -244,7 +244,7 @@ export function DevicePanel({
                     <span>{t('flash.systemDeviceWarning')}</span>
                   </li>
                 )}
-                {/* Opt-in autoconfig profile, integrated as the final summary row (Armbian images only). */}
+                {/* Opt-in autoconfig profile, integrated as the final summary row (Forge images only). */}
                 {showAutoconfig && (
                   <li className="device-summary__profile">
                     <button

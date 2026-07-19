@@ -27,7 +27,7 @@ import {
 } from './useTauri';
 import { getSkipVerify } from './useSettings';
 import { POLLING, CACHE, STORAGE_KEYS } from '../config';
-import { getErrorMessage, armbianIdentityKey, isCompressedImage } from '../utils';
+import { getErrorMessage, ForgeIdentityKey, isCompressedImage } from '../utils';
 import { isDeviceConnected } from '../utils/deviceUtils';
 import { isShaUnavailableError, translateFlashError } from '../utils/errorUtils';
 
@@ -490,10 +490,10 @@ export function useFlashOperation({
         let cached = false;
         if (!isQdlMode) {
           try {
-            const key = armbianIdentityKey(image.direct_url);
+            const key = ForgeIdentityKey(image.direct_url);
             if (key) {
               const list = await listCachedImages();
-              cached = list.some((c) => armbianIdentityKey(c.filename) === key);
+              cached = list.some((c) => ForgeIdentityKey(c.filename) === key);
             }
           } catch {
             cached = false;

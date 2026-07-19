@@ -1,7 +1,7 @@
 import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import armbianLogoWhite from '../../assets/armbian-logo-white.png';
-import armbianLogoBlack from '../../assets/armbian-logo-black.png';
+import ForgeLogoWhite from '../../assets/Forge-logo-white.png';
+import ForgeLogoBlack from '../../assets/Forge-logo-black.png';
 import type { BoardInfo, ImageInfo, BlockDevice, SelectionStep, Manufacturer } from '../../types';
 import { isEdlImage } from '../../types';
 import { UpdateModal } from '../shared';
@@ -91,8 +91,8 @@ export function Header({
             title={!isFlashing ? t('header.resetTooltip') : undefined}
           >
             {/* Black wordmark on light theme, white on dark; toggled via CSS to also cover 'auto'. */}
-            <img src={armbianLogoBlack} alt="Armbian" className="logo-main logo-main--light" />
-            <img src={armbianLogoWhite} alt="" aria-hidden="true" className="logo-main logo-main--dark" />
+            <img src={ForgeLogoBlack} alt="Forge" className="logo-main logo-main--light" />
+            <img src={ForgeLogoWhite} alt="" aria-hidden="true" className="logo-main logo-main--dark" />
           </div>
         )}
         <div className="header-right">

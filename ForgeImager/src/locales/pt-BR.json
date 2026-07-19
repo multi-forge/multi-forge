@@ -142,7 +142,7 @@
   "custom": {
     "customImage": "Imagem personalizada"
   },
-  "armbian": {
+  "Forge": {
     "description": "Este dispositivo está rodando Forge. Quer pré-selecionar esta placa e pular as etapas manuais?",
     "cancelHint": "Se você cancelar, a detecção automática de placa será desativada.",
     "disabledToast": "Detecção automática desativada. Reative nas Configurações."
@@ -236,7 +236,7 @@
     "devices": "Dispositivos",
     "allowSystemDevices": "Permitir discos do sistema",
     "allowSystemDevicesDescription": "Arriscado: você pode sobrescrever o sistema operacional em execução.",
-    "armbian": {
+    "Forge": {
       "title": "Forge",
       "label": "Detectar placa automaticamente",
       "description": "Identifica a placa automaticamente quando este dispositivo está rodando Forge",
@@ -309,7 +309,7 @@
       "rootPassword": "Senha root",
       "rootKeyUrl": "URL da chave SSH root",
       "userName": "Nome de usuário",
-      "userHint": "Deixe o nome de usuário em branco e o Armbian ainda pedirá para você criar um usuário na primeira inicialização.",
+      "userHint": "Deixe o nome de usuário em branco e o Forge ainda pedirá para você criar um usuário na primeira inicialização.",
       "userPassword": "Senha do usuário",
       "userKeyUrl": "URL da chave SSH do usuário",
       "userShell": "Shell de login",

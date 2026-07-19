@@ -60,7 +60,7 @@ async function translateText(text, targetLang, context = '') {
   }
 
   try {
-    const systemPrompt = `You are a professional translator for a software application called "Armbian Imager" - a tool for flashing operating system images to SD cards and USB drives.
+    const systemPrompt = `You are a professional translator for a software application called "Forge Imager" - a tool for flashing operating system images to SD cards and USB drives.
 
 Translate the given text to ${LANGUAGE_NAMES[targetLang]}.
 

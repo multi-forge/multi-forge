@@ -1,5 +1,5 @@
 //! Fetches and caches the Qualcomm firehose loader (`prog_firehose_ddr.elf`) for a
-//! board's SoC family from the armbian/qcombin repo, used to flash QDL/EDL devices.
+//! board's SoC family from the Forge/qcombin repo, used to flash QDL/EDL devices.
 
 use std::path::PathBuf;
 

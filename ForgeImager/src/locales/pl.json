@@ -10,7 +10,7 @@
     "chooseStorage": "Wybierz pamięć",
     "device": "Urządzenie",
     "chooseDevice": "Wybierz urządzenie",
-    "welcomeHeading": "Witamy w Armbian Imager",
+    "welcomeHeading": "Witamy w Forge Imager",
     "welcomeIntro": "Wybierz płytkę i obraz. My pobierzemy go, zapiszemy na karcie SD lub dysku USB i sprawdzimy za Ciebie.",
     "startNow": "Rozpocznij teraz",
     "useCustomImage": "Użyj własnego obrazu",
@@ -73,7 +73,7 @@
     "noManufacturers": "Nie znaleziono producentów",
     "noBoards": "Nie znaleziono płytek",
     "boardUpdateRequired": "Wymagana aktualizacja",
-    "boardUpdateRequiredHint": "Ta płytka nie jest obsługiwana przez tę wersję Armbian Imager. Zaktualizuj aplikację.",
+    "boardUpdateRequiredHint": "Ta płytka nie jest obsługiwana przez tę wersję Forge Imager. Zaktualizuj aplikację.",
     "noImages": "Nie znaleziono obrazów",
     "noDevices": "Nie znaleziono urządzeń",
     "promoted": "Polecane",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "Własny obraz"
   },
-  "armbian": {
-    "description": "To urządzenie działa pod kontrolą Armbian. Wybrać tę płytkę wstępnie i pominąć ręczne kroki?",
+  "Forge": {
+    "description": "To urządzenie działa pod kontrolą Forge. Wybrać tę płytkę wstępnie i pominąć ręczne kroki?",
     "cancelHint": "Jeśli anulujesz, automatyczne wykrywanie płytki zostanie wyłączone.",
     "disabledToast": "Automatyczne wykrywanie płytki wyłączone. Włącz je ponownie w Ustawieniach."
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "Wybierz język",
     "languageAuto": "Automatyczny",
     "searchLanguage": "Szukaj języków...",
-    "appDescription": "Narzędzie do zapisu Armbian OS na karty SD i dyski USB",
+    "appDescription": "Narzędzie do zapisu Forge OS na karty SD i dyski USB",
     "version": "Wersja",
     "platform": "Platforma",
     "arch": "Architektura",
@@ -236,10 +236,10 @@
     "devices": "Urządzenia",
     "allowSystemDevices": "Zezwalaj na dyski systemowe",
     "allowSystemDevicesDescription": "Ryzykowne: możesz nadpisać uruchomiony system.",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "Automatyczne wykrywanie płytki",
-      "description": "Rozpoznawaj płytkę automatycznie, gdy urządzenie działa pod kontrolą Armbian",
+      "description": "Rozpoznawaj płytkę automatycznie, gdy urządzenie działa pod kontrolą Forge",
       "mode_disabled": "Wyłączone",
       "mode_modal": "Interaktywne",
       "mode_auto": "Ciche"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "Profile",
       "title": "Profile autokonfiguracji",
-      "description": "Skonfiguruj wstępnie pierwsze uruchomienie Armbiana. Profil jest stosowany tylko wtedy, gdy wybierzesz go przed zapisem.",
+      "description": "Skonfiguruj wstępnie pierwsze uruchomienie Forgea. Profil jest stosowany tylko wtedy, gdy wybierzesz go przed zapisem.",
       "newProfile": "Nowy profil",
       "emptyTitle": "Brak profili",
       "emptyHint": "Utwórz profil, aby wstępnie ustawić sieć, ustawienia regionalne i konta przy pierwszym uruchomieniu.",
@@ -309,7 +309,7 @@
       "rootPassword": "Hasło root",
       "rootKeyUrl": "URL klucza SSH roota",
       "userName": "Nazwa użytkownika",
-      "userHint": "Pozostaw nazwę użytkownika pustą, a Armbian i tak poprosi o utworzenie użytkownika przy pierwszym uruchomieniu.",
+      "userHint": "Pozostaw nazwę użytkownika pustą, a Forge i tak poprosi o utworzenie użytkownika przy pierwszym uruchomieniu.",
       "userPassword": "Hasło użytkownika",
       "userKeyUrl": "URL klucza SSH użytkownika",
       "userShell": "Powłoka logowania",

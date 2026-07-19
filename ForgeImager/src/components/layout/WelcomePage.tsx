@@ -78,8 +78,8 @@ export function WelcomePage({ onStart }: WelcomePageProps) {
     return () => clearInterval(id);
   }, [deckLen]);
 
-  // NBSP-bind "Armbian Imager" so the title wraps before the product name, not mid-name.
-  const heading = t('home.welcomeHeading').replace(/Armbian\s*Imager/u, `Armbian${NBSP}Imager`);
+  // NBSP-bind "Forge Imager" so the title wraps before the product name, not mid-name.
+  const heading = t('home.welcomeHeading').replace(/Forge\s*Imager/u, `Forge${NBSP}Imager`);
 
   return (
     <div className="welcome">

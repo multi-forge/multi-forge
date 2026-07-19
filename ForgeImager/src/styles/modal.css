@@ -299,17 +299,17 @@
   font-size: 13px;
 }
 
-/* COMPACT MODAL (e.g. Armbian Board Detection) */
+/* COMPACT MODAL (e.g. Forge Board Detection) */
 .modal.modal-compact {
   max-width: min(92vw, 640px);
 }
 
-.armbian-board-modal {
+.Forge-board-modal {
   text-align: center;
   padding: 32px 40px 28px;
 }
 
-.armbian-board-hero {
+.Forge-board-hero {
   position: relative;
   display: flex;
   align-items: center;
@@ -319,7 +319,7 @@
 }
 
 /* Circular gradient "ball" behind the board, gently breathing (same motif as the flashing screen). */
-.armbian-board-hero::before {
+.Forge-board-hero::before {
   content: '';
   position: absolute;
   width: 280px;
@@ -336,7 +336,7 @@
   animation: confirmGlow 6s ease-in-out infinite;
 }
 
-.armbian-board-modal .armbian-board-image {
+.Forge-board-modal .Forge-board-image {
   position: relative;
   z-index: 1;
   display: flex;
@@ -344,7 +344,7 @@
 }
 
 /* Board drifts over the halo, matching the flashing hero. */
-.armbian-board-modal .armbian-board-image img {
+.Forge-board-modal .Forge-board-image img {
   width: 300px;
   height: auto;
   object-fit: contain;
@@ -353,7 +353,7 @@
 }
 
 /* Shown when no board image is available */
-.armbian-board-modal .board-image-placeholder {
+.Forge-board-modal .board-image-placeholder {
   width: 272px;
   height: 180px;
   display: flex;
@@ -366,7 +366,7 @@
   animation: confirmFloat 5.5s ease-in-out infinite;
 }
 
-.armbian-board-name {
+.Forge-board-name {
   font-size: 22px;
   font-weight: 700;
   color: var(--text-primary);
@@ -374,11 +374,11 @@
   letter-spacing: -0.2px;
 }
 
-.armbian-board-modal .board-grid-badges {
+.Forge-board-modal .board-grid-badges {
   margin-bottom: 12px;
 }
 
-.armbian-board-modal .armbian-board-description {
+.Forge-board-modal .Forge-board-description {
   font-size: 14px;
   color: var(--text-secondary);
   margin: 0 0 24px;
@@ -388,17 +388,17 @@
   margin-right: auto;
 }
 
-.armbian-board-actions {
+.Forge-board-actions {
   display: flex;
   justify-content: center;
   gap: 12px;
 }
 
-.armbian-board-actions .btn {
+.Forge-board-actions .btn {
   min-width: 140px;
 }
 
-.armbian-board-hint {
+.Forge-board-hint {
   font-size: 11px;
   color: var(--text-muted);
   text-align: center;
@@ -572,9 +572,9 @@
 
 /* Cache Manager Modal visual layer lives entirely in settings.css (single owner). */
 
-/* Armbian "board detected" modal: airy, headerless layout (variant 4) with a floating
+/* Forge "board detected" modal: airy, headerless layout (variant 4) with a floating
    board over a theme-aware glow. Surface still matches the Settings shell. */
-.modal.armbian-modal {
+.modal.Forge-modal {
   position: relative;
   background: var(--bg-app);
   border: 1px solid var(--border-color);
@@ -583,7 +583,7 @@
 }
 
 /* Floating close, no header bar. */
-.armbian-board-close {
+.Forge-board-close {
   position: absolute;
   top: 14px;
   right: 14px;
@@ -602,20 +602,20 @@
   transition: all var(--dur-fast) ease;
 }
 
-.armbian-board-close:hover {
+.Forge-board-close:hover {
   background: var(--bg-hover);
   color: var(--accent);
 }
 
 /* Glowing confirm to match the airy hero. */
-.armbian-board-actions .btn-primary {
+.Forge-board-actions .btn-primary {
   box-shadow: 0 10px 24px -10px rgba(var(--accent-rgb), 0.75);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .armbian-board-hero::before,
-  .armbian-board-modal .armbian-board-image img,
-  .armbian-board-modal .board-image-placeholder {
+  .Forge-board-hero::before,
+  .Forge-board-modal .Forge-board-image img,
+  .Forge-board-modal .board-image-placeholder {
     animation: none;
   }
 }

@@ -1,12 +1,12 @@
 [package]
-name = "armbian-ext4fs"
+name = "forge-ext4fs"
 version = "1.3.3"
 edition = "2021"
-description = "Vendored, stable-buildable fork of ext4_rs for Armbian Imager."
+description = "Vendored, stable-buildable fork of ext4_rs for Forge Imager."
 license = "MIT"
 
 [lib]
-name = "armbian_ext4fs"
+name = "forge_ext4fs"
 path = "src/lib.rs"
 
 [dependencies]

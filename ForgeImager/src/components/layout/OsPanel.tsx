@@ -13,7 +13,7 @@ import {
   isTrunkImage, IMAGE_FILTER_PREDICATES, FILTER_BUTTONS, categoryOf, type OsCategory,
 } from '../../config';
 import { getMonoLogo } from '../../config/mono-logos';
-import { formatFileSize, hexToRgba, staggerDelay, splitArmbianVersion, formatDate, armbianIdentityKey } from '../../utils';
+import { formatFileSize, hexToRgba, staggerDelay, splitForgeVersion, formatDate, ForgeIdentityKey } from '../../utils';
 import { distroGradient, distroBlock, distroVars } from '../../utils/distroTheme';
 import { ErrorDisplay, ConfirmationDialog } from '../shared';
 import type { BoardInfo, ImageInfo, ImageFilterType, CachedImageInfo } from '../../types';
@@ -112,17 +112,17 @@ export function OsPanel({ board, onSelect }: OsPanelProps) {
   const cachedKeys = useMemo(() => {
     const keys = new Set<string>();
     for (const cached of cachedImages ?? []) {
-      const key = armbianIdentityKey(cached.filename);
+      const key = ForgeIdentityKey(cached.filename);
       if (key) keys.add(key);
     }
     return keys;
   }, [cachedImages]);
 
   /** Whether this remote image already exists in the local cache. Identity comes from `direct_url`
-   * (the real Armbian filename); `file_url` is an API redirect that lacks the full name. */
+   * (the real Forge filename); `file_url` is an API redirect that lacks the full name. */
   function isCached(image: ImageInfo): boolean {
     if (cachedKeys.size === 0) return false;
-    const key = armbianIdentityKey(image.direct_url);
+    const key = ForgeIdentityKey(image.direct_url);
     return key !== null && cachedKeys.has(key);
   }
 
@@ -163,7 +163,7 @@ export function OsPanel({ board, onSelect }: OsPanelProps) {
 
   /** Clean version: strip the "-trunk.NN" rolling suffix, keep the 26.x.y number. */
   function versionLabel(image: ImageInfo): string {
-    return splitArmbianVersion(image.release).base;
+    return splitForgeVersion(image.release).base;
   }
 
   /** Recommended (gradient) card. */
@@ -198,7 +198,7 @@ export function OsPanel({ board, onSelect }: OsPanelProps) {
         </div>
         <div className="dl-card__bottom">
           <div className="dl-card__head">
-            <span className="dl-card__title">Armbian {versionLabel(image)} {getImageVariantLabel(image, t)}</span>
+            <span className="dl-card__title">Forge {versionLabel(image)} {getImageVariantLabel(image, t)}</span>
             {distroName && <span className="dl-card__sub">{distroName}</span>}
           </div>
           <div className="dl-card__foot">
@@ -255,7 +255,7 @@ export function OsPanel({ board, onSelect }: OsPanelProps) {
         </div>
         <div className="os-card__body">
           <div className="os-card__info">
-            <span className="os-card__title">Armbian {versionLabel(image)} {getImageVariantLabel(image, t)}</span>
+            <span className="os-card__title">Forge {versionLabel(image)} {getImageVariantLabel(image, t)}</span>
             {distroName && <span className="os-card__sub">{distroName}</span>}
           </div>
           <div className="os-card__foot">

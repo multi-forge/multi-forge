@@ -1,32 +1,32 @@
-// Modal shown on an Armbian host to confirm auto-selecting the detected board
+// Modal shown on an Forge host to confirm auto-selecting the detected board
 
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ImageOff } from 'lucide-react';
 import { BoardBadges } from '../shared/BoardBadges';
-import type { ArmbianReleaseInfo, BoardInfo } from '../../types';
-import { setArmbianBoardDetection } from '../../hooks/useSettings';
+import type { ForgeReleaseInfo, BoardInfo } from '../../types';
+import { setForgeBoardDetection } from '../../hooks/useSettings';
 import { useModalExitAnimation } from '../../hooks/useModalExitAnimation';
 
-interface ArmbianBoardModalProps {
+interface ForgeBoardModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   onDetectionDisabled?: () => void;
-  armbianInfo: ArmbianReleaseInfo;
+  ForgeInfo: ForgeReleaseInfo;
   boardInfo?: BoardInfo | null;
   boardImageUrl?: string | null;
 }
 
-export function ArmbianBoardModal({
+export function ForgeBoardModal({
   isOpen,
   onClose,
   onConfirm,
   onDetectionDisabled,
-  armbianInfo,
+  ForgeInfo,
   boardInfo,
   boardImageUrl,
-}: ArmbianBoardModalProps) {
+}: ForgeBoardModalProps) {
   const { t } = useTranslation();
 
   const { isExiting, handleClose, handleAction } = useModalExitAnimation({
@@ -34,7 +34,7 @@ export function ArmbianBoardModal({
     duration: 200,
     onExiting: () => {
       // 'auto' enables silent auto-selection on future runs
-      setArmbianBoardDetection('auto');
+      setForgeBoardDetection('auto');
     },
   });
 
@@ -46,7 +46,7 @@ export function ArmbianBoardModal({
 
   const handleCloseWithCallback = useCallback(() => {
     handleAction(() => {
-      setArmbianBoardDetection('disabled');
+      setForgeBoardDetection('disabled');
       onDetectionDisabled?.();
     });
   }, [handleAction, onDetectionDisabled]);
@@ -74,21 +74,21 @@ export function ArmbianBoardModal({
   return (
     <div className={`modal-overlay ${animationClass}`} onClick={handleClose}>
       <div
-        className={`modal modal-compact armbian-modal ${animationClass}`}
+        className={`modal modal-compact Forge-modal ${animationClass}`}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="armbian-board-name"
+        aria-labelledby="Forge-board-name"
         onClick={(e) => e.stopPropagation()}
       >
-        <button className="armbian-board-close" onClick={handleClose} aria-label="Close">
+        <button className="Forge-board-close" onClick={handleClose} aria-label="Close">
           ✕
         </button>
 
-        <div className="modal-body armbian-board-modal">
-          <div className="armbian-board-hero">
-            <div className="armbian-board-image">
+        <div className="modal-body Forge-board-modal">
+          <div className="Forge-board-hero">
+            <div className="Forge-board-image">
               {boardImageUrl ? (
-                <img src={boardImageUrl} alt={armbianInfo.board_name} />
+                <img src={boardImageUrl} alt={ForgeInfo.board_name} />
               ) : (
                 <div className="board-image-placeholder">
                   <ImageOff size={40} />
@@ -97,13 +97,13 @@ export function ArmbianBoardModal({
             </div>
           </div>
 
-          <h3 id="armbian-board-name" className="armbian-board-name">{armbianInfo.board_name}</h3>
+          <h3 id="Forge-board-name" className="Forge-board-name">{ForgeInfo.board_name}</h3>
 
           {boardInfo && <BoardBadges board={boardInfo} className="centered" />}
 
-          <p className="armbian-board-description">{t('armbian.description')}</p>
+          <p className="Forge-board-description">{t('Forge.description')}</p>
 
-          <div className="armbian-board-actions">
+          <div className="Forge-board-actions">
             <button className="btn btn-secondary" onClick={handleCloseWithCallback} disabled={isExiting}>
               {t('common.cancel')}
             </button>
@@ -111,7 +111,7 @@ export function ArmbianBoardModal({
               {t('common.confirm')}
             </button>
           </div>
-          <p className="armbian-board-hint">{t('armbian.cancelHint')}</p>
+          <p className="Forge-board-hint">{t('Forge.cancelHint')}</p>
         </div>
       </div>
     </div>

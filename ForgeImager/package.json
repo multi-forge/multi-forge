@@ -1,9 +1,9 @@
 {
-  "name": "armbian-imager",
+  "name": "forge-imager",
   "private": true,
   "version": "2.0.0",
-  "description": "Flash Armbian OS images to SD cards and USB drives",
-  "author": "Armbian",
+  "description": "Flash Forge OS images to SD cards and USB drives",
+  "author": "Forge",
   "maintainers": [
     "SuperKali <hello@superkali.me>"
   ],

@@ -10,7 +10,7 @@
     "chooseStorage": "ストレージを選択",
     "device": "デバイス",
     "chooseDevice": "デバイスを選択",
-    "welcomeHeading": "Armbian Imager へようこそ",
+    "welcomeHeading": "Forge Imager へようこそ",
     "welcomeIntro": "ボードとイメージを選ぶだけ。ダウンロードからSDカードやUSBドライブへの書き込み、検証まで私たちにお任せください。",
     "startNow": "今すぐ始める",
     "useCustomImage": "カスタムイメージを使用",
@@ -73,7 +73,7 @@
     "noManufacturers": "メーカーが見つかりません",
     "noBoards": "ボードが見つかりません",
     "boardUpdateRequired": "更新が必要",
-    "boardUpdateRequiredHint": "このボードはこのバージョンの Armbian Imager ではサポートされていません。更新してください。",
+    "boardUpdateRequiredHint": "このボードはこのバージョンの Forge Imager ではサポートされていません。更新してください。",
     "noImages": "イメージが見つかりません",
     "noDevices": "デバイスが見つかりません",
     "promoted": "おすすめ",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "カスタムイメージ"
   },
-  "armbian": {
-    "description": "このデバイスではArmbianが動作しています。このボードをあらかじめ選択して、手動の手順を省略しますか？",
+  "Forge": {
+    "description": "このデバイスではForgeが動作しています。このボードをあらかじめ選択して、手動の手順を省略しますか？",
     "cancelHint": "キャンセルすると、ボードの自動検出がオフになります。",
     "disabledToast": "ボードの自動検出をオフにしました。設定からもう一度オンにできます。"
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "言語を選択",
     "languageAuto": "自動",
     "searchLanguage": "言語を検索...",
-    "appDescription": "Armbian OSをSDカードやUSBドライブに書き込みます",
+    "appDescription": "Forge OSをSDカードやUSBドライブに書き込みます",
     "version": "バージョン",
     "platform": "プラットフォーム",
     "arch": "アーキテクチャ",
@@ -236,10 +236,10 @@
     "devices": "デバイス",
     "allowSystemDevices": "システムドライブを許可",
     "allowSystemDevicesDescription": "危険：実行中のOSを上書きする可能性があります。",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "ボードを自動検出",
-      "description": "このデバイスでArmbianが動作しているときに、ボードを自動的に識別します",
+      "description": "このデバイスでForgeが動作しているときに、ボードを自動的に識別します",
       "mode_disabled": "無効",
       "mode_modal": "対話型",
       "mode_auto": "サイレント"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "プロファイル",
       "title": "自動構成プロファイル",
-      "description": "Armbianの初回起動セットアップを事前設定します。プロファイルは書き込み前に選択した場合にのみ適用されます。",
+      "description": "Forgeの初回起動セットアップを事前設定します。プロファイルは書き込み前に選択した場合にのみ適用されます。",
       "newProfile": "新しいプロファイル",
       "emptyTitle": "プロファイルがありません",
       "emptyHint": "プロファイルを作成して、初回起動時のネットワーク・ロケール・アカウントを事前設定できます。",
@@ -309,7 +309,7 @@
       "rootPassword": "rootパスワード",
       "rootKeyUrl": "root SSHキーのURL",
       "userName": "ユーザー名",
-      "userHint": "ユーザー名を空のままにしても、Armbianは初回起動時にユーザーの作成を求めます。",
+      "userHint": "ユーザー名を空のままにしても、Forgeは初回起動時にユーザーの作成を求めます。",
       "userPassword": "ユーザーパスワード",
       "userKeyUrl": "ユーザーSSHキーのURL",
       "userShell": "ログインシェル",

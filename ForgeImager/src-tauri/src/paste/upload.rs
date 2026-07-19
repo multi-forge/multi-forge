@@ -1,4 +1,4 @@
-//! Log upload to paste.armbian.com, a Hastebin instance accepting raw text via POST.
+//! Log upload to paste.Forge.com, a Hastebin instance accepting raw text via POST.
 
 use std::fs;
 
@@ -6,7 +6,7 @@ use crate::logging::{get_current_log_path, get_log_dir};
 use crate::{log_error, log_info};
 
 /// Paste service configuration
-const PASTE_URL: &str = "https://paste.armbian.com";
+const PASTE_URL: &str = "https://paste.Forge.com";
 const PASTE_ENDPOINT: &str = "/log";
 
 /// Result of uploading logs
@@ -22,7 +22,7 @@ pub struct UploadResult {
 fn collect_logs() -> Result<String, String> {
     let mut content = String::new();
 
-    content.push_str("=== Armbian Imager Log Upload ===\n");
+    content.push_str("=== Forge Imager Log Upload ===\n");
     content.push_str(&format!(
         "Timestamp: {}\n",
         chrono::Local::now().format("%Y-%m-%d %H:%M:%S")
@@ -116,10 +116,10 @@ fn collect_logs() -> Result<String, String> {
     Ok(content)
 }
 
-/// Upload logs to paste.armbian.com, returning the paste URL and key.
+/// Upload logs to paste.Forge.com, returning the paste URL and key.
 #[tauri::command]
 pub async fn upload_logs() -> Result<UploadResult, String> {
-    log_info!("paste", "Starting log upload to paste.armbian.com");
+    log_info!("paste", "Starting log upload to paste.Forge.com");
 
     let content = collect_logs()?;
 
@@ -185,6 +185,6 @@ mod tests {
         let result = collect_logs();
         assert!(result.is_ok());
         let content = result.unwrap();
-        assert!(content.contains("Armbian Imager Log Upload"));
+        assert!(content.contains("Forge Imager Log Upload"));
     }
 }

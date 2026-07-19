@@ -249,33 +249,33 @@ export async function setCacheMaxSize(size: number): Promise<void> {
   }
 }
 
-/** Get the Armbian board detection mode: "disabled", "modal" (confirm before auto-select), or "auto" (no confirmation) */
-export async function getArmbianBoardDetection(): Promise<string> {
+/** Get the Forge board detection mode: "disabled", "modal" (confirm before auto-select), or "auto" (no confirmation) */
+export async function getForgeBoardDetection(): Promise<string> {
   try {
     const store = await getStore();
     return (
-      (await store.get<string>(SETTINGS.KEYS.ARMBIAN_BOARD_DETECTION)) ||
-      SETTINGS.DEFAULTS.ARMBIAN_BOARD_DETECTION
+      (await store.get<string>(SETTINGS.KEYS.Forge_BOARD_DETECTION)) ||
+      SETTINGS.DEFAULTS.Forge_BOARD_DETECTION
     );
   } catch (error) {
-    throw new Error(`Failed to get Armbian board detection preference: ${error}`);
+    throw new Error(`Failed to get Forge board detection preference: ${error}`);
   }
 }
 
-/** Set the Armbian board detection mode ('disabled', 'modal', or 'auto') */
-export async function setArmbianBoardDetection(mode: string): Promise<void> {
+/** Set the Forge board detection mode ('disabled', 'modal', or 'auto') */
+export async function setForgeBoardDetection(mode: string): Promise<void> {
   if (!['disabled', 'modal', 'auto'].includes(mode)) {
     throw new Error(
-      `Invalid Armbian board detection mode: ${mode}. Must be 'disabled', 'modal', or 'auto'`
+      `Invalid Forge board detection mode: ${mode}. Must be 'disabled', 'modal', or 'auto'`
     );
   }
 
   try {
     const store = await getStore();
-    await store.set(SETTINGS.KEYS.ARMBIAN_BOARD_DETECTION, mode);
+    await store.set(SETTINGS.KEYS.Forge_BOARD_DETECTION, mode);
     await store.save();
   } catch (error) {
-    throw new Error(`Failed to set Armbian board detection preference: ${error}`);
+    throw new Error(`Failed to set Forge board detection preference: ${error}`);
   }
 }
 

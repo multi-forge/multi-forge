@@ -24,7 +24,7 @@ interface NavItem {
 }
 
 /** Nav entries in display order. About uses `settings.appInfo` as label while AboutSection keeps the
- * hard-coded "Armbian Imager" title — mismatch is intentional and preserved. */
+ * hard-coded "Forge Imager" title — mismatch is intentional and preserved. */
 const NAV_ITEMS: readonly NavItem[] = [
   { id: 'appearance', icon: Sun, labelKey: 'settings.appearance' },
   { id: 'preferences', icon: Settings, labelKey: 'settings.preferences' },

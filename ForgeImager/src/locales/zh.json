@@ -10,7 +10,7 @@
     "chooseStorage": "选择存储设备",
     "device": "设备",
     "chooseDevice": "选择设备",
-    "welcomeHeading": "欢迎使用 Armbian Imager",
+    "welcomeHeading": "欢迎使用 Forge Imager",
     "welcomeIntro": "选好开发板和镜像就行，剩下的下载、写入 SD 卡或 U 盘以及校验都交给我们。",
     "startNow": "立即开始",
     "useCustomImage": "使用自定义镜像",
@@ -73,7 +73,7 @@
     "noManufacturers": "未找到制造商",
     "noBoards": "未找到开发板",
     "boardUpdateRequired": "需要更新",
-    "boardUpdateRequiredHint": "此版本的 Armbian Imager 不支持此开发板。请更新。",
+    "boardUpdateRequiredHint": "此版本的 Forge Imager 不支持此开发板。请更新。",
     "noImages": "未找到镜像",
     "noDevices": "未找到设备",
     "promoted": "推荐",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "自定义镜像"
   },
-  "armbian": {
-    "description": "此设备正在运行 Armbian。是否预先选定该开发板，省去手动步骤？",
+  "Forge": {
+    "description": "此设备正在运行 Forge。是否预先选定该开发板，省去手动步骤？",
     "cancelHint": "若取消，将关闭开发板自动检测。",
     "disabledToast": "已关闭开发板自动检测。可在“设置”中重新开启。"
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "选择语言",
     "languageAuto": "自动",
     "searchLanguage": "搜索语言...",
-    "appDescription": "将 Armbian OS 写入 SD 卡和 U 盘",
+    "appDescription": "将 Forge OS 写入 SD 卡和 U 盘",
     "version": "版本",
     "platform": "平台",
     "arch": "架构",
@@ -236,10 +236,10 @@
     "devices": "设备",
     "allowSystemDevices": "允许系统磁盘",
     "allowSystemDevicesDescription": "有风险：可能覆盖正在运行的操作系统。",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "自动检测开发板",
-      "description": "当此设备运行 Armbian 时，自动识别其开发板",
+      "description": "当此设备运行 Forge 时，自动识别其开发板",
       "mode_disabled": "已关闭",
       "mode_modal": "交互式",
       "mode_auto": "静默"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "配置文件",
       "title": "自动配置文件",
-      "description": "预设 Armbian 首次启动的设置。仅当你在写入前选择某个配置文件时才会应用。",
+      "description": "预设 Forge 首次启动的设置。仅当你在写入前选择某个配置文件时才会应用。",
       "newProfile": "新建配置文件",
       "emptyTitle": "暂无配置文件",
       "emptyHint": "创建配置文件，以便在首次启动时预设网络、区域设置和账户。",
@@ -291,7 +291,7 @@
       "groupLocalization": "本地化",
       "groupRoot": "Root 账户",
       "groupUser": "首个用户",
-      "userHint": "将用户名留空，Armbian 在首次启动时仍会提示你创建用户。",
+      "userHint": "将用户名留空，Forge 在首次启动时仍会提示你创建用户。",
       "groupAdvanced": "高级",
       "applyNetwork": "配置网络",
       "ethernetEnabled": "启用以太网",

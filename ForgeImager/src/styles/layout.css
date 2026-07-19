@@ -125,7 +125,7 @@
   display: block;
 }
 
-/* BOARD IMAGE FALLBACK (Armbian wordmark watermark) */
+/* BOARD IMAGE FALLBACK (Forge wordmark watermark) */
 /* Shown when a board/image has no photo: fills the slot and centers the logo. */
 .board-image-fallback {
   display: grid;
@@ -372,7 +372,7 @@
 
 .welcome__heading {
   margin: 10px auto 0;
-  /* Width in ch so the phrase always wraps at the same point ("Welcome to" / "Armbian Imager") at every window size. */
+  /* Width in ch so the phrase always wraps at the same point ("Welcome to" / "Forge Imager") at every window size. */
   max-width: 16ch;
   font-size: clamp(32px, 5.2vw, 66px);
   font-weight: 700;
@@ -1056,7 +1056,7 @@
   transition: transform 0.4s var(--ease-out-expo), border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-/* Brand radial glow on hover (mirrors Armbian-site .hw-card::before) */
+/* Brand radial glow on hover (mirrors Forge-site .hw-card::before) */
 .mfr-card::before {
   content: '';
   position: absolute;
@@ -1187,7 +1187,7 @@
   color: var(--text-muted);
 }
 
-/* Tier badge in the logo header; colors from Armbian-site packages/config/src/partner-tiers.ts (platinum reuses the shiny gradient). */
+/* Tier badge in the logo header; colors from Forge-site packages/config/src/partner-tiers.ts (platinum reuses the shiny gradient). */
 .mfr-tier {
   position: absolute;
   top: 8px;
@@ -1995,7 +1995,7 @@
   }
 }
 
-/* ---- Board cards (Armbian-site style: photo + tier badge + name) ---- */
+/* ---- Board cards (Forge-site style: photo + tier badge + name) ---- */
 .board-card {
   position: relative;
   display: flex;
@@ -2013,7 +2013,7 @@
   transition: transform 0.4s var(--ease-out-expo), border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-/* Brand radial glow on hover (mirrors Armbian-site .hw-card::before) */
+/* Brand radial glow on hover (mirrors Forge-site .hw-card::before) */
 .board-card::before {
   content: '';
   position: absolute;
@@ -2090,7 +2090,7 @@
   border-radius: var(--radius-lg);
 }
 
-/* Support-tier badge overlay; colors from Armbian-site support-tiers.ts */
+/* Support-tier badge overlay; colors from Forge-site support-tiers.ts */
 .bp-tier {
   position: absolute;
   top: 10px;
@@ -2490,7 +2490,7 @@
   transform: translateX(3px);
 }
 
-/* ---- OS download cards (Armbian-site "Recommended Images" style) ---- */
+/* ---- OS download cards (Forge-site "Recommended Images" style) ---- */
 .dl-card {
   position: relative;
   display: flex;

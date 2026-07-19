@@ -67,7 +67,7 @@ export const SETTINGS = {
     FORCE_OFFLINE: 'force_offline',
     CACHE_ENABLED: 'cache_enabled',
     CACHE_MAX_SIZE: 'cache_max_size',
-    ARMBIAN_BOARD_DETECTION: 'armbian_board_detection',
+    Forge_BOARD_DETECTION: 'Forge_board_detection',
     AUTOCONFIG_PROFILES: 'autoconfig_profiles',
     ALLOW_SYSTEM_DEVICES: 'allow_system_devices',
   },
@@ -81,11 +81,11 @@ export const SETTINGS = {
     SKIP_VERIFY: false,
     FORCE_OFFLINE: false,
     CACHE_ENABLED: true,
-    ARMBIAN_BOARD_DETECTION: 'modal',
+    Forge_BOARD_DETECTION: 'modal',
     AUTOCONFIG_PROFILES: [] as [],
     ALLOW_SYSTEM_DEVICES: false,
   },
-  ARMBIAN_DETECTION_MODES: {
+  Forge_DETECTION_MODES: {
     DISABLED: 'disabled',
     MODAL: 'modal',
     AUTO: 'auto',
@@ -140,8 +140,8 @@ export const UI = {
     DEFAULT_WIDTH: 180,
     SEPARATOR_WIDTH: 5,
   },
-  /** Armbian board modal image width in pixels */
-  ARMBIAN_BOARD_IMAGE_WIDTH: 480,
+  /** Forge board modal image width in pixels */
+  Forge_BOARD_IMAGE_WIDTH: 480,
   /** Icon sizes in pixels */
   ICON_SIZE: {
     SEARCH: 18,

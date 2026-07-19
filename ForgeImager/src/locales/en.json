@@ -142,7 +142,7 @@
   "custom": {
     "customImage": "Custom Image"
   },
-  "armbian": {
+  "Forge": {
     "description": "This device is running Forge. Want to pre-select this board and skip the manual steps?",
     "cancelHint": "If you cancel, board auto-detection turns off.",
     "disabledToast": "Board auto-detection disabled. Re-enable it in Settings."
@@ -236,7 +236,7 @@
     "devices": "Devices",
     "allowSystemDevices": "Allow system drives",
     "allowSystemDevicesDescription": "Risky: you can overwrite the running OS.",
-    "armbian": {
+    "Forge": {
       "title": "Forge",
       "label": "Auto-detect board",
       "description": "Identify the board automatically when this device runs Forge",

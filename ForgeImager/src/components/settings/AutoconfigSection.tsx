@@ -310,7 +310,7 @@ export function AutoconfigSection({ autoCreate = false, onSaved }: AutoconfigSec
     const c = draft.config;
     const preview = renderPresetPreview(c, revealSecrets);
 
-    // Locale/timezone are applied by Armbian only during first-user creation,
+    // Locale/timezone are applied by Forge only during first-user creation,
     // so they stay locked until the first user is fully defined (name + password + full name).
     const hasUser = !!(c.userName?.trim() && c.userPassword?.trim() && c.userRealName?.trim());
     // Counts mirror what render actually emits: hidden/locked sub-fields don't count.
@@ -430,7 +430,7 @@ export function AutoconfigSection({ autoCreate = false, onSaved }: AutoconfigSec
         </SectionCard>
 
         <SectionCard icon={Globe} title={t('settings.autoconfig.groupLocalization')} count={localeCount}>
-          {/* Armbian's firstlogin applies locale/timezone only inside the first-user
+          {/* Forge's firstlogin applies locale/timezone only inside the first-user
               creation step, so these are locked until a username is set. */}
           {!hasUser && (
             <div className="ac-note">
@@ -485,13 +485,13 @@ export function AutoconfigSection({ autoCreate = false, onSaved }: AutoconfigSec
         <SectionCard icon={User} title={t('settings.autoconfig.groupUser')} count={userCount}>
           <div className="ac-grid">
             <Field label={t('settings.autoconfig.userName')}>
-              <TextInput icon={User} value={c.userName} placeholder="armbian" onChange={(v) => setConfig('userName', v)} />
+              <TextInput icon={User} value={c.userName} placeholder="Forge" onChange={(v) => setConfig('userName', v)} />
             </Field>
             <Field label={t('settings.autoconfig.userPassword')}>
               <PasswordInput value={c.userPassword} placeholder={t('settings.autoconfig.passwordHint')} onChange={(v) => setConfig('userPassword', v)} />
             </Field>
             <Field label={t('settings.autoconfig.userRealName')}>
-              <TextInput icon={UserCircle} value={c.userRealName} placeholder="Armbian User" onChange={(v) => setConfig('userRealName', v)} />
+              <TextInput icon={UserCircle} value={c.userRealName} placeholder="Forge User" onChange={(v) => setConfig('userRealName', v)} />
             </Field>
             <Field
               label={t('settings.autoconfig.userKeyUrl')}
@@ -517,7 +517,7 @@ export function AutoconfigSection({ autoCreate = false, onSaved }: AutoconfigSec
               onChange={(v) => setConfig('userShell', (v || undefined) as AutoconfigConfig['userShell'])}
             />
           </Field>
-          {/* Armbian only skips first-boot user creation when a username is set. */}
+          {/* Forge only skips first-boot user creation when a username is set. */}
           <p className="ac-hint">{t('settings.autoconfig.userHint')}</p>
         </SectionCard>
 

@@ -72,8 +72,8 @@ export function formatBytes(bytes: number): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
-/** Parsed metadata from an Armbian image filename */
-export interface ArmbianFilenameInfo {
+/** Parsed metadata from an Forge image filename */
+export interface ForgeFilenameInfo {
   /** Board slug (lowercase, e.g. "nanopi-m5") */
   boardSlug: string;
   /** Version string (e.g. "25.02.0" or "26.2.0-trunk.493") */
@@ -88,7 +88,7 @@ export interface ArmbianFilenameInfo {
   desktop: string | null;
 }
 
-/** Compression extensions an Armbian image can carry. */
+/** Compression extensions an Forge image can carry. */
 export const COMPRESSION_EXTS = ['.xz', '.gz', '.zst', '.bz2'] as const;
 
 /** True when a filename or URL ends with a known compression extension (i.e. a decompress step runs). */
@@ -97,9 +97,9 @@ export function isCompressedImage(nameOrUrl: string): boolean {
   return COMPRESSION_EXTS.some((ext) => lower.endsWith(ext));
 }
 
-/** Parse an Armbian image filename into structured metadata across three conventions: Standard
- * `Armbian_{version}_{board}_...`, Labeled `Armbian_{label}_{version}_{board}_...` (label when parts[1] non-numeric), Prefixed `Armbian-unofficial_{version}_{board}_...`. */
-export function parseArmbianFilename(filename: string): ArmbianFilenameInfo | null {
+/** Parse an Forge image filename into structured metadata across three conventions: Standard
+ * `Forge_{version}_{board}_...`, Labeled `Forge_{label}_{version}_{board}_...` (label when parts[1] non-numeric), Prefixed `Forge-unofficial_{version}_{board}_...`. */
+export function parseForgeFilename(filename: string): ForgeFilenameInfo | null {
   const basename = filename.split('/').pop()?.split('\\').pop() ?? filename;
 
   // Strip compression extensions, then .img
@@ -116,8 +116,8 @@ export function parseArmbianFilename(filename: string): ArmbianFilenameInfo | nu
 
   const parts = name.split('_');
 
-  // Must start with "armbian" (possibly hyphenated, e.g. "Armbian-unofficial")
-  if (parts.length < 4 || !parts[0].toLowerCase().startsWith('armbian')) {
+  // Must start with "Forge" (possibly hyphenated, e.g. "Forge-unofficial")
+  if (parts.length < 4 || !parts[0].toLowerCase().startsWith('Forge')) {
     return null;
   }
 
@@ -139,11 +139,11 @@ export function parseArmbianFilename(filename: string): ArmbianFilenameInfo | nu
   };
 }
 
-/** Stable identity key for an Armbian image filename (board+version+distro+branch+kernel+desktop),
+/** Stable identity key for an Forge image filename (board+version+distro+branch+kernel+desktop),
  * used to match a remote image against locally cached files regardless of compression extension.
- * Returns null when the name isn't a recognizable Armbian image. */
-export function armbianIdentityKey(filename: string): string | null {
-  const parsed = parseArmbianFilename(filename);
+ * Returns null when the name isn't a recognizable Forge image. */
+export function ForgeIdentityKey(filename: string): string | null {
+  const parsed = parseForgeFilename(filename);
   if (!parsed) return null;
   return [parsed.boardSlug, parsed.version, parsed.distro, parsed.branch, parsed.kernel, parsed.desktop]
     .map((part) => (part ?? '').toLowerCase())
@@ -151,10 +151,10 @@ export function armbianIdentityKey(filename: string): string | null {
 }
 
 /**
- * Split an Armbian version into its headline base and optional build/trunk suffix.
+ * Split an Forge version into its headline base and optional build/trunk suffix.
  * "26.2.0-trunk.904" -> { base: "26.2.0", build: "trunk.904" }; "26.5.1" -> { base: "26.5.1", build: "" }.
  */
-export function splitArmbianVersion(version: string): { base: string; build: string } {
+export function splitForgeVersion(version: string): { base: string; build: string } {
   const raw = version || '';
   const dash = raw.indexOf('-');
   return dash === -1 ? { base: raw, build: '' } : { base: raw.slice(0, dash), build: raw.slice(dash + 1) };
@@ -191,34 +191,34 @@ export function stripVendorPrefix(name: string, vendorName: string): string {
 }
 
 /** Branded OS identity (title + meta) for home OS row and flash header. API images use structured fields;
- * custom/cached parse distro_release filename — Armbian builds (incl. trunk/unofficial) yield version+variant (GNOME/Minimal/…), else raw filename with no meta. */
+ * custom/cached parse distro_release filename — Forge builds (incl. trunk/unofficial) yield version+variant (GNOME/Minimal/…), else raw filename with no meta. */
 export function formatImageIdentity(
   image: ImageInfo,
   t: (key: string) => string
 ): { title: string; meta: string | null } {
   if (image.is_custom) {
-    const parsed = parseArmbianFilename(image.distro_release || '');
+    const parsed = parseForgeFilename(image.distro_release || '');
     if (parsed?.version) {
-      const version = splitArmbianVersion(parsed.version).base;
+      const version = splitForgeVersion(parsed.version).base;
       const desktopEnv = parsed.desktop ? getDesktopEnv(parsed.desktop) : null;
       const variant =
         desktopEnv && DESKTOP_BADGES[desktopEnv] ? DESKTOP_BADGES[desktopEnv].label : t('modal.minimal');
       const os = parsed.distro ? getOsInfo(parsed.distro)?.name ?? null : null;
       return {
-        title: `Armbian ${version} ${variant}`.replace(/\s+/g, ' ').trim(),
+        title: `Forge ${version} ${variant}`.replace(/\s+/g, ' ').trim(),
         meta: os && parsed.branch ? `${os} · ${parsed.branch}` : os || parsed.branch || null,
       };
     }
     return { title: image.distro_release || '', meta: null };
   }
 
-  const version = splitArmbianVersion(image.release || '').base;
+  const version = splitForgeVersion(image.release || '').base;
   const meta =
     image.distro_release && image.kernel_branch
       ? `${image.distro_release} · ${image.kernel_branch}`
       : image.distro_release || image.kernel_branch || null;
   return {
-    title: `Armbian ${version} ${getImageVariantLabel(image, t)}`.replace(/\s+/g, ' ').trim(),
+    title: `Forge ${version} ${getImageVariantLabel(image, t)}`.replace(/\s+/g, ' ').trim(),
     meta: meta || null,
   };
 }

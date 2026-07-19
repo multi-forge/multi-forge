@@ -31,7 +31,7 @@ export interface BoardQdl {
 }
 
 export interface ImageInfo {
-  /** Armbian release version (e.g., "24.02.0") */
+  /** Forge release version (e.g., "24.02.0") */
   release: string;
   distro_release: string;
   kernel_branch: string;
@@ -214,8 +214,8 @@ export interface CacheBreakdown {
   total: number;
 }
 
-/** Board identification read from /etc/armbian-release */
-export interface ArmbianReleaseInfo {
+/** Board identification read from /etc/Forge-release */
+export interface ForgeReleaseInfo {
   board: string; // e.g., "orangepi-5" - Board identifier for matching
   board_name: string; // e.g., "Orange Pi 5" - Human-readable board name for display
 }
@@ -223,7 +223,7 @@ export interface ArmbianReleaseInfo {
 /** Login shell for the first user provisioned via autoconfig */
 export type UserShell = 'bash' | 'zsh';
 
-/** Armbian first-boot autoconfig settings; all fields optional, only set/non-empty values
+/** Forge first-boot autoconfig settings; all fields optional, only set/non-empty values
  * are written into the image's /root/.not_logged_in_yet file. */
 export interface AutoconfigConfig {
   applyNetwork?: boolean;

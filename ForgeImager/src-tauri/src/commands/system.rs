@@ -1,4 +1,4 @@
-//! Platform-specific system utilities: opening URLs, locale and Armbian detection.
+//! Platform-specific system utilities: opening URLs, locale and Forge detection.
 
 use crate::{log_debug, log_info, log_warn};
 use serde::{Deserialize, Serialize};
@@ -195,7 +195,7 @@ fn open_url_windows(url: &str) -> Result<(), String> {
     Ok(())
 }
 
-/// Check reachability of the Armbian API health endpoint (5s timeout)
+/// Check reachability of the Forge API health endpoint (5s timeout)
 #[tauri::command]
 pub async fn check_connectivity() -> bool {
     match CONNECTIVITY_CLIENT
@@ -220,26 +220,26 @@ pub async fn check_connectivity() -> bool {
     }
 }
 
-// Armbian System Detection
+// Forge System Detection
 
-/// Board identification read from /etc/armbian-release
+/// Board identification read from /etc/Forge-release
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ArmbianReleaseInfo {
+pub struct ForgeReleaseInfo {
     pub board: String,
     pub board_name: String,
 }
 
-/// Parse /etc/armbian-release (Linux only); None when absent or unreadable
+/// Parse /etc/Forge-release (Linux only); None when absent or unreadable
 #[tauri::command]
-pub fn get_armbian_release() -> Option<ArmbianReleaseInfo> {
+pub fn get_FORGE_release() -> Option<ForgeReleaseInfo> {
     #[cfg(target_os = "linux")]
     {
         use std::fs;
 
-        let path = "/etc/armbian-release";
+        let path = "/etc/Forge-release";
 
         if !std::path::Path::new(path).exists() {
-            log_debug!(MODULE, "{} not found - not running on Armbian", path);
+            log_debug!(MODULE, "{} not found - not running on Forge", path);
             return None;
         }
 
@@ -279,17 +279,17 @@ pub fn get_armbian_release() -> Option<ArmbianReleaseInfo> {
 
         log_info!(
             MODULE,
-            "Detected Armbian system: {} ({})",
+            "Detected Forge system: {} ({})",
             board_name,
             board
         );
 
-        Some(ArmbianReleaseInfo { board, board_name })
+        Some(ForgeReleaseInfo { board, board_name })
     }
 
     #[cfg(not(target_os = "linux"))]
     {
-        log_info!(MODULE, "Armbian detection is Linux-only");
+        log_info!(MODULE, "Forge detection is Linux-only");
         None
     }
 }

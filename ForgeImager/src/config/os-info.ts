@@ -40,7 +40,7 @@ export const APP_INFO: Record<string, AppInfoConfig> = {
   'homeassistant': { name: 'Home Assistant', color: 'transparent', badgeColor: '#18bcf2' },
   'openmediavault': { name: 'OpenMediaVault', color: 'transparent', badgeColor: '#5dacdf' },
   'omv': { name: 'OpenMediaVault', color: 'transparent', badgeColor: '#5dacdf' },
-  'sdk': { name: 'Code server + Armbian sources', badge: 'SDK', color: 'transparent', badgeColor: '#1e88e5' },
+  'sdk': { name: 'Code server + Forge sources', badge: 'SDK', color: 'transparent', badgeColor: '#1e88e5' },
   'openhab': { name: 'openHAB', color: 'transparent', badgeColor: '#e64a19' },
   'kali': { name: 'Kali Linux', color: 'transparent', badgeColor: '#367bf0' },
 };

@@ -1,9 +1,9 @@
-//! Armbian first-boot autoconfig: render a preset (mirrors client-side AutoconfigConfig) and inject it.
-//! [`inject_into_image`] writes it to `/root/.not_logged_in_yet` in the image's ext4 rootfs, consumed on first boot. See https://docs.armbian.com/User-Guide_Autoconfig/.
+//! Forge first-boot autoconfig: render a preset (mirrors client-side AutoconfigConfig) and inject it.
+//! [`inject_into_image`] writes it to `/root/.not_logged_in_yet` in the image's ext4 rootfs, consumed on first boot. See https://docs.Forge.com/User-Guide_Autoconfig/.
 
 use std::path::Path;
 
-use armbian_write_conf::{write_file_into_bare_ext4_image, write_file_into_image, WriteConfError};
+use forge_write_conf::{write_file_into_bare_ext4_image, write_file_into_image, WriteConfError};
 use serde::Deserialize;
 
 use crate::{log_error, log_info};
@@ -140,7 +140,7 @@ pub fn render_preset(config: &AutoconfigConfig) -> String {
         }
     }
 
-    // Localization. Armbian applies locale/timezone only during first-user creation,
+    // Localization. Forge applies locale/timezone only during first-user creation,
     // so emit them only when a full user is defined (matches the locked UI inputs).
     let is_set = |v: &Option<String>| v.as_deref().map(|s| !s.trim().is_empty()).unwrap_or(false);
     let has_user = is_set(&config.user_name)
@@ -209,7 +209,7 @@ pub fn inject_into_image(
     }
 }
 
-/// Render the preset and write it into a BARE ext4 image (no partition table; e.g. Armbian QDL `disk-sdcard.img.root`);
+/// Render the preset and write it into a BARE ext4 image (no partition table; e.g. Forge QDL `disk-sdcard.img.root`);
 /// `image_path` must be a flat ext4 filesystem that will be mutated. Never logs secret values (password/wifi key).
 pub fn inject_into_bare_ext4_image(
     image_path: &Path,

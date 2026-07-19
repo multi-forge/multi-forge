@@ -1,4 +1,4 @@
-//! Formatting helpers for human-readable output and Armbian filename parsing.
+//! Formatting helpers for human-readable output and Forge filename parsing.
 
 pub const MB: u64 = 1024 * 1024;
 pub const GB: u64 = 1024 * 1024 * 1024;
@@ -35,9 +35,9 @@ pub fn format_size(bytes: u64) -> String {
     }
 }
 
-/// Parsed metadata from an Armbian image filename
+/// Parsed metadata from an Forge image filename
 #[derive(Debug, Clone, PartialEq)]
-pub struct ArmbianFilenameInfo {
+pub struct ForgeFilenameInfo {
     /// Board slug extracted from filename (lowercase, e.g. "nanopi-m5")
     pub board_slug: String,
     /// Version string (e.g. "25.02.0" or "26.2.0-trunk.493")
@@ -58,14 +58,14 @@ fn strip_image_extensions(filename: &str) -> &str {
     name.strip_suffix(".img").unwrap_or(name)
 }
 
-/// Parse an Armbian image filename into structured metadata. Three conventions: Standard `Armbian_{version}_{board}_{distro}_{branch}_{kernel}[_{desktop}]`,
-/// Labeled `Armbian_{label}_{version}_{board}_...` (label when parts[1] is non-numeric), Prefixed `Armbian-unofficial_{version}_{board}_...`.
-pub fn parse_armbian_filename(filename: &str) -> Option<ArmbianFilenameInfo> {
+/// Parse an Forge image filename into structured metadata. Three conventions: Standard `FORGE_{version}_{board}_{distro}_{branch}_{kernel}[_{desktop}]`,
+/// Labeled `FORGE_{label}_{version}_{board}_...` (label when parts[1] is non-numeric), Prefixed `Forge-unofficial_{version}_{board}_...`.
+pub fn parse_FORGE_filename(filename: &str) -> Option<ForgeFilenameInfo> {
     let name = strip_image_extensions(filename);
     let parts: Vec<&str> = name.split('_').collect();
 
-    // Must start with "Armbian", possibly hyphenated (e.g. "Armbian-unofficial").
-    if parts.len() < 4 || !parts[0].to_ascii_lowercase().starts_with("armbian") {
+    // Must start with "Forge", possibly hyphenated (e.g. "Forge-unofficial").
+    if parts.len() < 4 || !parts[0].to_ascii_lowercase().starts_with("Forge") {
         return None;
     }
 
@@ -83,7 +83,7 @@ pub fn parse_armbian_filename(filename: &str) -> Option<ArmbianFilenameInfo> {
 
     let board_slug = parts[board_index].to_lowercase();
 
-    Some(ArmbianFilenameInfo {
+    Some(ForgeFilenameInfo {
         board_slug,
         version: parts.get(1 + offset).map(|s| s.to_string()),
         distro: parts.get(3 + offset).map(|s| s.to_string()),
@@ -146,9 +146,9 @@ mod tests {
     }
 
     #[test]
-    fn test_parse_armbian_filename_standard() {
-        let info = parse_armbian_filename(
-            "Armbian_25.02.0_Nanopi-m5_bookworm_current_6.12.8_gnome.img.xz",
+    fn test_parse_FORGE_filename_standard() {
+        let info = parse_FORGE_filename(
+            "FORGE_25.02.0_Nanopi-m5_bookworm_current_6.12.8_gnome.img.xz",
         )
         .unwrap();
         assert_eq!(info.board_slug, "nanopi-m5");
@@ -160,9 +160,9 @@ mod tests {
     }
 
     #[test]
-    fn test_parse_armbian_filename_community() {
-        let info = parse_armbian_filename(
-            "Armbian_community_26.2.0-trunk.493_Youyeetoo-r1-v3_trixie_edge_6.19.3_minimal.img",
+    fn test_parse_FORGE_filename_community() {
+        let info = parse_FORGE_filename(
+            "FORGE_community_26.2.0-trunk.493_Youyeetoo-r1-v3_trixie_edge_6.19.3_minimal.img",
         )
         .unwrap();
         assert_eq!(info.board_slug, "youyeetoo-r1-v3");
@@ -174,9 +174,9 @@ mod tests {
     }
 
     #[test]
-    fn test_parse_armbian_filename_unofficial() {
-        let info = parse_armbian_filename(
-            "Armbian-unofficial_26.02.0-trunk_Cix-acpi_trixie_edge_6.19.4_minimal.img.xz",
+    fn test_parse_FORGE_filename_unofficial() {
+        let info = parse_FORGE_filename(
+            "Forge-unofficial_26.02.0-trunk_Cix-acpi_trixie_edge_6.19.4_minimal.img.xz",
         )
         .unwrap();
         assert_eq!(info.board_slug, "cix-acpi");
@@ -186,21 +186,21 @@ mod tests {
     }
 
     #[test]
-    fn test_parse_armbian_filename_minimal_no_desktop() {
+    fn test_parse_FORGE_filename_minimal_no_desktop() {
         let info =
-            parse_armbian_filename("Armbian_26.2.1_Nanopim4v2_trixie_current_6.18.8_minimal.img")
+            parse_FORGE_filename("FORGE_26.2.1_Nanopim4v2_trixie_current_6.18.8_minimal.img")
                 .unwrap();
         assert_eq!(info.board_slug, "nanopim4v2");
         assert_eq!(info.desktop.as_deref(), Some("minimal"));
     }
 
     #[test]
-    fn test_parse_armbian_filename_not_armbian() {
-        assert!(parse_armbian_filename("ubuntu-24.04-desktop.img.xz").is_none());
+    fn test_parse_FORGE_filename_not_Forge() {
+        assert!(parse_FORGE_filename("ubuntu-24.04-desktop.img.xz").is_none());
     }
 
     #[test]
-    fn test_parse_armbian_filename_too_short() {
-        assert!(parse_armbian_filename("Armbian_25.02.0.img").is_none());
+    fn test_parse_FORGE_filename_too_short() {
+        assert!(parse_FORGE_filename("FORGE_25.02.0.img").is_none());
     }
 }

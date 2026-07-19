@@ -10,7 +10,7 @@
     "chooseStorage": "Speicher wählen",
     "device": "Gerät",
     "chooseDevice": "Gerät wählen",
-    "welcomeHeading": "Willkommen bei Armbian Imager",
+    "welcomeHeading": "Willkommen bei Forge Imager",
     "welcomeIntro": "Wähle dein Board und ein Image. Wir laden es herunter, schreiben es auf deine SD-Karte oder deinen USB-Stick und prüfen es für dich.",
     "startNow": "Jetzt starten",
     "useCustomImage": "Eigenes Image verwenden",
@@ -73,7 +73,7 @@
     "noManufacturers": "Keine Hersteller gefunden",
     "noBoards": "Keine Boards gefunden",
     "boardUpdateRequired": "Update erforderlich",
-    "boardUpdateRequiredHint": "Dieses Board wird von dieser Version von Armbian Imager nicht unterstützt. Bitte aktualisieren.",
+    "boardUpdateRequiredHint": "Dieses Board wird von dieser Version von Forge Imager nicht unterstützt. Bitte aktualisieren.",
     "noImages": "Keine Images gefunden",
     "noDevices": "Keine Geräte gefunden",
     "promoted": "Empfohlen",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "Benutzerdefiniertes Image"
   },
-  "armbian": {
-    "description": "Dieses Gerät läuft mit Armbian. Möchtest du dieses Board vorauswählen und die manuellen Schritte überspringen?",
+  "Forge": {
+    "description": "Dieses Gerät läuft mit Forge. Möchtest du dieses Board vorauswählen und die manuellen Schritte überspringen?",
     "cancelHint": "Wenn du abbrichst, wird die automatische Board-Erkennung deaktiviert.",
     "disabledToast": "Board-Erkennung deaktiviert. Du kannst sie in den Einstellungen wieder aktivieren."
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "Wähle deine Sprache",
     "languageAuto": "Automatisch",
     "searchLanguage": "Sprachen suchen...",
-    "appDescription": "Schreibt Armbian OS auf SD-Karten und USB-Laufwerke",
+    "appDescription": "Schreibt Forge OS auf SD-Karten und USB-Laufwerke",
     "version": "Version",
     "platform": "Plattform",
     "arch": "Architektur",
@@ -236,10 +236,10 @@
     "devices": "Geräte",
     "allowSystemDevices": "Systemlaufwerke zulassen",
     "allowSystemDevicesDescription": "Riskant: das laufende Betriebssystem kann überschrieben werden.",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "Board automatisch erkennen",
-      "description": "Das Board automatisch erkennen, wenn dieses Gerät mit Armbian läuft",
+      "description": "Das Board automatisch erkennen, wenn dieses Gerät mit Forge läuft",
       "mode_disabled": "Deaktiviert",
       "mode_modal": "Interaktiv",
       "mode_auto": "Automatisch"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "Profile",
       "title": "Autoconfig-Profile",
-      "description": "Richte die Armbian-Erstkonfiguration vor. Ein Profil wird nur angewendet, wenn du es vor dem Flashen auswählst.",
+      "description": "Richte die Forge-Erstkonfiguration vor. Ein Profil wird nur angewendet, wenn du es vor dem Flashen auswählst.",
       "newProfile": "Neues Profil",
       "emptyTitle": "Noch keine Profile",
       "emptyHint": "Erstelle ein Profil, um Netzwerk, Sprache und Konten beim ersten Start vorzukonfigurieren.",
@@ -291,7 +291,7 @@
       "groupLocalization": "Lokalisierung",
       "groupRoot": "Root-Konto",
       "groupUser": "Erster Benutzer",
-      "userHint": "Lass den Benutzernamen leer, dann fordert Armbian dich beim ersten Start trotzdem auf, einen Benutzer anzulegen.",
+      "userHint": "Lass den Benutzernamen leer, dann fordert Forge dich beim ersten Start trotzdem auf, einen Benutzer anzulegen.",
       "groupAdvanced": "Erweitert",
       "applyNetwork": "Netzwerk konfigurieren",
       "ethernetEnabled": "Ethernet aktivieren",

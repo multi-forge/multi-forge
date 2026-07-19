@@ -1,8 +1,8 @@
-# Contributing to Armbian Imager
+# Contributing to Forge Imager
 
 Contributions are welcome. A few ways to help:
 
-- Report bugs by [opening an issue](https://github.com/armbian/imager/issues)
+- Report bugs by [opening an issue](https://github.com/multi-forge/multi-forge/issues)
 - Suggest features, and open a discussion first if it's a big one
 - Send pull requests for fixes and improvements
 - Add or improve translations in `src/locales/`
@@ -58,8 +58,5 @@ When you add or remove a translation key, change all 18 files in `src/locales/` 
 
 ## Other ways to contribute
 
-* [Become a new board maintainer](https://docs.armbian.com/Board_Maintainers_Procedures_and_Guidelines/)
-* [Apply for an open position](https://forum.armbian.com/staffapplications/)
-* [Help cover running costs](https://forum.armbian.com/subscriptions/)
-* [Help community members in the forum](https://forum.armbian.com/)
-* [Check the forum announcements for requests for help](https://forum.armbian.com/forum/37-announcements/)
+* [Open a discussion](https://github.com/multi-forge/multi-forge/discussions)
+* [Help community members](https://github.com/multi-forge/multi-forge/discussions)

@@ -1,3 +1,3 @@
-//! Uploading application logs to paste.armbian.com for debugging and support.
+//! Uploading application logs to paste.Forge.com for debugging and support.
 
 pub mod upload;

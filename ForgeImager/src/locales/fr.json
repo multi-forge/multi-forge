@@ -10,7 +10,7 @@
     "chooseStorage": "Choisir un stockage",
     "device": "Appareil",
     "chooseDevice": "Choisir un appareil",
-    "welcomeHeading": "Bienvenue dans Armbian Imager",
+    "welcomeHeading": "Bienvenue dans Forge Imager",
     "welcomeIntro": "Choisissez votre carte et une image. On s'occupe de la télécharger, de l'écrire sur votre carte SD ou clé USB et de la vérifier.",
     "startNow": "Commencer",
     "useCustomImage": "Utiliser une image personnalisée",
@@ -73,7 +73,7 @@
     "noManufacturers": "Aucun fabricant trouvé",
     "noBoards": "Aucune carte trouvée",
     "boardUpdateRequired": "Mise à jour requise",
-    "boardUpdateRequiredHint": "Cette carte n'est pas prise en charge par cette version d'Armbian Imager. Veuillez mettre à jour.",
+    "boardUpdateRequiredHint": "Cette carte n'est pas prise en charge par cette version d'Forge Imager. Veuillez mettre à jour.",
     "noImages": "Aucune image trouvée",
     "noDevices": "Aucun périphérique trouvé",
     "promoted": "Recommandé",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "Image personnalisée"
   },
-  "armbian": {
-    "description": "Cet appareil exécute Armbian. Souhaitez-vous présélectionner cette carte et ignorer la sélection manuelle ?",
+  "Forge": {
+    "description": "Cet appareil exécute Forge. Souhaitez-vous présélectionner cette carte et ignorer la sélection manuelle ?",
     "cancelHint": "Si vous annulez, la détection automatique de carte sera désactivée.",
     "disabledToast": "Détection automatique de carte désactivée. Réactivez-la dans les paramètres."
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "Choisissez votre langue",
     "languageAuto": "Automatique",
     "searchLanguage": "Rechercher des langues...",
-    "appDescription": "Écrit Armbian OS sur les cartes SD et les clés USB",
+    "appDescription": "Écrit Forge OS sur les cartes SD et les clés USB",
     "version": "Version",
     "platform": "Plateforme",
     "arch": "Architecture",
@@ -236,10 +236,10 @@
     "devices": "Périphériques",
     "allowSystemDevices": "Autoriser les disques système",
     "allowSystemDevicesDescription": "Risqué : peut écraser le système d'exploitation en cours d'exécution.",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "Détecter la carte automatiquement",
-      "description": "Identifier automatiquement la carte lorsque cet appareil exécute Armbian",
+      "description": "Identifier automatiquement la carte lorsque cet appareil exécute Forge",
       "mode_disabled": "Désactivé",
       "mode_modal": "Interactif",
       "mode_auto": "Silencieux"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "Profils",
       "title": "Profils d'autoconfiguration",
-      "description": "Préconfigurez le premier démarrage d'Armbian. Un profil n'est appliqué que si vous le sélectionnez avant la gravure.",
+      "description": "Préconfigurez le premier démarrage d'Forge. Un profil n'est appliqué que si vous le sélectionnez avant la gravure.",
       "newProfile": "Nouveau profil",
       "emptyTitle": "Aucun profil pour le moment",
       "emptyHint": "Créez un profil pour préconfigurer le réseau, la langue et les comptes au premier démarrage.",
@@ -291,7 +291,7 @@
       "groupLocalization": "Localisation",
       "groupRoot": "Compte root",
       "groupUser": "Premier utilisateur",
-      "userHint": "Laissez le nom d'utilisateur vide et Armbian vous demandera quand même de créer un utilisateur au premier démarrage.",
+      "userHint": "Laissez le nom d'utilisateur vide et Forge vous demandera quand même de créer un utilisateur au premier démarrage.",
       "groupAdvanced": "Avancé",
       "applyNetwork": "Configurer le réseau",
       "ethernetEnabled": "Activer Ethernet",

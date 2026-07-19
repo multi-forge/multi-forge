@@ -4,9 +4,9 @@
 
 :root,
 .theme-light {
-  /* Armbian Brand */
-  --armbian-orange: #f26522;
-  --armbian-red: #cc3333;
+  /* Forge Brand */
+  --Forge-orange: #f26522;
+  --Forge-red: #cc3333;
 
   /* Light Theme */
   --bg-app: #f8f9fa;
@@ -27,7 +27,7 @@
   --skeleton-base: #e4e7ea;
   --skeleton-shine: #f5f6f8;
 
-  --accent: var(--armbian-orange);
+  --accent: var(--Forge-orange);
   --accent-hover: #e55a1c;
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);

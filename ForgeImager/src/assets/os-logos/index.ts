@@ -18,5 +18,5 @@ export function getOsName(distroRelease: string): string {
     return 'Debian';
   }
 
-  return 'Armbian';
+  return 'Forge';
 }

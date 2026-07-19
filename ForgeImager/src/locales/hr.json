@@ -10,7 +10,7 @@
     "chooseStorage": "Odaberite pohranu",
     "device": "Uređaj",
     "chooseDevice": "Odaberite uređaj",
-    "welcomeHeading": "Dobro došli u Armbian Imager",
+    "welcomeHeading": "Dobro došli u Forge Imager",
     "welcomeIntro": "Odaberite ploču i sliku. Mi ćemo je preuzeti, zapisati na vašu SD karticu ili USB pogon i provjeriti.",
     "startNow": "Započnite",
     "useCustomImage": "Koristi prilagođenu sliku",
@@ -73,7 +73,7 @@
     "noManufacturers": "Nema pronađenih proizvođača",
     "noBoards": "Nema pronađenih ploča",
     "boardUpdateRequired": "Potrebna nadogradnja",
-    "boardUpdateRequiredHint": "Ova ploča nije podržana u ovoj verziji Armbian Imagera. Ažurirajte aplikaciju.",
+    "boardUpdateRequiredHint": "Ova ploča nije podržana u ovoj verziji Forge Imagera. Ažurirajte aplikaciju.",
     "noImages": "Nema pronađenih slika",
     "noDevices": "Nema pronađenih uređaja",
     "promoted": "Preporučeno",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "Prilagođena slika"
   },
-  "armbian": {
-    "description": "Ovaj uređaj koristi Armbian. Želite li unaprijed odabrati ovu ploču i preskočiti ručne korake?",
+  "Forge": {
+    "description": "Ovaj uređaj koristi Forge. Želite li unaprijed odabrati ovu ploču i preskočiti ručne korake?",
     "cancelHint": "Ako odustanete, automatsko otkrivanje ploče se isključuje.",
     "disabledToast": "Automatsko otkrivanje ploče je isključeno. Ponovno ga uključite u postavkama."
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "Odaberite jezik",
     "languageAuto": "Automatski",
     "searchLanguage": "Pretraži jezike...",
-    "appDescription": "Zapisuje Armbian OS na SD kartice i USB pogone",
+    "appDescription": "Zapisuje Forge OS na SD kartice i USB pogone",
     "version": "Verzija",
     "platform": "Platforma",
     "arch": "Arhitektura",
@@ -236,10 +236,10 @@
     "devices": "Uređaji",
     "allowSystemDevices": "Dopusti sistemske diskove",
     "allowSystemDevicesDescription": "Rizično: možeš prebrisati pokrenuti operativni sustav.",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "Automatsko otkrivanje ploče",
-      "description": "Automatski prepoznaj ploču kada ovaj uređaj koristi Armbian",
+      "description": "Automatski prepoznaj ploču kada ovaj uređaj koristi Forge",
       "mode_disabled": "Onemogućeno",
       "mode_modal": "Interaktivno",
       "mode_auto": "Tiho"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "Profili",
       "title": "Profili automatske konfiguracije",
-      "description": "Unaprijed postavite Armbianovo prvo pokretanje. Profil se primjenjuje samo ako ga odaberete prije zapisivanja.",
+      "description": "Unaprijed postavite Forgeovo prvo pokretanje. Profil se primjenjuje samo ako ga odaberete prije zapisivanja.",
       "newProfile": "Novi profil",
       "emptyTitle": "Još nema profila",
       "emptyHint": "Stvorite profil da biste unaprijed postavili mrežu, jezik i račune pri prvom pokretanju.",
@@ -291,7 +291,7 @@
       "groupLocalization": "Lokalizacija",
       "groupRoot": "Root račun",
       "groupUser": "Prvi korisnik",
-      "userHint": "Ostavite korisničko ime praznim i Armbian će vas pri prvom pokretanju ipak zatražiti da stvorite korisnika.",
+      "userHint": "Ostavite korisničko ime praznim i Forge će vas pri prvom pokretanju ipak zatražiti da stvorite korisnika.",
       "groupAdvanced": "Napredno",
       "applyNetwork": "Konfiguriraj mrežu",
       "ethernetEnabled": "Omogući Ethernet",

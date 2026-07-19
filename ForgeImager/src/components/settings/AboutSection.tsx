@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { getTauriVersion, getSystemInfo } from '../../hooks/useTauri';
 import { LINKS } from '../../config/constants';
-import armbianLogo from '../../../src-tauri/icons/icon.png';
+import ForgeLogo from '../../../src-tauri/icons/icon.png';
 
 /** Maps a raw backend platform id (e.g. "macos") to a display name (e.g. "macOS"); returns the original when unknown. */
 function formatPlatformName(platform: string): string {
@@ -108,8 +108,8 @@ export function AboutSection() {
     <div className="about-section">
       {/* Branding hero: floating logo over an accent-tint bloom. */}
       <div className="about-hero">
-        <img src={armbianLogo} alt="Armbian" className="about-logo" />
-        <h2 className="about-title">Armbian Imager</h2>
+        <img src={ForgeLogo} alt="Forge" className="about-logo" />
+        <h2 className="about-title">Forge Imager</h2>
         <p className="about-description">{t('settings.appDescription')}</p>
       </div>
 

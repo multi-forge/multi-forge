@@ -10,7 +10,7 @@
     "chooseStorage": "Scegli l'archiviazione",
     "device": "Dispositivo",
     "chooseDevice": "Scegli il dispositivo",
-    "welcomeHeading": "Benvenuto in Armbian Imager",
+    "welcomeHeading": "Benvenuto in Forge Imager",
     "welcomeIntro": "Scegli la scheda e l'immagine. Pensiamo noi a scaricarla, scriverla sulla tua scheda SD o chiavetta USB e verificarla.",
     "startNow": "Inizia ora",
     "useCustomImage": "Usa immagine personalizzata",
@@ -73,7 +73,7 @@
     "noManufacturers": "Nessun produttore trovato",
     "noBoards": "Nessuna scheda trovata",
     "boardUpdateRequired": "Aggiornamento richiesto",
-    "boardUpdateRequiredHint": "Questa scheda non è supportata da questa versione di Armbian Imager. Aggiorna l'app.",
+    "boardUpdateRequiredHint": "Questa scheda non è supportata da questa versione di Forge Imager. Aggiorna l'app.",
     "noImages": "Nessuna immagine trovata",
     "noDevices": "Nessun dispositivo trovato",
     "promoted": "Consigliato",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "Immagine Personalizzata"
   },
-  "armbian": {
-    "description": "Questo dispositivo sta eseguendo Armbian. Vuoi preselezionare questa scheda e saltare i passaggi manuali?",
+  "Forge": {
+    "description": "Questo dispositivo sta eseguendo Forge. Vuoi preselezionare questa scheda e saltare i passaggi manuali?",
     "cancelHint": "Se annulli, il rilevamento automatico della scheda viene disattivato.",
     "disabledToast": "Rilevamento automatico della scheda disattivato. Riattivalo nelle Impostazioni."
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "Scegli la lingua",
     "languageAuto": "Automatico",
     "searchLanguage": "Cerca lingue...",
-    "appDescription": "Scrive Armbian OS su schede SD e chiavette USB",
+    "appDescription": "Scrive Forge OS su schede SD e chiavette USB",
     "version": "Versione",
     "platform": "Piattaforma",
     "arch": "Architettura",
@@ -236,10 +236,10 @@
     "devices": "Dispositivi",
     "allowSystemDevices": "Consenti dischi di sistema",
     "allowSystemDevicesDescription": "Rischioso: puoi sovrascrivere il sistema operativo in uso.",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "Rileva la scheda automaticamente",
-      "description": "Identifica automaticamente la scheda quando questo dispositivo esegue Armbian",
+      "description": "Identifica automaticamente la scheda quando questo dispositivo esegue Forge",
       "mode_disabled": "Disattivato",
       "mode_modal": "Interattivo",
       "mode_auto": "Silenzioso"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "Profili",
       "title": "Profili di autoconfigurazione",
-      "description": "Preimposta la configurazione al primo avvio di Armbian. Un profilo viene applicato solo se lo selezioni prima della scrittura.",
+      "description": "Preimposta la configurazione al primo avvio di Forge. Un profilo viene applicato solo se lo selezioni prima della scrittura.",
       "newProfile": "Nuovo profilo",
       "emptyTitle": "Ancora nessun profilo",
       "emptyHint": "Crea un profilo per preimpostare rete, lingua e account al primo avvio.",
@@ -291,7 +291,7 @@
       "groupLocalization": "Localizzazione",
       "groupRoot": "Account root",
       "groupUser": "Primo utente",
-      "userHint": "Lascia vuoto il nome utente e Armbian ti chiederà comunque di creare un utente al primo avvio.",
+      "userHint": "Lascia vuoto il nome utente e Forge ti chiederà comunque di creare un utente al primo avvio.",
       "groupAdvanced": "Avanzate",
       "applyNetwork": "Configura la rete",
       "ethernetEnabled": "Abilita Ethernet",

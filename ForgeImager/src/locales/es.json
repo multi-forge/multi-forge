@@ -10,7 +10,7 @@
     "chooseStorage": "Elegir almacenamiento",
     "device": "Dispositivo",
     "chooseDevice": "Elegir dispositivo",
-    "welcomeHeading": "Bienvenido a Armbian Imager",
+    "welcomeHeading": "Bienvenido a Forge Imager",
     "welcomeIntro": "Elige tu placa y una imagen. Nosotros la descargamos, la escribimos en tu tarjeta SD o unidad USB y la verificamos por ti.",
     "startNow": "Empezar ahora",
     "useCustomImage": "Usar imagen personalizada",
@@ -73,7 +73,7 @@
     "noManufacturers": "No se encontraron fabricantes",
     "noBoards": "No se encontraron placas",
     "boardUpdateRequired": "Actualización necesaria",
-    "boardUpdateRequiredHint": "Esta placa no es compatible con esta versión de Armbian Imager. Actualiza la aplicación.",
+    "boardUpdateRequiredHint": "Esta placa no es compatible con esta versión de Forge Imager. Actualiza la aplicación.",
     "noImages": "No se encontraron imágenes",
     "noDevices": "No se encontraron dispositivos",
     "promoted": "Recomendado",
@@ -142,8 +142,8 @@
   "custom": {
     "customImage": "Imagen personalizada"
   },
-  "armbian": {
-    "description": "Este dispositivo ejecuta Armbian. ¿Quieres preseleccionar esta placa y saltarte los pasos manuales?",
+  "Forge": {
+    "description": "Este dispositivo ejecuta Forge. ¿Quieres preseleccionar esta placa y saltarte los pasos manuales?",
     "cancelHint": "Si cancelas, se desactivará la detección automática de placas.",
     "disabledToast": "Detección automática de placas desactivada. Vuelve a activarla en Ajustes."
   },
@@ -166,7 +166,7 @@
     "chooseLanguage": "Elige tu idioma",
     "languageAuto": "Automático",
     "searchLanguage": "Buscar idiomas...",
-    "appDescription": "Utilidad para escribir Armbian OS en tarjetas SD y unidades USB",
+    "appDescription": "Utilidad para escribir Forge OS en tarjetas SD y unidades USB",
     "version": "Versión",
     "platform": "Plataforma",
     "arch": "Arquitectura",
@@ -236,10 +236,10 @@
     "devices": "Dispositivos",
     "allowSystemDevices": "Permitir unidades del sistema",
     "allowSystemDevicesDescription": "Arriesgado: puedes sobrescribir el sistema operativo en uso.",
-    "armbian": {
-      "title": "Armbian",
+    "Forge": {
+      "title": "Forge",
       "label": "Detectar placa automáticamente",
-      "description": "Identificar automáticamente la placa de este dispositivo cuando se ejecuta en Armbian",
+      "description": "Identificar automáticamente la placa de este dispositivo cuando se ejecuta en Forge",
       "mode_disabled": "Desactivado",
       "mode_modal": "Interactivo",
       "mode_auto": "Silencioso"
@@ -269,7 +269,7 @@
     "autoconfig": {
       "tab": "Perfiles",
       "title": "Perfiles de autoconfiguración",
-      "description": "Preconfigura el primer arranque de Armbian. Un perfil solo se aplica cuando lo seleccionas antes de grabar.",
+      "description": "Preconfigura el primer arranque de Forge. Un perfil solo se aplica cuando lo seleccionas antes de grabar.",
       "newProfile": "Nuevo perfil",
       "emptyTitle": "Aún no hay perfiles",
       "emptyHint": "Crea un perfil para preconfigurar la red, el idioma y las cuentas en el primer arranque.",
@@ -291,7 +291,7 @@
       "groupLocalization": "Localización",
       "groupRoot": "Cuenta root",
       "groupUser": "Primer usuario",
-      "userHint": "Deja el nombre de usuario vacío y Armbian te pedirá igualmente que crees un usuario en el primer arranque.",
+      "userHint": "Deja el nombre de usuario vacío y Forge te pedirá igualmente que crees un usuario en el primer arranque.",
       "groupAdvanced": "Avanzado",
       "applyNetwork": "Configurar red",
       "ethernetEnabled": "Activar Ethernet",

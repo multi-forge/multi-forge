@@ -7,7 +7,7 @@ import { getForceOffline } from './useSettings';
 import { POLLING, EVENTS } from '../config';
 
 interface ConnectivityState {
-  /** Whether the app can reach the Armbian API */
+  /** Whether the app can reach the Forge API */
   isOnline: boolean;
 }
 

@@ -1,6 +1,6 @@
 # Development Guide
 
-Complete guide for setting up, building, and contributing to Armbian Imager.
+Complete guide for setting up, building, and contributing to Forge Imager.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ Complete guide for setting up, building, and contributing to Armbian Imager.
 ## Quick Start
 
 ```bash
-git clone https://github.com/armbian/imager.git && cd imager
+git clone https://github.com/multi-forge/multi-forge.git && cd imager
 bash scripts/setup/install.sh
 npm install
 npm run tauri:dev
@@ -52,7 +52,7 @@ npm run tauri:dev
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/armbian/imager.git
+git clone https://github.com/multi-forge/multi-forge.git
 cd imager
 ```
 
@@ -142,7 +142,7 @@ npm run tauri:build                  # Current platform
 ## Project Structure
 
 ```
-armbian-imager/
+forge-imager/
 ├── src/                              # React 19 Frontend
 │   ├── App.tsx                       # Main app + selection state machine
 │   ├── main.tsx                      # Entry point (i18n, theme, mount)
@@ -159,7 +159,7 @@ armbian-imager/
 │   │   │   ├── BoardModal.tsx        # Step 2: Board selection (image grid)
 │   │   │   ├── ImageModal.tsx        # Step 3: OS image selection (filters)
 │   │   │   ├── DeviceModal.tsx       # Step 4: Device selection (polling)
-│   │   │   └── ArmbianBoardModal.tsx # Auto-detect when running on Armbian
+│   │   │   └── ForgeBoardModal.tsx # Auto-detect when running on Forge
 │   │   ├── settings/                 # 5-tab settings modal
 │   │   │   ├── SettingsModal.tsx     # Container with sidebar navigation
 │   │   │   ├── AppearanceSection.tsx # Theme + language
@@ -168,7 +168,7 @@ armbian-imager/
 │   │   │   ├── DeveloperSection.tsx  # Dev mode + logs viewer
 │   │   │   ├── AboutSection.tsx      # Version, credits, links
 │   │   │   ├── CacheManagerModal.tsx # Cached images browser with delete
-│   │   │   └── LogsModal.tsx         # Log viewer + paste.armbian.com upload
+│   │   │   └── LogsModal.tsx         # Log viewer + paste.forge.dev upload
 │   │   ├── layout/
 │   │   │   ├── Header.tsx            # App header with step indicators
 │   │   │   └── HomePage.tsx          # Main selection buttons / flash view
@@ -177,7 +177,7 @@ armbian-imager/
 │   │       ├── ConfirmationDialog.tsx# Data loss / unstable image warnings
 │   │       ├── ErrorDisplay.tsx      # Error with retry + log upload
 │   │       ├── MarqueeText.tsx       # Scrolling overflow text
-│   │       ├── MotdTip.tsx           # Rotating tips from Armbian API
+│   │       ├── MotdTip.tsx           # Rotating tips from Forge API
 │   │       ├── SearchBox.tsx         # Filter input for modals
 │   │       ├── SkeletonCard.tsx      # Placeholder loaders
 │   │       ├── Toast.tsx             # Success/error notifications
@@ -216,10 +216,10 @@ armbian-imager/
 │   │   └── responsive.css           # Breakpoints (600-1400px)
 │   │
 │   ├── types/index.ts               # BoardInfo, ImageInfo, BlockDevice, etc.
-│   ├── utils/index.ts               # formatFileSize, parseArmbianFilename, etc.
+│   ├── utils/index.ts               # formatFileSize, parseForgeFilename, etc.
 │   ├── utils/deviceUtils.ts         # isDeviceConnected, getDeviceType
 │   ├── locales/                     # 18 language JSON files
-│   └── assets/                      # Logos (Armbian, OS distros)
+│   └── assets/                      # Logos (Forge, OS distros)
 │
 ├── src-tauri/                        # Rust Backend (Tauri 2)
 │   ├── src/
@@ -235,7 +235,7 @@ armbian-imager/
 │   │   │   ├── custom_image.rs      # select, decompress, detect board from filename
 │   │   │   ├── scraping.rs          # get_cached_board_image, get_cached_vendor_logo
 │   │   │   ├── settings.rs          # 25+ get/set commands (theme, cache, etc.)
-│   │   │   ├── system.rs            # open_url, locale, frontend logging, armbian detect
+│   │   │   ├── system.rs            # open_url, locale, frontend logging, Forge detect
 │   │   │   ├── update.rs            # get_github_release, is_app_in_applications
 │   │   │   └── state.rs             # AppState (cached JSON, download/flash state)
 │   │   │
@@ -261,10 +261,10 @@ armbian-imager/
 │   │   │   └── filters.rs           # Board/image extraction and filtering
 │   │   │
 │   │   ├── logging/mod.rs           # Structured logging (file + console + colors)
-│   │   ├── paste/upload.rs          # Log upload to paste.armbian.com
+│   │   ├── paste/upload.rs          # Log upload to paste.forge.dev
 │   │   ├── config/mod.rs            # All constants (URLs, buffers, timeouts, etc.)
 │   │   └── utils/
-│   │       ├── format.rs            # parse_armbian_filename, normalize_slug, format_size
+│   │       ├── format.rs            # parse_Forge_filename, normalize_slug, format_size
 │   │       ├── path.rs              # validate_cache_path, get_cache_dir
 │   │       ├── progress.rs          # ProgressTracker with throttled logging
 │   │       └── system.rs            # CPU count, recommended threads
@@ -357,7 +357,7 @@ All platforms: quick erase (64MB zeros) before flashing, `fsync` after write, sh
 
 1. **Cache check** - Return cached image immediately if available (LRU, default 20GB)
 2. **Download** - HTTP streaming to `.downloading` temp file with progress tracking
-3. **Mirror logging** - Logs final URL after redirect from `dl.armbian.com` (debug mode)
+3. **Mirror logging** - Logs final URL after redirect from `dl.forge.dev` (debug mode)
 4. **SHA256 verification** - Compare compressed file hash; special `[SHA_UNAVAILABLE]` handling lets user continue without SHA
 5. **Decompression** - XZ (multi-threaded via lzma-rust2 with liblzma fallback), GZ, BZ2, ZST
 6. **Failure tracking** - Auto-deletes cached image after 3 consecutive flash failures
@@ -423,12 +423,12 @@ All platforms: quick erase (64MB zeros) before flashing, `fsync` after write, sh
 
 | Data | Source |
 |------|--------|
-| Board List & Images | [github.armbian.com/armbian-images.json](https://github.armbian.com/armbian-images.json) |
-| Board Photos | [cache.armbian.com/images/272/{slug}.png](https://cache.armbian.com/images/) |
-| Vendor Logos | [cache.armbian.com/images/vendors/150/{vendor}.png](https://cache.armbian.com/images/vendors/150/) |
-| MOTD Tips | [github.com/armbian/os/main/motd.json](https://raw.githubusercontent.com/armbian/os/main/motd.json) |
-| Log Upload | [paste.armbian.com](https://paste.armbian.com) |
-| App Updates | [GitHub Releases](https://github.com/armbian/imager/releases/latest/download/latest.json) |
+| Board List & Images | [github.com/multi-forge/multi-forge/Forge-images.json](https://github.com/multi-forge/multi-forge/Forge-images.json) |
+| Board Photos | [cache.forge.dev/images/272/{slug}.png](https://cache.forge.dev/images/) |
+| Vendor Logos | [cache.forge.dev/images/vendors/150/{vendor}.png](https://cache.forge.dev/images/vendors/150/) |
+| MOTD Tips | [github.com/Forge/os/main/motd.json](https://raw.githubusercontent.com/Forge/os/main/motd.json) |
+| Log Upload | [paste.forge.dev](https://paste.forge.dev) |
+| App Updates | [GitHub Releases](https://github.com/multi-forge/multi-forge/releases/latest/download/latest.json) |
 
 ---
 
@@ -476,8 +476,8 @@ PRs are validated automatically via GitHub Actions:
 
 ### Getting Help
 
-1. Search [GitHub Issues](https://github.com/armbian/imager/issues)
-2. Check [Armbian Forum](https://forum.armbian.com)
+1. Search [GitHub Issues](https://github.com/multi-forge/multi-forge/issues)
+2. Check [Forge Community](https://github.com/multi-forge/multi-forge/discussions)
 3. Create issue with: OS version, `node --version`, `rustc --version`, full error log
 
 ---
@@ -510,4 +510,4 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md).
 - [Tauri](https://tauri.app/) — Framework
 - [i18next](https://www.i18next.com/) — Internationalization
 - [Lucide](https://lucide.dev/) — Icons
-- [Armbian Community](https://forum.armbian.com) — SBC support
+- [Forge Community](https://github.com/multi-forge/multi-forge/discussions) — SBC support

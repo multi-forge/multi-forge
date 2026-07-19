@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
-import type { BoardInfo, ImageInfo, BlockDevice, DownloadProgress, FlashProgress, CustomImageInfo, CustomImageClassification, ArmbianReleaseInfo, CachedImageInfo, CacheBreakdown, QdlDevice, VendorInfo, AutoconfigConfig } from '../types';
+import type { BoardInfo, ImageInfo, BlockDevice, DownloadProgress, FlashProgress, CustomImageInfo, CustomImageClassification, ForgeReleaseInfo, CachedImageInfo, CacheBreakdown, QdlDevice, VendorInfo, AutoconfigConfig } from '../types';
 
 export async function getBoards(): Promise<BoardInfo[]> {
   return invoke('get_boards');
@@ -41,7 +41,7 @@ export async function getDownloadProgress(): Promise<DownloadProgress> {
   return invoke('get_download_progress');
 }
 
-/** Flash an image to a device. With `autoconfig`, the Armbian first-boot file is written
+/** Flash an image to a device. With `autoconfig`, the Forge first-boot file is written
  * into the image; omitting it keeps default behaviour. */
 export async function flashImage(
   imagePath: string,
@@ -83,7 +83,7 @@ export async function deleteDecompressedCustomImage(imagePath: string): Promise<
   return invoke('delete_decompressed_custom_image', { imagePath });
 }
 
-/** Detect board info from an Armbian image filename, or null if no match */
+/** Detect board info from an Forge image filename, or null if no match */
 export async function detectBoardFromFilename(filename: string): Promise<BoardInfo | null> {
   return invoke('detect_board_from_filename', { filename });
 }
@@ -190,7 +190,7 @@ export async function deleteCachedImage(filename: string): Promise<number> {
 // Connectivity
 // ============================================================================
 
-/** Check reachability of the Armbian API (HEAD request, 5s timeout) */
+/** Check reachability of the Forge API (HEAD request, 5s timeout) */
 export async function checkConnectivity(): Promise<boolean> {
   return invoke('check_connectivity');
 }
@@ -210,12 +210,12 @@ export async function getCachedVendorLogo(vendorSlug: string): Promise<string | 
 }
 
 // ============================================================================
-// Armbian System Detection
+// Forge System Detection
 // ============================================================================
 
-/** Detect an Armbian host via /etc/armbian-release (Linux only); null otherwise */
-export async function getArmbianRelease(): Promise<ArmbianReleaseInfo | null> {
-  return invoke('get_armbian_release');
+/** Detect an Forge host via /etc/Forge-release (Linux only); null otherwise */
+export async function getForgeRelease(): Promise<ForgeReleaseInfo | null> {
+  return invoke('get_Forge_release');
 }
 
 // === QDL (Qualcomm EDL) operations ===

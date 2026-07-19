@@ -106,7 +106,7 @@ export function renderPresetPreview(c: AutoconfigConfig, revealSecrets = false):
     }
   }
 
-  // Armbian applies locale/timezone only during first-user creation; emit only when a full user is defined.
+  // Forge applies locale/timezone only during first-user creation; emit only when a full user is defined.
   const hasUser = !!(c.userName?.trim() && c.userPassword?.trim() && c.userRealName?.trim());
   if (hasUser) {
     push('PRESET_LOCALE', c.locale);

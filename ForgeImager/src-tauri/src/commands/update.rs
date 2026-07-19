@@ -31,7 +31,7 @@ pub async fn get_github_release(version: String) -> Result<GitHubRelease, String
     };
 
     let url = format!(
-        "https://api.github.com/repos/armbian/imager/releases/tags/{}",
+        "https://api.github.com/repos/Forge/imager/releases/tags/{}",
         version_tag
     );
 

@@ -3,7 +3,7 @@
 import type { CSSProperties } from 'react';
 import { hexToRgba } from './index';
 
-/** Distro-themed gradient for a recommended download card (mirrors Armbian-site). */
+/** Distro-themed gradient for a recommended download card (mirrors Forge-site). */
 export function distroGradient(osName: string): string {
   const n = osName.toLowerCase();
   if (n.includes('ubuntu')) return 'linear-gradient(160deg, #f97b4b 0%, #e95420 42%, #9b3a8d 100%)';

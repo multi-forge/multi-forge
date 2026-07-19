@@ -1,4 +1,4 @@
-//! Types representing Armbian API responses, boards, images, and vendors.
+//! Types representing Forge API responses, boards, images, and vendors.
 
 use serde::{Deserialize, Serialize};
 
@@ -166,7 +166,7 @@ pub struct BoardQdlInfo {
 /// Processed image information for the UI
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ImageInfo {
-    /// Armbian release version (e.g., "24.02.0")
+    /// Forge release version (e.g., "24.02.0")
     pub release: String,
     pub distro_release: String,
     pub kernel_branch: String,
