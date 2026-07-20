@@ -84,7 +84,9 @@
 }
 
 .logo-symbol {
-  height: 42px;
+  height: 84px;
+  margin-top: -20px;
+  margin-bottom: -20px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -92,7 +94,9 @@
 }
 
 .logo-text {
-  height: 32px;
+  height: 60px;
+  margin-top: -10px;
+  margin-bottom: -10px;
   width: auto;
   display: block;
   object-fit: contain;
