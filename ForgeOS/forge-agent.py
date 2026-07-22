@@ -2,7 +2,7 @@
 """
 ForgeOS Agent & First Boot Provisioning Daemon
 Implements Obsidian Blueprint Architecture goals for BTV E10 (Amlogic S905X2).
-Includes automatic port cleanup, command fallbacks, and error recovery.
+Features dual QR code onboarding (Wi-Fi AP Pair + Captive Portal URL) for HDMI & Headless modes.
 """
 import os
 import sys
@@ -52,7 +52,7 @@ def start_captive_portal():
     
     kill_stale_port_processes()
 
-    # 1. Try hostapd & dnsmasq AP setup
+    # 1. Generate hostapd & dnsmasq config
     hostapd_conf = """interface=wlan0
 driver=nl80211
 ssid=ForgeOS-Setup-btve10
@@ -83,15 +83,24 @@ address=/#/192.168.4.1
     run_cmd_safe(['iptables', '-t', 'nat', '-A', 'PREROUTING', '-i', 'wlan0', '-p', 'tcp', '--dport', '80', '-j', 'DNAT', '--to-destination', '192.168.4.1:80'])
     run_cmd_safe(['iptables', '-A', 'FORWARD', '-i', 'wlan0', '-p', 'tcp', '--dport', '80', '-j', 'ACCEPT'])
 
-    # 3. Check HDMI status & render QR code fallback for headless mode
+    # 3. Check HDMI status & render dual QR Code setup screen
     hdmi = get_hdmi_status()
     print(f'[FORGE-AGENT] HDMI Status: {hdmi}')
-    if hdmi == 'disconnected':
-        print('[FORGE-AGENT] Headless Mode (No HDMI). Rendering CLI QR pairing code on TTY1...')
-        run_cmd_safe('qrencode -t UTF8 "http://192.168.4.1" > /dev/tty1 2>/dev/null', shell=True)
-        run_cmd_safe('echo "\nSSID: ForgeOS-Setup-btve10 | Pass: forgeos123 | Setup: http://192.168.4.1" > /dev/tty1 2>/dev/null', shell=True)
 
-    # 4. Launch Captive Portal HTTP Server without timeout
+    wifi_qr_payload = "WIFI:S:ForgeOS-Setup-btve10;T:WPA;P:forgeos123;;"
+    url_qr_payload = "http://192.168.4.1"
+
+    if hdmi == 'connected':
+        print('[FORGE-AGENT] HDMI Connected. Rendering Fullscreen Dual QR Code Kiosk on DRM/KMS Framebuffer...')
+        run_cmd_safe('python3 /usr/bin/forge-display-qr', shell=True)
+    else:
+        print('[FORGE-AGENT] Headless Mode (No HDMI). Rendering Dual ANSI QR Codes on TTY1 console...')
+        run_cmd_safe('echo "\n--- 1. CONECTAR NA WI-FI ---" > /dev/tty1', shell=True)
+        run_cmd_safe(f'qrencode -t UTF8 "{wifi_qr_payload}" > /dev/tty1 2>/dev/null', shell=True)
+        run_cmd_safe('echo "\n--- 2. ABRIR PORTAL CAPTIVO ---" > /dev/tty1', shell=True)
+        run_cmd_safe(f'qrencode -t UTF8 "{url_qr_payload}" > /dev/tty1 2>/dev/null', shell=True)
+
+    # 4. Launch Captive Portal HTTP Server
     print('[FORGE-AGENT] Starting Captive Portal Web Server...')
     run_cmd_safe(['python3', '/opt/forgeos/captive-portal/server.py', '80'], timeout=None)
 

@@ -2,7 +2,7 @@
 """
 ForgeOS Captive Portal & Provisioning Backend
 Adapted WiFiProvisioner & Dev Telemetry Server for BTV E10 (Amlogic S905X2).
-Includes socket reuse and robust port fallback handling.
+Includes socket reuse, fallback ports, and dynamic SVG QR Code endpoint.
 """
 import http.server
 import socketserver
@@ -48,6 +48,21 @@ class CaptivePortalHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(status_data).encode('utf-8'))
             return
 
+        if path == '/api/qrcode':
+            try:
+                res = subprocess.run(['qrencode', '-t', 'SVG', 'http://192.168.4.1'], capture_output=True, text=True, timeout=5)
+                if res.returncode == 0:
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'image/svg+xml')
+                    self.end_headers()
+                    self.wfile.write(res.stdout.encode('utf-8'))
+                    return
+            except Exception as e:
+                print(f"[FORGEOS ERROR] SVG QR generation error: {e}")
+            
+            self.send_error(500, "Failed to generate QR Code")
+            return
+
         if path == '/api/wifi/scan':
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
@@ -86,7 +101,6 @@ class CaptivePortalHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"networks": networks}).encode('utf-8'))
             return
 
-        # Redirect any canary request to captive portal
         if not path.startswith('/api') and not (STATIC_DIR / path.lstrip('/')).exists():
             self.send_response(302)
             self.send_header('Location', f'http://192.168.4.1:{PORT}/')
@@ -111,13 +125,11 @@ class CaptivePortalHandler(http.server.SimpleHTTPRequestHandler):
                 if os.name == 'posix':
                     forge_boot.mkdir(parents=True, exist_ok=True)
                     
-                    # 1. Write network.yaml
                     with open(forge_boot / 'network.yaml', 'w', encoding='utf-8') as f:
                         f.write(f"ssid: '{config.get('wifiSSID', '')}'\n")
                         f.write(f"passphrase: '{config.get('wifiPass', '')}'\n")
                         f.write(f"dhcp: {str(config.get('dhcp', True)).lower()}\n")
 
-                    # 2. Write mina.yaml
                     with open(forge_boot / 'mina.yaml', 'w', encoding='utf-8') as f:
                         f.write(f"api_provider: '{provider}'\n")
                         f.write(f"api_base_url: '{base_url}'\n")
@@ -142,7 +154,6 @@ def main():
     requested_port = int(sys.argv[1]) if len(sys.argv) > 1 else PORT
     fallback_ports = [requested_port, 80, 8080, 8081, 8888]
     
-    # Try requested port and fallback ports with socket reuse
     for port in fallback_ports:
         try:
             with ReusableTCPServer(("", port), CaptivePortalHandler) as httpd:
@@ -152,7 +163,7 @@ def main():
         except OSError as e:
             print(f"[FORGEOS WARNING] Port {port} unavailable ({e}). Trying fallback port...")
     else:
-        print("[FORGEOS ERROR] All fallback ports unavailable. Captive Portal failed to start.")
+        print("[FORGEOS ERROR] All fallback ports unavailable.")
 
 if __name__ == '__main__':
     main()
