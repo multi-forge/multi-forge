@@ -2,6 +2,7 @@
 """
 ForgeOS Captive Portal & Provisioning Backend
 Adapted WiFiProvisioner & Dev Telemetry Server for BTV E10 (Amlogic S905X2).
+Includes socket reuse and robust port fallback handling.
 """
 import http.server
 import socketserver
@@ -18,6 +19,9 @@ API_BASE_URLS = {
     "groq": "https://api.groq.com/openai/v1",
     "cerebras": "https://api.cerebras.ai/v1"
 }
+
+class ReusableTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
 
 class CaptivePortalHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -49,7 +53,6 @@ class CaptivePortalHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             
-            # Scan real networks via nmcli on Linux if available
             networks = []
             if os.name == 'posix':
                 try:
@@ -60,7 +63,7 @@ class CaptivePortalHandler(http.server.SimpleHTTPRequestHandler):
                         parts = line.split(':')
                         if len(parts) >= 2 and parts[0] and parts[0] not in seen:
                             seen.add(parts[0])
-                            sig = int(parts[1]) if parts[0].isdigit() else 70
+                            sig = int(parts[1]) if parts[1].isdigit() else 70
                             rssi = -100 + (sig // 2)
                             sec = parts[2] if len(parts) > 2 and parts[2] else 'WPA2'
                             networks.append({
@@ -99,12 +102,11 @@ class CaptivePortalHandler(http.server.SimpleHTTPRequestHandler):
             
             try:
                 config = json.loads(post_data.decode('utf-8'))
-                print(f"[FORGEOS PROVISION] Config: {config}")
+                print(f"[FORGEOS PROVISION] Config received: {config}")
 
                 provider = config.get('apiProvider', 'groq')
                 base_url = API_BASE_URLS.get(provider, API_BASE_URLS['groq'])
 
-                # Save configs on Linux
                 forge_boot = Path('/boot/forge')
                 if os.name == 'posix':
                     forge_boot.mkdir(parents=True, exist_ok=True)
@@ -137,13 +139,20 @@ class CaptivePortalHandler(http.server.SimpleHTTPRequestHandler):
         self.send_error(404, "Endpoint Not Found")
 
 def main():
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else PORT
-    with socketserver.TCPServer(("", port), CaptivePortalHandler) as httpd:
-        print(f"[FORGEOS] WiFiProvisioner Server running at http://0.0.0.0:{port}/")
+    requested_port = int(sys.argv[1]) if len(sys.argv) > 1 else PORT
+    fallback_ports = [requested_port, 80, 8080, 8081, 8888]
+    
+    # Try requested port and fallback ports with socket reuse
+    for port in fallback_ports:
         try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\nShutting down server.")
+            with ReusableTCPServer(("", port), CaptivePortalHandler) as httpd:
+                print(f"[FORGEOS] Captive Portal Server running at http://0.0.0.0:{port}/")
+                httpd.serve_forever()
+                break
+        except OSError as e:
+            print(f"[FORGEOS WARNING] Port {port} unavailable ({e}). Trying fallback port...")
+    else:
+        print("[FORGEOS ERROR] All fallback ports unavailable. Captive Portal failed to start.")
 
 if __name__ == '__main__':
     main()
