@@ -6,8 +6,19 @@ import aiohttp
 from src.utils.chat_bridge import ChatBridge
 from src.utils.tts_client import TTSClient
 
+try:
+    import pytest
+except ImportError:
+    class DummyMark:
+        def __getattr__(self, name):
+            return lambda func: func
+    class DummyPytest:
+        mark = DummyMark()
+    pytest = DummyPytest()
+
 # logging.basicConfig(level=logging.INFO)
 
+@pytest.mark.asyncio
 async def test_pipeline():
     GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
     if not GROQ_API_KEY:

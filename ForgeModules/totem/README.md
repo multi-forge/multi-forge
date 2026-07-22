@@ -27,6 +27,8 @@ Mina é uma assistente virtual de voz interativa e inteligente, construída para
 
 ```
 Mina-a-Assistente-Virtual/
+├── config/
+│   └── prompts.txt           # Prompt do sistema (Fallback)
 ├── models/                   # Modelos locais (Wake Word, parâmetros de voz e o classificador SVM MABI)
 ├── src/
 │   ├── display/              # Renderização e gerência da GUI (PyQt5)
@@ -35,13 +37,14 @@ Mina-a-Assistente-Virtual/
 │       ├── chat_bridge.py    # Gerenciador da conexão com LLMs / APICOMM
 │       ├── intent_classifier.py # Classificador de intenções local e offline (MABI)
 │       ├── stt_client.py     # Transcritor local (PortAudio + C bindings)
-│       └── tts_client.py     # Sintetizador local (edge-tts + miniaudio)
-│       ├── ntp_sync.py       # Sincronização de horário NTP com cache em SQLite
+│       ├── tts_client.py     # Sintetizador local (edge-tts + miniaudio)
+│       └── ntp_sync.py       # Sincronização de horário NTP com cache em SQLite
 ├── scripts/                  # Scripts de sincronização e utilitários
+│   ├── mabi_voice_interface.py # Script integrado de demonstração rápida acústica local MABI
+│   ├── mina_wakeword_daemon.py # Daemon de monitoramento de Wake Word
 │   └── unesp_scraper.py      # Coletor em segundo plano do portal UNESP Sorocaba
 ├── main_cli.py               # Launcher em modo Linha de Comando (Console)
 ├── main_gui.py               # Launcher em modo Interface Gráfica
-├── mabi_voice_interface.py   # Script integrado de demonstração rápida acústica local MABI
 └── requirements.txt          # Dependências do Python
 ```
 
@@ -76,7 +79,7 @@ cp .env.example .env
   ```
 * **Daemon do Wake Word (Monitoramento de Microfone em background):**
   ```bash
-  python mina_wakeword_daemon.py
+  python scripts/mina_wakeword_daemon.py
   ```
 
 ---

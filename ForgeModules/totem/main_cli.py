@@ -8,6 +8,9 @@ import argparse
 import json
 from typing import Optional
 
+# Ensure project root is in sys.path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from src.utils.config_manager import ConfigManager
 from src.utils.chat_bridge import ChatBridge
 from src.utils.tts_client import TTSClient
@@ -33,10 +36,19 @@ async def cli_loop():
     cfg = ConfigManager()
     
     # Parse options
-    parser = argparse.ArgumentParser(description="Mina - Assistente Virtual (Modo CLI)")
+    parser = argparse.ArgumentParser(description="Mina - Assistente Virtual (Modo CLI/GUI)")
     parser.add_argument("--no-tts", action="store_true", help="Desativar saída de voz (TTS)")
     parser.add_argument("--no-stt", action="store_true", help="Desativar entrada de microfone (STT)")
-    args = parser.parse_args()
+    parser.add_argument("-w", "--windowed", "--gui", action="store_true", help="Iniciar em modo janela (GUI)")
+    parser.add_argument("-f", "-F", "--fullscreen", action="store_true", help="Iniciar em modo tela cheia (GUI)")
+    parser.add_argument("-s", "--studio", action="store_true", help="Iniciar modo studio de layout")
+    parser.add_argument("-g", "-r", "--gravity", choices=["right", "left"], nargs="?", const="right", default=None, help="Rotação da GUI (right/left)")
+    args, unknown = parser.parse_known_args()
+
+    if args.windowed or args.fullscreen or args.studio or (args.gravity is not None):
+        import main_gui
+        main_gui.main()
+        return
 
     # Init chat bridge
     llm_opts = cfg.get_config("LLM_OPTIONS", {})
@@ -251,7 +263,24 @@ async def cli_loop():
     await chat_bridge.stop()
 
 
+GUI_FLAGS = ("-w", "--windowed", "-g", "--gui", "-f", "--fullscreen", "-s", "--studio", "-r", "--gravity")
+
+
+def _check_gui_launch_args():
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("-w", "--windowed", "--gui", action="store_true")
+    parser.add_argument("-f", "-F", "--fullscreen", action="store_true")
+    parser.add_argument("-s", "--studio", action="store_true")
+    parser.add_argument("-g", "-r", "--gravity", choices=["right", "left"], nargs="?", const="right", default=None)
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    return bool(args.windowed or args.fullscreen or args.studio or (args.gravity is not None))
+
+
 def main():
+    if _check_gui_launch_args():
+        import main_gui
+        main_gui.main()
+        return
     try:
         asyncio.run(cli_loop())
     except KeyboardInterrupt:

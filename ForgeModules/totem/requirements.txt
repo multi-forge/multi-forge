@@ -1,8 +1,8 @@
 # GUI dependencies for Xiaozhi AI Client (Mina Assistant)
 
 # Qt and GUI framework
-PyQt5==5.15.11
-qasync==0.27.1
+PyQt5>=5.15.0; sys_platform == "win32"
+qasync>=0.27.0
 
 # Utilities
 colorlog==6.9.0
