@@ -28,6 +28,10 @@ export function UpdateProvider({ children }: { children: ReactNode }) {
     hasCheckedRef.current = true;
 
     const run = async () => {
+      const isTauri = typeof window !== 'undefined' && Boolean((window as any).__TAURI_INTERNALS__);
+      if (!isTauri) {
+        return;
+      }
       // Honour the "notify about updates" setting; skip the check when disabled.
       const notify = await getShowUpdaterModal();
       if (!notify) {

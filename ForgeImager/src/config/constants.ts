@@ -73,7 +73,7 @@ export const SETTINGS = {
   },
   DEFAULTS: {
     THEME: 'auto',
-    LANGUAGE: 'en',
+    LANGUAGE: 'pt-BR',
     SHOW_MOTD: true,
     SHOW_WELCOME: true,
     SHOW_UPDATER_MODAL: true,

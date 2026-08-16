@@ -69,14 +69,19 @@ export function getSupportedLanguageCodes(): string[] {
   return SUPPORTED_LANGUAGES.map((lang) => lang.code);
 }
 
-/** Get the default language (English) */
+/** Get the default language (Portuguese - Brazil) */
 export function getDefaultLanguage(): string {
-  return 'en';
+  return 'pt-BR';
 }
 
-/** Extract the language code from a locale string (e.g. "en-US" -> "en") */
+/** Extract the language code from a locale string (e.g. "pt-BR" -> "pt-BR", "en-US" -> "en") */
 export function getLanguageFromLocale(locale: string): string {
-  const lang = locale.split('-')[0].toLowerCase();
+  const normalized = locale.replace('_', '-');
+  const lower = normalized.toLowerCase();
+  if (lower === 'pt-br' || lower === 'pt') {
+    return 'pt-BR';
+  }
+  const lang = normalized.split('-')[0].toLowerCase();
   return getSupportedLanguageCodes().includes(lang) ? lang : getDefaultLanguage();
 }
 

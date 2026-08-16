@@ -82,6 +82,14 @@ export function AboutSection() {
   // Load app, Tauri and system metadata in parallel; log-only on failure.
   useEffect(() => {
     const loadAppInfo = async () => {
+      const isTauri = typeof window !== 'undefined' && Boolean((window as any).__TAURI_INTERNALS__);
+      if (!isTauri) {
+        setAppVersion('2.0.0');
+        setTauriVersion('2.3.0');
+        setPlatform('Linux (ARM64)');
+        setArch('aarch64');
+        return;
+      }
       try {
         const [version, tauriVer, systemInfo] = await Promise.all([
           getVersion(),
@@ -101,6 +109,11 @@ export function AboutSection() {
 
   /** Opens an external URL in the user's default browser via the shell. */
   const openLink = (url: string) => {
+    const isTauri = typeof window !== 'undefined' && Boolean((window as any).__TAURI_INTERNALS__);
+    if (!isTauri) {
+      window.open(url, '_blank');
+      return;
+    }
     open(url);
   };
 

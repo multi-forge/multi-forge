@@ -1,7 +1,50 @@
 import { invoke } from '@tauri-apps/api/core';
 import type { BoardInfo, ImageInfo, BlockDevice, DownloadProgress, FlashProgress, CustomImageInfo, CustomImageClassification, ForgeReleaseInfo, CachedImageInfo, CacheBreakdown, QdlDevice, VendorInfo, AutoconfigConfig } from '../types';
 
+const isTauri = typeof window !== 'undefined' && Boolean((window as any).__TAURI_INTERNALS__);
+
 export async function getBoards(): Promise<BoardInfo[]> {
+  if (!isTauri) {
+    return [
+      {
+        slug: 'btv-e10',
+        name: 'BTV E10 (Amlogic S905X2 / G12A)',
+        vendor: 'btv',
+        vendor_name: 'BTV',
+        support_tier: 'platinum',
+        image_count: 2,
+        has_desktop: true,
+        promoted: true,
+        soc: 'Amlogic S905X2',
+        architecture: 'arm64',
+        summary: '2GB LPDDR4, 8GB eMMC, Realtek RTL8189FTV Wi-Fi AP 25MHz.',
+      },
+      {
+        slug: 'raspberry-pi-4',
+        name: 'Raspberry Pi 4 Model B',
+        vendor: 'raspberry-pi',
+        vendor_name: 'Raspberry Pi',
+        support_tier: 'platinum',
+        image_count: 2,
+        has_desktop: true,
+        promoted: true,
+        soc: 'BCM2711',
+        architecture: 'arm64',
+      },
+      {
+        slug: 'orangepi-5-plus',
+        name: 'Orange Pi 5 Plus',
+        vendor: 'orange-pi',
+        vendor_name: 'Orange Pi',
+        support_tier: 'platinum',
+        image_count: 2,
+        has_desktop: true,
+        promoted: true,
+        soc: 'RK3588',
+        architecture: 'arm64',
+      }
+    ];
+  }
   return invoke('get_boards');
 }
 
@@ -12,6 +55,44 @@ export async function getImagesForBoard(
   variantFilter?: string,
   stability?: string
 ): Promise<ImageInfo[]> {
+  if (!isTauri) {
+    return [
+      {
+        release: '24.2.1',
+        distro_release: 'bookworm',
+        kernel_branch: 'current',
+        kernel_version: '6.6.21',
+        image_variant: 'desktop',
+        preinstalled_application: 'totem-ai',
+        promoted: true,
+        file_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-armbian-btv-e10.img.xz',
+        direct_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-armbian-btv-e10.img.xz',
+        sha_url: null,
+        file_size: 891289600,
+        stability: 'stable',
+        format: 'sd',
+        companions: [],
+        display_variants: [],
+      },
+      {
+        release: '3.20.0',
+        distro_release: 'alpine',
+        kernel_branch: 'lts',
+        kernel_version: '6.6.21',
+        image_variant: 'minimal',
+        preinstalled_application: 'iot-gateway',
+        promoted: false,
+        file_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-alpine-btv-e10.img.xz',
+        direct_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-alpine-btv-e10.img.xz',
+        sha_url: null,
+        file_size: 115343360,
+        stability: 'stable',
+        format: 'sd',
+        companions: [],
+        display_variants: [],
+      }
+    ];
+  }
   return invoke('get_images_for_board', {
     boardSlug,
     preappFilter,
@@ -22,14 +103,42 @@ export async function getImagesForBoard(
 }
 
 export async function getVendors(): Promise<VendorInfo[]> {
+  if (!isTauri) {
+    return [
+      { slug: 'btv', name: 'BTV (Amlogic TV Boxes)' } as any,
+      { slug: 'raspberry-pi', name: 'Raspberry Pi Foundation' } as any,
+      { slug: 'orange-pi', name: 'Orange Pi' } as any
+    ];
+  }
   return invoke('get_vendors');
 }
 
 export async function getBlockDevices(): Promise<BlockDevice[]> {
+  if (!isTauri) {
+    return [
+      {
+        path: '/dev/mmcblk0',
+        name: 'SanDisk Ultra 32GB MicroSD',
+        size: 31914983424,
+        is_removable: true,
+        is_system: false,
+        mountpoints: ['/boot']
+      } as any,
+      {
+        path: '/dev/sdb',
+        name: 'Kingston DataTraveler 16GB USB 3.0',
+        size: 15998745600,
+        is_removable: true,
+        is_system: false,
+        mountpoints: []
+      } as any
+    ];
+  }
   return invoke('get_block_devices');
 }
 
 export async function requestWriteAuthorization(devicePath: string): Promise<boolean> {
+  if (!isTauri) return true;
   return invoke('request_write_authorization', { devicePath });
 }
 
@@ -122,10 +231,12 @@ export async function openUrl(url: string): Promise<void> {
 }
 
 export async function logInfo(module: string, message: string): Promise<void> {
+  if (!isTauri) return;
   return invoke('log_from_frontend', { module, message });
 }
 
 export async function logWarn(module: string, message: string): Promise<void> {
+  if (!isTauri) return;
   return invoke('log_warn_from_frontend', { module, message });
 }
 
@@ -139,26 +250,41 @@ export interface GitHubRelease {
 
 /** Fetch GitHub release info for a version tag (e.g. "1.0.0" or "v1.0.0") */
 export async function getGithubRelease(version: string): Promise<GitHubRelease> {
+  if (!isTauri) {
+    return {
+      tag_name: 'v2.0.0',
+      name: 'Forge Imager 2.0.0',
+      body: 'MultiForge Release',
+      html_url: 'https://github.com/multi-forge/multi-forge',
+      published_at: '2026-08-16',
+    };
+  }
   return invoke('get_github_release', { version });
 }
 
 /** Whether the app runs from /Applications (always true off macOS); gates an update warning */
 export async function isAppInApplications(): Promise<boolean> {
+  if (!isTauri) return true;
   return invoke('is_app_in_applications');
 }
 
 /** Get the real system platform and architecture */
 export async function getSystemInfo(): Promise<{ platform: string; arch: string }> {
+  if (!isTauri) {
+    return { platform: 'linux', arch: 'aarch64' };
+  }
   return invoke('get_system_info');
 }
 
 /** Get the Tauri framework version */
 export async function getTauriVersion(): Promise<string> {
+  if (!isTauri) return '2.3.0';
   return invoke('get_tauri_version');
 }
 
 /** Get the log file contents (last 10k lines if over 5MB); ANSI colors preserved */
 export async function getLogs(): Promise<string> {
+  if (!isTauri) return 'Running in browser debug mode';
   return invoke('get_logs');
 }
 
@@ -168,21 +294,25 @@ export async function getLogs(): Promise<string> {
 
 /** Get the cache size split into flashable images and assets (photos + API JSON) */
 export async function getCacheBreakdown(): Promise<CacheBreakdown> {
+  if (!isTauri) return { total_size: 0, image_size: 0, asset_size: 0 };
   return invoke('get_cache_breakdown');
 }
 
 /** Clear all cached images (irreversible) */
 export async function clearCache(): Promise<void> {
+  if (!isTauri) return;
   return invoke('clear_cache');
 }
 
 /** List cached images with metadata (filename, size, last used, parsed board) */
 export async function listCachedImages(): Promise<CachedImageInfo[]> {
+  if (!isTauri) return [];
   return invoke('list_cached_images');
 }
 
 /** Delete one cached image by filename, returning the new total cache size in bytes */
 export async function deleteCachedImage(filename: string): Promise<number> {
+  if (!isTauri) return 0;
   return invoke('delete_cached_image', { filename });
 }
 
@@ -192,6 +322,9 @@ export async function deleteCachedImage(filename: string): Promise<number> {
 
 /** Check reachability of the Forge API (HEAD request, 5s timeout) */
 export async function checkConnectivity(): Promise<boolean> {
+  if (!isTauri) {
+    return typeof navigator !== 'undefined' ? navigator.onLine : true;
+  }
   return invoke('check_connectivity');
 }
 
@@ -201,11 +334,13 @@ export async function checkConnectivity(): Promise<boolean> {
 
 /** Get a board image as a data URI from cache (downloads if needed), or null if unavailable */
 export async function getCachedBoardImage(boardSlug: string): Promise<string | null> {
+  if (!isTauri) return null;
   return invoke('get_cached_board_image', { boardSlug });
 }
 
 /** Get a vendor logo as a data URI from cache (downloads if needed), or null if unavailable */
 export async function getCachedVendorLogo(vendorSlug: string): Promise<string | null> {
+  if (!isTauri) return null;
   return invoke('get_cached_vendor_logo', { vendorSlug });
 }
 
@@ -215,6 +350,7 @@ export async function getCachedVendorLogo(vendorSlug: string): Promise<string | 
 
 /** Detect an Forge host via /etc/Forge-release (Linux only); null otherwise */
 export async function getForgeRelease(): Promise<ForgeReleaseInfo | null> {
+  if (!isTauri) return null;
   return invoke('get_forge_release');
 }
 
@@ -222,6 +358,7 @@ export async function getForgeRelease(): Promise<ForgeReleaseInfo | null> {
 
 /** Detect Qualcomm devices connected via USB in EDL (Emergency Download) mode */
 export async function getQdlDevices(): Promise<QdlDevice[]> {
+  if (!isTauri) return [];
   return invoke('get_qdl_devices');
 }
 

@@ -3,11 +3,42 @@
 import { load } from '@tauri-apps/plugin-store';
 import { CACHE, EVENTS, SETTINGS } from '../config';
 import type { AutoconfigProfile, AutoconfigProfilesChangedDetail } from '../types';
-let storeInstance: Awaited<ReturnType<typeof load>> | null = null;
-let storePromise: Promise<Awaited<ReturnType<typeof load>>> | null = null;
+const isTauri = typeof window !== 'undefined' && Boolean((window as any).__TAURI_INTERNALS__);
+
+class LocalStorageStore {
+  async get<T>(key: string): Promise<T | null> {
+    try {
+      const val = localStorage.getItem(`forge_setting_${key}`);
+      return val ? JSON.parse(val) : null;
+    } catch {
+      return null;
+    }
+  }
+  async set(key: string, value: any): Promise<void> {
+    try {
+      localStorage.setItem(`forge_setting_${key}`, JSON.stringify(value));
+    } catch {
+      // ignore
+    }
+  }
+  async save(): Promise<void> {}
+  async delete(key: string): Promise<void> {
+    try {
+      localStorage.removeItem(`forge_setting_${key}`);
+    } catch {
+      // ignore
+    }
+  }
+}
+
+const localFallbackStore = new LocalStorageStore();
 
 // Lazily load the store, caching the in-flight promise to avoid concurrent re-init
 async function getStore() {
+  if (!isTauri) {
+    return localFallbackStore as any;
+  }
+
   if (storeInstance) {
     return storeInstance;
   }
@@ -21,7 +52,8 @@ async function getStore() {
       })
       .catch(error => {
         storePromise = null;
-        throw new Error(`Failed to initialize settings store: ${error}`);
+        console.warn('Failed to init Tauri store, falling back to LocalStorage:', error);
+        return localFallbackStore as any;
       });
   }
 

@@ -1,27 +1,20 @@
-name: "Build ForgeImager (Cloud CI/CD)"
+name: Build ForgeImager (Cloud CI/CD)
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'ForgeImager/**'
       - '.github/workflows/build-forge-imager.yml'
-    tags:
-      - 'v*'
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-env:
-  CARGO_TERM_COLOR: always
-  NODE_VERSION: '22'
-  TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-  TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
 defaults:
   run:
     working-directory: ForgeImager
+
+env:
+  NODE_VERSION: '20'
 
 jobs:
   build-linux-arm64:
@@ -61,20 +54,6 @@ jobs:
 
       - name: Install Tauri CLI
         run: cargo install tauri-cli --version "^2" --locked
-
-      - name: Setup Signing Key for Bundling
-        shell: bash
-        run: |
-          if [ -z "${TAURI_SIGNING_PRIVATE_KEY}" ]; then
-            echo "Generating ephemeral signing key for artifact bundling..."
-            cargo tauri signer generate --password "" -w /tmp/temp_key
-            echo "TAURI_SIGNING_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
-            cat /tmp/temp_key >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-            echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD=" >> $GITHUB_ENV
-            PUBKEY=$(tail -n 1 /tmp/temp_key.pub)
-            sed -i 's|"pubkey": ".*"|"pubkey": "'"$PUBKEY"'"|' src-tauri/tauri.conf.json
-          fi
 
       - name: Build Tauri App (ARM64 AppImage & Deb)
         run: cargo tauri build --bundles deb,appimage
@@ -125,20 +104,6 @@ jobs:
       - name: Install Tauri CLI
         run: cargo install tauri-cli --version "^2" --locked
 
-      - name: Setup Signing Key for Bundling
-        shell: bash
-        run: |
-          if [ -z "${TAURI_SIGNING_PRIVATE_KEY}" ]; then
-            echo "Generating ephemeral signing key for artifact bundling..."
-            cargo tauri signer generate --password "" -w /tmp/temp_key
-            echo "TAURI_SIGNING_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
-            cat /tmp/temp_key >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-            echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD=" >> $GITHUB_ENV
-            PUBKEY=$(tail -n 1 /tmp/temp_key.pub)
-            sed -i 's|"pubkey": ".*"|"pubkey": "'"$PUBKEY"'"|' src-tauri/tauri.conf.json
-          fi
-
       - name: Build Tauri App (AppImage & Deb)
         run: cargo tauri build --bundles deb,appimage
 
@@ -174,20 +139,6 @@ jobs:
 
       - name: Install Tauri CLI
         run: cargo install tauri-cli --version "^2" --locked
-
-      - name: Setup Signing Key for Bundling
-        shell: bash
-        run: |
-          if [ -z "${TAURI_SIGNING_PRIVATE_KEY}" ]; then
-            echo "Generating ephemeral signing key for artifact bundling..."
-            cargo tauri signer generate --password "" -w "$RUNNER_TEMP/temp_key"
-            echo "TAURI_SIGNING_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
-            cat "$RUNNER_TEMP/temp_key" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-            echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD=" >> $GITHUB_ENV
-            PUBKEY=$(tail -n 1 "$RUNNER_TEMP/temp_key.pub")
-            sed -i 's|"pubkey": ".*"|"pubkey": "'"$PUBKEY"'"|' src-tauri/tauri.conf.json
-          fi
 
       - name: Build Tauri App (.exe & .msi)
         run: cargo tauri build --bundles msi,nsis

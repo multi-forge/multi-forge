@@ -35,6 +35,15 @@ export function AppearanceSection() {
   // Default to "auto" when no language is explicitly saved
   useEffect(() => {
     const checkAutoLanguage = async () => {
+      const isTauri = typeof window !== 'undefined' && Boolean((window as any).__TAURI_INTERNALS__);
+      if (!isTauri) {
+        const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('forge_setting_language') : null;
+        if (!saved) {
+          setCurrentLanguage('auto');
+        }
+        setInitialized(true);
+        return;
+      }
       try {
         const store = await load('settings.json', { autoSave: true, defaults: {} });
         const savedLanguage = await store.get<string>('language');
