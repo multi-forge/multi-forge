@@ -62,12 +62,18 @@ jobs:
       - name: Install Tauri CLI
         run: cargo install tauri-cli --version "^2" --locked
 
-      - name: Prepare Tauri Config (Handle Signing Key)
+      - name: Setup Signing Key for Bundling
         shell: bash
         run: |
           if [ -z "${TAURI_SIGNING_PRIVATE_KEY}" ]; then
-            echo "No TAURI_SIGNING_PRIVATE_KEY found; disabling pubkey requirement for development build."
-            sed -i '/"pubkey":/d' src-tauri/tauri.conf.json
+            echo "Generating ephemeral signing key for artifact bundling..."
+            cargo tauri signer generate --password "" -w /tmp/temp_key
+            echo "TAURI_SIGNING_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
+            cat /tmp/temp_key >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
+            echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD=" >> $GITHUB_ENV
+            PUBKEY=$(tail -n 1 /tmp/temp_key.pub)
+            sed -i 's|"pubkey": ".*"|"pubkey": "'"$PUBKEY"'"|' src-tauri/tauri.conf.json
           fi
 
       - name: Build Tauri App (ARM64 AppImage & Deb)
@@ -119,12 +125,18 @@ jobs:
       - name: Install Tauri CLI
         run: cargo install tauri-cli --version "^2" --locked
 
-      - name: Prepare Tauri Config (Handle Signing Key)
+      - name: Setup Signing Key for Bundling
         shell: bash
         run: |
           if [ -z "${TAURI_SIGNING_PRIVATE_KEY}" ]; then
-            echo "No TAURI_SIGNING_PRIVATE_KEY found; disabling pubkey requirement for development build."
-            sed -i '/"pubkey":/d' src-tauri/tauri.conf.json
+            echo "Generating ephemeral signing key for artifact bundling..."
+            cargo tauri signer generate --password "" -w /tmp/temp_key
+            echo "TAURI_SIGNING_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
+            cat /tmp/temp_key >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
+            echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD=" >> $GITHUB_ENV
+            PUBKEY=$(tail -n 1 /tmp/temp_key.pub)
+            sed -i 's|"pubkey": ".*"|"pubkey": "'"$PUBKEY"'"|' src-tauri/tauri.conf.json
           fi
 
       - name: Build Tauri App (AppImage & Deb)
@@ -163,12 +175,18 @@ jobs:
       - name: Install Tauri CLI
         run: cargo install tauri-cli --version "^2" --locked
 
-      - name: Prepare Tauri Config (Handle Signing Key)
+      - name: Setup Signing Key for Bundling
         shell: bash
         run: |
           if [ -z "${TAURI_SIGNING_PRIVATE_KEY}" ]; then
-            echo "No TAURI_SIGNING_PRIVATE_KEY found; disabling pubkey requirement for development build."
-            sed -i '/"pubkey":/d' src-tauri/tauri.conf.json
+            echo "Generating ephemeral signing key for artifact bundling..."
+            cargo tauri signer generate --password "" -w "$RUNNER_TEMP/temp_key"
+            echo "TAURI_SIGNING_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
+            cat "$RUNNER_TEMP/temp_key" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
+            echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD=" >> $GITHUB_ENV
+            PUBKEY=$(tail -n 1 "$RUNNER_TEMP/temp_key.pub")
+            sed -i 's|"pubkey": ".*"|"pubkey": "'"$PUBKEY"'"|' src-tauri/tauri.conf.json
           fi
 
       - name: Build Tauri App (.exe & .msi)
