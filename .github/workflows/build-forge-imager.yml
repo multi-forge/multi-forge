@@ -15,62 +15,15 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
+  TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+  TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
 defaults:
   run:
     working-directory: ForgeImager
 
 jobs:
-  build-linux-x64:
-    name: Build Linux x64
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libwebkit2gtk-4.1-dev \
-            libayatana-appindicator3-dev \
-            librsvg2-dev \
-            patchelf \
-            libssl-dev \
-            libgtk-3-dev \
-            squashfs-tools \
-            xdg-utils
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: ForgeImager/package-lock.json
-
-      - name: Setup Rust Toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install npm dependencies
-        run: npm ci
-
-      - name: Build frontend
-        run: npm run build
-
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli --version "^2" --locked
-
-      - name: Build Tauri App (AppImage & Deb)
-        run: cargo tauri build --bundles deb,appimage
-
-      - name: Upload Linux x64 Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: forge-imager-linux-x64
-          path: |
-            ForgeImager/src-tauri/target/release/bundle/deb/*.deb
-            ForgeImager/src-tauri/target/release/bundle/appimage/*.AppImage
-
   build-linux-arm64:
     name: Build Linux ARM64 (BTV E10 / SBCs)
     runs-on: ubuntu-24.04-arm
@@ -109,6 +62,14 @@ jobs:
       - name: Install Tauri CLI
         run: cargo install tauri-cli --version "^2" --locked
 
+      - name: Prepare Tauri Config (Handle Signing Key)
+        shell: bash
+        run: |
+          if [ -z "${TAURI_SIGNING_PRIVATE_KEY}" ]; then
+            echo "No TAURI_SIGNING_PRIVATE_KEY found; disabling pubkey requirement for development build."
+            sed -i '/"pubkey":/d' src-tauri/tauri.conf.json
+          fi
+
       - name: Build Tauri App (ARM64 AppImage & Deb)
         run: cargo tauri build --bundles deb,appimage
 
@@ -116,6 +77,63 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: forge-imager-linux-arm64
+          path: |
+            ForgeImager/src-tauri/target/release/bundle/deb/*.deb
+            ForgeImager/src-tauri/target/release/bundle/appimage/*.AppImage
+
+  build-linux-x64:
+    name: Build Linux x64
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libssl-dev \
+            libgtk-3-dev \
+            squashfs-tools \
+            xdg-utils
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ForgeImager/package-lock.json
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --version "^2" --locked
+
+      - name: Prepare Tauri Config (Handle Signing Key)
+        shell: bash
+        run: |
+          if [ -z "${TAURI_SIGNING_PRIVATE_KEY}" ]; then
+            echo "No TAURI_SIGNING_PRIVATE_KEY found; disabling pubkey requirement for development build."
+            sed -i '/"pubkey":/d' src-tauri/tauri.conf.json
+          fi
+
+      - name: Build Tauri App (AppImage & Deb)
+        run: cargo tauri build --bundles deb,appimage
+
+      - name: Upload Linux x64 Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-imager-linux-x64
           path: |
             ForgeImager/src-tauri/target/release/bundle/deb/*.deb
             ForgeImager/src-tauri/target/release/bundle/appimage/*.AppImage
@@ -144,6 +162,14 @@ jobs:
 
       - name: Install Tauri CLI
         run: cargo install tauri-cli --version "^2" --locked
+
+      - name: Prepare Tauri Config (Handle Signing Key)
+        shell: bash
+        run: |
+          if [ -z "${TAURI_SIGNING_PRIVATE_KEY}" ]; then
+            echo "No TAURI_SIGNING_PRIVATE_KEY found; disabling pubkey requirement for development build."
+            sed -i '/"pubkey":/d' src-tauri/tauri.conf.json
+          fi
 
       - name: Build Tauri App (.exe & .msi)
         run: cargo tauri build --bundles msi,nsis
