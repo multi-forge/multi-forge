@@ -5,7 +5,14 @@ import { CACHE, EVENTS, SETTINGS } from '../config';
 import type { AutoconfigProfile, AutoconfigProfilesChangedDetail } from '../types';
 const isTauri = typeof window !== 'undefined' && Boolean((window as any).__TAURI_INTERNALS__);
 
-class LocalStorageStore {
+interface MinimalStore {
+  get<T>(key: string): Promise<T | null>;
+  set(key: string, value: any): Promise<void>;
+  save(): Promise<void>;
+  delete(key: string): Promise<void>;
+}
+
+class LocalStorageStore implements MinimalStore {
   async get<T>(key: string): Promise<T | null> {
     try {
       const val = localStorage.getItem(`forge_setting_${key}`);
@@ -31,12 +38,15 @@ class LocalStorageStore {
   }
 }
 
-const localFallbackStore = new LocalStorageStore();
+const localFallbackStore: MinimalStore = new LocalStorageStore();
+
+let storeInstance: MinimalStore | null = null;
+let storePromise: Promise<MinimalStore> | null = null;
 
 // Lazily load the store, caching the in-flight promise to avoid concurrent re-init
-async function getStore() {
+async function getStore(): Promise<MinimalStore> {
   if (!isTauri) {
-    return localFallbackStore as any;
+    return localFallbackStore;
   }
 
   if (storeInstance) {
@@ -46,14 +56,14 @@ async function getStore() {
   if (!storePromise) {
     storePromise = load(SETTINGS.FILE, { autoSave: true, defaults: {} })
       .then(store => {
-        storeInstance = store;
+        storeInstance = store as unknown as MinimalStore;
         storePromise = null;
-        return store;
+        return storeInstance;
       })
       .catch(error => {
         storePromise = null;
         console.warn('Failed to init Tauri store, falling back to LocalStorage:', error);
-        return localFallbackStore as any;
+        return localFallbackStore;
       });
   }
 

@@ -294,7 +294,7 @@ export async function getLogs(): Promise<string> {
 
 /** Get the cache size split into flashable images and assets (photos + API JSON) */
 export async function getCacheBreakdown(): Promise<CacheBreakdown> {
-  if (!isTauri) return { total_size: 0, image_size: 0, asset_size: 0 };
+  if (!isTauri) return { images: 0, assets: 0, total: 0 };
   return invoke('get_cache_breakdown');
 }
 
