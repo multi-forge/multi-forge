@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MultiForge · Provisionamento</title>
+  <link rel="stylesheet" href="/static/css/pico.min.css">
+  <style>
+    :root { --mf-primary: #e8590c; }
+    body > main { max-width: 620px; }
+    .brand { display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem; }
+    .brand h1 { font-size: 1.35rem; margin: 0; }
+    .badge-status { font-size: .8rem; }
+    .ok    { --pico-background-color: #d3f9d8; color: #2b8a3e; }
+    .warn  { --pico-background-color: #fff3bf; color: #997a00; }
+    .err   { --pico-background-color: #ffe3e3; color: #c92a2a; }
+    article.mode-card { margin-top: 1rem; display: none; }
+    article.mode-card.active { display: block; }
+    .hint { font-size: .82rem; opacity: .75; margin: .4rem 0; }
+    .modules li span.tag { float: right; font-size: .72rem; opacity: .65; }
+    footer { text-align:center; font-size:.78rem; opacity:.6; margin-top:1.5rem; }
+    #spinner { visibility: hidden; }
+    #spinner.busy { visibility: visible; }
+    [aria-busy="true"] { cursor: progress; }
+  </style>
+</head>
+<body>
+<main class="container">
+  <div class="brand">
+    <h1>🛠️ MultiForge</h1>
+    <span id="status-badge" class="badge-status badge warn">verificando…</span>
+  </div>
+  <p class="hint">BTV E10 · ForgeOS Provisioner — conecte o dispositivo à sua rede Wi-Fi.</p>
+
+  <article aria-label="status">
+    <table>
+      <tbody>
+        <tr><td>Modo atual</td><td id="st-mode">—</td></tr>
+        <tr><td>Último provisionamento</td><td id="st-last">—</td></tr>
+      </tbody>
+    </table>
+    <button id="btn-reset" class="outline secondary small">Restaurar modo AP</button>
+    <span id="spinner" aria-busy="false"></span>
+  </article>
+
+  <form id="prov-form">
+    <fieldset>
+      <legend><code>forge.yaml</code> → Rede</legend>
+      <label for="mode-psk">
+        <input type="radio" name="netmode" id="mode-psk" value="psk" checked>
+        Rede doméstica (WPA/WPA2-PSK)
+      </label>
+      <label for="mode-eap">
+        <input type="radio" name="netmode" id="mode-eap" value="eap">
+        Corporativa / Eduroam (802.1X)
+      </label>
+    </fieldset>
+
+    <!-- PSK -->
+    <article class="mode-card active" id="card-psk">
+      <label>SSID
+        <input type="text" id="psk-ssid" placeholder="Nome da rede" autocomplete="off" required>
+      </label>
+      <label>Senha
+        <input type="password" id="psk-pass" placeholder="Senha WPA (mín. 8 caracteres)" minlength="8" required>
+      </label>
+    </article>
+
+    <!-- EAP -->
+    <article class="mode-card" id="card-eap">
+      <label>SSID
+        <input type="text" id="eap-ssid" placeholder="eduroam" value="eduroam" required>
+      </label>
+      <div class="grid">
+        <label>Método
+          <select id="eap-method">
+            <option value="PEAP">PEAP</option>
+            <option value="TTLS">TTLS</option>
+          </select>
+        </label>
+        <label>Fase 2
+          <select id="eap-phase2">
+            <option value="MSCHAPV2">MSCHAPv2</option>
+            <option value="PAP">PAP</option>
+          </select>
+        </label>
+      </div>
+      <label>Identidade
+        <input type="text" id="eap-identity" placeholder="usuario@dominio.edu.br" required>
+      </label>
+      <label>Senha
+        <input type="password" id="eap-password" required>
+      </label>
+      <details>
+        <summary>Opções avançadas</summary>
+        <label>Identidade anônima
+          <input type="text" id="eap-anon" placeholder="anonymous@dominio.edu.br">
+        </label>
+        <label>Domínio do certificado (suffix match)
+          <input type="text" id="eap-domain" placeholder="dominio.edu.br">
+        </label>
+      </details>
+    </article>
+
+    <p class="hint warn-box err" style="padding:.6rem;border-radius:.5rem">
+      ⚠️ Rádio único: durante o teste de conexão o portal sai do ar por até ~90 s.
+      Se falhar, o AP volta automaticamente.
+    </p>
+
+    <button type="submit" id="btn-go" class="primary">Conectar</button>
+  </form>
+
+  <article>
+    <h2>Módulos <small><span class="tag">Fase 2</span></small></h2>
+    <ul class="modules">
+      <li>Totem Assistant <span class="tag">em breve</span></li>
+      <li>Web Scraping / Edge AI <span class="tag">em breve</span></li>
+    </ul>
+  </article>
+
+  <footer>MultiForge · MIT License · http://192.168.4.1</footer>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let busy = false;
+
+document.querySelectorAll('input[name="netmode"]').forEach(r =>
+  r.addEventListener('change', () => {
+    $('card-psk').classList.toggle('active', $('mode-psk').checked);
+    $('card-eap').classList.toggle('active', $('mode-eap').checked);
+  }));
+
+function setBadge(cls, txt) {
+  const b = $('status-badge');
+  b.className = 'badge-status badge ' + cls;
+  b.textContent = txt;
+}
+function setBusy(b) { busy = b; $('spinner').setAttribute('aria-busy', b); }
+
+async function refreshStatus() {
+  if (busy) return;
+  try {
+    const r = await fetch('/api/status');
+    const j = await r.json();
+    $('st-mode').textContent = j.ap_active ? `AP (${j.ssid}) · portal ativo` : (j.client_ssid ? `Cliente: ${j.client_ssid} (${j.client_ip || '?'})` : '—');
+    $('st-last').textContent = j.last_result || '—';
+    if (j.provisioning) setBadge('warn', 'testando conexão…');
+    else if (j.client_connected) setBadge('ok', 'conectado');
+    else if (j.last_failed) setBadge('err', 'falhou · AP restaurado');
+    else setBadge('warn', 'modo provisionamento');
+  } catch (e) { /* box em modo cliente: portal fora */ }
+}
+
+$('prov-form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  if (busy) return;
+  const payload = $('mode-eap').checked ? {
+    mode: 'eap',
+    ssid: $('eap-ssid').value.trim(),
+    method: $('eap-method').value,
+    phase2: $('eap-phase2').value,
+    identity: $('eap-identity').value.trim(),
+    password: $('eap-password').value,
+    anonymous_identity: $('eap-anon').value.trim(),
+    domain: $('eap-domain').value.trim()
+  } : {
+    mode: 'psk',
+    ssid: $('psk-ssid').value.trim(),
+    password: $('psk-pass').value
+  };
+  if (!payload.ssid) return;
+  setBusy(true); setBadge('warn', 'enviando…');
+  try {
+    const r = await fetch('/api/provision', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const j = await r.json();
+    if (!r.ok || j.error) { setBadge('err', j.error || 'erro'); setBusy(false); return; }
+    setBadge('warn', 'testando conexão… aguarde ~90s');
+    pollResult();
+  } catch (e) {
+    setBadge('err', 'sem resposta do portal'); setBusy(false);
+  }
+});
+
+async function pollResult() {
+  for (let i = 0; i < 40; i++) {
+    try {
+      const r = await fetch('/api/status');
+      const j = await r.json();
+      if (!j.provisioning) {
+        setBusy(false);
+        if (j.client_connected && !j.ap_active) setBadge('ok', `conectado: ${j.client_ip}`);
+        else if (j.last_failed) setBadge('err', 'falha na conexão · AP restaurado');
+        refreshStatus(); return;
+      }
+    } catch (e) { /* AP derrubado durante teste: esperado */ }
+    await new Promise(res => setTimeout(res, 5000));
+  }
+  setBusy(false); setBadge('err', 'timeout'); refreshStatus();
+}
+
+$('btn-reset').addEventListener('click', async () => {
+  try { await fetch('/api/reset', {method:'POST'}); } catch(e) {}
+  setTimeout(refreshStatus, 3000);
+});
+
+refreshStatus();
+setInterval(refreshStatus, 8000);
+</script>
+</body>
+</html>

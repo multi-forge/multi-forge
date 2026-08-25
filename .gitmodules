@@ -1,9 +1,0 @@
-[submodule "mina"]
-	path = mina
-	url = https://github.com/alguemaiYT/Mina-a-Assistente-Virtual
-[submodule "scraping"]
-	path = scraping
-	url = https://github.com/alguemaiYT/Scraping4Hackathon
-[submodule "nonail"]
-	path = nonail
-	url = https://github.com/alguemaiYT/NoNail
