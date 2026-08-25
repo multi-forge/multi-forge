@@ -115,9 +115,12 @@ class Handler(BaseHTTPRequestHandler):
                     os.remove(os.path.join(STATE, f))
                 except OSError:
                     pass
-            subprocess.Popen(["bash", os.path.join(BASE, "bin", "start-ap.sh")],
-                             stdout=open("/var/log/forge-ap.log", "a"),
-                             stderr=subprocess.STDOUT)
+            if not status_payload()["ap_active"]:
+                # só derruba/religa o stack se o AP não estiver no ar
+                # (evita bounce do AP quando o reset vem do próprio portal)
+                subprocess.Popen(["bash", os.path.join(BASE, "bin", "start-ap.sh")],
+                                 stdout=open("/var/log/forge-ap.log", "a"),
+                                 stderr=subprocess.STDOUT)
             return self._send(200, {"ok": True})
 
         if self.path.split("?")[0] != "/api/provision":
