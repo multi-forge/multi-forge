@@ -47,3 +47,7 @@ temp/
 *.img
 *.iso
 *.xz
+
+## Graphify
+graphify-out/cache/
+graphify-out/cost.json

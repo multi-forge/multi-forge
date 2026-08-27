@@ -1,0 +1,2060 @@
+{
+  "ForgeImager/crates/forge-write-conf/Cargo.toml": {
+    "mtime": 1784747755.1537273,
+    "seen": 1787851076.834485,
+    "ast_hash": "43cc71073a10ca9c1dc2fb95e3115468",
+    "semantic_hash": "43cc71073a10ca9c1dc2fb95e3115468"
+  },
+  "ForgeImager/crates/forge-write-conf/src/detect.rs": {
+    "mtime": 1784747755.1537273,
+    "seen": 1787851076.834485,
+    "ast_hash": "d8fa06451f7ca5349a8aa890ecbf77bf",
+    "semantic_hash": "d8fa06451f7ca5349a8aa890ecbf77bf"
+  },
+  "ForgeImager/crates/forge-write-conf/src/lib.rs": {
+    "mtime": 1784747755.1548798,
+    "seen": 1787851076.834485,
+    "ast_hash": "cf30344cacdc42bd4f1912ce6d65f835",
+    "semantic_hash": "cf30344cacdc42bd4f1912ce6d65f835"
+  },
+  "ForgeImager/crates/forge-write-conf/src/validate.rs": {
+    "mtime": 1784747755.1548798,
+    "seen": 1787851076.834485,
+    "ast_hash": "7385db0f4994e3f7dc30454af8740738",
+    "semantic_hash": "7385db0f4994e3f7dc30454af8740738"
+  },
+  "ForgeImager/crates/forge-write-conf/tests/inject_real_image.rs": {
+    "mtime": 1784747755.1560874,
+    "seen": 1787851076.834485,
+    "ast_hash": "0b317ab2e386473a26a8aa9ca7fe6db5",
+    "semantic_hash": "0b317ab2e386473a26a8aa9ca7fe6db5"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/Cargo.toml": {
+    "mtime": 1784747755.1567526,
+    "seen": 1787851076.834485,
+    "ast_hash": "b75aea840216cae29e656cfcb7a1f971",
+    "semantic_hash": "b75aea840216cae29e656cfcb7a1f971"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/block.rs": {
+    "mtime": 1784747755.1589768,
+    "seen": 1787851076.834485,
+    "ast_hash": "73cab2c8715e6d37c134a022b4f435e9",
+    "semantic_hash": "73cab2c8715e6d37c134a022b4f435e9"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/block_group.rs": {
+    "mtime": 1784747755.160627,
+    "seen": 1787851076.834485,
+    "ast_hash": "bfb1e8d7540c5b3e18f5a8cecfdef5f7",
+    "semantic_hash": "bfb1e8d7540c5b3e18f5a8cecfdef5f7"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/consts.rs": {
+    "mtime": 1784747755.1617267,
+    "seen": 1787851076.834485,
+    "ast_hash": "7ac1a80a05fc972d05af691cb0b7a765",
+    "semantic_hash": "7ac1a80a05fc972d05af691cb0b7a765"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/direntry.rs": {
+    "mtime": 1784747755.1628313,
+    "seen": 1787851076.834485,
+    "ast_hash": "0bb7ac39d75cdb8017366f3a98f7e4e9",
+    "semantic_hash": "0bb7ac39d75cdb8017366f3a98f7e4e9"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/ext4.rs": {
+    "mtime": 1784747755.1628313,
+    "seen": 1787851076.834485,
+    "ast_hash": "332bd89a275a2ca56e9b51a521503a8e",
+    "semantic_hash": "332bd89a275a2ca56e9b51a521503a8e"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/extents.rs": {
+    "mtime": 1784747755.16384,
+    "seen": 1787851076.834485,
+    "ast_hash": "a65c1e56501bc15040e2aa2ed480611c",
+    "semantic_hash": "a65c1e56501bc15040e2aa2ed480611c"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/file.rs": {
+    "mtime": 1784747755.16384,
+    "seen": 1787851076.834485,
+    "ast_hash": "cd86be37a5b929100fb0cbed164b6a6c",
+    "semantic_hash": "cd86be37a5b929100fb0cbed164b6a6c"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/inode.rs": {
+    "mtime": 1784747755.1648376,
+    "seen": 1787851076.834485,
+    "ast_hash": "57aaacfabbb85c44e5a66416f2389930",
+    "semantic_hash": "57aaacfabbb85c44e5a66416f2389930"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/mod.rs": {
+    "mtime": 1784747755.1648376,
+    "seen": 1787851076.834485,
+    "ast_hash": "eca624a4cd0e6e7b1b5bf6442fd340a8",
+    "semantic_hash": "eca624a4cd0e6e7b1b5bf6442fd340a8"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/mount_point.rs": {
+    "mtime": 1784747755.1648376,
+    "seen": 1787851076.834485,
+    "ast_hash": "bfdeeaa078b144fde5ca34a90f0cc9ba",
+    "semantic_hash": "bfdeeaa078b144fde5ca34a90f0cc9ba"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_defs/super_block.rs": {
+    "mtime": 1784747755.1663425,
+    "seen": 1787851076.834485,
+    "ast_hash": "f6318d44e20b4468e98a9d955aa6d382",
+    "semantic_hash": "f6318d44e20b4468e98a9d955aa6d382"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_impls/balloc.rs": {
+    "mtime": 1784747755.1673493,
+    "seen": 1787851076.834485,
+    "ast_hash": "25ef845763f3347e20a356d9fcbae8af",
+    "semantic_hash": "25ef845763f3347e20a356d9fcbae8af"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_impls/dir.rs": {
+    "mtime": 1784747755.1673493,
+    "seen": 1787851076.834485,
+    "ast_hash": "7862d9057e7f9c1f08794b6e0bca06b5",
+    "semantic_hash": "7862d9057e7f9c1f08794b6e0bca06b5"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_impls/ext4.rs": {
+    "mtime": 1784747755.1687176,
+    "seen": 1787851076.834485,
+    "ast_hash": "4bf49faae5a4a8805e016ffea5dd4f69",
+    "semantic_hash": "4bf49faae5a4a8805e016ffea5dd4f69"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_impls/extents.rs": {
+    "mtime": 1784747755.1693714,
+    "seen": 1787851076.834485,
+    "ast_hash": "8c34e6cf15794132db75eb8f436edaca",
+    "semantic_hash": "8c34e6cf15794132db75eb8f436edaca"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_impls/file.rs": {
+    "mtime": 1784747755.170378,
+    "seen": 1787851076.834485,
+    "ast_hash": "c00e92fc0f8310da9859e7ead407b06d",
+    "semantic_hash": "c00e92fc0f8310da9859e7ead407b06d"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_impls/ialloc.rs": {
+    "mtime": 1784747755.1717546,
+    "seen": 1787851076.834485,
+    "ast_hash": "b00decde9e4b09607c4623cd921a0010",
+    "semantic_hash": "b00decde9e4b09607c4623cd921a0010"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_impls/inode.rs": {
+    "mtime": 1784747755.1724524,
+    "seen": 1787851076.834485,
+    "ast_hash": "f7366ea5e5c0067b1fd0a25ad41be39e",
+    "semantic_hash": "f7366ea5e5c0067b1fd0a25ad41be39e"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/ext4_impls/mod.rs": {
+    "mtime": 1784747755.1729615,
+    "seen": 1787851076.834485,
+    "ast_hash": "1909ab3a521c7fba0d19d9ddedee2875",
+    "semantic_hash": "1909ab3a521c7fba0d19d9ddedee2875"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/fuse_interface/mod.rs": {
+    "mtime": 1784747755.1741188,
+    "seen": 1787851076.834485,
+    "ast_hash": "340577fb88f8d99a16ea3b1f6d3fdd69",
+    "semantic_hash": "340577fb88f8d99a16ea3b1f6d3fdd69"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/lib.rs": {
+    "mtime": 1784747755.1754687,
+    "seen": 1787851076.834485,
+    "ast_hash": "fda6df646e6ede303013a08b6dcadfb8",
+    "semantic_hash": "fda6df646e6ede303013a08b6dcadfb8"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/prelude.rs": {
+    "mtime": 1784747755.176478,
+    "seen": 1787851076.834485,
+    "ast_hash": "372a071a1dd20f45dc1d6ebcd8e08592",
+    "semantic_hash": "372a071a1dd20f45dc1d6ebcd8e08592"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/simple_interface/mod.rs": {
+    "mtime": 1784747755.176478,
+    "seen": 1787851076.834485,
+    "ast_hash": "53d0c3b6c17d509e545efb8fecd527b2",
+    "semantic_hash": "53d0c3b6c17d509e545efb8fecd527b2"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/utils/bitmap.rs": {
+    "mtime": 1784747755.177523,
+    "seen": 1787851076.834485,
+    "ast_hash": "e24969de1ef272559b636b7b5028f66d",
+    "semantic_hash": "e24969de1ef272559b636b7b5028f66d"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/utils/crc.rs": {
+    "mtime": 1784747755.177523,
+    "seen": 1787851076.834485,
+    "ast_hash": "f20756d9a797adef4536085dcc5a10de",
+    "semantic_hash": "f20756d9a797adef4536085dcc5a10de"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/utils/errors.rs": {
+    "mtime": 1784747755.179031,
+    "seen": 1787851076.834485,
+    "ast_hash": "bdc2f0cba7507cc479c90fd0676ffa50",
+    "semantic_hash": "bdc2f0cba7507cc479c90fd0676ffa50"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/utils/mod.rs": {
+    "mtime": 1784747755.1796467,
+    "seen": 1787851076.834485,
+    "ast_hash": "73e2c51cc5dded4926c539a846a9cae9",
+    "semantic_hash": "73e2c51cc5dded4926c539a846a9cae9"
+  },
+  "ForgeImager/crates/forge-write-conf/vendor/forge-ext4fs/src/utils/path.rs": {
+    "mtime": 1784747755.1796467,
+    "seen": 1787851076.834485,
+    "ast_hash": "4745622121c555e31ae80bb8c67b25e3",
+    "semantic_hash": "4745622121c555e31ae80bb8c67b25e3"
+  },
+  "ForgeImager/eslint.config.js": {
+    "mtime": 1784747755.181041,
+    "seen": 1787851076.834485,
+    "ast_hash": "fbb95beff842076fcdecb7cf6dc2a7ea",
+    "semantic_hash": "fbb95beff842076fcdecb7cf6dc2a7ea"
+  },
+  "ForgeImager/package.json": {
+    "mtime": 1784747755.1835368,
+    "seen": 1787851076.834485,
+    "ast_hash": "6cf48c815e4e0aab509dc8a9b6cd80da",
+    "semantic_hash": "6cf48c815e4e0aab509dc8a9b6cd80da"
+  },
+  "ForgeImager/scripts/locales/sync-locales.js": {
+    "mtime": 1784747755.1940415,
+    "seen": 1787851076.834485,
+    "ast_hash": "17658a9e444da0670f28de219eb6e2ea",
+    "semantic_hash": "17658a9e444da0670f28de219eb6e2ea"
+  },
+  "ForgeImager/scripts/setup/install-linux.sh": {
+    "mtime": 1784747755.195041,
+    "seen": 1787851076.834485,
+    "ast_hash": "9d3892eba9913bb3f1dad9cdca4512e3",
+    "semantic_hash": "9d3892eba9913bb3f1dad9cdca4512e3"
+  },
+  "ForgeImager/scripts/setup/install-macos.sh": {
+    "mtime": 1784747755.195041,
+    "seen": 1787851076.834485,
+    "ast_hash": "e5829fcc92a090678568f65e78f36dc5",
+    "semantic_hash": "e5829fcc92a090678568f65e78f36dc5"
+  },
+  "ForgeImager/scripts/setup/install-windows.ps1": {
+    "mtime": 1784747755.1961079,
+    "seen": 1787851076.834485,
+    "ast_hash": "2f3d23199411144ba2d6b6c8628b219f",
+    "semantic_hash": "2f3d23199411144ba2d6b6c8628b219f"
+  },
+  "ForgeImager/scripts/setup/install.sh": {
+    "mtime": 1784747755.1961079,
+    "seen": 1787851076.834485,
+    "ast_hash": "72500a87015e5b03de41d00a01153208",
+    "semantic_hash": "72500a87015e5b03de41d00a01153208"
+  },
+  "ForgeImager/src-tauri/Cargo.toml": {
+    "mtime": 1784747755.19828,
+    "seen": 1787851076.834485,
+    "ast_hash": "201d57fd05072837b33495938b51be33",
+    "semantic_hash": "201d57fd05072837b33495938b51be33"
+  },
+  "ForgeImager/src-tauri/build.rs": {
+    "mtime": 1784747755.200313,
+    "seen": 1787851076.834485,
+    "ast_hash": "62991c82edb12c7983144619866862f7",
+    "semantic_hash": "62991c82edb12c7983144619866862f7"
+  },
+  "ForgeImager/src-tauri/capabilities/default.json": {
+    "mtime": 1784747755.200313,
+    "seen": 1787851076.834485,
+    "ast_hash": "ebc79d8173b02dd685a5452a0c43d875",
+    "semantic_hash": "ebc79d8173b02dd685a5452a0c43d875"
+  },
+  "ForgeImager/src-tauri/src/autoconfig.rs": {
+    "mtime": 1784747755.2401626,
+    "seen": 1787851076.834485,
+    "ast_hash": "660f0a3d216c5c5346ebcbfb4aea8f71",
+    "semantic_hash": "660f0a3d216c5c5346ebcbfb4aea8f71"
+  },
+  "ForgeImager/src-tauri/src/cache.rs": {
+    "mtime": 1784747755.2406762,
+    "seen": 1787851076.834485,
+    "ast_hash": "d8937d482febead4118a28ef502187a9",
+    "semantic_hash": "d8937d482febead4118a28ef502187a9"
+  },
+  "ForgeImager/src-tauri/src/commands/board_queries.rs": {
+    "mtime": 1784747755.241302,
+    "seen": 1787851076.834485,
+    "ast_hash": "0c88ed141a28a004974f59198ec1597a",
+    "semantic_hash": "0c88ed141a28a004974f59198ec1597a"
+  },
+  "ForgeImager/src-tauri/src/commands/custom_image.rs": {
+    "mtime": 1784747755.241302,
+    "seen": 1787851076.834485,
+    "ast_hash": "f1b991f367f6954b637c63935f3a51fb",
+    "semantic_hash": "f1b991f367f6954b637c63935f3a51fb"
+  },
+  "ForgeImager/src-tauri/src/commands/mod.rs": {
+    "mtime": 1784747755.2426543,
+    "seen": 1787851076.834485,
+    "ast_hash": "5d626ac4f5b94f6373e4aaf1f5a610cf",
+    "semantic_hash": "5d626ac4f5b94f6373e4aaf1f5a610cf"
+  },
+  "ForgeImager/src-tauri/src/commands/operations.rs": {
+    "mtime": 1784747755.2436602,
+    "seen": 1787851076.834485,
+    "ast_hash": "dcb5b7fe822d35ed4d9a3f014456fe3d",
+    "semantic_hash": "dcb5b7fe822d35ed4d9a3f014456fe3d"
+  },
+  "ForgeImager/src-tauri/src/commands/progress.rs": {
+    "mtime": 1784747755.2436602,
+    "seen": 1787851076.834485,
+    "ast_hash": "7ecf1b93d27ef878855d0ed10394c503",
+    "semantic_hash": "7ecf1b93d27ef878855d0ed10394c503"
+  },
+  "ForgeImager/src-tauri/src/commands/qdl_operations.rs": {
+    "mtime": 1784747755.2436602,
+    "seen": 1787851076.834485,
+    "ast_hash": "87a5afecaa010e9dbf62dce7f299e4bf",
+    "semantic_hash": "87a5afecaa010e9dbf62dce7f299e4bf"
+  },
+  "ForgeImager/src-tauri/src/commands/scraping.rs": {
+    "mtime": 1784747755.2449286,
+    "seen": 1787851076.834485,
+    "ast_hash": "bb985255ea14b554bdc4335add7b5948",
+    "semantic_hash": "bb985255ea14b554bdc4335add7b5948"
+  },
+  "ForgeImager/src-tauri/src/commands/settings.rs": {
+    "mtime": 1784747755.2449286,
+    "seen": 1787851076.834485,
+    "ast_hash": "827653fcc41a54b414084a76d7406388",
+    "semantic_hash": "827653fcc41a54b414084a76d7406388"
+  },
+  "ForgeImager/src-tauri/src/commands/state.rs": {
+    "mtime": 1784747755.246302,
+    "seen": 1787851076.834485,
+    "ast_hash": "634d531c505885cffcdcaef4b3434f2f",
+    "semantic_hash": "634d531c505885cffcdcaef4b3434f2f"
+  },
+  "ForgeImager/src-tauri/src/commands/system.rs": {
+    "mtime": 1784747755.246302,
+    "seen": 1787851076.834485,
+    "ast_hash": "440aa1d3c483728867fc1f3d4dfef5da",
+    "semantic_hash": "440aa1d3c483728867fc1f3d4dfef5da"
+  },
+  "ForgeImager/src-tauri/src/commands/update.rs": {
+    "mtime": 1784747755.246302,
+    "seen": 1787851076.834485,
+    "ast_hash": "60d3a7d47762351e7d85593709dceef9",
+    "semantic_hash": "60d3a7d47762351e7d85593709dceef9"
+  },
+  "ForgeImager/src-tauri/src/config/mod.rs": {
+    "mtime": 1784747755.2475924,
+    "seen": 1787851076.834485,
+    "ast_hash": "4231e786ed138b05588d96c1335db322",
+    "semantic_hash": "4231e786ed138b05588d96c1335db322"
+  },
+  "ForgeImager/src-tauri/src/decompress.rs": {
+    "mtime": 1784747755.2475924,
+    "seen": 1787851076.834485,
+    "ast_hash": "faa67208eef61b147cbd53d350f4d4ed",
+    "semantic_hash": "faa67208eef61b147cbd53d350f4d4ed"
+  },
+  "ForgeImager/src-tauri/src/devices/linux.rs": {
+    "mtime": 1784747755.2490315,
+    "seen": 1787851076.834485,
+    "ast_hash": "ac4724c26af7a439c92a91b70214e540",
+    "semantic_hash": "ac4724c26af7a439c92a91b70214e540"
+  },
+  "ForgeImager/src-tauri/src/devices/macos.rs": {
+    "mtime": 1784747755.2490315,
+    "seen": 1787851076.834485,
+    "ast_hash": "3afa593a785de8e008df97b5e53c3244",
+    "semantic_hash": "3afa593a785de8e008df97b5e53c3244"
+  },
+  "ForgeImager/src-tauri/src/devices/mod.rs": {
+    "mtime": 1784747755.2490315,
+    "seen": 1787851076.834485,
+    "ast_hash": "2704168ee42a0bb2be9e5098b6cd5055",
+    "semantic_hash": "2704168ee42a0bb2be9e5098b6cd5055"
+  },
+  "ForgeImager/src-tauri/src/devices/types.rs": {
+    "mtime": 1784747755.2503953,
+    "seen": 1787851076.834485,
+    "ast_hash": "cf221f201fee80406ce86558e39beec4",
+    "semantic_hash": "cf221f201fee80406ce86558e39beec4"
+  },
+  "ForgeImager/src-tauri/src/devices/windows.rs": {
+    "mtime": 1784747755.250915,
+    "seen": 1787851076.834485,
+    "ast_hash": "1dd69550914271bee657f41063ac57fd",
+    "semantic_hash": "1dd69550914271bee657f41063ac57fd"
+  },
+  "ForgeImager/src-tauri/src/download.rs": {
+    "mtime": 1784747755.2514918,
+    "seen": 1787851076.834485,
+    "ast_hash": "356fac9bf0735cc3c090a800794e8aba",
+    "semantic_hash": "356fac9bf0735cc3c090a800794e8aba"
+  },
+  "ForgeImager/src-tauri/src/flash/linux/mod.rs": {
+    "mtime": 1784747755.2524974,
+    "seen": 1787851076.834485,
+    "ast_hash": "ab6e602ff487f71ad3225a4a6c7dbfc5",
+    "semantic_hash": "ab6e602ff487f71ad3225a4a6c7dbfc5"
+  },
+  "ForgeImager/src-tauri/src/flash/linux/privileges.rs": {
+    "mtime": 1784747755.2524974,
+    "seen": 1787851076.834485,
+    "ast_hash": "f3fa6c7947686b2cc370c808e07659d0",
+    "semantic_hash": "f3fa6c7947686b2cc370c808e07659d0"
+  },
+  "ForgeImager/src-tauri/src/flash/linux/writer.rs": {
+    "mtime": 1784747755.2524974,
+    "seen": 1787851076.834485,
+    "ast_hash": "a3eb18c08c3192398231417f47fb54af",
+    "semantic_hash": "a3eb18c08c3192398231417f47fb54af"
+  },
+  "ForgeImager/src-tauri/src/flash/macos/authorization.rs": {
+    "mtime": 1784747755.2539687,
+    "seen": 1787851076.834485,
+    "ast_hash": "9dde4a4da38ef72dfc3b325815916adf",
+    "semantic_hash": "9dde4a4da38ef72dfc3b325815916adf"
+  },
+  "ForgeImager/src-tauri/src/flash/macos/bindings.rs": {
+    "mtime": 1784747755.2539687,
+    "seen": 1787851076.834485,
+    "ast_hash": "7445b61378e033c8f71d12c75c871ae7",
+    "semantic_hash": "7445b61378e033c8f71d12c75c871ae7"
+  },
+  "ForgeImager/src-tauri/src/flash/macos/mod.rs": {
+    "mtime": 1784747755.2549756,
+    "seen": 1787851076.834485,
+    "ast_hash": "ec9d552916a861db58b29783f18c3cde",
+    "semantic_hash": "ec9d552916a861db58b29783f18c3cde"
+  },
+  "ForgeImager/src-tauri/src/flash/macos/writer.rs": {
+    "mtime": 1784747755.2549756,
+    "seen": 1787851076.834485,
+    "ast_hash": "e10a550ea4dfe3c731245e3c9b44370e",
+    "semantic_hash": "e10a550ea4dfe3c731245e3c9b44370e"
+  },
+  "ForgeImager/src-tauri/src/flash/mod.rs": {
+    "mtime": 1784747755.2549756,
+    "seen": 1787851076.834485,
+    "ast_hash": "e5473a8c0d14c61b648e381fe9845690",
+    "semantic_hash": "e5473a8c0d14c61b648e381fe9845690"
+  },
+  "ForgeImager/src-tauri/src/flash/verify.rs": {
+    "mtime": 1784747755.256482,
+    "seen": 1787851076.834485,
+    "ast_hash": "4ace98dc33815a1bff374470b9d4d826",
+    "semantic_hash": "4ace98dc33815a1bff374470b9d4d826"
+  },
+  "ForgeImager/src-tauri/src/flash/windows.rs": {
+    "mtime": 1784747755.256482,
+    "seen": 1787851076.834485,
+    "ast_hash": "ecc6978302b6530e9e9099877a90f130",
+    "semantic_hash": "ecc6978302b6530e9e9099877a90f130"
+  },
+  "ForgeImager/src-tauri/src/images/filters.rs": {
+    "mtime": 1784747755.2575097,
+    "seen": 1787851076.834485,
+    "ast_hash": "0606ae334808a39ff7b6e4c39b8e81a6",
+    "semantic_hash": "0606ae334808a39ff7b6e4c39b8e81a6"
+  },
+  "ForgeImager/src-tauri/src/images/mod.rs": {
+    "mtime": 1784747755.2575097,
+    "seen": 1787851076.834485,
+    "ast_hash": "965049525fd473a3ef1c4c24589fe90a",
+    "semantic_hash": "965049525fd473a3ef1c4c24589fe90a"
+  },
+  "ForgeImager/src-tauri/src/images/models.rs": {
+    "mtime": 1784747755.2590077,
+    "seen": 1787851076.834485,
+    "ast_hash": "f1bdfa0a89edbbd92ff3467599068c5a",
+    "semantic_hash": "f1bdfa0a89edbbd92ff3467599068c5a"
+  },
+  "ForgeImager/src-tauri/src/logging/mod.rs": {
+    "mtime": 1784747755.2595124,
+    "seen": 1787851076.834485,
+    "ast_hash": "4b3329cef7b35b8b28b196b1d23154b3",
+    "semantic_hash": "4b3329cef7b35b8b28b196b1d23154b3"
+  },
+  "ForgeImager/src-tauri/src/main.rs": {
+    "mtime": 1784747755.2595124,
+    "seen": 1787851076.834485,
+    "ast_hash": "829df3bbfec51e293d2577f9a75e5fbf",
+    "semantic_hash": "829df3bbfec51e293d2577f9a75e5fbf"
+  },
+  "ForgeImager/src-tauri/src/paste/mod.rs": {
+    "mtime": 1784747755.2610855,
+    "seen": 1787851076.834485,
+    "ast_hash": "e258772d502f1a36085c64a4c5448a68",
+    "semantic_hash": "e258772d502f1a36085c64a4c5448a68"
+  },
+  "ForgeImager/src-tauri/src/paste/upload.rs": {
+    "mtime": 1784747755.262385,
+    "seen": 1787851076.834485,
+    "ast_hash": "6b21508346157e21e25f91e11d530f57",
+    "semantic_hash": "6b21508346157e21e25f91e11d530f57"
+  },
+  "ForgeImager/src-tauri/src/picture_cache.rs": {
+    "mtime": 1784747755.263484,
+    "seen": 1787851076.834485,
+    "ast_hash": "b0ecbd559f8311262319e0a08dacea60",
+    "semantic_hash": "b0ecbd559f8311262319e0a08dacea60"
+  },
+  "ForgeImager/src-tauri/src/qdl/boards.rs": {
+    "mtime": 1784747755.2640636,
+    "seen": 1787851076.834485,
+    "ast_hash": "26dcaf3dae09417d8739df62a2f6196e",
+    "semantic_hash": "26dcaf3dae09417d8739df62a2f6196e"
+  },
+  "ForgeImager/src-tauri/src/qdl/detect.rs": {
+    "mtime": 1784747755.2640636,
+    "seen": 1787851076.834485,
+    "ast_hash": "d996580c169e9c6a5599548fd211a750",
+    "semantic_hash": "d996580c169e9c6a5599548fd211a750"
+  },
+  "ForgeImager/src-tauri/src/qdl/extract.rs": {
+    "mtime": 1784747755.2654665,
+    "seen": 1787851076.834485,
+    "ast_hash": "f6393e4538d49e3ab7a473fa3070311d",
+    "semantic_hash": "f6393e4538d49e3ab7a473fa3070311d"
+  },
+  "ForgeImager/src-tauri/src/qdl/flash.rs": {
+    "mtime": 1784747755.2664735,
+    "seen": 1787851076.834485,
+    "ast_hash": "999d743b0906d168b937379c3a376a94",
+    "semantic_hash": "999d743b0906d168b937379c3a376a94"
+  },
+  "ForgeImager/src-tauri/src/qdl/loader.rs": {
+    "mtime": 1784747755.2674747,
+    "seen": 1787851076.834485,
+    "ast_hash": "1635468c2002b67447a779d8771bf4c0",
+    "semantic_hash": "1635468c2002b67447a779d8771bf4c0"
+  },
+  "ForgeImager/src-tauri/src/qdl/mod.rs": {
+    "mtime": 1784747755.2674747,
+    "seen": 1787851076.834485,
+    "ast_hash": "02f4e99122a83d76ef9775e5042b4fc3",
+    "semantic_hash": "02f4e99122a83d76ef9775e5042b4fc3"
+  },
+  "ForgeImager/src-tauri/src/qdl/provision.rs": {
+    "mtime": 1784747755.2684724,
+    "seen": 1787851076.834485,
+    "ast_hash": "107f34b94028a58315635fced8bf17f9",
+    "semantic_hash": "107f34b94028a58315635fced8bf17f9"
+  },
+  "ForgeImager/src-tauri/src/qdl/registry.rs": {
+    "mtime": 1784747755.2684724,
+    "seen": 1787851076.834485,
+    "ast_hash": "01d4e611f78bc12afac2f3715a47cd42",
+    "semantic_hash": "01d4e611f78bc12afac2f3715a47cd42"
+  },
+  "ForgeImager/src-tauri/src/utils/format.rs": {
+    "mtime": 1784747755.2694728,
+    "seen": 1787851076.834485,
+    "ast_hash": "7d0b1538b0655e43c5fa2f816337aeaf",
+    "semantic_hash": "7d0b1538b0655e43c5fa2f816337aeaf"
+  },
+  "ForgeImager/src-tauri/src/utils/http.rs": {
+    "mtime": 1784747755.2694728,
+    "seen": 1787851076.834485,
+    "ast_hash": "ba80029067bab4f350eedd1f4b44ddbf",
+    "semantic_hash": "ba80029067bab4f350eedd1f4b44ddbf"
+  },
+  "ForgeImager/src-tauri/src/utils/mod.rs": {
+    "mtime": 1784747755.270472,
+    "seen": 1787851076.834485,
+    "ast_hash": "657a4683501d081b6d5835c869712272",
+    "semantic_hash": "657a4683501d081b6d5835c869712272"
+  },
+  "ForgeImager/src-tauri/src/utils/path.rs": {
+    "mtime": 1784747755.271472,
+    "seen": 1787851076.834485,
+    "ast_hash": "e202254c1b7a278157f405dec7bef1fa",
+    "semantic_hash": "e202254c1b7a278157f405dec7bef1fa"
+  },
+  "ForgeImager/src-tauri/src/utils/progress.rs": {
+    "mtime": 1784747755.2720766,
+    "seen": 1787851076.834485,
+    "ast_hash": "b4d18fbeff7b51019bb89753dd65f5e2",
+    "semantic_hash": "b4d18fbeff7b51019bb89753dd65f5e2"
+  },
+  "ForgeImager/src-tauri/src/utils/system.rs": {
+    "mtime": 1784747755.2720766,
+    "seen": 1787851076.834485,
+    "ast_hash": "58c6c2b6705faaf4e4d19dc7430d497c",
+    "semantic_hash": "58c6c2b6705faaf4e4d19dc7430d497c"
+  },
+  "ForgeImager/src-tauri/tauri.conf.json": {
+    "mtime": 1784747755.2730837,
+    "seen": 1787851076.834485,
+    "ast_hash": "2908d7c42f10f9b9c7f24296867d98f0",
+    "semantic_hash": "2908d7c42f10f9b9c7f24296867d98f0"
+  },
+  "ForgeImager/src/App.tsx": {
+    "mtime": 1784747755.2748642,
+    "seen": 1787851076.834485,
+    "ast_hash": "0a67ac2697ac8af2bb3cc5ebaa3bba41",
+    "semantic_hash": "0a67ac2697ac8af2bb3cc5ebaa3bba41"
+  },
+  "ForgeImager/src/assets/index.ts": {
+    "mtime": 1784747755.2926378,
+    "seen": 1787851076.834485,
+    "ast_hash": "61bc6afef87ad1138103918e5b38f5a7",
+    "semantic_hash": "61bc6afef87ad1138103918e5b38f5a7"
+  },
+  "ForgeImager/src/assets/os-logos/index.ts": {
+    "mtime": 1784747755.2926378,
+    "seen": 1787851076.834485,
+    "ast_hash": "ca3208e23d2ea595e3b5bfa84b2e6ca2",
+    "semantic_hash": "ca3208e23d2ea595e3b5bfa84b2e6ca2"
+  },
+  "ForgeImager/src/components/flash/FlashActions.tsx": {
+    "mtime": 1784747755.2992947,
+    "seen": 1787851076.834485,
+    "ast_hash": "60bfb679ddded571e0a87ca6ee5a709b",
+    "semantic_hash": "60bfb679ddded571e0a87ca6ee5a709b"
+  },
+  "ForgeImager/src/components/flash/FlashPhaseDots.tsx": {
+    "mtime": 1784747755.302397,
+    "seen": 1787851076.834485,
+    "ast_hash": "7a3f0abef38277132d82a7af8b0df65e",
+    "semantic_hash": "7a3f0abef38277132d82a7af8b0df65e"
+  },
+  "ForgeImager/src/components/flash/FlashProgress.tsx": {
+    "mtime": 1784747755.303054,
+    "seen": 1787851076.834485,
+    "ast_hash": "64aba89290b718ae50ed06f648c77e05",
+    "semantic_hash": "64aba89290b718ae50ed06f648c77e05"
+  },
+  "ForgeImager/src/components/flash/FlashStageIcon.tsx": {
+    "mtime": 1784747755.3040612,
+    "seen": 1787851076.834485,
+    "ast_hash": "5a8ca527b4f508915058c86c2b34c870",
+    "semantic_hash": "5a8ca527b4f508915058c86c2b34c870"
+  },
+  "ForgeImager/src/components/flash/index.ts": {
+    "mtime": 1784747755.3040612,
+    "seen": 1787851076.834485,
+    "ast_hash": "42cd7cea7c3bdd06e1130b56a0b419b8",
+    "semantic_hash": "42cd7cea7c3bdd06e1130b56a0b419b8"
+  },
+  "ForgeImager/src/components/index.ts": {
+    "mtime": 1784747755.3050635,
+    "seen": 1787851076.834485,
+    "ast_hash": "268ce991fc779b56df36a2afc29aca67",
+    "semantic_hash": "268ce991fc779b56df36a2afc29aca67"
+  },
+  "ForgeImager/src/components/layout/BoardPanel.tsx": {
+    "mtime": 1784747755.3058953,
+    "seen": 1787851076.834485,
+    "ast_hash": "9205faae7bddb40b75d3c48f1f537ea0",
+    "semantic_hash": "9205faae7bddb40b75d3c48f1f537ea0"
+  },
+  "ForgeImager/src/components/layout/DevicePanel.tsx": {
+    "mtime": 1784747755.3064017,
+    "seen": 1787851076.834485,
+    "ast_hash": "0548c103f3c5e8a00234601c77c898c9",
+    "semantic_hash": "0548c103f3c5e8a00234601c77c898c9"
+  },
+  "ForgeImager/src/components/layout/Header.tsx": {
+    "mtime": 1784747755.307427,
+    "seen": 1787851076.834485,
+    "ast_hash": "47331eb019b869971c29daed5f1a7cf5",
+    "semantic_hash": "47331eb019b869971c29daed5f1a7cf5"
+  },
+  "ForgeImager/src/components/layout/HomePage.tsx": {
+    "mtime": 1784747755.3084264,
+    "seen": 1787851076.834485,
+    "ast_hash": "790cf54362eb9ed3d41340d787cefb27",
+    "semantic_hash": "790cf54362eb9ed3d41340d787cefb27"
+  },
+  "ForgeImager/src/components/layout/ManufacturerPanel.tsx": {
+    "mtime": 1784747755.3084264,
+    "seen": 1787851076.834485,
+    "ast_hash": "0407640d54dc1e41ab9fdece0cc19a98",
+    "semantic_hash": "0407640d54dc1e41ab9fdece0cc19a98"
+  },
+  "ForgeImager/src/components/layout/OsPanel.tsx": {
+    "mtime": 1784747755.3094256,
+    "seen": 1787851076.834485,
+    "ast_hash": "79a47e6c87d707eeb13fd3d6628b2151",
+    "semantic_hash": "79a47e6c87d707eeb13fd3d6628b2151"
+  },
+  "ForgeImager/src/components/layout/WelcomePage.tsx": {
+    "mtime": 1784747755.3108697,
+    "seen": 1787851076.834485,
+    "ast_hash": "a36d62ced5b212a12dd7b7ac89fc701c",
+    "semantic_hash": "a36d62ced5b212a12dd7b7ac89fc701c"
+  },
+  "ForgeImager/src/components/layout/index.ts": {
+    "mtime": 1784747755.3115652,
+    "seen": 1787851076.834485,
+    "ast_hash": "a24fe2521e9bb8a08e72bebe4b4a218f",
+    "semantic_hash": "a24fe2521e9bb8a08e72bebe4b4a218f"
+  },
+  "ForgeImager/src/components/modals/ArmbianBoardModal.tsx": {
+    "mtime": 1784747755.312573,
+    "seen": 1787851076.834485,
+    "ast_hash": "093d8ca9a0357419ab22bc8ec0c523f2",
+    "semantic_hash": "093d8ca9a0357419ab22bc8ec0c523f2"
+  },
+  "ForgeImager/src/components/modals/Modal.tsx": {
+    "mtime": 1784747755.312573,
+    "seen": 1787851076.834485,
+    "ast_hash": "1928e4a2f9a79198190b4af2486ee607",
+    "semantic_hash": "1928e4a2f9a79198190b4af2486ee607"
+  },
+  "ForgeImager/src/components/modals/index.ts": {
+    "mtime": 1784747755.3140793,
+    "seen": 1787851076.834485,
+    "ast_hash": "eb40a3fc084a89b26d6421f9e9821d54",
+    "semantic_hash": "eb40a3fc084a89b26d6421f9e9821d54"
+  },
+  "ForgeImager/src/components/settings/AboutSection.tsx": {
+    "mtime": 1784747755.31509,
+    "seen": 1787851076.834485,
+    "ast_hash": "ce32b2cdcbe91d7e8b30d27502377d38",
+    "semantic_hash": "ce32b2cdcbe91d7e8b30d27502377d38"
+  },
+  "ForgeImager/src/components/settings/AppearanceSection.tsx": {
+    "mtime": 1784747755.31509,
+    "seen": 1787851076.834485,
+    "ast_hash": "d60f04fc9623974b8556b6738d933d73",
+    "semantic_hash": "d60f04fc9623974b8556b6738d933d73"
+  },
+  "ForgeImager/src/components/settings/AutoconfigSection.tsx": {
+    "mtime": 1784747755.3163285,
+    "seen": 1787851076.834485,
+    "ast_hash": "64cc88755d7131687c89bd7a8a9bcb62",
+    "semantic_hash": "64cc88755d7131687c89bd7a8a9bcb62"
+  },
+  "ForgeImager/src/components/settings/CacheManagerModal.tsx": {
+    "mtime": 1784747755.3178298,
+    "seen": 1787851076.834485,
+    "ast_hash": "d31870fbd1f49d0c195d6a4b1c56cda1",
+    "semantic_hash": "d31870fbd1f49d0c195d6a4b1c56cda1"
+  },
+  "ForgeImager/src/components/settings/DeveloperSection.tsx": {
+    "mtime": 1784747755.318336,
+    "seen": 1787851076.834485,
+    "ast_hash": "9dfa331d8f6d5cfb9cbe8c126950f966",
+    "semantic_hash": "9dfa331d8f6d5cfb9cbe8c126950f966"
+  },
+  "ForgeImager/src/components/settings/LogsModal.tsx": {
+    "mtime": 1784747755.3194213,
+    "seen": 1787851076.834485,
+    "ast_hash": "7527f7ad5e95e1c6bb235d716dd2776e",
+    "semantic_hash": "7527f7ad5e95e1c6bb235d716dd2776e"
+  },
+  "ForgeImager/src/components/settings/PreferencesSection.tsx": {
+    "mtime": 1784747755.3204398,
+    "seen": 1787851076.834485,
+    "ast_hash": "5af3e62fdf219852b7cb86aba719c50f",
+    "semantic_hash": "5af3e62fdf219852b7cb86aba719c50f"
+  },
+  "ForgeImager/src/components/settings/SettingsButton.tsx": {
+    "mtime": 1784747755.3204398,
+    "seen": 1787851076.834485,
+    "ast_hash": "be3440f1794c1daee697143c0168e34c",
+    "semantic_hash": "be3440f1794c1daee697143c0168e34c"
+  },
+  "ForgeImager/src/components/settings/SettingsModal.tsx": {
+    "mtime": 1784747755.3214455,
+    "seen": 1787851076.834485,
+    "ast_hash": "bd6934f476d20d0da71577bcf6708f73",
+    "semantic_hash": "bd6934f476d20d0da71577bcf6708f73"
+  },
+  "ForgeImager/src/components/settings/StorageSection.tsx": {
+    "mtime": 1784747755.323016,
+    "seen": 1787851076.834485,
+    "ast_hash": "67c83bb546ce1fc5d46547577aa2ebfe",
+    "semantic_hash": "67c83bb546ce1fc5d46547577aa2ebfe"
+  },
+  "ForgeImager/src/components/settings/index.ts": {
+    "mtime": 1784747755.323016,
+    "seen": 1787851076.834485,
+    "ast_hash": "cb6bc5daf3207ba8e41914c510575d2e",
+    "semantic_hash": "cb6bc5daf3207ba8e41914c510575d2e"
+  },
+  "ForgeImager/src/components/shared/BoardBadges.tsx": {
+    "mtime": 1784747755.3242016,
+    "seen": 1787851076.834485,
+    "ast_hash": "d34397c349878ebe4f0dfae69aeb13ac",
+    "semantic_hash": "d34397c349878ebe4f0dfae69aeb13ac"
+  },
+  "ForgeImager/src/components/shared/BoardImage.tsx": {
+    "mtime": 1784747755.324862,
+    "seen": 1787851076.834485,
+    "ast_hash": "262b32713ca0143c59d92393d8ee3c29",
+    "semantic_hash": "262b32713ca0143c59d92393d8ee3c29"
+  },
+  "ForgeImager/src/components/shared/ChangelogModal.tsx": {
+    "mtime": 1784747755.3258688,
+    "seen": 1787851076.834485,
+    "ast_hash": "0ae98defde408cda390cd20219379938",
+    "semantic_hash": "0ae98defde408cda390cd20219379938"
+  },
+  "ForgeImager/src/components/shared/ConfirmationDialog.tsx": {
+    "mtime": 1784747755.3258688,
+    "seen": 1787851076.834485,
+    "ast_hash": "23cf096b623ea94c5ec450e90717dc62",
+    "semantic_hash": "23cf096b623ea94c5ec450e90717dc62"
+  },
+  "ForgeImager/src/components/shared/DeviceIcon.tsx": {
+    "mtime": 1784747755.3273532,
+    "seen": 1787851076.834485,
+    "ast_hash": "43189b8294681435d295e2627d2ca67d",
+    "semantic_hash": "43189b8294681435d295e2627d2ca67d"
+  },
+  "ForgeImager/src/components/shared/ErrorDisplay.tsx": {
+    "mtime": 1784747755.3315966,
+    "seen": 1787851076.834485,
+    "ast_hash": "968809cb2205b4a4d02083e9adf80636",
+    "semantic_hash": "968809cb2205b4a4d02083e9adf80636"
+  },
+  "ForgeImager/src/components/shared/GridPager.tsx": {
+    "mtime": 1784747755.3354468,
+    "seen": 1787851076.834485,
+    "ast_hash": "d0d4746f9b06d6b6f32eab81a0cacf0b",
+    "semantic_hash": "d0d4746f9b06d6b6f32eab81a0cacf0b"
+  },
+  "ForgeImager/src/components/shared/MarqueeText.tsx": {
+    "mtime": 1784747755.3354468,
+    "seen": 1787851076.834485,
+    "ast_hash": "edc38ddc9bb82ccd6ee6499649b2b145",
+    "semantic_hash": "edc38ddc9bb82ccd6ee6499649b2b145"
+  },
+  "ForgeImager/src/components/shared/MotdTip.tsx": {
+    "mtime": 1784747755.3364537,
+    "seen": 1787851076.834485,
+    "ast_hash": "3fd4c4a9c3c7064be2c9b7538421b267",
+    "semantic_hash": "3fd4c4a9c3c7064be2c9b7538421b267"
+  },
+  "ForgeImager/src/components/shared/SearchBox.tsx": {
+    "mtime": 1784747755.3378248,
+    "seen": 1787851076.834485,
+    "ast_hash": "ba6947f4bb11bc619535f8263f6d8262",
+    "semantic_hash": "ba6947f4bb11bc619535f8263f6d8262"
+  },
+  "ForgeImager/src/components/shared/Toast.tsx": {
+    "mtime": 1784747755.3386464,
+    "seen": 1787851076.834485,
+    "ast_hash": "fea64b2d1375c3feff54df618c69ded5",
+    "semantic_hash": "fea64b2d1375c3feff54df618c69ded5"
+  },
+  "ForgeImager/src/components/shared/UpdateEntry.tsx": {
+    "mtime": 1784747755.339653,
+    "seen": 1787851076.834485,
+    "ast_hash": "1fccbda97c85d5338a56182d1ecb3a88",
+    "semantic_hash": "1fccbda97c85d5338a56182d1ecb3a88"
+  },
+  "ForgeImager/src/components/shared/UpdateModal.tsx": {
+    "mtime": 1784747755.3401718,
+    "seen": 1787851076.834485,
+    "ast_hash": "c00284252d44e0acfcd54ae20c30c2c8",
+    "semantic_hash": "c00284252d44e0acfcd54ae20c30c2c8"
+  },
+  "ForgeImager/src/components/shared/index.ts": {
+    "mtime": 1784747755.3412244,
+    "seen": 1787851076.834485,
+    "ast_hash": "0b3f1a4112f7961d646598cdf4b1daf0",
+    "semantic_hash": "0b3f1a4112f7961d646598cdf4b1daf0"
+  },
+  "ForgeImager/src/config/autoconfig.ts": {
+    "mtime": 1784747755.3422332,
+    "seen": 1787851076.834485,
+    "ast_hash": "d20a47e1d617c481269607c6e31b043d",
+    "semantic_hash": "d20a47e1d617c481269607c6e31b043d"
+  },
+  "ForgeImager/src/config/badges.ts": {
+    "mtime": 1784747755.343341,
+    "seen": 1787851076.834485,
+    "ast_hash": "3c7f91ba6a72fc39d74a545622b00818",
+    "semantic_hash": "3c7f91ba6a72fc39d74a545622b00818"
+  },
+  "ForgeImager/src/config/constants.ts": {
+    "mtime": 1784747755.3446474,
+    "seen": 1787851076.834485,
+    "ast_hash": "a710c4c2b96b34f9c3c29a7d4681701d",
+    "semantic_hash": "a710c4c2b96b34f9c3c29a7d4681701d"
+  },
+  "ForgeImager/src/config/deviceColors.ts": {
+    "mtime": 1784747755.3457844,
+    "seen": 1787851076.834485,
+    "ast_hash": "5443f5b8094a32285726146420ffbfa2",
+    "semantic_hash": "5443f5b8094a32285726146420ffbfa2"
+  },
+  "ForgeImager/src/config/i18n.ts": {
+    "mtime": 1784747755.3475287,
+    "seen": 1787851076.834485,
+    "ast_hash": "de572c8de71d1ffe32c0bced26c4eaf7",
+    "semantic_hash": "de572c8de71d1ffe32c0bced26c4eaf7"
+  },
+  "ForgeImager/src/config/imageFilters.ts": {
+    "mtime": 1784747755.3486564,
+    "seen": 1787851076.834485,
+    "ast_hash": "6e462917385d3e082c809e9947af194a",
+    "semantic_hash": "6e462917385d3e082c809e9947af194a"
+  },
+  "ForgeImager/src/config/index.ts": {
+    "mtime": 1784747755.3499336,
+    "seen": 1787851076.834485,
+    "ast_hash": "b9ee8e75e2d43c1ac45d10c47b79add5",
+    "semantic_hash": "b9ee8e75e2d43c1ac45d10c47b79add5"
+  },
+  "ForgeImager/src/config/mono-logos.ts": {
+    "mtime": 1784747755.3509378,
+    "seen": 1787851076.834485,
+    "ast_hash": "391c7d66bf1187305d3914b497825f58",
+    "semantic_hash": "391c7d66bf1187305d3914b497825f58"
+  },
+  "ForgeImager/src/config/os-info.ts": {
+    "mtime": 1784747755.3518984,
+    "seen": 1787851076.834485,
+    "ast_hash": "816246ddaca4b4e90aef70d9ff1d9a88",
+    "semantic_hash": "816246ddaca4b4e90aef70d9ff1d9a88"
+  },
+  "ForgeImager/src/config/qdlBoards.ts": {
+    "mtime": 1784747755.3524225,
+    "seen": 1787851076.834485,
+    "ast_hash": "90e15ee7e39ac34f1f843a65848e32de",
+    "semantic_hash": "90e15ee7e39ac34f1f843a65848e32de"
+  },
+  "ForgeImager/src/config/supportTiers.ts": {
+    "mtime": 1784747755.3524225,
+    "seen": 1787851076.834485,
+    "ast_hash": "782c96c5031d501a46a6f9d894848c7a",
+    "semantic_hash": "782c96c5031d501a46a6f9d894848c7a"
+  },
+  "ForgeImager/src/contexts/ThemeContext.tsx": {
+    "mtime": 1784747755.3538897,
+    "seen": 1787851076.834485,
+    "ast_hash": "fd0cc805a2b305059fef90b4a517400d",
+    "semantic_hash": "fd0cc805a2b305059fef90b4a517400d"
+  },
+  "ForgeImager/src/contexts/UpdateContext.tsx": {
+    "mtime": 1784747755.3538897,
+    "seen": 1787851076.834485,
+    "ast_hash": "92f6d47d1347fdc27cb3fbdcc0cdb96e",
+    "semantic_hash": "92f6d47d1347fdc27cb3fbdcc0cdb96e"
+  },
+  "ForgeImager/src/hooks/useAsyncData.ts": {
+    "mtime": 1784747755.3549,
+    "seen": 1787851076.834485,
+    "ast_hash": "b913802c38e702564bd61759515ec695",
+    "semantic_hash": "b913802c38e702564bd61759515ec695"
+  },
+  "ForgeImager/src/hooks/useConnectivity.ts": {
+    "mtime": 1784747755.3554611,
+    "seen": 1787851076.834485,
+    "ast_hash": "ab08ea0373c05c99a8196b7016fd63c1",
+    "semantic_hash": "ab08ea0373c05c99a8196b7016fd63c1"
+  },
+  "ForgeImager/src/hooks/useDeviceMonitor.ts": {
+    "mtime": 1784747755.3554611,
+    "seen": 1787851076.834485,
+    "ast_hash": "0b20f6e92ae2b2382880ef36ecdd3b43",
+    "semantic_hash": "0b20f6e92ae2b2382880ef36ecdd3b43"
+  },
+  "ForgeImager/src/hooks/useFlashOperation.ts": {
+    "mtime": 1784747755.3569715,
+    "seen": 1787851076.834485,
+    "ast_hash": "53099c12aa819f26484e50b079846866",
+    "semantic_hash": "53099c12aa819f26484e50b079846866"
+  },
+  "ForgeImager/src/hooks/useModalExitAnimation.ts": {
+    "mtime": 1784747755.357517,
+    "seen": 1787851076.834485,
+    "ast_hash": "98ade7981edc9282a3390d917990fbae",
+    "semantic_hash": "98ade7981edc9282a3390d917990fbae"
+  },
+  "ForgeImager/src/hooks/usePagedGrid.ts": {
+    "mtime": 1784747755.3578663,
+    "seen": 1787851076.834485,
+    "ast_hash": "dd1cc12398c40a555f818dbf2eb4d357",
+    "semantic_hash": "dd1cc12398c40a555f818dbf2eb4d357"
+  },
+  "ForgeImager/src/hooks/useSettings.ts": {
+    "mtime": 1784747755.3590932,
+    "seen": 1787851076.834485,
+    "ast_hash": "eb90d81884251355f1552a5480941664",
+    "semantic_hash": "eb90d81884251355f1552a5480941664"
+  },
+  "ForgeImager/src/hooks/useSettingsGroup.ts": {
+    "mtime": 1784747755.3590932,
+    "seen": 1787851076.834485,
+    "ast_hash": "e1902e201162256dafe196c54477e52c",
+    "semantic_hash": "e1902e201162256dafe196c54477e52c"
+  },
+  "ForgeImager/src/hooks/useSkeletonLoading.ts": {
+    "mtime": 1784747755.360101,
+    "seen": 1787851076.834485,
+    "ast_hash": "c7b3517b91374cc9703aa8834065d993",
+    "semantic_hash": "c7b3517b91374cc9703aa8834065d993"
+  },
+  "ForgeImager/src/hooks/useTauri.ts": {
+    "mtime": 1784747755.360101,
+    "seen": 1787851076.834485,
+    "ast_hash": "ea7b933d576b8622e5069c7bf97ae962",
+    "semantic_hash": "ea7b933d576b8622e5069c7bf97ae962"
+  },
+  "ForgeImager/src/hooks/useToasts.tsx": {
+    "mtime": 1784747755.361301,
+    "seen": 1787851076.834485,
+    "ast_hash": "64ae71b389bc99273949c6c20516e95b",
+    "semantic_hash": "64ae71b389bc99273949c6c20516e95b"
+  },
+  "ForgeImager/src/hooks/useVendorLogos.ts": {
+    "mtime": 1784747755.3621743,
+    "seen": 1787851076.834485,
+    "ast_hash": "be1693dda116dde113b9fa041061a591",
+    "semantic_hash": "be1693dda116dde113b9fa041061a591"
+  },
+  "ForgeImager/src/i18n.ts": {
+    "mtime": 1784747755.3634167,
+    "seen": 1787851076.834485,
+    "ast_hash": "0e885729485bf9672ed232c820430c58",
+    "semantic_hash": "0e885729485bf9672ed232c820430c58"
+  },
+  "ForgeImager/src/locales/de.json": {
+    "mtime": 1784747755.3634167,
+    "seen": 1787851076.834485,
+    "ast_hash": "70f98e426d809b4a59edfa04b13ffaa3",
+    "semantic_hash": "70f98e426d809b4a59edfa04b13ffaa3"
+  },
+  "ForgeImager/src/locales/en.json": {
+    "mtime": 1784747755.3657036,
+    "seen": 1787851076.834485,
+    "ast_hash": "3ed7676d4c0a5cbd325453c3982609a7",
+    "semantic_hash": "3ed7676d4c0a5cbd325453c3982609a7"
+  },
+  "ForgeImager/src/locales/es.json": {
+    "mtime": 1784747755.366722,
+    "seen": 1787851076.834485,
+    "ast_hash": "c9583d0c6ddaf950bd39a46594668ef1",
+    "semantic_hash": "c9583d0c6ddaf950bd39a46594668ef1"
+  },
+  "ForgeImager/src/locales/fr.json": {
+    "mtime": 1784747755.3680687,
+    "seen": 1787851076.834485,
+    "ast_hash": "70460c6303a0065921fc9fcb8553cdf5",
+    "semantic_hash": "70460c6303a0065921fc9fcb8553cdf5"
+  },
+  "ForgeImager/src/locales/hr.json": {
+    "mtime": 1784747755.3680687,
+    "seen": 1787851076.834485,
+    "ast_hash": "69dc3da5cee3164a4f3b4bbe13d4fdcd",
+    "semantic_hash": "69dc3da5cee3164a4f3b4bbe13d4fdcd"
+  },
+  "ForgeImager/src/locales/it.json": {
+    "mtime": 1784747755.3690758,
+    "seen": 1787851076.834485,
+    "ast_hash": "119c7b7baee5a49847d5ccb3626bffb5",
+    "semantic_hash": "119c7b7baee5a49847d5ccb3626bffb5"
+  },
+  "ForgeImager/src/locales/ja.json": {
+    "mtime": 1784747755.3705802,
+    "seen": 1787851076.834485,
+    "ast_hash": "bbc64094d721c2b59e058fe74b29fa04",
+    "semantic_hash": "bbc64094d721c2b59e058fe74b29fa04"
+  },
+  "ForgeImager/src/locales/ko.json": {
+    "mtime": 1784747755.3705802,
+    "seen": 1787851076.834485,
+    "ast_hash": "4f3ad7a0aa7357bf49e9cd7077c7e850",
+    "semantic_hash": "4f3ad7a0aa7357bf49e9cd7077c7e850"
+  },
+  "ForgeImager/src/locales/nl.json": {
+    "mtime": 1784747755.3715875,
+    "seen": 1787851076.834485,
+    "ast_hash": "3e0648769c8043500d00e31a725ad74d",
+    "semantic_hash": "3e0648769c8043500d00e31a725ad74d"
+  },
+  "ForgeImager/src/locales/pl.json": {
+    "mtime": 1784747755.372587,
+    "seen": 1787851076.834485,
+    "ast_hash": "ccc97413d61c431ee0a62c34d6d8d5da",
+    "semantic_hash": "ccc97413d61c431ee0a62c34d6d8d5da"
+  },
+  "ForgeImager/src/locales/pt-BR.json": {
+    "mtime": 1784747755.3740928,
+    "seen": 1787851076.834485,
+    "ast_hash": "fd7c105a22263d1e821f839d40252cc4",
+    "semantic_hash": "fd7c105a22263d1e821f839d40252cc4"
+  },
+  "ForgeImager/src/locales/pt.json": {
+    "mtime": 1784747755.375101,
+    "seen": 1787851076.834485,
+    "ast_hash": "355595fe4b618847332dfba7998ebafa",
+    "semantic_hash": "355595fe4b618847332dfba7998ebafa"
+  },
+  "ForgeImager/src/locales/ru.json": {
+    "mtime": 1784747755.376101,
+    "seen": 1787851076.834485,
+    "ast_hash": "3eee3f00b429dc16e9308c5db8091558",
+    "semantic_hash": "3eee3f00b429dc16e9308c5db8091558"
+  },
+  "ForgeImager/src/locales/sl.json": {
+    "mtime": 1784747755.3767223,
+    "seen": 1787851076.834485,
+    "ast_hash": "8b16b1963fc75f498622140997b35ec5",
+    "semantic_hash": "8b16b1963fc75f498622140997b35ec5"
+  },
+  "ForgeImager/src/locales/sv.json": {
+    "mtime": 1784747755.3777304,
+    "seen": 1787851076.834485,
+    "ast_hash": "0af43fe28ff38d3a8dc94ed759a700ca",
+    "semantic_hash": "0af43fe28ff38d3a8dc94ed759a700ca"
+  },
+  "ForgeImager/src/locales/tr.json": {
+    "mtime": 1784747755.378729,
+    "seen": 1787851076.834485,
+    "ast_hash": "19d7b90170940ca9162bd3ccf85de875",
+    "semantic_hash": "19d7b90170940ca9162bd3ccf85de875"
+  },
+  "ForgeImager/src/locales/uk.json": {
+    "mtime": 1784747755.3802829,
+    "seen": 1787851076.834485,
+    "ast_hash": "7812fb79b78581d0e5e239188d6b06a6",
+    "semantic_hash": "7812fb79b78581d0e5e239188d6b06a6"
+  },
+  "ForgeImager/src/locales/zh.json": {
+    "mtime": 1784747755.381284,
+    "seen": 1787851076.834485,
+    "ast_hash": "2fe58053b9f5617cd965a401846f6d78",
+    "semantic_hash": "2fe58053b9f5617cd965a401846f6d78"
+  },
+  "ForgeImager/src/main.tsx": {
+    "mtime": 1784747755.3827353,
+    "seen": 1787851076.834485,
+    "ast_hash": "9e5e04c94804138831c391fbcf6c4438",
+    "semantic_hash": "9e5e04c94804138831c391fbcf6c4438"
+  },
+  "ForgeImager/src/types/index.ts": {
+    "mtime": 1784747755.3924735,
+    "seen": 1787851076.834485,
+    "ast_hash": "fe51659ea42cb81b78d5bd04fcb124d3",
+    "semantic_hash": "fe51659ea42cb81b78d5bd04fcb124d3"
+  },
+  "ForgeImager/src/utils/color.ts": {
+    "mtime": 1784747755.3934755,
+    "seen": 1787851076.834485,
+    "ast_hash": "5c6bca1a0974a7aa11f39b7930dde969",
+    "semantic_hash": "5c6bca1a0974a7aa11f39b7930dde969"
+  },
+  "ForgeImager/src/utils/deviceUtils.ts": {
+    "mtime": 1784747755.3934755,
+    "seen": 1787851076.834485,
+    "ast_hash": "1d1493d59814882dc9349c2b2680c91b",
+    "semantic_hash": "1d1493d59814882dc9349c2b2680c91b"
+  },
+  "ForgeImager/src/utils/distroTheme.ts": {
+    "mtime": 1784747755.3949811,
+    "seen": 1787851076.834485,
+    "ast_hash": "748dee277f0a24385053c0b8d26830b1",
+    "semantic_hash": "748dee277f0a24385053c0b8d26830b1"
+  },
+  "ForgeImager/src/utils/errorUtils.ts": {
+    "mtime": 1784747755.3955958,
+    "seen": 1787851076.834485,
+    "ast_hash": "5096641a036c71a0653f9e05ade01af2",
+    "semantic_hash": "5096641a036c71a0653f9e05ade01af2"
+  },
+  "ForgeImager/src/utils/index.ts": {
+    "mtime": 1784747755.3961012,
+    "seen": 1787851076.834485,
+    "ast_hash": "09cbdbfeec0506c548e0af5a4f130e40",
+    "semantic_hash": "09cbdbfeec0506c548e0af5a4f130e40"
+  },
+  "ForgeImager/src/vite-env.d.ts": {
+    "mtime": 1784747755.3961012,
+    "seen": 1787851076.834485,
+    "ast_hash": "8f68c27c3fc38817b2726b20e2d4f1ee",
+    "semantic_hash": "8f68c27c3fc38817b2726b20e2d4f1ee"
+  },
+  "ForgeImager/tsconfig.app.json": {
+    "mtime": 1784747755.397181,
+    "seen": 1787851076.834485,
+    "ast_hash": "06fed9d2d293837c0571529eaae7204a",
+    "semantic_hash": "06fed9d2d293837c0571529eaae7204a"
+  },
+  "ForgeImager/tsconfig.json": {
+    "mtime": 1784747755.3981812,
+    "seen": 1787851076.834485,
+    "ast_hash": "a3d39fa780ebff65444de257f291ce6c",
+    "semantic_hash": "a3d39fa780ebff65444de257f291ce6c"
+  },
+  "ForgeImager/tsconfig.node.json": {
+    "mtime": 1784747755.3981812,
+    "seen": 1787851076.834485,
+    "ast_hash": "eec85c9d7c6b599801557f1afd86672c",
+    "semantic_hash": "eec85c9d7c6b599801557f1afd86672c"
+  },
+  "ForgeImager/vite.config.ts": {
+    "mtime": 1784747755.3981812,
+    "seen": 1787851076.834485,
+    "ast_hash": "199e1221ae03d6974fdc8b5e23787b98",
+    "semantic_hash": "199e1221ae03d6974fdc8b5e23787b98"
+  },
+  "ForgeModules/sub-modulos/web-scraping/agent/__init__.py": {
+    "mtime": 1784747755.4007785,
+    "seen": 1787851076.834485,
+    "ast_hash": "045ee15061e52f1caa81164a54de97ed",
+    "semantic_hash": "045ee15061e52f1caa81164a54de97ed"
+  },
+  "ForgeModules/sub-modulos/web-scraping/agent/chain.py": {
+    "mtime": 1784747755.4022477,
+    "seen": 1787851076.834485,
+    "ast_hash": "1bc29c1d63f0341e2a89c846790aaed5",
+    "semantic_hash": "1bc29c1d63f0341e2a89c846790aaed5"
+  },
+  "ForgeModules/sub-modulos/web-scraping/agent/rag.py": {
+    "mtime": 1784747755.403255,
+    "seen": 1787851076.834485,
+    "ast_hash": "3be3fd35af50e5e767a8b14bf6375eb4",
+    "semantic_hash": "3be3fd35af50e5e767a8b14bf6375eb4"
+  },
+  "ForgeModules/sub-modulos/web-scraping/agent/tools.py": {
+    "mtime": 1784747755.403255,
+    "seen": 1787851076.834485,
+    "ast_hash": "dc5846a5eb74e0360d19d64e73e1bfe0",
+    "semantic_hash": "dc5846a5eb74e0360d19d64e73e1bfe0"
+  },
+  "ForgeModules/sub-modulos/web-scraping/api/__init__.py": {
+    "mtime": 1784747755.403255,
+    "seen": 1787851076.834485,
+    "ast_hash": "39155b89169db34b9a99001dd6fdc4cc",
+    "semantic_hash": "39155b89169db34b9a99001dd6fdc4cc"
+  },
+  "ForgeModules/sub-modulos/web-scraping/api/dependencies.py": {
+    "mtime": 1784747755.4062867,
+    "seen": 1787851076.834485,
+    "ast_hash": "2291c93015752c8c883a54899ad7741e",
+    "semantic_hash": "2291c93015752c8c883a54899ad7741e"
+  },
+  "ForgeModules/sub-modulos/web-scraping/api/main.py": {
+    "mtime": 1784747755.407032,
+    "seen": 1787851076.834485,
+    "ast_hash": "2f9f7d7f01d8774186e0fb3f9eb84313",
+    "semantic_hash": "2f9f7d7f01d8774186e0fb3f9eb84313"
+  },
+  "ForgeModules/sub-modulos/web-scraping/api/routes/__init__.py": {
+    "mtime": 1784747755.407032,
+    "seen": 1787851076.834485,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "ForgeModules/sub-modulos/web-scraping/api/routes/agent.py": {
+    "mtime": 1784747755.4080398,
+    "seen": 1787851076.834485,
+    "ast_hash": "d18b432b2e5e3947777af51c29554f6d",
+    "semantic_hash": "d18b432b2e5e3947777af51c29554f6d"
+  },
+  "ForgeModules/sub-modulos/web-scraping/api/routes/dados.py": {
+    "mtime": 1784747755.40904,
+    "seen": 1787851076.834485,
+    "ast_hash": "87cb67177506e7a1ccd787036319182a",
+    "semantic_hash": "87cb67177506e7a1ccd787036319182a"
+  },
+  "ForgeModules/sub-modulos/web-scraping/api/routes/status.py": {
+    "mtime": 1784747755.41004,
+    "seen": 1787851076.834485,
+    "ast_hash": "f80621ff2ea84e32c65da57365512364",
+    "semantic_hash": "f80621ff2ea84e32c65da57365512364"
+  },
+  "ForgeModules/sub-modulos/web-scraping/api/schemas.py": {
+    "mtime": 1784747755.41004,
+    "seen": 1787851076.834485,
+    "ast_hash": "0695256a678d113e354d15a01aa18e97",
+    "semantic_hash": "0695256a678d113e354d15a01aa18e97"
+  },
+  "ForgeModules/sub-modulos/web-scraping/collector/__init__.py": {
+    "mtime": 1784747755.411039,
+    "seen": 1787851076.834485,
+    "ast_hash": "42e9cfe9d8d01213be5ef62129444d67",
+    "semantic_hash": "42e9cfe9d8d01213be5ef62129444d67"
+  },
+  "ForgeModules/sub-modulos/web-scraping/collector/base.py": {
+    "mtime": 1784747755.411039,
+    "seen": 1787851076.834485,
+    "ast_hash": "fd61dffce0fb137212ed01b6f836ec14",
+    "semantic_hash": "fd61dffce0fb137212ed01b6f836ec14"
+  },
+  "ForgeModules/sub-modulos/web-scraping/collector/main.py": {
+    "mtime": 1784747755.412326,
+    "seen": 1787851076.834485,
+    "ast_hash": "f3d405917a2dd630eb1e9699fd6431c2",
+    "semantic_hash": "f3d405917a2dd630eb1e9699fd6431c2"
+  },
+  "ForgeModules/sub-modulos/web-scraping/collector/open_meteo.py": {
+    "mtime": 1784747755.413635,
+    "seen": 1787851076.834485,
+    "ast_hash": "14ee3c2ccde5d7638405e356a6310b8b",
+    "semantic_hash": "14ee3c2ccde5d7638405e356a6310b8b"
+  },
+  "ForgeModules/sub-modulos/web-scraping/collector/scheduler.py": {
+    "mtime": 1784747755.4147897,
+    "seen": 1787851076.834485,
+    "ast_hash": "e37a2db5d26f352282bbc8f2f599f31b",
+    "semantic_hash": "e37a2db5d26f352282bbc8f2f599f31b"
+  },
+  "ForgeModules/sub-modulos/web-scraping/collector/university_api.py": {
+    "mtime": 1784747755.4157975,
+    "seen": 1787851076.834485,
+    "ast_hash": "39d1792e84183bda8fec8a45a33f8562",
+    "semantic_hash": "39d1792e84183bda8fec8a45a33f8562"
+  },
+  "ForgeModules/sub-modulos/web-scraping/collector/university_portal.py": {
+    "mtime": 1784747755.4157975,
+    "seen": 1787851076.834485,
+    "ast_hash": "fe07a74be8383ae5fb9a5d8413339775",
+    "semantic_hash": "fe07a74be8383ae5fb9a5d8413339775"
+  },
+  "ForgeModules/sub-modulos/web-scraping/config/__init__.py": {
+    "mtime": 1784747755.41731,
+    "seen": 1787851076.834485,
+    "ast_hash": "dc6c55cf727d7c79313a86f31ebee97b",
+    "semantic_hash": "dc6c55cf727d7c79313a86f31ebee97b"
+  },
+  "ForgeModules/sub-modulos/web-scraping/config/settings.py": {
+    "mtime": 1784747755.41731,
+    "seen": 1787851076.834485,
+    "ast_hash": "d0cb6b8977876e020f28e7780653c729",
+    "semantic_hash": "d0cb6b8977876e020f28e7780653c729"
+  },
+  "ForgeModules/sub-modulos/web-scraping/database/__init__.py": {
+    "mtime": 1784747755.4187748,
+    "seen": 1787851076.834485,
+    "ast_hash": "53b7abcc43d7ad9b1565a682b206b4ac",
+    "semantic_hash": "53b7abcc43d7ad9b1565a682b206b4ac"
+  },
+  "ForgeModules/sub-modulos/web-scraping/database/connection.py": {
+    "mtime": 1784747755.4187748,
+    "seen": 1787851076.834485,
+    "ast_hash": "dfce88f9ddeb236e75d51d4104ee66d9",
+    "semantic_hash": "dfce88f9ddeb236e75d51d4104ee66d9"
+  },
+  "ForgeModules/sub-modulos/web-scraping/database/models.py": {
+    "mtime": 1784747755.4197855,
+    "seen": 1787851076.834485,
+    "ast_hash": "5b4f66786f18e5a604dcec6b40daf3e3",
+    "semantic_hash": "5b4f66786f18e5a604dcec6b40daf3e3"
+  },
+  "ForgeModules/sub-modulos/web-scraping/database/repository.py": {
+    "mtime": 1784747755.4207823,
+    "seen": 1787851076.834485,
+    "ast_hash": "198baef1e90d6a03d05820e4fff91cf9",
+    "semantic_hash": "198baef1e90d6a03d05820e4fff91cf9"
+  },
+  "ForgeModules/sub-modulos/web-scraping/frontend/js/app.js": {
+    "mtime": 1784747755.4259493,
+    "seen": 1787851076.834485,
+    "ast_hash": "31ed2832153423a25fc6668ae4a1c36a",
+    "semantic_hash": "31ed2832153423a25fc6668ae4a1c36a"
+  },
+  "ForgeModules/sub-modulos/web-scraping/pyproject.toml": {
+    "mtime": 1784747755.4259493,
+    "seen": 1787851076.834485,
+    "ast_hash": "683c85462f8fbe90aba558391aec622f",
+    "semantic_hash": "683c85462f8fbe90aba558391aec622f"
+  },
+  "ForgeModules/sub-modulos/web-scraping/scripts/install_linux.sh": {
+    "mtime": 1784747755.428468,
+    "seen": 1787851076.834485,
+    "ast_hash": "740fb86514d73eaa653f4405fcd82eed",
+    "semantic_hash": "740fb86514d73eaa653f4405fcd82eed"
+  },
+  "ForgeModules/sub-modulos/web-scraping/shared/__init__.py": {
+    "mtime": 1784747755.428468,
+    "seen": 1787851076.834485,
+    "ast_hash": "4d114939db7467c1155f05a10820e1a1",
+    "semantic_hash": "4d114939db7467c1155f05a10820e1a1"
+  },
+  "ForgeModules/sub-modulos/web-scraping/shared/cache.py": {
+    "mtime": 1784747755.4294665,
+    "seen": 1787851076.834485,
+    "ast_hash": "b301cca2073eb06469be090c4a22aec2",
+    "semantic_hash": "b301cca2073eb06469be090c4a22aec2"
+  },
+  "ForgeModules/sub-modulos/web-scraping/shared/logging_config.py": {
+    "mtime": 1784747755.4304671,
+    "seen": 1787851076.834485,
+    "ast_hash": "d27ea330c46ceaf47bfbaeb72a3dbef5",
+    "semantic_hash": "d27ea330c46ceaf47bfbaeb72a3dbef5"
+  },
+  "ForgeModules/sub-modulos/web-scraping/tests/__init__.py": {
+    "mtime": 1784747755.4309423,
+    "seen": 1787851076.834485,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "ForgeModules/sub-modulos/web-scraping/tests/conftest.py": {
+    "mtime": 1784747755.4314492,
+    "seen": 1787851076.834485,
+    "ast_hash": "9ef29e3aea8e841d3e804717a3bf04c3",
+    "semantic_hash": "9ef29e3aea8e841d3e804717a3bf04c3"
+  },
+  "ForgeModules/sub-modulos/web-scraping/tests/test_agent.py": {
+    "mtime": 1784747755.432457,
+    "seen": 1787851076.834485,
+    "ast_hash": "479f5d4ab403a0053d1983016db093fd",
+    "semantic_hash": "479f5d4ab403a0053d1983016db093fd"
+  },
+  "ForgeModules/sub-modulos/web-scraping/tests/test_base.py": {
+    "mtime": 1784747755.432457,
+    "seen": 1787851076.834485,
+    "ast_hash": "1eaf03712a264a2bc8cfcb351b29f678",
+    "semantic_hash": "1eaf03712a264a2bc8cfcb351b29f678"
+  },
+  "ForgeModules/sub-modulos/web-scraping/tests/test_collector.py": {
+    "mtime": 1784747755.4334571,
+    "seen": 1787851076.834485,
+    "ast_hash": "3f935bf33b93417a0157049ead282d5e",
+    "semantic_hash": "3f935bf33b93417a0157049ead282d5e"
+  },
+  "ForgeModules/sub-modulos/web-scraping/tests/test_settings.py": {
+    "mtime": 1784747755.4334571,
+    "seen": 1787851076.834485,
+    "ast_hash": "d6ed6cdb365ea2e604c7d567d2d73ac3",
+    "semantic_hash": "d6ed6cdb365ea2e604c7d567d2d73ac3"
+  },
+  "ForgeModules/totem/.vscode/settings.json": {
+    "mtime": 1784747755.4387157,
+    "seen": 1787851076.834485,
+    "ast_hash": "7933b9cf635d2c2be5971297d7d05345",
+    "semantic_hash": "7933b9cf635d2c2be5971297d7d05345"
+  },
+  "ForgeModules/totem/c_src/apicomm.c": {
+    "mtime": 1784383366.482309,
+    "seen": 1787851076.834485,
+    "ast_hash": "4a04d24c89ded5238c166d13a738f301",
+    "semantic_hash": "4a04d24c89ded5238c166d13a738f301"
+  },
+  "ForgeModules/totem/c_src/stt.c": {
+    "mtime": 1783457565.932037,
+    "seen": 1787851076.834485,
+    "ast_hash": "50fe764db6af1f66d8748e9114c18f5d",
+    "semantic_hash": "50fe764db6af1f66d8748e9114c18f5d"
+  },
+  "ForgeModules/totem/c_src/stt.h": {
+    "mtime": 1783457565.9343839,
+    "seen": 1787851076.834485,
+    "ast_hash": "71d130a0e66f3e83d40546889f714b9d",
+    "semantic_hash": "71d130a0e66f3e83d40546889f714b9d"
+  },
+  "ForgeModules/totem/config/academic_data.json": {
+    "mtime": 1783457566.0684395,
+    "seen": 1787851076.834485,
+    "ast_hash": "343df94e311969786d9d7cac5c6ffb16",
+    "semantic_hash": "343df94e311969786d9d7cac5c6ffb16"
+  },
+  "ForgeModules/totem/config/layout_config.json": {
+    "mtime": 1784674347.0407493,
+    "seen": 1787851076.834485,
+    "ast_hash": "9818a748980ce0d4c455439b3f5c02c5",
+    "semantic_hash": "9818a748980ce0d4c455439b3f5c02c5"
+  },
+  "ForgeModules/totem/edge_opi_client/Cargo.toml": {
+    "mtime": 1783457566.0719323,
+    "seen": 1787851076.834485,
+    "ast_hash": "df646aa3c7e96629c2c7b0ac5f3c6d41",
+    "semantic_hash": "df646aa3c7e96629c2c7b0ac5f3c6d41"
+  },
+  "ForgeModules/totem/edge_opi_client/src/main.rs": {
+    "mtime": 1783457566.0719323,
+    "seen": 1787851076.834485,
+    "ast_hash": "6e6c567bf6a511205274b3bcbe769874",
+    "semantic_hash": "6e6c567bf6a511205274b3bcbe769874"
+  },
+  "ForgeModules/totem/install.py": {
+    "mtime": 1784748705.8869822,
+    "seen": 1787851076.834485,
+    "ast_hash": "67305f4aa6e666f3a74857585445da9e",
+    "semantic_hash": "67305f4aa6e666f3a74857585445da9e"
+  },
+  "ForgeModules/totem/install.sh": {
+    "mtime": 1784749768.293637,
+    "seen": 1787851076.834485,
+    "ast_hash": "dd7efc865f863137e2b50e09b7bb7488",
+    "semantic_hash": "dd7efc865f863137e2b50e09b7bb7488"
+  },
+  "ForgeModules/totem/keywords/scripts/binary_to_c_array.py": {
+    "mtime": 1783457566.198461,
+    "seen": 1787851076.834485,
+    "ast_hash": "e078996db73aef06675bc0cd93b6121c",
+    "semantic_hash": "e078996db73aef06675bc0cd93b6121c"
+  },
+  "ForgeModules/totem/keywords/scripts/machine-state.sh": {
+    "mtime": 1783457566.2035124,
+    "seen": 1787851076.834485,
+    "ast_hash": "c8f66d1f1ae0593aea9af86608027678",
+    "semantic_hash": "c8f66d1f1ae0593aea9af86608027678"
+  },
+  "ForgeModules/totem/keywords/scripts/update_languages.py": {
+    "mtime": 1783457566.2035124,
+    "seen": 1787851076.834485,
+    "ast_hash": "7f43cdb7f957fcff8207f9438b3db2b4",
+    "semantic_hash": "7f43cdb7f957fcff8207f9438b3db2b4"
+  },
+  "ForgeModules/totem/libs/webrtc_apm/__init__.py": {
+    "mtime": 1783457566.236495,
+    "seen": 1787851076.834485,
+    "ast_hash": "eafc6d8829efbfe96653e7f4cdee236b",
+    "semantic_hash": "eafc6d8829efbfe96653e7f4cdee236b"
+  },
+  "ForgeModules/totem/main_cli.py": {
+    "mtime": 1784748675.3702438,
+    "seen": 1787851076.834485,
+    "ast_hash": "d3a8119f07dee11d1fcf93d26f12961c",
+    "semantic_hash": "d3a8119f07dee11d1fcf93d26f12961c"
+  },
+  "ForgeModules/totem/main_gui.py": {
+    "mtime": 1784675588.2792482,
+    "seen": 1787851076.834485,
+    "ast_hash": "fc31ae0261a790b50a793f597aa1d30a",
+    "semantic_hash": "fc31ae0261a790b50a793f597aa1d30a"
+  },
+  "ForgeModules/totem/models/pt_BR-mariana-medium.onnx.json": {
+    "mtime": 1784383366.4861765,
+    "seen": 1787851076.834485,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "ForgeModules/totem/models/voices.json": {
+    "mtime": 1784383366.7693868,
+    "seen": 1787851076.834485,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "ForgeModules/totem/scripts/download_kws.py": {
+    "mtime": 1784383366.770502,
+    "seen": 1787851076.834485,
+    "ast_hash": "eefa0799820b38e745ae2e3a3558a383",
+    "semantic_hash": "eefa0799820b38e745ae2e3a3558a383"
+  },
+  "ForgeModules/totem/scripts/list_devices.py": {
+    "mtime": 1783457566.344102,
+    "seen": 1787851076.834485,
+    "ast_hash": "ebafa3e5c9684f5a2db5dd45639ce342",
+    "semantic_hash": "ebafa3e5c9684f5a2db5dd45639ce342"
+  },
+  "ForgeModules/totem/scripts/mabi_voice_interface.py": {
+    "mtime": 1784383366.770502,
+    "seen": 1787851076.834485,
+    "ast_hash": "0ab40967134edc11f4171d9ce2cad431",
+    "semantic_hash": "0ab40967134edc11f4171d9ce2cad431"
+  },
+  "ForgeModules/totem/scripts/mina_wakeword_daemon.py": {
+    "mtime": 1784383366.771581,
+    "seen": 1787851076.834485,
+    "ast_hash": "58612fc7ca7031b0b5e6a81a7d66bd90",
+    "semantic_hash": "58612fc7ca7031b0b5e6a81a7d66bd90"
+  },
+  "ForgeModules/totem/scripts/patch_academic_db.py": {
+    "mtime": 1784383366.771581,
+    "seen": 1787851076.834485,
+    "ast_hash": "d8a0d8ac3d319f7c3d94d077a760b8b7",
+    "semantic_hash": "d8a0d8ac3d319f7c3d94d077a760b8b7"
+  },
+  "ForgeModules/totem/scripts/patch_tts.py": {
+    "mtime": 1784383366.771581,
+    "seen": 1787851076.834485,
+    "ast_hash": "884543011d2cdf1f643182ffed41ef3a",
+    "semantic_hash": "884543011d2cdf1f643182ffed41ef3a"
+  },
+  "ForgeModules/totem/scripts/start_tts.sh": {
+    "mtime": 1784383366.7730598,
+    "seen": 1787851076.834485,
+    "ast_hash": "976af81d8f20ceb7a7ce09bb5b128f43",
+    "semantic_hash": "976af81d8f20ceb7a7ce09bb5b128f43"
+  },
+  "ForgeModules/totem/scripts/startxorg.sh": {
+    "mtime": 1784383366.7730598,
+    "seen": 1787851076.834485,
+    "ast_hash": "033ad8b6f236974d60b714c92a27b712",
+    "semantic_hash": "033ad8b6f236974d60b714c92a27b712"
+  },
+  "ForgeModules/totem/scripts/unesp_scraper.py": {
+    "mtime": 1783457566.344102,
+    "seen": 1787851076.834485,
+    "ast_hash": "baccd8f847e6b0c5089fa6798060c312",
+    "semantic_hash": "baccd8f847e6b0c5089fa6798060c312"
+  },
+  "ForgeModules/totem/setup.ps1": {
+    "mtime": 1784675980.100324,
+    "seen": 1787851076.834485,
+    "ast_hash": "b5e2a72c313f1431689813141090f51d",
+    "semantic_hash": "b5e2a72c313f1431689813141090f51d"
+  },
+  "ForgeModules/totem/setup.sh": {
+    "mtime": 1784675976.4450824,
+    "seen": 1787851076.834485,
+    "ast_hash": "8bfab44d859f004e0f3cdfc487af2a8e",
+    "semantic_hash": "8bfab44d859f004e0f3cdfc487af2a8e"
+  },
+  "ForgeModules/totem/src/__init__.py": {
+    "mtime": 1783457566.574642,
+    "seen": 1787851076.834485,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "ForgeModules/totem/src/display/base_display.py": {
+    "mtime": 1783457566.574642,
+    "seen": 1787851076.834485,
+    "ast_hash": "cd109fa9d17c4abcc47ea349afe8473b",
+    "semantic_hash": "cd109fa9d17c4abcc47ea349afe8473b"
+  },
+  "ForgeModules/totem/src/display/gui_display.py": {
+    "mtime": 1784675609.169999,
+    "seen": 1787851076.834485,
+    "ast_hash": "342c5c7d94fdd80d88ece9eff2f03183",
+    "semantic_hash": "342c5c7d94fdd80d88ece9eff2f03183"
+  },
+  "ForgeModules/totem/src/display/gui_display_model.py": {
+    "mtime": 1783457566.574642,
+    "seen": 1787851076.834485,
+    "ast_hash": "915883d002aa8495bf58fb50059df4c9",
+    "semantic_hash": "915883d002aa8495bf58fb50059df4c9"
+  },
+  "ForgeModules/totem/src/display/layout_config_model.py": {
+    "mtime": 1783457566.574642,
+    "seen": 1787851076.834485,
+    "ast_hash": "0b1651ef72b0c2677883fb0ddb068ef8",
+    "semantic_hash": "0b1651ef72b0c2677883fb0ddb068ef8"
+  },
+  "ForgeModules/totem/src/utils/academic_db.py": {
+    "mtime": 1784383366.774108,
+    "seen": 1787851076.834485,
+    "ast_hash": "8f522c21c5175d0986a1563a7d3090d2",
+    "semantic_hash": "8f522c21c5175d0986a1563a7d3090d2"
+  },
+  "ForgeModules/totem/src/utils/binary_manager.py": {
+    "mtime": 1783457566.5795138,
+    "seen": 1787851076.834485,
+    "ast_hash": "50ae47c096ada127a4b7266e0288d89b",
+    "semantic_hash": "50ae47c096ada127a4b7266e0288d89b"
+  },
+  "ForgeModules/totem/src/utils/chat_bridge.py": {
+    "mtime": 1784383366.774108,
+    "seen": 1787851076.834485,
+    "ast_hash": "237eecc51101b4b3095b18304cdbe03a",
+    "semantic_hash": "237eecc51101b4b3095b18304cdbe03a"
+  },
+  "ForgeModules/totem/src/utils/common_utils.py": {
+    "mtime": 1783457566.5795138,
+    "seen": 1787851076.834485,
+    "ast_hash": "430e64d6055ce9925615bb3b448c16f7",
+    "semantic_hash": "430e64d6055ce9925615bb3b448c16f7"
+  },
+  "ForgeModules/totem/src/utils/config_manager.py": {
+    "mtime": 1783457566.5795138,
+    "seen": 1787851076.834485,
+    "ast_hash": "2bd0806c8585b20883285512205f0853",
+    "semantic_hash": "2bd0806c8585b20883285512205f0853"
+  },
+  "ForgeModules/totem/src/utils/dependency_manager.py": {
+    "mtime": 1784383366.7750695,
+    "seen": 1787851076.834485,
+    "ast_hash": "8834060092edf035e563991b21cc9a71",
+    "semantic_hash": "8834060092edf035e563991b21cc9a71"
+  },
+  "ForgeModules/totem/src/utils/device_activator.py": {
+    "mtime": 1783457566.5795138,
+    "seen": 1787851076.834485,
+    "ast_hash": "76390775e337ed07f67b9acf700249c6",
+    "semantic_hash": "76390775e337ed07f67b9acf700249c6"
+  },
+  "ForgeModules/totem/src/utils/intent_classifier.py": {
+    "mtime": 1784383366.7750695,
+    "seen": 1787851076.834485,
+    "ast_hash": "09d2b8a1da32e1fa2b782e348d361cea",
+    "semantic_hash": "09d2b8a1da32e1fa2b782e348d361cea"
+  },
+  "ForgeModules/totem/src/utils/logging_config.py": {
+    "mtime": 1783457566.5795138,
+    "seen": 1787851076.834485,
+    "ast_hash": "353223e6533358e7b04ce035792658c6",
+    "semantic_hash": "353223e6533358e7b04ce035792658c6"
+  },
+  "ForgeModules/totem/src/utils/memory_db.py": {
+    "mtime": 1783457566.5795138,
+    "seen": 1787851076.834485,
+    "ast_hash": "69637b3178b27ece7f13b3f7f0d94ee3",
+    "semantic_hash": "69637b3178b27ece7f13b3f7f0d94ee3"
+  },
+  "ForgeModules/totem/src/utils/ntp_sync.py": {
+    "mtime": 1783457566.5836985,
+    "seen": 1787851076.834485,
+    "ast_hash": "61efc77ece0a7b1fc5d5b6caae1c800c",
+    "semantic_hash": "61efc77ece0a7b1fc5d5b6caae1c800c"
+  },
+  "ForgeModules/totem/src/utils/resource_finder.py": {
+    "mtime": 1783457566.5836985,
+    "seen": 1787851076.834485,
+    "ast_hash": "6b1670454b00dcfd8472c3832924bae1",
+    "semantic_hash": "6b1670454b00dcfd8472c3832924bae1"
+  },
+  "ForgeModules/totem/src/utils/stt_client.py": {
+    "mtime": 1783457566.5836985,
+    "seen": 1787851076.834485,
+    "ast_hash": "f9e20d774b4eb919054c7e4f6a2f09b9",
+    "semantic_hash": "f9e20d774b4eb919054c7e4f6a2f09b9"
+  },
+  "ForgeModules/totem/src/utils/system_optimizer.py": {
+    "mtime": 1783457566.5847063,
+    "seen": 1787851076.834485,
+    "ast_hash": "270af09c75c486238265a18eb4f06441",
+    "semantic_hash": "270af09c75c486238265a18eb4f06441"
+  },
+  "ForgeModules/totem/src/utils/tts_client.py": {
+    "mtime": 1784383640.7393572,
+    "seen": 1787851076.834485,
+    "ast_hash": "ade0f67e5acc4fce3ba09f0f686d7e0a",
+    "semantic_hash": "ade0f67e5acc4fce3ba09f0f686d7e0a"
+  },
+  "ForgeModules/totem/src/utils/vad_cpp_helper.py": {
+    "mtime": 1783457566.5852952,
+    "seen": 1787851076.834485,
+    "ast_hash": "05762cdd27685adebdcf75418f34c942",
+    "semantic_hash": "05762cdd27685adebdcf75418f34c942"
+  },
+  "ForgeModules/totem/src/utils/vad_monitor.py": {
+    "mtime": 1783457566.5852952,
+    "seen": 1787851076.834485,
+    "ast_hash": "bd1570633cc8a9a6d7ba6a3510dadf66",
+    "semantic_hash": "bd1570633cc8a9a6d7ba6a3510dadf66"
+  },
+  "ForgeModules/totem/src/utils/wake_word_listener.py": {
+    "mtime": 1783457566.5852952,
+    "seen": 1787851076.834485,
+    "ast_hash": "b65027a47b767800507f4521a681d6f2",
+    "semantic_hash": "b65027a47b767800507f4521a681d6f2"
+  },
+  "ForgeModules/totem/src/views/__init__.py": {
+    "mtime": 1783457566.58681,
+    "seen": 1787851076.834485,
+    "ast_hash": "e15132e00e6de8a46d44bb980d6de238",
+    "semantic_hash": "e15132e00e6de8a46d44bb980d6de238"
+  },
+  "ForgeModules/totem/src/views/activation/__init__.py": {
+    "mtime": 1783457566.58681,
+    "seen": 1787851076.834485,
+    "ast_hash": "7c3c741567d4d5ebee15372ce5211dfd",
+    "semantic_hash": "7c3c741567d4d5ebee15372ce5211dfd"
+  },
+  "ForgeModules/totem/src/views/activation/activation_model.py": {
+    "mtime": 1783457566.58681,
+    "seen": 1787851076.834485,
+    "ast_hash": "c8284aeeb675e6b0cae0decfed689823",
+    "semantic_hash": "c8284aeeb675e6b0cae0decfed689823"
+  },
+  "ForgeModules/totem/src/views/activation/activation_window.py": {
+    "mtime": 1783457566.58681,
+    "seen": 1787851076.834485,
+    "ast_hash": "e3b8d980ec37a2445db4ba8f1c4ea42e",
+    "semantic_hash": "e3b8d980ec37a2445db4ba8f1c4ea42e"
+  },
+  "ForgeModules/totem/src/views/activation/cli_activation.py": {
+    "mtime": 1783457566.589249,
+    "seen": 1787851076.834485,
+    "ast_hash": "a4db312a83b8dcf76a428beb0a39480e",
+    "semantic_hash": "a4db312a83b8dcf76a428beb0a39480e"
+  },
+  "ForgeModules/totem/src/views/base/__init__.py": {
+    "mtime": 1783457566.590258,
+    "seen": 1787851076.834485,
+    "ast_hash": "ed3865f1e53f3105b8ce121a6c52f52f",
+    "semantic_hash": "ed3865f1e53f3105b8ce121a6c52f52f"
+  },
+  "ForgeModules/totem/src/views/base/async_mixins.py": {
+    "mtime": 1783457566.590775,
+    "seen": 1787851076.834485,
+    "ast_hash": "786fb0d08a7c4e72172172ba36444d05",
+    "semantic_hash": "786fb0d08a7c4e72172172ba36444d05"
+  },
+  "ForgeModules/totem/src/views/base/base_window.py": {
+    "mtime": 1783457566.590775,
+    "seen": 1787851076.834485,
+    "ast_hash": "3fdf7c05b84fb83bc479eeea5a145ee1",
+    "semantic_hash": "3fdf7c05b84fb83bc479eeea5a145ee1"
+  },
+  "ForgeModules/totem/src/views/components/__init__.py": {
+    "mtime": 1783457566.5915558,
+    "seen": 1787851076.834485,
+    "ast_hash": "fa52db26aa4c9c56a363eff243c1980d",
+    "semantic_hash": "fa52db26aa4c9c56a363eff243c1980d"
+  },
+  "ForgeModules/totem/src/views/settings/__init__.py": {
+    "mtime": 1783457566.5927012,
+    "seen": 1787851076.834485,
+    "ast_hash": "8015bdc2a6ae8764530b8476e4543fa8",
+    "semantic_hash": "8015bdc2a6ae8764530b8476e4543fa8"
+  },
+  "ForgeModules/totem/src/views/settings/components/ai_services/__init__.py": {
+    "mtime": 1783457566.593569,
+    "seen": 1787851076.834485,
+    "ast_hash": "e870057e79834ceeb59df77ed4004a90",
+    "semantic_hash": "e870057e79834ceeb59df77ed4004a90"
+  },
+  "ForgeModules/totem/src/views/settings/components/ai_services/ai_services_widget.py": {
+    "mtime": 1784383366.776524,
+    "seen": 1787851076.834485,
+    "ast_hash": "0434b0925c668a33a320fd595e6cc232",
+    "semantic_hash": "0434b0925c668a33a320fd595e6cc232"
+  },
+  "ForgeModules/totem/src/views/settings/components/audio/__init__.py": {
+    "mtime": 1783457566.5956843,
+    "seen": 1787851076.834485,
+    "ast_hash": "7257e56abb43fff822782cfc859a3765",
+    "semantic_hash": "7257e56abb43fff822782cfc859a3765"
+  },
+  "ForgeModules/totem/src/views/settings/components/audio/audio_widget.py": {
+    "mtime": 1783457566.596189,
+    "seen": 1787851076.834485,
+    "ast_hash": "4f637af9e2c2730156ca57ac9ca513f5",
+    "semantic_hash": "4f637af9e2c2730156ca57ac9ca513f5"
+  },
+  "ForgeModules/totem/src/views/settings/components/base_settings_widget.py": {
+    "mtime": 1783457566.596189,
+    "seen": 1787851076.8352013,
+    "ast_hash": "2db73fca5d1b6e1f6a817df3c112366f",
+    "semantic_hash": "2db73fca5d1b6e1f6a817df3c112366f"
+  },
+  "ForgeModules/totem/src/views/settings/components/camera/__init__.py": {
+    "mtime": 1783457566.596189,
+    "seen": 1787851076.8352013,
+    "ast_hash": "a72a3c9777892a480fbd2aa2d211eb4a",
+    "semantic_hash": "a72a3c9777892a480fbd2aa2d211eb4a"
+  },
+  "ForgeModules/totem/src/views/settings/components/camera/camera_widget.py": {
+    "mtime": 1784383366.7781172,
+    "seen": 1787851076.8352013,
+    "ast_hash": "847f0b42cb0536326bec963c186ef25a",
+    "semantic_hash": "847f0b42cb0536326bec963c186ef25a"
+  },
+  "ForgeModules/totem/src/views/settings/components/shortcuts_settings.py": {
+    "mtime": 1783457566.599435,
+    "seen": 1787851076.8352013,
+    "ast_hash": "16da7f2350a1bb40e5887de150bc26a5",
+    "semantic_hash": "16da7f2350a1bb40e5887de150bc26a5"
+  },
+  "ForgeModules/totem/src/views/settings/components/system_options/__init__.py": {
+    "mtime": 1783457566.599435,
+    "seen": 1787851076.8352013,
+    "ast_hash": "94e1f858bfa2277f45cbf65f8f2c75d7",
+    "semantic_hash": "94e1f858bfa2277f45cbf65f8f2c75d7"
+  },
+  "ForgeModules/totem/src/views/settings/components/system_options/system_options_widget.py": {
+    "mtime": 1783457566.599435,
+    "seen": 1787851076.8352013,
+    "ast_hash": "320960cf7fc13782ce62fa8b2be855f7",
+    "semantic_hash": "320960cf7fc13782ce62fa8b2be855f7"
+  },
+  "ForgeModules/totem/src/views/settings/components/wake_word/__init__.py": {
+    "mtime": 1783457566.599435,
+    "seen": 1787851076.8352013,
+    "ast_hash": "48936023ae634db5cdc8e5ef6a44bce7",
+    "semantic_hash": "48936023ae634db5cdc8e5ef6a44bce7"
+  },
+  "ForgeModules/totem/src/views/settings/components/wake_word/wake_word_widget.py": {
+    "mtime": 1783457566.599435,
+    "seen": 1787851076.8352013,
+    "ast_hash": "7bb580acb8dc11a4db4d77027f3db879",
+    "semantic_hash": "7bb580acb8dc11a4db4d77027f3db879"
+  },
+  "ForgeModules/totem/src/views/settings/settings_window.py": {
+    "mtime": 1783457566.6028702,
+    "seen": 1787851076.8352013,
+    "ast_hash": "5e4e256c09ed9f635c530013280755b6",
+    "semantic_hash": "5e4e256c09ed9f635c530013280755b6"
+  },
+  "ForgeModules/totem/tests/benchmark_pipeline.py": {
+    "mtime": 1783457566.6071663,
+    "seen": 1787851076.8352013,
+    "ast_hash": "ba723d68248d5df5d69d2731be5d32dc",
+    "semantic_hash": "ba723d68248d5df5d69d2731be5d32dc"
+  },
+  "ForgeModules/totem/tests/test_academic.py": {
+    "mtime": 1784383366.7781172,
+    "seen": 1787851076.8352013,
+    "ast_hash": "ea0f7d4389418e4eb27a08b102555670",
+    "semantic_hash": "ea0f7d4389418e4eb27a08b102555670"
+  },
+  "ForgeModules/totem/tests/test_all.py": {
+    "mtime": 1783457566.6071663,
+    "seen": 1787851076.8352013,
+    "ast_hash": "b098eac9f7c4fefa6bfad163de354291",
+    "semantic_hash": "b098eac9f7c4fefa6bfad163de354291"
+  },
+  "ForgeModules/totem/tests/test_all_mics.py": {
+    "mtime": 1783457566.6077774,
+    "seen": 1787851076.8352013,
+    "ast_hash": "97a667647fdac6e95b033bec858ddf82",
+    "semantic_hash": "97a667647fdac6e95b033bec858ddf82"
+  },
+  "ForgeModules/totem/tests/test_decode.py": {
+    "mtime": 1783457566.6082935,
+    "seen": 1787851076.8352013,
+    "ast_hash": "db6dd6be88c8006952ef641b11da01bb",
+    "semantic_hash": "db6dd6be88c8006952ef641b11da01bb"
+  },
+  "ForgeModules/totem/tests/test_kws_mic.py": {
+    "mtime": 1784383366.7781172,
+    "seen": 1787851076.8352013,
+    "ast_hash": "bd26b9dcb2c55e334daafbf1b68b12e4",
+    "semantic_hash": "bd26b9dcb2c55e334daafbf1b68b12e4"
+  },
+  "ForgeModules/totem/tests/test_live_sensitivity.py": {
+    "mtime": 1784383366.779303,
+    "seen": 1787851076.8352013,
+    "ast_hash": "82cafad24c9c6b2698a35425d0a2d8af",
+    "semantic_hash": "82cafad24c9c6b2698a35425d0a2d8af"
+  },
+  "ForgeModules/totem/tests/test_memory.py": {
+    "mtime": 1783457566.6090453,
+    "seen": 1787851076.8352013,
+    "ast_hash": "8e4d479db5ca86589d2cf3671539f38d",
+    "semantic_hash": "8e4d479db5ca86589d2cf3671539f38d"
+  },
+  "ForgeModules/totem/tests/test_mic_level.py": {
+    "mtime": 1783457566.6090453,
+    "seen": 1787851076.8352013,
+    "ast_hash": "ed0f21c9576fb2b869a4504127c59089",
+    "semantic_hash": "ed0f21c9576fb2b869a4504127c59089"
+  },
+  "ForgeModules/totem/tests/test_ntp.py": {
+    "mtime": 1783457566.6090453,
+    "seen": 1787851076.8352013,
+    "ast_hash": "10704b127811d3cbdd0cb1e077c72759",
+    "semantic_hash": "10704b127811d3cbdd0cb1e077c72759"
+  },
+  "ForgeModules/totem/tests/test_optimized_gui.py": {
+    "mtime": 1784383366.779874,
+    "seen": 1787851076.8352013,
+    "ast_hash": "1a947cf5ffb39ae84adb7cb598fea829",
+    "semantic_hash": "1a947cf5ffb39ae84adb7cb598fea829"
+  },
+  "ForgeModules/totem/tests/test_perf.py": {
+    "mtime": 1784383366.779874,
+    "seen": 1787851076.8352013,
+    "ast_hash": "b52f25ec7cb46a08bcfb0d9ed3b6a548",
+    "semantic_hash": "b52f25ec7cb46a08bcfb0d9ed3b6a548"
+  },
+  "ForgeModules/totem/tests/test_pipeline.py": {
+    "mtime": 1784383743.3504336,
+    "seen": 1787851076.8352013,
+    "ast_hash": "899008a0d7e004c786626c0feff8abbe",
+    "semantic_hash": "899008a0d7e004c786626c0feff8abbe"
+  },
+  "ForgeModules/totem/tests/test_play.py": {
+    "mtime": 1783457566.6090453,
+    "seen": 1787851076.8352013,
+    "ast_hash": "f0aa2dbff49c77fb9b59d630837f35a9",
+    "semantic_hash": "f0aa2dbff49c77fb9b59d630837f35a9"
+  },
+  "ForgeModules/totem/tests/test_sherpa.py": {
+    "mtime": 1784383366.781423,
+    "seen": 1787851076.8352013,
+    "ast_hash": "b710f6900896be34683ff6856606eff5",
+    "semantic_hash": "b710f6900896be34683ff6856606eff5"
+  },
+  "ForgeModules/totem/tests/test_wakeword.py": {
+    "mtime": 1783457566.6120005,
+    "seen": 1787851076.8352013,
+    "ast_hash": "693a92029b0d7bcdaf9366fb117c51c8",
+    "semantic_hash": "693a92029b0d7bcdaf9366fb117c51c8"
+  },
+  "ForgeModules/totem/tests/test_wav_spot.py": {
+    "mtime": 1784383366.781423,
+    "seen": 1787851076.8352013,
+    "ast_hash": "0f9ebfb387a74a8883c407d87eab509c",
+    "semantic_hash": "0f9ebfb387a74a8883c407d87eab509c"
+  },
+  "ForgeModules/totem/tests/test_windowed_layout_and_cli.py": {
+    "mtime": 1784675634.4564712,
+    "seen": 1787851076.8352013,
+    "ast_hash": "3b470d34f8ddad687b4471fd66362597",
+    "semantic_hash": "3b470d34f8ddad687b4471fd66362597"
+  },
+  "ForgeModules/totem/tts_api/main.py": {
+    "mtime": 1783457566.613807,
+    "seen": 1787851076.8352013,
+    "ast_hash": "a38cfe2115b9bea1d407e50c72f8114b",
+    "semantic_hash": "a38cfe2115b9bea1d407e50c72f8114b"
+  },
+  "ForgeModules/totem/tts_api/test_api.py": {
+    "mtime": 1783457566.613807,
+    "seen": 1787851076.8352013,
+    "ast_hash": "08c3e5dabfaaff6437dae1ed9cb68a02",
+    "semantic_hash": "08c3e5dabfaaff6437dae1ed9cb68a02"
+  },
+  "ForgeModules/totem/tts_api/tts_api_outputs/api_benchmark_report.json": {
+    "mtime": 1783457566.6147716,
+    "seen": 1787851076.8352013,
+    "ast_hash": "68a6f8ca9053dde0d4a883d3b053cc12",
+    "semantic_hash": "68a6f8ca9053dde0d4a883d3b053cc12"
+  },
+  "ForgeOS/captive-portal/app.js": {
+    "mtime": 1784750728.340751,
+    "seen": 1787851076.8352013,
+    "ast_hash": "f448cae8d959f4826978bf0a6d8d14c6",
+    "semantic_hash": "f448cae8d959f4826978bf0a6d8d14c6"
+  },
+  "ForgeOS/captive-portal/server.py": {
+    "mtime": 1784751175.105539,
+    "seen": 1787851076.8352013,
+    "ast_hash": "8036bdef07920dd3fcffe90bcaa65abc",
+    "semantic_hash": "8036bdef07920dd3fcffe90bcaa65abc"
+  },
+  "ForgeOS/forge-agent.py": {
+    "mtime": 1784757386.1883364,
+    "seen": 1787851076.8352013,
+    "ast_hash": "f749fdedb5630d2b5bc841f6fe410f1b",
+    "semantic_hash": "f749fdedb5630d2b5bc841f6fe410f1b"
+  },
+  "ForgeOS/forge_display.py": {
+    "mtime": 1784753013.8162215,
+    "seen": 1787851076.8352013,
+    "ast_hash": "4dbc229577371d706ada092666020f2c",
+    "semantic_hash": "4dbc229577371d706ada092666020f2c"
+  },
+  "ForgeModules/totem/tts_api/tts_api_outputs/api_get_test.mp3": {
+    "mtime": 1783457566.6147716,
+    "seen": 1787851076.8352013,
+    "ast_hash": "2ed534f1284da326ae5e8000f12a90a3",
+    "semantic_hash": "2ed534f1284da326ae5e8000f12a90a3"
+  },
+  "ForgeModules/totem/tts_api/tts_api_outputs/api_sample_01.mp3": {
+    "mtime": 1783457566.6173978,
+    "seen": 1787851076.8352013,
+    "ast_hash": "fdac2fc6e9c6e8a07670233ca5332ca1",
+    "semantic_hash": "fdac2fc6e9c6e8a07670233ca5332ca1"
+  },
+  "ForgeModules/totem/tts_api/tts_api_outputs/api_sample_02.mp3": {
+    "mtime": 1783457566.6173978,
+    "seen": 1787851076.8352013,
+    "ast_hash": "e8e1f0dde95e0442d8c543a4b7868ac2",
+    "semantic_hash": "e8e1f0dde95e0442d8c543a4b7868ac2"
+  },
+  "ForgeModules/totem/tts_api/tts_api_outputs/api_sample_03.mp3": {
+    "mtime": 1783457566.6173978,
+    "seen": 1787851076.8352013,
+    "ast_hash": "7a06b2488e01bfd2b64d5a1e38f9d9da",
+    "semantic_hash": "7a06b2488e01bfd2b64d5a1e38f9d9da"
+  },
+  "ForgeModules/totem/tts_api/tts_api_outputs/api_sample_04.mp3": {
+    "mtime": 1783457566.6173978,
+    "seen": 1787851076.8352013,
+    "ast_hash": "e4d0e5284fdd2a7c2fa6190f75e41dbb",
+    "semantic_hash": "e4d0e5284fdd2a7c2fa6190f75e41dbb"
+  },
+  "ForgeModules/totem/tts_api/tts_api_outputs/api_sample_05.mp3": {
+    "mtime": 1783457566.6173978,
+    "seen": 1787851076.8352013,
+    "ast_hash": "25d75cc2482be5ff756b775e07214362",
+    "semantic_hash": "25d75cc2482be5ff756b775e07214362"
+  },
+  "ForgeModules/totem/tts_api/tts_api_outputs/api_stream_test.mp3": {
+    "mtime": 1783457566.6173978,
+    "seen": 1787851076.8352013,
+    "ast_hash": "78c609c17b81ae8db8dcd211114bc20c",
+    "semantic_hash": "78c609c17b81ae8db8dcd211114bc20c"
+  }
+}
