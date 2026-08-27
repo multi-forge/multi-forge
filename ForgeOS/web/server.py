@@ -155,7 +155,8 @@ def validate(d):
     ssid = d.get("ssid", "")
     if not isinstance(ssid, str) or not (0 < len(ssid) <= 32):
         return "SSID inválido"
-    if any(c in ssid for c in '"\n\r\t'):
+    forbidden = ('"', '\n', '\r', '\t', '\\')
+    if any(c in ssid for c in forbidden):
         return "SSID contém caracteres inválidos"
     if d.get("mode") == "psk":
         p = d.get("password", "")
@@ -173,7 +174,7 @@ def validate(d):
             return "phase2 inválido"
         for k in ("anonymous_identity", "domain"):
             v = d.get(k, "")
-            if v and any(c in v for c in '"\n\r\t'):
+            if v and any(c in v for c in forbidden):
                 return f"{k} inválido"
         return None
     return "modo inválido"
