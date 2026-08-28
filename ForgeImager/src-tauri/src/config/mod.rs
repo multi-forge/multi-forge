@@ -14,13 +14,16 @@ pub mod app {
 
 /// API endpoints and URLs
 pub mod urls {
-    /// GitHub releases API base for multi-forge/multi-forge.
-    /// Overridable at runtime via `FORGE_API_BASE` for custom setups.
-    const API_BASE_DEFAULT: &str = "https://api.github.com/repos/multi-forge/multi-forge";
+    /// GitHub repository identifier (e.g., "multi-forge/multi-forge").
+    /// Overridable at runtime via `FORGE_GITHUB_REPO`.
+    pub fn github_repo() -> String {
+        std::env::var("FORGE_GITHUB_REPO").unwrap_or_else(|_| "multi-forge/multi-forge".to_string())
+    }
 
-    /// MultiForge GitHub releases API base.
+    /// GitHub releases API base for the project.
+    /// Overridable at runtime via `FORGE_API_BASE` for custom setups.
     pub fn api_base() -> String {
-        std::env::var("FORGE_API_BASE").unwrap_or_else(|_| API_BASE_DEFAULT.to_string())
+        std::env::var("FORGE_API_BASE").unwrap_or_else(|_| format!("https://api.github.com/repos/{}", github_repo()))
     }
 
     /// Connectivity probe: GitHub API root — always reachable, no auth, no server needed.
@@ -28,7 +31,7 @@ pub mod urls {
         "https://api.github.com".to_string()
     }
 
-    /// GitHub releases page for MultiForge.
+    /// GitHub releases API endpoint.
     pub fn releases() -> String {
         format!("{}/releases", api_base())
     }
@@ -36,6 +39,26 @@ pub mod urls {
     /// GitHub releases API — latest release.
     pub fn latest_release() -> String {
         format!("{}/releases/latest", api_base())
+    }
+
+    /// GitHub releases API for a specific tag.
+    pub fn release_by_tag(tag: &str) -> String {
+        format!("{}/releases/tags/{}", api_base(), tag)
+    }
+
+    /// Raw GitHub content base URL.
+    pub fn raw_repo_base() -> String {
+        format!("https://raw.githubusercontent.com/{}/main", github_repo())
+    }
+
+    /// Remote manifest URL in repository.
+    pub fn manifest_url() -> String {
+        format!("{}/forge-images.json", raw_repo_base())
+    }
+
+    /// Alternative remote manifest URL.
+    pub fn manifest_url_alt() -> String {
+        format!("{}/Forge-images.json", raw_repo_base())
     }
 
     /// Base URL for board images (placeholder — swap for your CDN/GitHub raw URL).

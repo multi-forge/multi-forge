@@ -1170,11 +1170,14 @@
   pointer-events: none;
 }
 
-/* Static logo with a soft floating halo (no animation by default) */
+/* Static logo with a soft floating halo */
 .about-logo {
   width: 80px;
-  height: auto;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 18px;
   margin-bottom: var(--space-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   filter: drop-shadow(0 10px 24px rgba(var(--accent-rgb), 0.25));
 }
 

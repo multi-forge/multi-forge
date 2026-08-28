@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getBoards, getCachedBoardImage } from '../../hooks/useTauri';
 import { shuffle } from '../../utils';
 import { BoardImage } from '../shared';
+import ForgeSymbol from '../../assets/Forge-symbol.png';
 import type { BoardInfo } from '../../types';
 
 interface WelcomePageProps {
@@ -117,6 +118,9 @@ export function WelcomePage({ onStart }: WelcomePageProps) {
       )}
 
       <div className="welcome__content">
+        <div className="welcome__brand">
+          <img src={ForgeSymbol} alt="Multi-Forge" className="welcome__brand-logo" />
+        </div>
         <h1 className="welcome__heading">{heading}</h1>
         <p className="welcome__intro">{t('home.welcomeIntro')}</p>
         <button type="button" className="welcome__cta" onClick={onStart}>

@@ -12,36 +12,12 @@ export async function getBoards(): Promise<BoardInfo[]> {
         vendor: 'btv',
         vendor_name: 'BTV',
         support_tier: 'platinum',
-        image_count: 2,
+        image_count: 1,
         has_desktop: true,
         promoted: true,
         soc: 'Amlogic S905X2',
         architecture: 'arm64',
         summary: '2GB LPDDR4, 8GB eMMC, Realtek RTL8189FTV Wi-Fi AP 25MHz.',
-      },
-      {
-        slug: 'raspberry-pi-4',
-        name: 'Raspberry Pi 4 Model B',
-        vendor: 'raspberry-pi',
-        vendor_name: 'Raspberry Pi',
-        support_tier: 'platinum',
-        image_count: 2,
-        has_desktop: true,
-        promoted: true,
-        soc: 'BCM2711',
-        architecture: 'arm64',
-      },
-      {
-        slug: 'orangepi-5-plus',
-        name: 'Orange Pi 5 Plus',
-        vendor: 'orange-pi',
-        vendor_name: 'Orange Pi',
-        support_tier: 'platinum',
-        image_count: 2,
-        has_desktop: true,
-        promoted: true,
-        soc: 'RK3588',
-        architecture: 'arm64',
       }
     ];
   }
@@ -58,34 +34,17 @@ export async function getImagesForBoard(
   if (!isTauri) {
     return [
       {
-        release: '24.2.1',
+        release: '1.0.0',
         distro_release: 'bookworm',
         kernel_branch: 'current',
-        kernel_version: '6.6.21',
+        kernel_version: '6.1.y',
         image_variant: 'desktop',
         preinstalled_application: 'totem-ai',
         promoted: true,
-        file_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-armbian-btv-e10.img.xz',
-        direct_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-armbian-btv-e10.img.xz',
-        sha_url: null,
+        file_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-btv-e10.img.xz',
+        direct_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-btv-e10.img.xz',
+        sha_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-btv-e10.img.xz.sha256',
         file_size: 891289600,
-        stability: 'stable',
-        format: 'sd',
-        companions: [],
-        display_variants: [],
-      },
-      {
-        release: '3.20.0',
-        distro_release: 'alpine',
-        kernel_branch: 'lts',
-        kernel_version: '6.6.21',
-        image_variant: 'minimal',
-        preinstalled_application: 'iot-gateway',
-        promoted: false,
-        file_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-alpine-btv-e10.img.xz',
-        direct_url: 'https://github.com/multi-forge/multi-forge/releases/download/v1.0.0/forgeos-alpine-btv-e10.img.xz',
-        sha_url: null,
-        file_size: 115343360,
         stability: 'stable',
         format: 'sd',
         companions: [],
@@ -105,9 +64,7 @@ export async function getImagesForBoard(
 export async function getVendors(): Promise<VendorInfo[]> {
   if (!isTauri) {
     return [
-      { slug: 'btv', name: 'BTV (Amlogic TV Boxes)' } as any,
-      { slug: 'raspberry-pi', name: 'Raspberry Pi Foundation' } as any,
-      { slug: 'orange-pi', name: 'Orange Pi' } as any
+      { slug: 'btv', name: 'BTV (Amlogic TV Boxes)', description: 'Amlogic S905X2 TV Box platform', board_count: 1, partner_tier: 'platinum' } as any
     ];
   }
   return invoke('get_vendors');

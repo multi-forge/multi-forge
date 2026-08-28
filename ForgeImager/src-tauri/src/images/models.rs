@@ -213,3 +213,38 @@ pub struct DisplayVariantInfo {
     pub url: String,
     pub size_bytes: u64,
 }
+
+// ─── Manifest & GitHub Release types ──────────────────────────────────────────
+
+/// Manifest structure for `forge-images.json` or `manifest.json`
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct ForgeManifest {
+    #[serde(default)]
+    pub boards: Vec<ApiBoardSummary>,
+    #[serde(default)]
+    pub images: Vec<ApiImage>,
+    #[serde(default)]
+    pub vendors: Vec<ApiVendor>,
+}
+
+/// GitHub Release response representation
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GhRelease {
+    pub tag_name: String,
+    pub name: Option<String>,
+    pub body: Option<String>,
+    pub draft: Option<bool>,
+    pub prerelease: Option<bool>,
+    pub published_at: Option<String>,
+    #[serde(default)]
+    pub assets: Vec<GhAsset>,
+}
+
+/// GitHub Release Asset representation
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GhAsset {
+    pub name: String,
+    pub browser_download_url: String,
+    pub size: u64,
+    pub updated_at: Option<String>,
+}
