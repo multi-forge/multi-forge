@@ -59,7 +59,7 @@ def main():
 
     with open(out_path, "w") as f:
         f.write("\n".join(lines) + "\n")
-    print(f"[BUILD-CONF] {out_path} ({d.get('mode')} → {d.get('ssid')})")
+    print(f"[BUILD-CONF] {out_path} ({d.get('mode')} -> {d.get('ssid')})")
 
 
 if __name__ == "__main__":

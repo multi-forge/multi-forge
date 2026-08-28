@@ -8,6 +8,7 @@ import json
 import os
 import re
 import subprocess
+import tempfile
 import time
 from pathlib import Path
 
@@ -16,8 +17,9 @@ from PIL import Image, ImageDraw, ImageFont
 FB = "/dev/fb0"
 LINE_LEN = 7680
 BPP = 4
-STATE = "/opt/forgeos/state"
-FONTS = "/opt/forgeos/display/fonts"
+BASE = os.environ.get("FORGEOS_BASE", "/opt/forgeos" if os.path.exists("/opt/forgeos") else os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+STATE = os.path.join(BASE, "state")
+FONTS = os.path.join(BASE, "display", "fonts")
 
 # ---- paleta ----
 BG = (11, 15, 25)          # #0B0F19
@@ -64,11 +66,20 @@ def get_state():
 
 def qr_png(data, box):
     """QR normalizado em box x box (NEAREST preserva módulos nítidos)."""
-    out = f"/tmp/qr_{abs(hash(data)) % 9999}.png"
-    subprocess.run(["qrencode", "-s", "12", "-m", "0", "-o", out, data],
-                   check=True, capture_output=True)
-    img = Image.open(out).convert("RGB")
-    return img.resize((box, box), Image.NEAREST)
+    try:
+        import qrcode
+        qr = qrcode.QRCode(box_size=12, border=0)
+        qr.add_data(data)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
+        return img.resize((box, box), Image.NEAREST)
+    except Exception:
+        import tempfile
+        out = os.path.join(tempfile.gettempdir(), f"qr_{abs(hash(data)) % 9999}.png")
+        subprocess.run(["qrencode", "-s", "12", "-m", "0", "-o", out, data],
+                       check=True, capture_output=True)
+        img = Image.open(out).convert("RGB")
+        return img.resize((box, box), Image.NEAREST)
 
 
 def render():
@@ -171,7 +182,7 @@ def render():
     d.text((W - 80, fy + 33), info, font=F("JetBrainsMono-Regular.ttf", 16),
            fill=TXT3, anchor="rm")
 
-    out = "/tmp/forge_display.png"
+    out = os.path.join(tempfile.gettempdir(), "forge_display.png")
     img.save(out)
     return out, fy
 

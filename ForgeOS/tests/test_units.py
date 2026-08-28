@@ -7,7 +7,7 @@ import sys
 import tempfile
 import unittest
 
-BASE = "/opt/forgeos"
+BASE = os.environ.get("FORGEOS_BASE", "/opt/forgeos" if os.path.exists("/opt/forgeos") else os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def load(name, path):

@@ -19,7 +19,7 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-BASE = "/opt/forgeos"
+BASE = os.environ.get("FORGEOS_BASE", "/opt/forgeos" if os.path.exists("/opt/forgeos") else os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 WEB = os.path.join(BASE, "web")
 STATE = os.path.join(BASE, "state")
 NETWORK = os.path.join(BASE, "network")
@@ -114,6 +114,61 @@ def status_payload():
 
 
 def get_real_scan():
+    # Windows local dev Wi-Fi scan fallback
+    if os.name == "nt":
+        try:
+            out = subprocess.run(
+                ["netsh", "wlan", "show", "networks", "mode=bssid"],
+                capture_output=True, text=True, timeout=5, encoding="cp850", errors="replace")
+            lines = out.stdout.splitlines()
+            networks = []
+            cur_ssid = None
+            cur_auth = "psk"
+            cur_bssid = None
+            cur_signal = -60
+            seen = set()
+
+            for line in lines:
+                line_s = line.strip()
+                if line_s.startswith("SSID "):
+                    parts = line_s.split(":", 1)
+                    if len(parts) == 2:
+                        cur_ssid = parts[1].strip()
+                elif "Autentica" in line_s or "Authentication" in line_s:
+                    if "Enterprise" in line_s or "802.1X" in line_s:
+                        cur_auth = "eap"
+                    elif "Open" in line_s or "Abrir" in line_s or "Nenhum" in line_s:
+                        cur_auth = "open"
+                    else:
+                        cur_auth = "psk"
+                elif line_s.startswith("BSSID "):
+                    parts = line_s.split(":", 1)
+                    if len(parts) == 2:
+                        cur_bssid = parts[1].strip()
+                elif "Sinal" in line_s or "Signal" in line_s:
+                    m = re.search(r'(\d+)%', line_s)
+                    if m:
+                        cur_signal = int(m.group(1)) // 2 - 100
+                elif "Canal" in line_s or "Channel" in line_s:
+                    m = re.search(r'(\d+)', line_s)
+                    if m:
+                        cur_channel = int(m.group(1))
+                        if cur_ssid and cur_ssid not in seen:
+                            seen.add(cur_ssid)
+                            networks.append({
+                                "ssid": cur_ssid,
+                                "bssid": cur_bssid or "",
+                                "rssi": cur_signal,
+                                "channel": cur_channel,
+                                "encryption": cur_auth,
+                                "flags": f"[{cur_auth.upper()}]"
+                            })
+            networks.sort(key=lambda x: x["rssi"], reverse=True)
+            return networks
+        except Exception as e:
+            print(f"[SCAN-WIN] Error: {e}")
+            return []
+
     try:
         ctrl = "/var/run/wpa_supplicant-ap"
         if not os.path.exists(os.path.join(ctrl, "wlan0")):
