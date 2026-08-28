@@ -1,214 +1,1370 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MultiForge · Provisionamento</title>
-  <link rel="stylesheet" href="/static/css/pico.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MultiForge OS · Enterprise Provisioner</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="manifest" href="/manifest.json">
   <style>
-    :root { --mf-primary: #e8590c; }
-    body > main { max-width: 620px; }
-    .brand { display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem; }
-    .brand h1 { font-size: 1.35rem; margin: 0; }
-    .badge-status { font-size: .8rem; }
-    .ok    { --pico-background-color: #d3f9d8; color: #2b8a3e; }
-    .warn  { --pico-background-color: #fff3bf; color: #997a00; }
-    .err   { --pico-background-color: #ffe3e3; color: #c92a2a; }
-    article.mode-card { margin-top: 1rem; display: none; }
-    article.mode-card.active { display: block; }
-    .hint { font-size: .82rem; opacity: .75; margin: .4rem 0; }
-    .modules li span.tag { float: right; font-size: .72rem; opacity: .65; }
-    footer { text-align:center; font-size:.78rem; opacity:.6; margin-top:1.5rem; }
-    #spinner { visibility: hidden; }
-    #spinner.busy { visibility: visible; }
-    [aria-busy="true"] { cursor: progress; }
+    /* ==========================================================================
+       MultiForge Enterprise Design System (ESP32-SvelteKit + DaisyUI + Tailwind)
+       ========================================================================== */
+    :root {
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "JetBrains Mono", monospace;
+      
+      /* Dark Theme (Default) */
+      --bg-base: #090D16;
+      --bg-surface: #0F172A;
+      --bg-surface-elevated: #1E293B;
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --bg-glass: rgba(15, 23, 42, 0.75);
+      --border: #334155;
+      --border-subtle: #1E293B;
+      
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-faint: #64748B;
+      
+      --primary: #F97316;
+      --primary-hover: #EA580C;
+      --primary-glow: rgba(249, 115, 22, 0.25);
+      
+      --secondary: #3B82F6;
+      --secondary-glow: rgba(59, 130, 246, 0.25);
+      
+      --success: #10B981;
+      --success-glow: rgba(16, 185, 129, 0.25);
+      
+      --warning: #F59E0B;
+      --warning-glow: rgba(245, 158, 11, 0.25);
+      
+      --danger: #EF4444;
+      --danger-glow: rgba(239, 68, 68, 0.25);
+      
+      --purple: #8B5CF6;
+      
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 20px var(--primary-glow);
+    }
+
+    [data-theme="light"] {
+      --bg-base: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-surface-elevated: #F1F5F9;
+      --bg-card: #FFFFFF;
+      --bg-glass: rgba(255, 255, 255, 0.85);
+      --border: #E2E8F0;
+      --border-subtle: #CBD5E1;
+      
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --text-faint: #94A3B8;
+      
+      --primary: #EA580C;
+      --primary-hover: #C2410C;
+      --primary-glow: rgba(234, 88, 12, 0.15);
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --shadow-glow: 0 0 15px var(--primary-glow);
+    }
+
+    /* Reset & Base */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: var(--font-sans); background: var(--bg-base); color: var(--text-main); -webkit-font-smoothing: antialiased; line-height: 1.5; }
+    
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+
+    /* Layout */
+    .app-container { display: flex; height: 100vh; overflow: hidden; }
+    
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+      z-index: 40;
+    }
+
+    .brand-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary), #D97706);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+    .brand-info h1 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.02em; }
+    .brand-info span { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+    .nav-menu {
+      flex: 1;
+      padding: 1rem 0.75rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .nav-section-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      padding: 0.75rem 0.75rem 0.25rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+    }
+    .nav-item:hover { background: var(--bg-surface-elevated); color: var(--text-main); }
+    .nav-item.active {
+      background: var(--bg-surface-elevated);
+      color: var(--primary);
+      font-weight: 600;
+      border-left: 3px solid var(--primary);
+    }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-full);
+      background: var(--bg-base);
+      color: var(--text-muted);
+    }
+    .nav-badge.active { background: var(--success); color: white; }
+    .nav-badge.warn { background: var(--warning); color: #000; }
+
+    .sidebar-footer {
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface);
+    }
+    .device-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+      animation: pulse 2s infinite;
+    }
+    .status-dot.warn { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+    .status-dot.danger { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* Main Content Area */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg-base);
+    }
+
+    /* Top Navbar */
+    .topbar {
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      flex-shrink: 0;
+      z-index: 30;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .mobile-menu-btn {
+      display: none;
+      padding: 0.5rem;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+    }
+    .topbar-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+    .status-badge.ok { border-color: rgba(16, 185, 129, 0.4); color: var(--success); }
+    .status-badge.warn { border-color: rgba(245, 158, 11, 0.4); color: var(--warning); }
+    .status-badge.err { border-color: rgba(239, 68, 68, 0.4); color: var(--danger); }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      transition: all 0.15s ease;
+    }
+    .icon-btn:hover { color: var(--text-main); border-color: var(--primary); }
+
+    /* Page Views Container */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .page-view {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+    .page-view.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Grid & Cards */
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card-title svg { color: var(--primary); }
+
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+    .stat-value { font-size: 1.6rem; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.03em; }
+    .stat-sub { font-size: 0.75rem; color: var(--text-faint); display: flex; align-items: center; gap: 0.35rem; }
+
+    /* Progress Bar */
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-surface-elevated);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), #FBBF24);
+      border-radius: var(--radius-full);
+      transition: width 0.4s ease;
+    }
+    .progress-bar-fill.success { background: linear-gradient(90deg, var(--success), #34D399); }
+    .progress-bar-fill.blue { background: linear-gradient(90deg, var(--secondary), #60A5FA); }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      color: var(--text-faint);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+    .data-table tr:hover td { background: var(--bg-surface-elevated); color: var(--text-main); }
+    .data-table td.strong { font-weight: 600; color: var(--text-main); font-family: var(--font-mono); }
+
+    /* Wi-Fi Scanner Item */
+    .wifi-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      margin-bottom: 0.6rem;
+      transition: all 0.2s ease;
+    }
+    .wifi-item:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .wifi-left { display: flex; align-items: center; gap: 0.85rem; }
+    .wifi-signal-meter {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 18px;
+      width: 18px;
+    }
+    .wifi-bar {
+      width: 3px;
+      background: var(--border);
+      border-radius: 1px;
+    }
+    .wifi-bar.active { background: var(--success); }
+    .wifi-bar.active.warn { background: var(--warning); }
+    .wifi-bar.active.weak { background: var(--danger); }
+    .wifi-bar:nth-child(1) { height: 25%; }
+    .wifi-bar:nth-child(2) { height: 50%; }
+    .wifi-bar:nth-child(3) { height: 75%; }
+    .wifi-bar:nth-child(4) { height: 100%; }
+
+    .wifi-details h4 { font-size: 0.95rem; font-weight: 600; }
+    .wifi-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+      margin-top: 0.15rem;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-psk { background: rgba(59, 130, 246, 0.15); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-eap { background: rgba(139, 92, 246, 0.15); color: #A78BFA; border: 1px solid rgba(139, 92, 246, 0.3); }
+    .badge-open { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    /* Buttons & Form Inputs */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-secondary {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover { background: var(--border); }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--danger);
+    }
+    .btn-danger:hover { background: var(--danger); color: white; }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.78rem; }
+
+    .form-group { margin-bottom: 1.1rem; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-muted); }
+    .form-control {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      transition: border-color 0.15s ease;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    /* Modal Dialog */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 100;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 520px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: modalSlide 0.2s ease;
+    }
+    @keyframes modalSlide {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-body { padding: 1.5rem; max-height: 75vh; overflow-y: auto; }
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background: var(--bg-surface-elevated);
+    }
+
+    /* Terminal / Logs */
+    .terminal-window {
+      background: #000000;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #A3E635;
+      height: 380px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .mobile-menu-btn { display: flex; }
+      .grid-4, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .content-area { padding: 1rem; }
+    }
   </style>
 </head>
 <body>
-<main class="container">
-  <div class="brand">
-    <h1>🛠️ MultiForge</h1>
-    <span id="status-badge" class="badge-status badge warn">verificando…</span>
-  </div>
-  <p class="hint">BTV E10 · ForgeOS Provisioner — conecte o dispositivo à sua rede Wi-Fi.</p>
 
-  <article aria-label="status">
-    <table>
-      <tbody>
-        <tr><td>Modo atual</td><td id="st-mode">—</td></tr>
-        <tr><td>Último provisionamento</td><td id="st-last">—</td></tr>
-      </tbody>
-    </table>
-    <button id="btn-reset" class="outline secondary small">Restaurar modo AP</button>
-    <span id="spinner" aria-busy="false"></span>
-  </article>
-
-  <form id="prov-form" novalidate>
-    <fieldset>
-      <legend><code>forge.yaml</code> → Rede</legend>
-      <label for="mode-psk">
-        <input type="radio" name="netmode" id="mode-psk" value="psk" checked>
-        Rede doméstica (WPA/WPA2-PSK)
-      </label>
-      <label for="mode-eap">
-        <input type="radio" name="netmode" id="mode-eap" value="eap">
-        Corporativa / Eduroam (802.1X)
-      </label>
-    </fieldset>
-
-    <!-- PSK -->
-    <article class="mode-card active" id="card-psk">
-      <label>SSID
-        <input type="text" id="psk-ssid" placeholder="Nome da rede" autocomplete="off" required>
-      </label>
-      <label>Senha
-        <input type="password" id="psk-pass" placeholder="Senha WPA (mín. 8 caracteres)" minlength="8" required>
-      </label>
-    </article>
-
-    <!-- EAP -->
-    <article class="mode-card" id="card-eap">
-      <label>SSID
-        <input type="text" id="eap-ssid" placeholder="eduroam" value="eduroam" required>
-      </label>
-      <div class="grid">
-        <label>Método
-          <select id="eap-method">
-            <option value="PEAP">PEAP</option>
-            <option value="TTLS">TTLS</option>
-          </select>
-        </label>
-        <label>Fase 2
-          <select id="eap-phase2">
-            <option value="MSCHAPV2">MSCHAPv2</option>
-            <option value="PAP">PAP</option>
-          </select>
-        </label>
+<div class="app-container">
+  <!-- Sidebar Navigation (ESP32-SvelteKit Architecture) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand-header">
+      <div class="brand-logo">M</div>
+      <div class="brand-info">
+        <h1>MultiForge OS</h1>
+        <span>v2.1 · BTV E10 (ARM64)</span>
       </div>
-      <label>Identidade
-        <input type="text" id="eap-identity" placeholder="usuario@dominio.edu.br" required>
-      </label>
-      <label>Senha
-        <input type="password" id="eap-password" required>
-      </label>
-      <details>
-        <summary>Opções avançadas</summary>
-        <label>Identidade anônima
-          <input type="text" id="eap-anon" placeholder="anonymous@dominio.edu.br">
-        </label>
-        <label>Domínio do certificado (suffix match)
-          <input type="text" id="eap-domain" placeholder="dominio.edu.br">
-        </label>
-      </details>
-    </article>
+    </div>
 
-    <p class="hint warn-box err" style="padding:.6rem;border-radius:.5rem">
-      ⚠️ Rádio único: durante o teste de conexão o portal sai do ar por até ~90 s.
-      Se falhar, o AP volta automaticamente.
-    </p>
+    <nav class="nav-menu">
+      <div class="nav-section-title">Principal</div>
+      <a href="#dashboard" class="nav-item active" data-tab="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="#wifi" class="nav-item" data-tab="wifi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+        <span>Wi-Fi & Scanner</span>
+        <span class="nav-badge" id="badge-wifi-count">0 redes</span>
+      </a>
+      <a href="#ap" class="nav-item" data-tab="ap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+        <span>Ponto de Acesso (AP)</span>
+        <span class="nav-badge active" id="badge-ap-status">ON</span>
+      </a>
+      <a href="#ethernet" class="nav-item" data-tab="ethernet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        <span>Rede & Ethernet</span>
+      </a>
 
-    <button type="submit" id="btn-go" class="primary">Conectar</button>
-  </form>
+      <div class="nav-section-title">Hardware & Módulos</div>
+      <a href="#system" class="nav-item" data-tab="system">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+        <span>Sistema & Métricas</span>
+      </a>
+      <a href="#modules" class="nav-item" data-tab="modules">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span>Módulos (Totem/AI)</span>
+      </a>
+      <a href="#logs" class="nav-item" data-tab="logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span>Logs & Terminal</span>
+      </a>
+    </nav>
 
-  <article>
-    <h2>Módulos <small><span class="tag">Fase 2</span></small></h2>
-    <ul class="modules">
-      <li>Totem Assistant <span class="tag">em breve</span></li>
-      <li>Web Scraping / Edge AI <span class="tag">em breve</span></li>
-    </ul>
-  </article>
+    <div class="sidebar-footer">
+      <div class="device-pill">
+        <span class="status-dot" id="footer-dot"></span>
+        <span id="footer-mode-label">AP: 192.168.4.1</span>
+      </div>
+      <button class="icon-btn" id="theme-toggle" title="Alternar Modo Escuro / Claro">
+        <svg id="theme-icon-sun" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </aside>
 
-  <footer>MultiForge · MIT License · http://192.168.4.1</footer>
-</main>
+  <!-- Main View Area -->
+  <div class="main-wrapper">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobile-toggle">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="topbar-title" id="page-title">Dashboard</span>
+      </div>
+
+      <div class="topbar-right">
+        <div class="status-badge ok" id="top-status-badge">
+          <span class="status-dot"></span>
+          <span id="top-status-text">AP Ativo</span>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btn-quick-reset" title="Restaurar AP">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>Reset AP</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Sections -->
+    <main class="content-area">
+      <!-- 1. DASHBOARD -->
+      <section class="page-view active" id="view-dashboard">
+        <div class="grid-4">
+          <div class="card stat-box">
+            <span class="stat-label">Modo Operacional</span>
+            <span class="stat-value" id="dash-mode" style="font-size:1.35rem; color:var(--primary)">Captive AP</span>
+            <div class="stat-sub">
+              <span class="status-dot" id="dash-mode-dot"></span>
+              <span id="dash-mode-sub">RTL8189FTV_AP (192.168.4.1)</span>
+            </div>
+          </div>
+
+          <div class="card stat-box">
+            <span class="stat-label">Ethernet Uplink</span>
+            <span class="stat-value" id="dash-eth-ip" style="font-size:1.35rem; color:#60A5FA">192.168.1.153</span>
+            <div class="stat-sub">
+              <span id="dash-eth-mac">MAC: EC:2E:AB:41:1E:75</span>
+            </div>
+          </div>
+
+          <div class="card stat-box">
+            <span class="stat-label">Memória RAM</span>
+            <span class="stat-value" id="dash-mem-val">343 MB</span>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="dash-mem-bar" style="width: 25%;"></div>
+            </div>
+            <div class="stat-sub" style="margin-top:0.35rem;">
+              <span id="dash-mem-sub">Total: 1.8 GB (75% Livre)</span>
+            </div>
+          </div>
+
+          <div class="card stat-box">
+            <span class="stat-label">Tempo Ativo (Uptime)</span>
+            <span class="stat-value" id="dash-uptime">10h 45m</span>
+            <div class="stat-sub">
+              <span>Kernel 6.18-ophub · aarch64</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Quick Wi-Fi Scan Overview -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/></svg>
+                Redes Wi-Fi Próximas
+              </span>
+              <button class="btn btn-primary btn-sm" onclick="showTab('wifi')">Ver Todas</button>
+            </div>
+            <div id="dash-wifi-list">
+              <p style="color:var(--text-faint); font-size:0.85rem;">Escaneando redes ao redor...</p>
+            </div>
+          </div>
+
+          <!-- Hardware & Platform Overview -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+                Hardware do Appliance
+              </span>
+            </div>
+            <table class="data-table">
+              <tbody>
+                <tr><td>Dispositivo / Modelo</td><td class="strong">BTV Express E10</td></tr>
+                <tr><td>SoC / Processador</td><td class="strong">Amlogic S905X2 (4x Cortex-A53)</td></tr>
+                <tr><td>Rádio Wi-Fi</td><td class="strong">Realtek RTL8189FTV (8189fs)</td></tr>
+                <tr><td>Armazenamento eMMC</td><td class="strong">29 GB (/dev/mmcblk1p2)</td></tr>
+                <tr><td>Watchdog de Provisionamento</td><td class="strong" style="color:var(--success)">Ativo (Rollback 75s)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. WI-FI & SCANNER -->
+      <section class="page-view" id="view-wifi">
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="card-header">
+            <span class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+              Radar de Redes Wi-Fi Disponíveis
+            </span>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-secondary btn-sm" id="btn-manual-network">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Rede Oculta / Manual</span>
+              </button>
+              <button class="btn btn-primary btn-sm" id="btn-refresh-scan">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <span>Escanear Agora</span>
+              </button>
+            </div>
+          </div>
+          
+          <div style="margin-bottom:1rem; display:flex; gap:0.75rem;">
+            <input type="text" class="form-control" id="wifi-filter-input" placeholder="Filtrar por nome (SSID)..." style="max-width:320px;">
+          </div>
+
+          <div id="wifi-networks-container">
+            <p style="color:var(--text-faint); padding:1rem 0;">Carregando redes...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. ACCESS POINT (AP) -->
+      <section class="page-view" id="view-ap">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49"/></svg>
+                Configuração do Ponto de Acesso
+              </span>
+            </div>
+            <form id="form-ap-config">
+              <div class="form-group">
+                <label class="form-label">Nome da Rede AP (SSID)</label>
+                <input type="text" class="form-control" id="ap-cfg-ssid" value="RTL8189FTV_AP" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Senha (Opcional - Em branco para Aberta)</label>
+                <input type="password" class="form-control" id="ap-cfg-pass" placeholder="Mínimo 8 caracteres (WPA2-PSK)">
+              </div>
+
+              <div class="grid-2" style="margin-bottom:0;">
+                <div class="form-group">
+                  <label class="form-label">Canal Wi-Fi (2.4 GHz)</label>
+                  <select class="form-control" id="ap-cfg-channel">
+                    <option value="1">Canal 1 (2412 MHz)</option>
+                    <option value="6" selected>Canal 6 (2437 MHz)</option>
+                    <option value="11">Canal 11 (2462 MHz)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">IP do Gateway</label>
+                  <input type="text" class="form-control" value="192.168.4.1" disabled>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width:100%; margin-top:0.5rem;">
+                Salvar e Reiniciar AP
+              </button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Status do Servidor DHCP</span>
+            </div>
+            <table class="data-table">
+              <tbody>
+                <tr><td>Interface AP</td><td class="strong">wlan0 (wpa_supplicant mode=2)</td></tr>
+                <tr><td>Faixa de IPs DHCP</td><td class="strong">192.168.4.10 – 192.168.4.250</td></tr>
+                <tr><td>DNS Cativo</td><td class="strong">dnsmasq (Redirecionamento automático)</td></tr>
+                <tr><td>Portal Web UI</td><td class="strong">Porta 8080 (iptables :80 → :8080)</td></tr>
+                <tr><td>Uplink NAT (MASQUERADE)</td><td class="strong" style="color:var(--success)">Habilitado em eth0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. ETHERNET & NETWORK -->
+      <section class="page-view" id="view-ethernet">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>
+              Interfaces de Rede Físicas e Roteamento
+            </span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Interface</th>
+                <th>Tipo</th>
+                <th>Endereço IPv4</th>
+                <th>Endereço MAC</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="strong">eth0</td>
+                <td>Ethernet 100/1000M</td>
+                <td class="strong" id="eth-table-ip">192.168.1.153</td>
+                <td class="strong" id="eth-table-mac">EC:2E:AB:41:1E:75</td>
+                <td><span class="badge badge-open">CONECTADO</span></td>
+              </tr>
+              <tr>
+                <td class="strong">wlan0</td>
+                <td>Wi-Fi (RTL8189FTV)</td>
+                <td class="strong" id="wlan-table-ip">192.168.4.1</td>
+                <td class="strong" id="wlan-table-mac">3C:7A:AA:39:F6:C2</td>
+                <td><span class="badge badge-psk">AP ATIVO</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. SYSTEM & METRICS -->
+      <section class="page-view" id="view-system">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Serviços do ForgeOS (systemd)</span>
+            </div>
+            <table class="data-table">
+              <tbody>
+                <tr><td>forge-ap.service</td><td><span class="badge badge-open">ATIVO (EXITED)</span></td></tr>
+                <tr><td>forge-portal.service</td><td><span class="badge badge-open">RODANDO</span></td></tr>
+                <tr><td>forge-display.service</td><td><span class="badge badge-open">RODANDO</span></td></tr>
+                <tr><td>forge-watchdog.service</td><td><span class="badge badge-open">RODANDO</span></td></tr>
+                <tr><td>forge-fbcon-disable.service</td><td><span class="badge badge-open">ATIVO</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Telemetria do Sistema</span>
+            </div>
+            <table class="data-table">
+              <tbody>
+                <tr><td>Sistema Operacional</td><td class="strong">Armbian 26.08 Trixie (Debian 13)</td></tr>
+                <tr><td>Arquitetura</td><td class="strong">aarch64 (ARM 64-bit)</td></tr>
+                <tr><td>Frequência da CPU</td><td class="strong">1.20 GHz – 1.80 GHz Dynamic</td></tr>
+                <tr><td>Memória Total</td><td class="strong">1.89 GB LPDDR4</td></tr>
+                <tr><td>Partição Raiz (/)</td><td class="strong">2.6 GB usado de 29 GB (9%)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. MODULES -->
+      <section class="page-view" id="view-modules">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">🎙️ Totem Voice Assistant</span>
+              <span class="badge badge-psk">Fase 2</span>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+              Assistente acadêmico local com reconhecimento de voz offline e síntese neural.
+            </p>
+            <button class="btn btn-secondary btn-sm" disabled>Em Breve</button>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">🌐 Web Scraping & RAG</span>
+              <span class="badge badge-psk">Fase 2</span>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+              Motor de indexação inteligente para extração de dados e bases de conhecimento vetoriais na borda.
+            </p>
+            <button class="btn btn-secondary btn-sm" disabled>Em Breve</button>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📺 Kiosk Framebuffer</span>
+              <span class="badge badge-open">Ativo</span>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+              Renderizador HDMI 1080p sem flicker para exibição do QR Code e status do dispositivo.
+            </p>
+            <span class="badge badge-open">/dev/fb0 ativo</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. LOGS & TERMINAL -->
+      <section class="page-view" id="view-logs">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              Console do Sistema e Provisionamento em Tempo Real
+            </span>
+            <button class="btn btn-secondary btn-sm" id="btn-clear-logs">Limpar</button>
+          </div>
+          <div class="terminal-window" id="terminal-logs">[00:00:00] [PORTAL] Sistema iniciado com sucesso na porta 8080.
+[00:00:01] [AP] wpa_supplicant e dnsmasq ativos no rádio wlan0.
+[00:00:02] [WATCHDOG] Monitor de contingência ativo (75s rollback).</div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- CONNECT MODAL (WPA-PSK + 802.1X Eduroam) -->
+<div class="modal-overlay" id="connect-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 style="font-size:1.1rem; font-weight:700;" id="modal-network-title">Conectar ao Wi-Fi</h3>
+      <button class="icon-btn" onclick="closeModal()">✕</button>
+    </div>
+    <form id="form-provision">
+      <div class="modal-body">
+        <input type="hidden" id="prov-ssid">
+        
+        <div style="display:flex; gap:1rem; margin-bottom:1.25rem;">
+          <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.88rem; font-weight:600; cursor:pointer;">
+            <input type="radio" name="prov-mode" value="psk" checked onchange="toggleProvMode()">
+            Rede Doméstica (WPA-PSK)
+          </label>
+          <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.88rem; font-weight:600; cursor:pointer;">
+            <input type="radio" name="prov-mode" value="eap" onchange="toggleProvMode()">
+            Eduroam / 802.1X EAP
+          </label>
+        </div>
+
+        <!-- PSK Fields -->
+        <div id="fields-psk">
+          <div class="form-group">
+            <label class="form-label">Senha do Wi-Fi</label>
+            <input type="password" class="form-control" id="prov-psk-pass" placeholder="Mínimo 8 caracteres">
+          </div>
+        </div>
+
+        <!-- EAP Fields -->
+        <div id="fields-eap" style="display:none;">
+          <div class="grid-2" style="margin-bottom:0;">
+            <div class="form-group">
+              <label class="form-label">Método EAP</label>
+              <select class="form-control" id="prov-eap-method">
+                <option value="PEAP" selected>PEAP</option>
+                <option value="TTLS">TTLS</option>
+                <option value="PWD">PWD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fase 2 (Auth)</label>
+              <select class="form-control" id="prov-eap-phase2">
+                <option value="MSCHAPV2" selected>MSCHAPv2</option>
+                <option value="PAP">PAP</option>
+                <option value="GTC">GTC</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Identidade / Usuário</label>
+            <input type="text" class="form-control" id="prov-eap-user" placeholder="usuario@instituicao.edu.br">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Senha</label>
+            <input type="password" class="form-control" id="prov-eap-pass">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Identidade Anônima (Opcional)</label>
+            <input type="text" class="form-control" id="prov-eap-anon" placeholder="anonymous@instituicao.edu.br">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Domínio do Certificado (Opcional)</label>
+            <input type="text" class="form-control" id="prov-eap-domain" placeholder="instituicao.edu.br">
+          </div>
+        </div>
+
+        <div style="background:rgba(245, 158, 11, 0.1); border:1px solid rgba(245, 158, 11, 0.3); border-radius:var(--radius-md); padding:0.75rem; font-size:0.78rem; color:var(--warning);">
+          ⚠️ <strong>Rádio Único:</strong> Durante a conexão, o Ponto de Acesso sai do ar por ~75s para testar o enlace. Se a conexão falhar, o watchdog restaura o AP automaticamente.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit-provision">Conectar Agora</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script>
-const $ = (id) => document.getElementById(id);
-let busy = false;
+/* ==========================================================================
+   MultiForge Enterprise Client Controller
+   ========================================================================== */
+let currentNetworks = [];
 
-document.querySelectorAll('input[name="netmode"]').forEach(r =>
-  r.addEventListener('change', () => {
-    $('card-psk').classList.toggle('active', $('mode-psk').checked);
-    $('card-eap').classList.toggle('active', $('mode-eap').checked);
-  }));
-
-function setBadge(cls, txt) {
-  const b = $('status-badge');
-  b.className = 'badge-status badge ' + cls;
-  b.textContent = txt;
-}
-function setBusy(b) { busy = b; $('spinner').setAttribute('aria-busy', b); }
-
-async function refreshStatus() {
-  if (busy) return;
-  try {
-    const r = await fetch('/api/status');
-    const j = await r.json();
-    $('st-mode').textContent = j.ap_active ? `AP (${j.ssid}) · portal ativo` : (j.client_ssid ? `Cliente: ${j.client_ssid} (${j.client_ip || '?'})` : '—');
-    $('st-last').textContent = j.last_result || '—';
-    if (j.provisioning) setBadge('warn', 'testando conexão…');
-    else if (j.client_connected) setBadge('ok', 'conectado');
-    else if (j.last_failed) setBadge('err', 'falhou · AP restaurado');
-    else setBadge('warn', 'modo provisionamento');
-  } catch (e) { /* box em modo cliente: portal fora */ }
-}
-
-$('prov-form').addEventListener('submit', async (ev) => {
-  ev.preventDefault();
-  if (busy) return;
-  const payload = $('mode-eap').checked ? {
-    mode: 'eap',
-    ssid: $('eap-ssid').value.trim(),
-    method: $('eap-method').value,
-    phase2: $('eap-phase2').value,
-    identity: $('eap-identity').value.trim(),
-    password: $('eap-password').value,
-    anonymous_identity: $('eap-anon').value.trim(),
-    domain: $('eap-domain').value.trim()
-  } : {
-    mode: 'psk',
-    ssid: $('psk-ssid').value.trim(),
-    password: $('psk-pass').value
+// Tab Navigation
+function showTab(tabId) {
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('data-tab') === tabId);
+  });
+  document.querySelectorAll('.page-view').forEach(el => {
+    el.classList.toggle('active', el.id === 'view-' + tabId);
+  });
+  const titles = {
+    dashboard: 'Dashboard do Appliance',
+    wifi: 'Wi-Fi & Redes Disponíveis',
+    ap: 'Configuração do Ponto de Acesso',
+    ethernet: 'Rede & Interfaces Físicas',
+    system: 'Sistema & Telemetria',
+    modules: 'Módulos MultiForge',
+    logs: 'Logs & Diagnóstico'
   };
-  if (!payload.ssid) return;
-  setBusy(true); setBadge('warn', 'enviando…');
+  document.getElementById('page-title').textContent = titles[tabId] || 'MultiForge OS';
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('open');
+  }
+}
+
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', (e) => {
+    e.preventDefault();
+    const tab = el.getAttribute('data-tab');
+    location.hash = tab;
+    showTab(tab);
+  });
+});
+
+window.addEventListener('hashchange', () => {
+  const tab = location.hash.replace('#', '') || 'dashboard';
+  showTab(tab);
+});
+
+// Mobile Sidebar Toggle
+document.getElementById('mobile-toggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// Theme Switcher (Dark / Light)
+const themeToggle = document.getElementById('theme-toggle');
+const sunIcon = document.getElementById('theme-icon-sun');
+const moonIcon = document.getElementById('theme-icon-moon');
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('mf_theme', theme);
+  if (theme === 'light') {
+    sunIcon.style.display = 'block';
+    moonIcon.style.display = 'none';
+  } else {
+    sunIcon.style.display = 'none';
+    moonIcon.style.display = 'block';
+  }
+}
+
+const savedTheme = localStorage.getItem('mf_theme') || 'dark';
+setTheme(savedTheme);
+
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  setTheme(current === 'dark' ? 'light' : 'dark');
+});
+
+// Modal Logic
+function openConnectModal(ssid, enc) {
+  document.getElementById('modal-network-title').textContent = 'Conectar a: ' + ssid;
+  document.getElementById('prov-ssid').value = ssid;
+  const isEap = enc === 'eap' || ssid.toLowerCase().includes('eduroam');
+  document.querySelector(`input[name="prov-mode"][value="${isEap ? 'eap' : 'psk'}"]`).checked = true;
+  toggleProvMode();
+  document.getElementById('connect-modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('connect-modal').classList.remove('active');
+}
+
+function toggleProvMode() {
+  const mode = document.querySelector('input[name="prov-mode"]:checked').value;
+  document.getElementById('fields-psk').style.display = mode === 'psk' ? 'block' : 'none';
+  document.getElementById('fields-eap').style.display = mode === 'eap' ? 'block' : 'none';
+}
+
+document.getElementById('btn-manual-network').addEventListener('click', () => {
+  const ssid = prompt('Digite o SSID da rede Wi-Fi:');
+  if (ssid) openConnectModal(ssid.trim(), 'psk');
+});
+
+// Wi-Fi Scanning & Rendering
+async function fetchScan() {
+  const btn = document.getElementById('btn-refresh-scan');
+  btn.classList.add('loading');
   try {
-    const r = await fetch('/api/provision', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
+    const res = await fetch('/api/scan');
+    const data = await res.json();
+    currentNetworks = data.networks || [];
+    renderWifiNetworks(currentNetworks);
+  } catch (err) {
+    console.error('Scan error:', err);
+  } finally {
+    btn.classList.remove('loading');
+  }
+}
+
+function renderWifiNetworks(networks) {
+  const filter = document.getElementById('wifi-filter-input').value.toLowerCase();
+  const filtered = networks.filter(n => n.ssid.toLowerCase().includes(filter));
+  
+  document.getElementById('badge-wifi-count').textContent = networks.length + ' redes';
+  
+  const container = document.getElementById('wifi-networks-container');
+  const dashContainer = document.getElementById('dash-wifi-list');
+  
+  if (filtered.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-faint); padding:1rem 0;">Nenhuma rede encontrada.</p>';
+    dashContainer.innerHTML = '<p style="color:var(--text-faint); font-size:0.85rem;">Nenhuma rede no alcance.</p>';
+    return;
+  }
+
+  const html = filtered.map(net => {
+    const rssi = net.rssi;
+    let signalClass = 'active';
+    let barsActive = 4;
+    if (rssi < -80) { signalClass = 'active weak'; barsActive = 1; }
+    else if (rssi < -70) { signalClass = 'active warn'; barsActive = 2; }
+    else if (rssi < -60) { signalClass = 'active'; barsActive = 3; }
+
+    const encBadge = net.encryption === 'eap' 
+      ? '<span class="badge badge-eap">802.1X EAP</span>'
+      : (net.encryption === 'open' 
+        ? '<span class="badge badge-open">ABERTA</span>' 
+        : '<span class="badge badge-psk">WPA/WPA2-PSK</span>');
+
+    return `
+      <div class="wifi-item">
+        <div class="wifi-left">
+          <div class="wifi-signal-meter" title="${rssi} dBm">
+            <div class="wifi-bar ${barsActive >= 1 ? signalClass : ''}"></div>
+            <div class="wifi-bar ${barsActive >= 2 ? signalClass : ''}"></div>
+            <div class="wifi-bar ${barsActive >= 3 ? signalClass : ''}"></div>
+            <div class="wifi-bar ${barsActive >= 4 ? signalClass : ''}"></div>
+          </div>
+          <div class="wifi-details">
+            <h4>${escapeHtml(net.ssid)}</h4>
+            <div class="wifi-meta">
+              ${encBadge}
+              <span>Canal ${net.channel || 6}</span>
+              <span>${rssi} dBm</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">
+          Conectar
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = html;
+
+  // Render top 3 on dashboard
+  dashContainer.innerHTML = filtered.slice(0, 3).map(net => `
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid var(--border-subtle);">
+      <div>
+        <strong style="font-size:0.9rem;">${escapeHtml(net.ssid)}</strong>
+        <div style="font-size:0.75rem; color:var(--text-faint);">${net.encryption.toUpperCase()} · ${net.rssi} dBm</div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">Conectar</button>
+    </div>
+  `).join('');
+}
+
+document.getElementById('wifi-filter-input').addEventListener('input', () => {
+  renderWifiNetworks(currentNetworks);
+});
+document.getElementById('btn-refresh-scan').addEventListener('click', fetchScan);
+
+// System Status Polling
+async function updateStatus() {
+  try {
+    const res = await fetch('/api/status');
+    const s = await res.json();
+    
+    // Topbar and Footer badges
+    const badge = document.getElementById('top-status-badge');
+    const badgeText = document.getElementById('top-status-text');
+    const footerLabel = document.getElementById('footer-mode-label');
+    const footerDot = document.getElementById('footer-dot');
+    
+    if (s.provisioning) {
+      badge.className = 'status-badge warn';
+      badgeText.textContent = 'Provisionando...';
+      footerLabel.textContent = 'Conectando ao Wi-Fi...';
+      footerDot.className = 'status-dot warn';
+    } else if (s.client_connected) {
+      badge.className = 'status-badge ok';
+      badgeText.textContent = 'Cliente: ' + s.client_ssid;
+      footerLabel.textContent = 'Cliente: ' + s.client_ip;
+      footerDot.className = 'status-dot';
+    } else {
+      badge.className = 'status-badge ok';
+      badgeText.textContent = 'AP: ' + (s.ssid || 'RTL8189FTV_AP');
+      footerLabel.textContent = 'AP: 192.168.4.1';
+      footerDot.className = 'status-dot';
+    }
+
+    // Dashboard
+    document.getElementById('dash-mode').textContent = s.ap_active ? 'Captive AP' : (s.client_ssid || 'Cliente');
+    document.getElementById('dash-mode-sub').textContent = s.ap_active ? (s.ssid + ' (192.168.4.1)') : (s.client_ip || 'Sem IP');
+
+    // Telemetry
+    const sysRes = await fetch('/rest/systemStatus');
+    const sys = await sysRes.json();
+    if (sys.total_heap) {
+      const usedMb = Math.round((sys.total_heap - sys.free_heap) / 1048576);
+      const totalMb = Math.round(sys.total_heap / 1048576);
+      const pct = Math.round((usedMb / totalMb) * 100);
+      document.getElementById('dash-mem-val').textContent = usedMb + ' MB';
+      document.getElementById('dash-mem-bar').style.width = pct + '%';
+      document.getElementById('dash-mem-sub').textContent = `Total: ${totalMb} MB (${100 - pct}% Livre)`;
+    }
+    if (sys.uptime) {
+      const hrs = Math.floor(sys.uptime / 3600);
+      const mins = Math.floor((sys.uptime % 3600) / 60);
+      document.getElementById('dash-uptime').textContent = `${hrs}h ${mins}m`;
+    }
+
+    // Ethernet
+    const ethRes = await fetch('/rest/ethernetStatus');
+    const eth = await ethRes.json();
+    if (eth.local_ip) {
+      document.getElementById('dash-eth-ip').textContent = eth.local_ip;
+      document.getElementById('dash-eth-mac').textContent = 'MAC: ' + eth.mac_address;
+      document.getElementById('eth-table-ip').textContent = eth.local_ip;
+      document.getElementById('eth-table-mac').textContent = eth.mac_address;
+    }
+  } catch (err) {
+    console.error('Status poll error:', err);
+  }
+}
+
+// Provision Form Submission
+document.getElementById('form-provision').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const ssid = document.getElementById('prov-ssid').value;
+  const mode = document.querySelector('input[name="prov-mode"]:checked').value;
+  
+  let payload = { ssid, mode };
+  if (mode === 'psk') {
+    payload.password = document.getElementById('prov-psk-pass').value;
+  } else {
+    payload.method = document.getElementById('prov-eap-method').value;
+    payload.phase2 = document.getElementById('prov-eap-phase2').value;
+    payload.identity = document.getElementById('prov-eap-user').value.trim();
+    payload.password = document.getElementById('prov-eap-pass').value;
+    payload.anonymous_identity = document.getElementById('prov-eap-anon').value.trim();
+    payload.domain = document.getElementById('prov-eap-domain').value.trim();
+  }
+
+  const submitBtn = document.getElementById('btn-submit-provision');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Enviando...';
+
+  try {
+    const res = await fetch('/api/provision', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    const j = await r.json();
-    if (!r.ok || j.error) { setBadge('err', j.error || 'erro'); setBusy(false); return; }
-    setBadge('warn', 'testando conexão… aguarde ~90s');
-    pollResult();
-  } catch (e) {
-    setBadge('err', 'sem resposta do portal'); setBusy(false);
+    const j = await res.json();
+    if (!res.ok || j.error) {
+      alert('Erro: ' + (j.error || 'Falha ao provisionar'));
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Conectar Agora';
+      return;
+    }
+    closeModal();
+    alert('Provisionamento iniciado! O dispositivo alternará o rádio para testar a conexão.');
+    updateStatus();
+  } catch (err) {
+    alert('Erro de comunicação com o portal.');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Conectar Agora';
   }
 });
 
-async function pollResult() {
-  for (let i = 0; i < 40; i++) {
-    try {
-      const r = await fetch('/api/status');
-      const j = await r.json();
-      if (!j.provisioning) {
-        setBusy(false);
-        if (j.client_connected && !j.ap_active) setBadge('ok', `conectado: ${j.client_ip}`);
-        else if (j.last_failed) setBadge('err', 'falha na conexão · AP restaurado');
-        refreshStatus(); return;
-      }
-    } catch (e) { /* AP derrubado durante teste: esperado */ }
-    await new Promise(res => setTimeout(res, 5000));
+// AP Config Form Submission
+document.getElementById('form-ap-config').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const ssid = document.getElementById('ap-cfg-ssid').value.trim();
+  const password = document.getElementById('ap-cfg-pass').value;
+  const channel = parseInt(document.getElementById('ap-cfg-channel').value);
+
+  try {
+    const res = await fetch('/api/ap', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ssid, password, channel })
+    });
+    const j = await res.json();
+    alert(j.message || 'Configurações salvas!');
+    updateStatus();
+  } catch (err) {
+    alert('Erro ao atualizar AP');
   }
-  setBusy(false); setBadge('err', 'timeout'); refreshStatus();
+});
+
+// Quick Reset AP
+document.getElementById('btn-quick-reset').addEventListener('click', async () => {
+  if (confirm('Deseja restaurar o modo Ponto de Acesso (AP)?')) {
+    await fetch('/api/reset', { method: 'POST' });
+    setTimeout(updateStatus, 2000);
+  }
+});
+
+document.getElementById('btn-clear-logs').addEventListener('click', () => {
+  document.getElementById('terminal-logs').textContent = '';
+});
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
 }
 
-$('btn-reset').addEventListener('click', async () => {
-  try { await fetch('/api/reset', {method:'POST'}); } catch(e) {}
-  setTimeout(refreshStatus, 3000);
-});
-
-refreshStatus();
-setInterval(refreshStatus, 8000);
+// Initial Run
+const initialTab = location.hash.replace('#', '') || 'dashboard';
+showTab(initialTab);
+fetchScan();
+updateStatus();
+setInterval(updateStatus, 5000);
 </script>
 </body>
 </html>
