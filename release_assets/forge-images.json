@@ -1,8 +1,8 @@
-﻿{
+{
   "boards": [
     {
       "slug": "btv-e10",
-      "name": "BTV E10 (Amlogic S905X2)",
+      "name": "BTV E10",
       "vendor_slug": "btv",
       "vendor_name": "BTV",
       "support_tier": "platinum",
@@ -39,7 +39,7 @@
   "vendors": [
     {
       "slug": "btv",
-      "name": "BTV (Amlogic TV Boxes)",
+      "name": "BTV",
       "website": "https://github.com/multi-forge/multi-forge",
       "description": "Amlogic S905X2 and TV box platforms",
       "board_count": 1,

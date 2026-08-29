@@ -193,7 +193,7 @@ fn parse_image_asset_name(filename: &str, _tag: &str) -> ParsedAssetMeta {
 
     // 1. Board detection
     let (board_slug, board_name, vendor_slug, vendor_name, soc, arch) = if lower.contains("btv-e10") || lower.contains("btve10") || lower.contains("btv_e10") || lower.contains("btv") {
-        ("btv-e10".to_string(), "BTV E10 (Amlogic S905X2)".to_string(), "btv".to_string(), "BTV".to_string(), Some("Amlogic S905X2".to_string()), Some("arm64".to_string()))
+        ("btv-e10".to_string(), "BTV E10".to_string(), "btv".to_string(), "BTV".to_string(), Some("Amlogic S905X2".to_string()), Some("arm64".to_string()))
     } else {
         // Dynamic fallback: extract clean name from filename
         let clean = filename
@@ -302,7 +302,7 @@ fn get_builtin_catalog() -> (Vec<ApiBoardSummary>, Vec<ApiImage>, Vec<ApiVendor>
     let boards = vec![
         ApiBoardSummary {
             slug: "btv-e10".to_string(),
-            name: "BTV E10 (Amlogic S905X2)".to_string(),
+            name: "BTV E10".to_string(),
             vendor_slug: "btv".to_string(),
             vendor_name: "BTV".to_string(),
             support_tier: "platinum".to_string(),
@@ -348,7 +348,7 @@ fn get_builtin_catalog() -> (Vec<ApiBoardSummary>, Vec<ApiImage>, Vec<ApiVendor>
     let vendors = vec![
         ApiVendor {
             slug: "btv".to_string(),
-            name: "BTV (Amlogic TV Boxes)".to_string(),
+            name: "BTV".to_string(),
             logo_url: None,
             website: Some("https://github.com/multi-forge/multi-forge".to_string()),
             description: Some("Amlogic S905X2 and TV box platforms".to_string()),

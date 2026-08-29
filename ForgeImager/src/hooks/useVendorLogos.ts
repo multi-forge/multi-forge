@@ -63,17 +63,14 @@ export function useVendorLogos(boards: BoardInfo[] | null, isActive: boolean) {
     });
   }, [isActive, boards, state.isLoaded]);
 
-  // Falls back to "other" when the vendor's logo failed to load
+  // Returns the actual vendor id or fallback
   const getEffectiveVendor = useCallback((board: BoardInfo): string => {
-    if (!board.vendor || state.failedLogos.has(board.vendor)) {
-      return VENDOR.FALLBACK_ID;
-    }
     return board.vendor || VENDOR.FALLBACK_ID;
-  }, [state.failedLogos]);
+  }, []);
 
   const hasValidLogo = useCallback((board: BoardInfo): boolean => {
-    return !!(board.vendor && !state.failedLogos.has(board.vendor));
-  }, [state.failedLogos]);
+    return !!(board.vendor && state.cachedUrls.has(board.vendor));
+  }, [state.cachedUrls]);
 
   return {
     failedLogos: state.failedLogos,
@@ -93,13 +90,13 @@ export interface ManufacturerData {
   standardCount: number;
 }
 
-/** Build the manufacturer list from boards; boards with failed logos go under "other" */
+/** Build the manufacturer list from boards */
 export function useManufacturerList(
   boards: BoardInfo[] | null,
   isActive: boolean,
   searchFilter: string = ''
 ) {
-  const { failedLogos, cachedUrls, isLoaded, getEffectiveVendor, hasValidLogo } = useVendorLogos(boards, isActive);
+  const { cachedUrls, isLoaded, failedLogos, getEffectiveVendor } = useVendorLogos(boards, isActive);
 
   const manufacturers = useMemo(() => {
     if (!boards || !isLoaded) return [];
@@ -114,12 +111,9 @@ export function useManufacturerList(
     }> = {};
 
     for (const board of boards) {
-      const validLogo = hasValidLogo(board);
-      const vendorId = validLogo ? (board.vendor || VENDOR.FALLBACK_ID) : VENDOR.FALLBACK_ID;
-      const vendorName = validLogo ? (board.vendor_name || 'Other') : 'Other';
-      const vendorLogo = validLogo
-        ? (cachedUrls.get(board.vendor) || null)
-        : null;
+      const vendorId = getEffectiveVendor(board);
+      const vendorName = board.vendor_name || (vendorId.toLowerCase() === 'btv' ? 'BTV' : vendorId);
+      const vendorLogo = cachedUrls.get(vendorId) || null;
 
       if (!vendorMap[vendorId]) {
         vendorMap[vendorId] = {
@@ -205,7 +199,7 @@ export function useManufacturerList(
       });
 
     return result;
-  }, [boards, isLoaded, searchFilter, hasValidLogo, cachedUrls]);
+  }, [boards, isLoaded, searchFilter, getEffectiveVendor, cachedUrls]);
 
   return {
     manufacturers,
