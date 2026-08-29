@@ -8,15 +8,14 @@ Plataforma open-source para identificação, compatibilização, provisionamento
 
 ---
 
-## 📊 Estado Funcional Real (Atualizado 28/08/2026)
+## 📊 Estado Funcional Real (Atualizado 29/08/2026)
 
 | Componente | Stack Real | Entradas Principais (God Nodes) | Status | Testes |
 |------------|------------|---------------------------------|--------|--------|
 | **[ForgeImager](ForgeImager/)** | Tauri v2 + React 19 + Rust | `src-tauri/src/main.rs`, `App.tsx`, `crates/forge-write-conf` (`Ext4Inode`, `FlashState`) | **98%** (Produção) | CI Matrix (x64/ARM64) |
 | **[ForgeOS](ForgeOS/)** | Python 3 + Bash + systemd | `bin/start-ap.sh`, `web/server.py` (v2.1), `display/qr_screen.py`, `bin/watchdog.sh` | **92%** (Piloto BTV E10) | 34/34 PASS (16 unit + 14 integ + 4 E2E) |
-| **[ForgeDB](ForgeDB/)** | YAML / Markdown | `devices/btv/e10/device.yaml`, `images.yaml` | **35%** (1 device) | — |
+| **[ForgeDB](ForgeDB/)** | YAML / Markdown | `devices/btv/e10/device.yaml`, `images.yaml`, `modules/` | **35%** (1 device + catálogo de módulos) | — |
 | **[ForgeModules](ForgeModules/)** | Python (PyQt5, FastAPI, LangChain) | `totem/main_cli.py`, `totem/main_gui.py`, `sub-modulos/web-scraping/api/main.py` | **30%** (2 standalone) | pytest local |
-| **ForgeHub** | — | `catalog.yaml` (ausente) | **10%** (Conceito) | — |
 
 > **Hardware Piloto Validado:** BTV E10 (Amlogic S905X2, 2GB RAM, 8GB eMMC, Wi-Fi Realtek RTL8189FTV).
 
@@ -32,10 +31,11 @@ multi-forge/
 │   └── src/            # UI Wizard de 4 etapas, 18 idiomas, suporte dark/light
 ├── ForgeOS/            # Stack de provisionamento on-device (BTV E10)
 │   ├── bin/            # start-ap.sh (wpa_supplicant m=2), apply-client.sh, watchdog.sh
-│   ├── web/            # Portal HTTP offline (server.py v2.1 REST API + Enterprise SPA Dark/Light)
+│   ├── web/            # Portal HTTP offline + Module Hub (server.py v2.1 REST API + Enterprise SPA Dark/Light)
 │   ├── display/        # Kiosk HDMI framebuffer 1080p pixel-perfect (qr_screen.py)
 │   └── tests/          # Suíte de testes (run_all.sh, Playwright E2E)
-├── ForgeDB/            # Metadados de hardware e imagens de boot por dispositivo
+├── ForgeDB/            # Metadados de hardware, imagens de boot e catálogo de módulos
+│   └── modules/        # Metadados de módulos (module.yaml por módulo)
 ├── ForgeModules/       # Módulos operacionais (Mina/Totem voz acadêmica e Web-Scraping RAG)
 └── graphify-out/       # Knowledge Graph (3.177 nós, 6.462 arestas, 200 comunidades)
 ```
@@ -99,7 +99,7 @@ graphify extract . --code-only --update
 ## 🎯 Gaps Críticos para Fechar o Ciclo MVP (Phase 1)
 
 1. **Alinhamento de Contrato de Autoconfig:** `ForgeImager` injeta `/root/.not_logged_in_yet` (formato Armbian), enquanto o provisioner do `ForgeOS` espera parâmetros via portal web ou `/boot/forge/forge.yaml`.
-2. **Manifesto `module.yaml`:** Padronizar os contratos de instalação do Totem e Web-Scraping para que o `ForgeOS` possa acioná-los automaticamente.
+2. **Auto-discovery de Módulos:** Os manifestos `module.yaml` agora existem em `ForgeDB/modules/`. Falta integrar a leitura automática no portal web do `ForgeOS` (aba Modules) para instalação one-click.
 3. **JSON Schemas no ForgeDB:** Implementar validação formal em `ForgeDB/schemas/` para validar novos dispositivos via CI.
 
 ---
@@ -115,6 +115,12 @@ graphify extract . --code-only --update
 ---
 
 ## 📝 Changelog Recente
+
+### 29/08/2026 — Reestruturação Arquitetural (Phase P0)
+
+- **ForgeHub eliminado:** Componente conceitual absorvido — funcionalidade de catálogo de módulos migrada para `ForgeDB/modules/` (metadados `module.yaml`) e portal web do `ForgeOS` (aba Modules no SPA).
+- **Arquitetura consolidada em 4 componentes:** ForgeImager, ForgeOS, ForgeDB, ForgeModules.
+- **ForgeDB expandido:** Agora cataloga metadados de módulos além de dispositivos e imagens.
 
 ### 28/08/2026 — Sprint de Consolidação (5 commits)
 
