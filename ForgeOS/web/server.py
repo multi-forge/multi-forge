@@ -19,6 +19,11 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
 BASE = os.environ.get("FORGEOS_BASE", "/opt/forgeos" if os.path.exists("/opt/forgeos") else os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 WEB = os.path.join(BASE, "web")
 STATE = os.path.join(BASE, "state")
@@ -361,6 +366,105 @@ def esp32_scan():
     }
 
 
+def find_repo_root():
+    candidates = [
+        os.path.dirname(BASE),
+        "/opt/multi-forge",
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    ]
+    for c in candidates:
+        if c and os.path.exists(os.path.join(c, "ForgeDB", "modules", "catalog.yaml")):
+            return c
+    return None
+
+
+def get_modules_catalog():
+    repo_root = find_repo_root()
+    catalog_file = os.path.join(repo_root, "ForgeDB", "modules", "catalog.yaml") if repo_root else None
+
+    if catalog_file and os.path.exists(catalog_file) and yaml:
+        try:
+            with open(catalog_file, encoding="utf-8") as f:
+                data = yaml.safe_load(f) or {}
+            modules = data.get("modules", [])
+            for m in modules:
+                mod_id = m.get("id")
+                mod_yaml_path = os.path.join(repo_root, "ForgeDB", "modules", mod_id, "module.yaml")
+                if os.path.exists(mod_yaml_path):
+                    with open(mod_yaml_path, encoding="utf-8") as mf:
+                        m_detail = yaml.safe_load(mf) or {}
+                        m["requirements"] = m_detail.get("requirements", {})
+                        m["variants"] = m_detail.get("variants", [])
+                        m["author"] = m_detail.get("author", "")
+                        m["license"] = m_detail.get("license", "")
+
+                status_file = os.path.join(STATE, f"module_{mod_id}.json")
+                if os.path.exists(status_file):
+                    m["status"] = read_json(status_file) or {"state": "installed"}
+                else:
+                    m["status"] = {"state": "available"}
+            return {"modules": modules, "total": len(modules)}
+        except Exception as e:
+            print(f"[MODULES] Error reading catalog: {e}")
+
+    # Fallback default catalog
+    return {
+        "modules": [
+            {
+                "id": "totem",
+                "name": "Mina — Assistente Virtual Acadêmica",
+                "version": "1.0.0",
+                "category": "ai",
+                "icon": "🤖",
+                "description": "Quiosque de voz inteligente com PyQt5, Picovoice Porcupine wake-word, STT/TTS e classificador MABI.",
+                "source_path": "ForgeModules/totem",
+                "tier": "stable",
+                "promoted": True,
+                "author": "G.E.R.A — UNESP Sorocaba",
+                "license": "MIT",
+                "requirements": {"min_ram_mb": 512, "min_storage_mb": 300, "python": ">=3.9"},
+                "status": {"state": "available"}
+            },
+            {
+                "id": "web-scraping",
+                "name": "Coletor Acadêmico & RAG Agent",
+                "version": "1.0.0",
+                "category": "data",
+                "icon": "🕸️",
+                "description": "Pipeline assíncrono de coleta de dados universitários com FastAPI, LangChain RAG, PostgreSQL e Redis.",
+                "source_path": "ForgeModules/sub-modulos/web-scraping",
+                "tier": "beta",
+                "promoted": False,
+                "author": "G.E.R.A — UNESP Sorocaba",
+                "license": "MIT",
+                "requirements": {"min_ram_mb": 1024, "min_storage_mb": 500, "python": ">=3.12"},
+                "status": {"state": "available"}
+            }
+        ],
+        "total": 2
+    }
+
+
+def get_module_detail(mod_id):
+    repo_root = find_repo_root()
+    if repo_root and yaml:
+        mod_yaml_path = os.path.join(repo_root, "ForgeDB", "modules", mod_id, "module.yaml")
+        if os.path.exists(mod_yaml_path):
+            try:
+                with open(mod_yaml_path, encoding="utf-8") as f:
+                    detail = yaml.safe_load(f) or {}
+                status_file = os.path.join(STATE, f"module_{mod_id}.json")
+                detail["status"] = read_json(status_file) if os.path.exists(status_file) else {"state": "available"}
+                return detail
+            except Exception as e:
+                print(f"[MODULES] Error loading module {mod_id}: {e}")
+    catalog = get_modules_catalog()
+    for m in catalog.get("modules", []):
+        if m.get("id") == mod_id:
+            return m
+    return None
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "ForgePortal/2.1"
 
@@ -460,11 +564,46 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/ap":
             return self._send(200, get_ap_config())
 
+        # --- Module Hub API ---
+        if path in ("/rest/modules", "/api/modules"):
+            return self._send(200, get_modules_catalog())
+        if path.startswith("/rest/modules/") or path.startswith("/api/modules/"):
+            mod_id = path.rstrip("/").split("/")[-1]
+            detail = get_module_detail(mod_id)
+            if detail:
+                return self._send(200, detail)
+            return self._send(404, {"error": f"module '{mod_id}' not found"})
+
         # --- SPA fallback: any unmatched route → index.html ---
         return self._serve_file(os.path.join(WEB, "index.html"), "text/html")
 
     def do_POST(self):
         path = self.path.split("?")[0]
+
+        if path.startswith("/api/modules/") or path.startswith("/rest/modules/"):
+            parts = path.rstrip("/").split("/")
+            if len(parts) >= 4:
+                mod_id = parts[-2]
+                action = parts[-1]
+                status_file = os.path.join(STATE, f"module_{mod_id}.json")
+                if action == "install":
+                    with open(status_file, "w") as sf:
+                        json.dump({"state": "installed", "installed_at": int(time.time()), "active": True}, sf)
+                    return self._send(200, {"ok": True, "message": f"Módulo '{mod_id}' instalado", "status": {"state": "installed", "active": True}})
+                elif action == "start":
+                    with open(status_file, "w") as sf:
+                        json.dump({"state": "running", "started_at": int(time.time()), "active": True}, sf)
+                    return self._send(200, {"ok": True, "message": f"Módulo '{mod_id}' iniciado", "status": {"state": "running", "active": True}})
+                elif action == "stop":
+                    with open(status_file, "w") as sf:
+                        json.dump({"state": "stopped", "stopped_at": int(time.time()), "active": False}, sf)
+                    return self._send(200, {"ok": True, "message": f"Módulo '{mod_id}' pausado", "status": {"state": "stopped", "active": False}})
+                elif action == "uninstall":
+                    try:
+                        os.remove(status_file)
+                    except OSError:
+                        pass
+                    return self._send(200, {"ok": True, "message": f"Módulo '{mod_id}' desinstalado", "status": {"state": "available"}})
 
         if path == "/api/reset":
             for f in ("result.json", "attempt.json", "provision.json", "applying"):

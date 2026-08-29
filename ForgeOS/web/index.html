@@ -894,41 +894,21 @@
         </div>
       </section>
 
-      <!-- 6. MODULES -->
+      <!-- 6. MODULES HUB -->
       <section class="page-view" id="view-modules">
-        <div class="grid-3">
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">🎙️ Totem Voice Assistant</span>
-              <span class="badge badge-psk">Fase 2</span>
-            </div>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
-              Assistente acadêmico local com reconhecimento de voz offline e síntese neural.
-            </p>
-            <button class="btn btn-secondary btn-sm" disabled>Em Breve</button>
+        <div class="view-header" style="margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h2 style="font-size:1.25rem; font-weight:700;">MultiForge Module Hub</h2>
+            <p style="font-size:0.85rem; color:var(--text-muted);">Módulos e aplicações inteligentes para nós de borda ARM (BTV E10)</p>
           </div>
+          <button class="btn btn-secondary btn-sm" id="btn-refresh-modules" onclick="loadModulesHub()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Atualizar Catálogo
+          </button>
+        </div>
 
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">🌐 Web Scraping & RAG</span>
-              <span class="badge badge-psk">Fase 2</span>
-            </div>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
-              Motor de indexação inteligente para extração de dados e bases de conhecimento vetoriais na borda.
-            </p>
-            <button class="btn btn-secondary btn-sm" disabled>Em Breve</button>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">📺 Kiosk Framebuffer</span>
-              <span class="badge badge-open">Ativo</span>
-            </div>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
-              Renderizador HDMI 1080p sem flicker para exibição do QR Code e status do dispositivo.
-            </p>
-            <span class="badge badge-open">/dev/fb0 ativo</span>
-          </div>
+        <div class="grid-3" id="modules-container">
+          <!-- Dynamic Module Cards loaded via /rest/modules -->
         </div>
       </section>
 
@@ -1055,6 +1035,9 @@ function showTab(tabId) {
     logs: 'Logs & Diagnóstico'
   };
   document.getElementById('page-title').textContent = titles[tabId] || 'MultiForge OS';
+  if (tabId === 'modules') {
+    loadModulesHub();
+  }
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
   }
@@ -1364,6 +1347,125 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text || '';
   return div.innerHTML;
+}
+
+// Module Hub Loader & Actions
+async function loadModulesHub() {
+  const container = document.getElementById('modules-container');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/rest/modules');
+    const data = await res.json();
+    const modules = data.modules || [];
+
+    if (modules.length === 0) {
+      container.innerHTML = '<div class="card"><p style="color:var(--text-muted);">Nenhum módulo encontrado no catálogo.</p></div>';
+      return;
+    }
+
+    container.innerHTML = modules.map(m => {
+      const state = (m.status && m.status.state) || 'available';
+      const isRunning = state === 'running';
+      const isInstalled = state === 'installed' || isRunning;
+
+      let badgeClass = 'badge-psk';
+      let stateLabel = 'Disponível';
+      if (isRunning) { badgeClass = 'badge-open'; stateLabel = 'Rodando'; }
+      else if (state === 'installed') { badgeClass = 'badge-open'; stateLabel = 'Instalado'; }
+      else if (state === 'stopped') { badgeClass = 'badge-eap'; stateLabel = 'Pausado'; }
+
+      const req = m.requirements || {};
+      const minRam = req.min_ram_mb ? `${req.min_ram_mb} MB RAM` : 'Leve';
+
+      let actionButtons = '';
+      if (!isInstalled) {
+        actionButtons = `<button class="btn btn-primary btn-sm" onclick="moduleAction('${m.id}', 'install')">Instalar Módulo</button>`;
+      } else if (isRunning) {
+        actionButtons = `
+          <button class="btn btn-secondary btn-sm" onclick="moduleAction('${m.id}', 'stop')">Pausar</button>
+          <button class="btn btn-secondary btn-sm" style="color:var(--danger);" onclick="moduleAction('${m.id}', 'uninstall')">Desinstalar</button>
+        `;
+      } else {
+        actionButtons = `
+          <button class="btn btn-primary btn-sm" onclick="moduleAction('${m.id}', 'start')">Iniciar</button>
+          <button class="btn btn-secondary btn-sm" style="color:var(--danger);" onclick="moduleAction('${m.id}', 'uninstall')">Desinstalar</button>
+        `;
+      }
+
+      return `
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="card-header" style="margin-bottom:0.75rem;">
+              <span class="card-title" style="display:flex; align-items:center; gap:0.5rem;">
+                <span style="font-size:1.4rem;">${m.icon || '📦'}</span>
+                <span>${escapeHtml(m.name)}</span>
+              </span>
+              <span class="badge ${badgeClass}">${stateLabel}</span>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.45; margin-bottom:1rem;">
+              ${escapeHtml(m.description)}
+            </p>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.25rem;">
+              <span class="nav-badge" style="background:var(--bg-card); font-size:0.72rem;">${minRam}</span>
+              <span class="nav-badge" style="background:var(--bg-card); font-size:0.72rem;">${m.category || 'app'}</span>
+              <span class="nav-badge" style="background:var(--bg-card); font-size:0.72rem;">v${m.version || '1.0'}</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.5rem; padding-top:0.75rem; border-top:1px solid var(--border);">
+            ${actionButtons}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Built-in Kiosk Card
+    container.innerHTML += `
+      <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div class="card-header" style="margin-bottom:0.75rem;">
+            <span class="card-title" style="display:flex; align-items:center; gap:0.5rem;">
+              <span style="font-size:1.4rem;">📺</span>
+              <span>Kiosk HDMI Framebuffer</span>
+            </span>
+            <span class="badge badge-open">Ativo</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.45; margin-bottom:1rem;">
+            Renderizador HDMI 1080p sem flicker em /dev/fb0 com Dual QR Code e telemetria em tempo real.
+          </p>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.25rem;">
+            <span class="nav-badge" style="background:var(--bg-card); font-size:0.72rem;">32 MB RAM</span>
+            <span class="nav-badge" style="background:var(--bg-card); font-size:0.72rem;">display</span>
+            <span class="nav-badge" style="background:var(--bg-card); font-size:0.72rem;">Built-in</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.5rem; padding-top:0.75rem; border-top:1px solid var(--border);">
+          <span class="badge badge-open">systemd ativo</span>
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    console.error('Error loading modules:', err);
+    container.innerHTML = '<div class="card"><p style="color:var(--danger);">Erro ao carregar catálogo de módulos.</p></div>';
+  }
+}
+
+async function moduleAction(modId, action) {
+  try {
+    const res = await fetch(\`/api/modules/\${modId}/\${action}\`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const j = await res.json();
+    if (j.ok) {
+      loadModulesHub();
+    } else {
+      alert(j.error || 'Erro na operação');
+    }
+  } catch (err) {
+    alert('Erro de comunicação com o portal');
+  }
 }
 
 // Initial Run

@@ -22,23 +22,23 @@ boot:
   dtb: meson-g12a-sei510.dtb
   aml_autoscript: true
   preferred_tool: "/root/install-aml.sh"
-  dtb_url: "https://drive.google.com/uc?export=download&id=1aaxBDKcvh3FGpS1LabSoefU0TTAFl4Mt"
+  dtb_url: "https://raw.githubusercontent.com/multi-forge/multi-forge/main/ForgeDB/devices/btv/e10/dtb/meson-g12a-sei510.dtb"
 
 images:
+  - id: forgeos-btv-e10-desktop
+    distribution: ForgeOS Desktop
+    version: v1.0.0-test (Kernel 6.1.y)
+    url: "https://github.com/multi-forge/multi-forge/releases/download/v1.0.0-test/forgeos-btv-e10.img.xz"
+    recommended: true
   - id: forgeos-server
     distribution: ForgeOS Server
     version: Bullseye ARM64
-    url: "https://downloads.sourceforge.net/project/multi-forge/forgeos-server-arm64.img.xz"
-    recommended: true
+    url: "https://github.com/multi-forge/multi-forge/releases/download/v1.0.0-test/forgeos-server-arm64.img.xz"
+    recommended: false
   - id: forgeos-iot
     distribution: ForgeOS IoT Gateway
     version: Alpine ARM64
-    url: "https://downloads.sourceforge.net/project/multi-forge/forgeos-iot-arm64.img.xz"
-    recommended: false
-  - id: forgeos-media
-    distribution: ForgeOS Media Station
-    version: Kodi ARM64
-    url: "https://downloads.sourceforge.net/project/multi-forge/forgeos-media-arm64.img.xz"
+    url: "https://github.com/multi-forge/multi-forge/releases/download/v1.0.0-test/forgeos-iot-arm64.img.xz"
     recommended: false
 
 known_issues:

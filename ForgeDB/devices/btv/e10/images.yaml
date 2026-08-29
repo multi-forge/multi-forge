@@ -1,49 +1,20 @@
 images:
-  - id: forgeos-23.8.1
+  - id: forgeos-btv-e10-desktop
     distribution: ForgeOS
-    version: 23.8.1
-    kernel: 6.1.50
-    url: https://drive.google.com/uc?export=download&id=1GMTTM88uvnXYpHC2hlzQGaLKLA0Rq2jx
+    version: v1.0.0-test
+    kernel: 6.1.y
+    url: https://github.com/multi-forge/multi-forge/releases/download/v1.0.0-test/forgeos-btv-e10.img.xz
+    sha256_url: https://github.com/multi-forge/multi-forge/releases/download/v1.0.0-test/forgeos-btv-e10.img.xz.sha256
     recommended: true
-  - id: armbian-23.8.1
-    distribution: Armbian
-    version: 23.8.1
-    kernel: 6.1.50
-    url: https://drive.google.com/uc?export=download&id=16XfAspTprQX2QKNFBrFKEcHLAQbMXLjE
-    recommended: false
-  - id: armbian-23.8.1-torrent
-    distribution: Armbian
-    version: 23.8.1
-    kernel: 6.1.50
-    url: https://drive.google.com/uc?export=download&id=10nbA5OmPXiTydt9d8HHTb1Cm_RJv1YWm
-    recommended: false
-  - id: armbian-23.11.1
-    distribution: Armbian
-    version: 23.11.1
-    kernel: 6.1.63
-    url: https://drive.google.com/uc?export=download&id=1cZzKVb4iwia0aPONmyD_bFzK2FwtRN-r
-    recommended: false
-  - id: armbian-23.11.1-torrent
-    distribution: Armbian
-    version: 23.11.1
-    kernel: 6.1.63
-    url: https://drive.google.com/uc?export=download&id=1c1b4kldMVfyZwS0YkZXywP_6S2TaOpvO
-    recommended: false
   - id: forgeos-server
     distribution: ForgeOS Server
     version: Bullseye ARM64
-    kernel: null
-    url: https://downloads.sourceforge.net/project/multi-forge/forgeos-server-arm64.img.xz
+    kernel: 6.1.y
+    url: https://github.com/multi-forge/multi-forge/releases/download/v1.0.0-test/forgeos-server-arm64.img.xz
     recommended: false
   - id: forgeos-iot
     distribution: ForgeOS IoT Gateway
     version: Alpine ARM64
-    kernel: null
-    url: https://downloads.sourceforge.net/project/multi-forge/forgeos-iot-arm64.img.xz
-    recommended: false
-  - id: forgeos-media
-    distribution: ForgeOS Media Station
-    version: Kodi ARM64
-    kernel: null
-    url: https://downloads.sourceforge.net/project/multi-forge/forgeos-media-arm64.img.xz
+    kernel: 6.1.y
+    url: https://github.com/multi-forge/multi-forge/releases/download/v1.0.0-test/forgeos-iot-arm64.img.xz
     recommended: false
