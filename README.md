@@ -4,40 +4,69 @@
   <img src="imagens/logo.png" width="1280" alt="MultiForge Logo/Banner">
 </p>
 
-Plataforma open-source para identificação, compatibilização, provisionamento e modularização de hardware ARM reaproveitado (TV Boxes e SBCs legadas).
+Plataforma open-source completa para **identificação, compatibilização, gravação, provisionamento e modularização de hardware ARM reaproveitado** (TV Boxes e SBCs comerciais legadas).
 
 ---
 
-## 📊 Estado Funcional Real (Atualizado 29/08/2026)
+## 📊 Estado Funcional Real (Auditado em 29/08/2026)
 
-| Componente | Stack Real | Entradas Principais (God Nodes) | Status | Testes |
-|------------|------------|---------------------------------|--------|--------|
-| **[ForgeImager](ForgeImager/)** | Tauri v2 + React 19 + Rust | `src-tauri/src/main.rs`, `App.tsx`, `crates/forge-write-conf` (`Ext4Inode`, `FlashState`) | **98%** (Produção) | CI Matrix (x64/ARM64) |
+| Componente | Stack Real | Entradas Principais (God Nodes) | Status | Testes / Cobertura |
+|------------|------------|---------------------------------|--------|-------------------|
+| **[ForgeImager](ForgeImager/)** | Tauri v2 + React 19 + Rust | `src-tauri/src/main.rs`, `App.tsx`, `crates/forge-write-conf` (`Ext4Inode`, `FlashState`) | **98%** (Produção) | CI Matrix (x64/ARM64 Linux, Win, macOS) |
 | **[ForgeOS](ForgeOS/)** | Python 3 + Bash + systemd | `bin/start-ap.sh`, `web/server.py` (v2.1), `display/qr_screen.py`, `bin/watchdog.sh` | **92%** (Piloto BTV E10) | 34/34 PASS (16 unit + 14 integ + 4 E2E) |
-| **[ForgeDB](ForgeDB/)** | YAML / Markdown | `devices/btv/e10/device.yaml`, `images.yaml`, `modules/` | **35%** (1 device + catálogo de módulos) | — |
-| **[ForgeModules](ForgeModules/)** | Python (PyQt5, FastAPI, LangChain) | `totem/main_cli.py`, `totem/main_gui.py`, `sub-modulos/web-scraping/api/main.py` | **30%** (2 standalone) | pytest local |
+| **[ForgeDB](ForgeDB/)** | YAML / JSON Schema | `devices/btv/e10/device.yaml`, `modules/catalog.yaml`, `schemas/*.schema.json` | **45%** (1 device + catálogo + schemas) | Validação JSON Schema Draft 2020-12 |
+| **[ForgeModules](ForgeModules/)** | Python (PyQt5, FastAPI, LangChain) | `totem/main_cli.py`, `totem/main_gui.py`, `sub-modulos/web-scraping/api/main.py` | **35%** (2 módulos + manifestos) | pytest local + live run |
 
-> **Hardware Piloto Validado:** BTV E10 (Amlogic S905X2, 2GB RAM, 8GB eMMC, Wi-Fi Realtek RTL8189FTV).
+> **Hardware Piloto Validado:** BTV Express E10 (SoC Amlogic S905X2, 2GB LPDDR4, 8GB eMMC, Wi-Fi Realtek RTL8189FTV, Armbian Linux 26.08 Trixie, kernel `6.18.44-ophub`).
 
 ---
 
-## ⚙️ Arquitetura e Fluxo de Execução
+## ⚙️ Arquitetura Integrada do Ecossistema
+
+O MultiForge opera em um pipeline contínuo de **4 componentes interligados**:
 
 ```text
 multi-forge/
 ├── ForgeImager/        # Desktop Flasher (Tauri v2 + React 19 + Rust)
-│   ├── src-tauri/      # 35+ IPC commands, EDL/QDL, block I/O (Win32/udisks2/authopen)
+│   ├── src-tauri/      # 35+ comandos IPC em Rust, streaming I/O, EDL/QDL Sahara
 │   ├── crates/         # forge-write-conf (escrita userspace ext4 sem mount/root)
-│   └── src/            # UI Wizard de 4 etapas, 18 idiomas, suporte dark/light
+│   └── src/            # UI 3D Wizard de 4 etapas, 18 idiomas, temas Dark/Light
 ├── ForgeOS/            # Stack de provisionamento on-device (BTV E10)
 │   ├── bin/            # start-ap.sh (wpa_supplicant m=2), apply-client.sh, watchdog.sh
-│   ├── web/            # Portal HTTP offline + Module Hub (server.py v2.1 REST API + Enterprise SPA Dark/Light)
+│   ├── web/            # Portal HTTP offline + Module Hub (server.py v2.1 REST API + Enterprise SPA)
 │   ├── display/        # Kiosk HDMI framebuffer 1080p pixel-perfect (qr_screen.py)
-│   └── tests/          # Suíte de testes (run_all.sh, Playwright E2E)
-├── ForgeDB/            # Metadados de hardware, imagens de boot e catálogo de módulos
-│   └── modules/        # Metadados de módulos (module.yaml por módulo)
-├── ForgeModules/       # Módulos operacionais (Mina/Totem voz acadêmica e Web-Scraping RAG)
-└── graphify-out/       # Knowledge Graph (3.177 nós, 6.462 arestas, 200 comunidades)
+│   └── tests/          # Suíte de testes (16 unitários cross-platform + 14 integração)
+├── ForgeDB/            # Single Source of Truth para Hardware e Módulos
+│   ├── devices/        # Metadados de placas (specs, SoCs, DTBs, métodos de flashing)
+│   ├── modules/        # Catálogo central (catalog.yaml) e manifestos (module.yaml)
+│   └── schemas/        # Schemas formais JSON Draft 2020-12 (device.schema.json, module.schema.json)
+├── ForgeModules/       # Aplicações operacionais para os nós de borda
+│   ├── totem/          # Mina — Assistente Virtual Acadêmica (PyQt5 + Sherpa-ONNX + MABI)
+│   └── sub-modulos/    # Coletor Acadêmico & RAG Agent (FastAPI + LangChain + PostgreSQL/SQLite)
+└── release_assets/     # Manifestos de imagens e hashes para distribuição de releases
+```
+
+```mermaid
+flowchart TD
+    subgraph S1["1. Preparação & Gravação"]
+        FDB[("ForgeDB<br/>Hardware + Imagens")] --> FI["ForgeImager (Desktop)<br/>Grava SD/eMMC + Injeta Ext4"]
+    end
+
+    subgraph S2["2. Boot & Provisionamento (ForgeOS)"]
+        FI -->|"Primeiro Boot"| AP["forge-ap (192.168.4.1)<br/>wpa_supplicant m=2"]
+        AP --> PORTAL["forge-portal (:8080)<br/>REST API v2.1 + SPA Dark Mode"]
+        AP --> HDMI["forge-display (/dev/fb0)<br/>Dual QR Code 1080p"]
+        PORTAL -->|"Wi-Fi (PSK ou EAP)"| APPLY["apply-client.sh<br/>Valida DHCP e Internet"]
+        APPLY -->|"Falha >75s"| WD["watchdog.sh<br/>Rollback Automático"]
+        APPLY -->|"Sucesso"| CLI["Modo Cliente Ativo<br/>Conectado à LAN"]
+    end
+
+    subgraph S3["3. Seleção & Execução de Módulos"]
+        CLI --> HUB["MultiForge Module Hub<br/>(Aba Módulos no Portal)"]
+        FDB -->|"catalog.yaml"| HUB
+        HUB -->|"Instala / Inicia"| MOD1["Totem (Mina AI)<br/>Quiosque de Voz"]
+        HUB -->|"Instala / Inicia"| MOD2["Web Scraping & RAG<br/>Agente Universitário"]
+    end
 ```
 
 ---
@@ -47,31 +76,56 @@ multi-forge/
 ### 1. ForgeImager (App Desktop)
 ```bash
 cd ForgeImager
-pnpm install
-pnpm tauri dev       # Modo desenvolvimento com hot-reload
-pnpm tauri build     # Gera binários assinados (.deb, .AppImage, .msi, .exe)
-```
-- **Gravação de Imagens:** Suporta streaming direto com verificação SHA256 em tempo real e descompressão multithread (`.xz`, `.gz`, `.zst`, `.bz2`).
-- **Autoconfig Injection:** Injeta credenciais de primeiro boot no rootfs ext4 sem necessidade de privilégios de root do host.
-- **Qualcomm EDL:** Suporte nativo a flashing de emergência via protocolo Sahara/Firehose (`VID 0x05C6`).
 
-### 2. ForgeOS (On-Device Stack)
+# Desenvolvimento local com hot-reload (Windows / Linux / macOS):
+pnpm install
+pnpm tauri dev
+
+# Compilação de instaladores (.exe, .msi, .deb, .AppImage, .dmg):
+pnpm tauri build
+```
+- **Gravação Segura:** Descompressão multithread on-the-fly (`.xz`, `.gz`, `.zst`, `.bz2`) com validação SHA-256 bloco a bloco.
+- **Autoconfig Injection:** Injeta parâmetros de rede e primeiro boot diretamente no ext4 via crate Rust dedicada sem precisar montar a partição.
+- **Qualcomm EDL:** Flashing de baixo nível via protocolo Sahara/Firehose (`VID 0x05C6`).
+
+### 2. ForgeOS (Stack On-Device na TV Box)
 ```bash
 cd ForgeOS
-sudo ./install.sh               # Instalação idempotente em Armbian
-sudo ./tests/run_all.sh         # Executa os 30 testes unitários e de integração
-```
-- **Rede Resiliente:** AP cativo via `wpa_supplicant` mode=2 para contornar limitações de driver RTL8189FTV.
-- **Rollback Automático:** Watchdog monitora conexão e reverte para AP caso ocorra falha de DHCP/DNS ou perda de internet (>5 min).
-- **Kiosk HDMI:** Renderização direta em `/dev/fb0` com dual QR code (conexão Wi-Fi e portal).
 
-### 3. ForgeModules
+# Instalação automatizada e idempotente no Armbian:
+sudo bash install.sh
+
+# Execução dos testes unitários e de integração:
+python -m unittest discover -s tests -p "test_*.py" -v
+bash tests/run_all.sh
+```
+- **Rede Resiliente:** AP cativo em `192.168.4.1` via `wpa_supplicant` mode=2 para contornar limitações do driver RTL8189FTV.
+- **Module Hub Integrado:** Endpoints REST em `/rest/modules` e `/api/modules/*` para instalação e controle de ciclo de vida de apps.
+- **Rollback com Watchdog:** Monitor em background reverte automaticamente para AP caso ocorra falha de conexão ou perda de internet (>5 min).
+- **Kiosk HDMI Framebuffer:** Renderização direta em `/dev/fb0` em 1080p sem X11/Wayland para economia máxima de RAM.
+
+### 3. ForgeDB (Banco de Hardware e Módulos)
+```bash
+cd ForgeDB
+
+# Validação do device.yaml da BTV E10 contra o JSON Schema:
+python -c "import yaml, json, jsonschema; jsonschema.validate(yaml.safe_load(open('devices/btv/e10/device.yaml')), json.load(open('schemas/device.schema.json'))); print('✅ Device Schema OK!')"
+
+# Validação do manifesto de módulos:
+python -c "import yaml, json, jsonschema; jsonschema.validate(yaml.safe_load(open('modules/totem/module.yaml')), json.load(open('schemas/module.schema.json'))); print('✅ Module Schema OK!')"
+```
+
+### 4. ForgeModules (Aplicações)
 ```bash
 # Totem (Assistente Virtual Mina - CLI ou GUI PyQt5)
-cd ForgeModules/totem && python install.py && python main_cli.py
+cd ForgeModules/totem
+python install.py
+python main_cli.py      # Console
+python main_gui.py      # Interface Gráfica
 
-# Web-Scraping & RAG Agent
-cd ForgeModules/sub-modulos/web-scraping && docker compose up -d
+# Web-Scraping & RAG Agent (Variante Docker ou Lite SQLite)
+cd ForgeModules/sub-modulos/web-scraping
+docker compose up -d    # Modo completo
 ```
 
 ---
@@ -85,58 +139,39 @@ O repositório possui uma malha de código indexada via AST local pelo Graphify 
 start graphify-out/graph.html              # Grafo de conceitos e comunidades
 start graphify-out/multi-forge-callflow.html # Diagramas Mermaid de call-flow
 
-# Consultas estruturadas (sem varredura manual de arquivos)
+# Consultas estruturadas
 graphify query "como o watchdog realiza o rollback de rede?"
 graphify path "FlashState" "watchdog.sh"
 graphify explain "Ext4Inode"
-
-# Atualização incremental após alterações
-graphify extract . --code-only --update
 ```
-
----
-
-## 🎯 Gaps Críticos para Fechar o Ciclo MVP (Phase 1)
-
-1. **Alinhamento de Contrato de Autoconfig:** `ForgeImager` injeta `/root/.not_logged_in_yet` (formato Armbian), enquanto o provisioner do `ForgeOS` espera parâmetros via portal web ou `/boot/forge/forge.yaml`.
-2. **Auto-discovery de Módulos:** Os manifestos `module.yaml` agora existem em `ForgeDB/modules/`. Falta integrar a leitura automática no portal web do `ForgeOS` (aba Modules) para instalação one-click.
-3. **JSON Schemas no ForgeDB:** Implementar validação formal em `ForgeDB/schemas/` para validar novos dispositivos via CI.
 
 ---
 
 ## 📖 Documentação Completa
 
-* [Arquitetura Geral](docs/architecture.md)
-* [Roadmap de 3 Fases](docs/roadmap.md)
-* [Guia Técnico BTV E10 (Flashing, UART, Pinouts)](docs/btv-e10.md)
-* [Auditoria Interna de Engenharia](docs/audit-2026-08-24.md)
-* [Guia de Desenvolvimento do ForgeImager](ForgeImager/DEVELOPMENT.md)
+* 🏛️ [Arquitetura do Ecossistema](docs/architecture.md)
+* 📡 [Documentação Técnica do ForgeOS](ForgeOS/README.md)
+* 🔧 [Manual do ForgeImager](ForgeImager/README.md) & [Guia de Desenvolvimento](ForgeImager/DEVELOPMENT.md)
+* 🗄️ [Manual e Schemas do ForgeDB](ForgeDB/README.md)
+* 📦 [Guia de Módulos e Contratos (ForgeModules)](ForgeModules/README.md)
+* 📟 [Guia Técnico BTV E10 (Pinouts, UART, Flashing)](docs/btv-e10.md)
+* 🗺️ [Roadmap de 3 Fases](docs/roadmap.md)
 
 ---
 
 ## 📝 Changelog Recente
 
-### 29/08/2026 — Reestruturação Arquitetural (Phase P0)
+### 29/08/2026 — Integração do Module Hub e Reestruturação ForgeDB
+- **Module Hub no ForgeOS:** Implementados endpoints `/rest/modules`, `/rest/modules/<id>` e `/api/modules/<id>/<action>` no `server.py` v2.1.
+- **Frontend SPA Atualizado:** Adicionada aba interativa "Módulos" no painel web com ações de instalação, inicialização, parada e badges de consumo de RAM.
+- **ForgeHub Absorvido:** Conceito integrado diretamente ao ForgeOS e metadados centralizados em `ForgeDB/modules/`.
+- **Manifestos e Schemas Criados:** `ForgeDB/modules/catalog.yaml`, `totem/module.yaml`, `web-scraping/module.yaml`, `device.schema.json` e `module.schema.json`.
+- **URLs Alinhadas:** Atualizadas referências no `ForgeDB` para apontar diretamente aos artefatos de GitHub Releases.
 
-- **ForgeHub eliminado:** Componente conceitual absorvido — funcionalidade de catálogo de módulos migrada para `ForgeDB/modules/` (metadados `module.yaml`) e portal web do `ForgeOS` (aba Modules no SPA).
-- **Arquitetura consolidada em 4 componentes:** ForgeImager, ForgeOS, ForgeDB, ForgeModules.
-- **ForgeDB expandido:** Agora cataloga metadados de módulos além de dispositivos e imagens.
-
-### 28/08/2026 — Sprint de Consolidação (5 commits)
-
-**ForgeOS** (85% → **92%**):
-- `server.py` v2.1: REST API completa (`/rest/features`, `/rest/systemStatus`, `/rest/wifiStatus`, `/rest/wifiScan`, etc.) compatível com ESP32-SvelteKit
-- Novo Web UI enterprise-grade: Dark Mode (padrão) + Light Mode, sidebar navigation, KPI cards em tempo real (RAM, CPU, Uptime), Wi-Fi scanner com barras de sinal dBm, modal de conexão dual-mode (WPA-PSK + WPA2-Enterprise 802.1X)
-- Suporte cross-platform: fallback `netsh wlan` para Windows, `tempfile.gettempdir()`, correção de encoding `cp1252`
-- Logo e favicon customizados integrados ao brand header da sidebar
-- 16/16 testes unitários passando em Windows e Linux
-
-**ForgeImager** (98% — mantido):
-- Refactor completo de branding: Armbian → MultiForge (ícones, assets, temas, modais)
-- Integração dinâmica com GitHub Releases (`forge-images.json`) para download de imagens
-- Tema 3D overhaul com nova paleta de cores enterprise
-- Scripts de build e dev (`build.bat`, `start-dev.bat`, `start-app.bat`)
-- `release_assets/forge-images.json` como manifesto centralizado de imagens
+### 28/08/2026 — Sprint de Consolidação
+- **Web UI Enterprise:** Dark/Light mode, live Wi-Fi scanner, dBm meter, 802.1X Eduroam e logo customizada.
+- **ForgeImager Rebrand:** Identidade 3D MultiForge, catálogo dinâmico via GitHub Releases e scripts de build.
+- **16/16 Testes Unitários:** Suíte de testes cross-platform 100% verde em Windows e Linux.
 
 ---
 

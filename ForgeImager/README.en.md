@@ -1,26 +1,27 @@
 <h2 align="center">
-  🔧 Forge Imager
+  🔧 ForgeImager
   <br><br>
 </h2>
 
 ### About
 
-Forge Imager is a tool for downloading and flashing OS images to single-board computers. It checks the target disk before writing, validates the checksum, and verifies the image after the write, so a bad download or the wrong disk doesn't turn into a broken card.
+**ForgeImager** is the official desktop tool of the MultiForge ecosystem for downloading, configuring, and safely flashing operating system images to single-board computers (SBCs) and repurposed ARM TV Boxes (Amlogic, Rockchip, Allwinner).
 
-> **Note:** This project is a fork of [Armbian Imager](https://github.com/armbian/imager), adapted for the Forge ecosystem.
+Built with **Tauri v2 + React 19 + Rust**, it pairs a lightweight native Rust I/O backend with a responsive, modern UI featuring a 3D MultiForge design theme.
 
-### Features
+### 🌟 Key Features
 
-- Works with multiple boards, with filtering and board metadata
-- Disk safety checks, checksum validation, and post-write verification
-- Native builds for Linux, Windows, and macOS, on x64 and ARM64
-- Multi-language interface that follows your system language by default
-- Built-in application updates
-- Small binary with few runtime dependencies
+- **Ext4 Direct Userspace Injection (`crates/forge-write-conf`):** Injects Wi-Fi credentials, first-boot scripts, and user settings directly into the target disk's ext4 partition without mounting or requiring host root privileges.
+- **Dynamic Catalog via GitHub Releases:** Integrates with remote release manifests (`release_assets/forge-images.json`) for automated image downloads and SHA256 checksum verification.
+- **Safe Streaming & Real-Time Verification:** Multithreaded on-the-fly decompression (`.xz`, `.gz`, `.zst`, `.bz2`) with block-by-block SHA-256 verification.
+- **Qualcomm EDL / QDL Emergency Flashing:** Integrated Sahara/Firehose protocol (`VID 0x05C6`) for unbricking Qualcomm-based hardware.
+- **3D MultiForge Visual Identity:** Industrial dark/light theme with automatic system sync.
+- **Cross-Platform Native Builds:** Linux, Windows, and macOS (x64 and ARM64).
+- **Multi-Language Interface:** 18 supported languages with automatic locale detection.
 
-## Download
+## 📦 Download
 
-Prebuilt binaries are available for every supported platform.
+Prebuilt binaries are available in [Releases](https://github.com/multi-forge/multi-forge/releases).
 
 | <a href="https://github.com/multi-forge/multi-forge/releases"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/apple.svg" width="24"><br><strong>macOS</strong></a> | <a href="https://github.com/multi-forge/multi-forge/releases"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/windows11.svg" width="24"><br><strong>Windows</strong></a> | <a href="https://github.com/multi-forge/multi-forge/releases"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linux.svg" width="24"><br><strong>Linux</strong></a> |
 |:---:|:---:|:---:|
@@ -29,35 +30,38 @@ Prebuilt binaries are available for every supported platform.
 
 ## How It Works
 
-1. **Pick a manufacturer.** Choose one of the supported SBC vendors, or load your own image file.
-2. **Pick a board.** Boards show photos and metadata.
-3. **Pick an image.** Desktop or server, a kernel branch, and a stable, nightly, or rolling release build.
-4. **Flash.** The app downloads, decompresses, writes, and verifies for you.
+1. **Pick a manufacturer.** Choose one of the supported SBC/TV box vendors, or load your own local image file.
+2. **Pick a board.** Boards show photos and hardware metadata.
+3. **Pick an image.** Select desktop or server, kernel branch, and stability tier.
+4. **Flash.** The app downloads, decompresses, writes, injects autoconfig, and verifies for you.
 
-## Customization
+## 🛠️ Development & Building
 
-- Theme: light, dark, or follow the system setting
-- Developer mode: turn on detailed logging and open the log viewer
-- Language: 18 languages, auto-detected from your system
+### Quick Scripts (Windows)
+```bash
+# Launch development mode with hot-reload (Frontend + Rust IPC):
+.\start-dev.bat
 
-## Platform Support
+# Build production installers (.msi / .exe):
+.\build.bat
 
-| Platform | Architecture | Notes |
-|----------|-------------|-------|
-| macOS | Intel x64 | Full support |
-| macOS | Apple Silicon | Native ARM64 build, Touch ID support |
-| Windows | x64 | Requires Administrator privileges |
-| Windows | ARM64 | Native ARM64 build, requires Administrator privileges |
-| Linux | x64 | Uses lsblk for detection and UDisks2/polkit for elevated device access |
-| Linux | ARM64 | Native ARM64 build |
+# Run compiled release binary:
+.\start-app.bat
+```
 
-### Supported Languages
+### Manual Build (Cross-platform)
+```bash
+# 1. Install frontend dependencies
+pnpm install
 
-English, Italian, German, French, Spanish, Portuguese, Portuguese (Brazil), Dutch, Polish, Russian, Chinese, Japanese, Korean, Ukrainian, Turkish, Slovenian, Swedish, Croatian
+# 2. Run in development mode
+pnpm tauri dev
 
-## Development
+# 3. Build release bundles
+pnpm tauri build
+```
 
-Setup, build instructions, and project layout live in [DEVELOPMENT.md](DEVELOPMENT.md).
+Setup, IPC architecture details, and environment prerequisites are documented in [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## Credits
 

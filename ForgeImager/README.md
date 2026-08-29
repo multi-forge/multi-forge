@@ -1,26 +1,27 @@
 <h2 align="center">
-  🔧 Forge Imager
+  🔧 ForgeImager
   <br><br>
 </h2>
 
 ### Sobre
 
-O Forge Imager é uma ferramenta para baixar e gravar imagens de sistemas operacionais em computadores de placa única (SBCs). Ele verifica o disco de destino antes de gravar, valida o checksum e verifica a imagem após a gravação, garantindo que um download corrompido ou a seleção do disco errado não danifiquem seu dispositivo.
+O **ForgeImager** é a ferramenta desktop oficial do ecossistema MultiForge para download, parametrização e gravação segura de sistemas operacionais em computadores de placa única (SBCs) e TV Boxes reaproveitadas (Amlogic, Rockchip, Allwinner).
 
-> **Nota:** Este projeto é um fork do [Armbian Imager](https://github.com/armbian/imager), adaptado para o ecossistema Forge.
+Construído com **Tauri v2 + React 19 + Rust**, combina a leveza e velocidade de um backend nativo em Rust com uma interface de usuário moderna, responsiva e com identidade visual 3D MultiForge.
 
-### Recursos
+### 🌟 Principais Recursos
 
-- Compatível com múltiplas placas, incluindo filtragem e metadados específicos de cada placa
-- Verificações de segurança do disco, validação de checksum e verificação pós-gravação
-- Compilações nativas para Linux, Windows e macOS (suportando x64 e ARM64)
-- Interface multilíngue que segue o idioma padrão do seu sistema operacional
-- Atualizações integradas no próprio aplicativo
-- Executável leve com poucas dependências de execução
+- **Injeção Userspace em Ext4 (`crates/forge-write-conf`):** Injeta credenciais de Wi-Fi, usuários e scripts de primeiro boot diretamente na partição ext4 do disco de destino sem necessidade de montar (`mount`) ou privilégios de root do host.
+- **Catálogo Dinâmico via GitHub Releases:** Integração direta com manifestos remotos (`release_assets/forge-images.json`) para download transparente de imagens oficiais e verificação SHA256.
+- **Gravação Segura e Verificação em Tempo Real:** Suporte a streaming com descompressão multithread (`.xz`, `.gz`, `.zst`, `.bz2`) e checagem de integridade SHA-256 bloco a bloco.
+- **Suporte de Emergência Qualcomm EDL / QDL:** Protocolo Sahara/Firehose integrado (`VID 0x05C6`) para recuperação de placas brickadas.
+- **Identidade Visual 3D MultiForge:** Tema industrial com suporte a Dark, Light e sincronização com o SO.
+- **Compilações Nativas Multiplataforma:** Linux, Windows e macOS (suportando x64 e ARM64).
+- **Interface Multilíngue:** 18 idiomas suportados com detecção automática.
 
-## Download
+## 📦 Download
 
-Binários pré-compilados estão disponíveis para todas as plataformas suportadas.
+Binários pré-compilados estão disponíveis na aba [Releases](https://github.com/multi-forge/multi-forge/releases).
 
 | <a href="https://github.com/multi-forge/multi-forge/releases"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/apple.svg" width="24"><br><strong>macOS</strong></a> | <a href="https://github.com/multi-forge/multi-forge/releases"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/windows11.svg" width="24"><br><strong>Windows</strong></a> | <a href="https://github.com/multi-forge/multi-forge/releases"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linux.svg" width="24"><br><strong>Linux</strong></a> |
 |:---:|:---:|:---:|
@@ -55,9 +56,33 @@ Binários pré-compilados estão disponíveis para todas as plataformas suportad
 
 Alemão, Chinês, Coreano, Croata, Espanhol, Francês, Holandês, Inglês, Italiano, Japonês, Polonês, Português, Português (Brasil), Russo, Sueco, Esloveno, Turco, Ucraniano
 
-## Desenvolvimento
+## 🛠️ Desenvolvimento & Compilação
 
-As instruções de configuração, compilação e layout do projeto estão detalhadas em [DEVELOPMENT.md](DEVELOPMENT.md).
+### Scripts Rápidos (Windows)
+```bash
+# Iniciar em modo desenvolvimento com hot-reload (Frontend + Rust IPC):
+.\start-dev.bat
+
+# Compilar binários de produção (.msi / .exe):
+.\build.bat
+
+# Executar binário compilado:
+.\start-app.bat
+```
+
+### Compilação Manual (Cross-platform)
+```bash
+# 1. Instalar dependências do Frontend
+pnpm install
+
+# 2. Executar em modo desenvolvimento
+pnpm tauri dev
+
+# 3. Gerar instaladores de produção
+pnpm tauri build
+```
+
+As instruções detalhadas de configuração de ambiente Rust/Node e arquitetura interna de IPC estão em [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## Créditos
 
