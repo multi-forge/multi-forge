@@ -8,17 +8,17 @@ Plataforma open-source para identificação, compatibilização, provisionamento
 
 ---
 
-## 📊 Estado Funcional Real (Auditado via Graphify AST)
+## 📊 Estado Funcional Real (Atualizado 28/08/2026)
 
 | Componente | Stack Real | Entradas Principais (God Nodes) | Status | Testes |
 |------------|------------|---------------------------------|--------|--------|
 | **[ForgeImager](ForgeImager/)** | Tauri v2 + React 19 + Rust | `src-tauri/src/main.rs`, `App.tsx`, `crates/forge-write-conf` (`Ext4Inode`, `FlashState`) | **98%** (Produção) | CI Matrix (x64/ARM64) |
-| **[ForgeOS](ForgeOS/)** | Python 3 + Bash + systemd | `bin/start-ap.sh`, `web/server.py`, `display/qr_screen.py`, `bin/watchdog.sh` | **85%** (Piloto BTV E10) | 34/34 PASS (16 unit + 14 integ + 4 E2E) |
+| **[ForgeOS](ForgeOS/)** | Python 3 + Bash + systemd | `bin/start-ap.sh`, `web/server.py` (v2.1), `display/qr_screen.py`, `bin/watchdog.sh` | **92%** (Piloto BTV E10) | 34/34 PASS (16 unit + 14 integ + 4 E2E) |
 | **[ForgeDB](ForgeDB/)** | YAML / Markdown | `devices/btv/e10/device.yaml`, `images.yaml` | **35%** (1 device) | — |
 | **[ForgeModules](ForgeModules/)** | Python (PyQt5, FastAPI, LangChain) | `totem/main_cli.py`, `totem/main_gui.py`, `sub-modulos/web-scraping/api/main.py` | **30%** (2 standalone) | pytest local |
 | **ForgeHub** | — | `catalog.yaml` (ausente) | **10%** (Conceito) | — |
 
-> **Hardware Piloto Validade:** BTV E10 (Amlogic S905X2, 2GB RAM, 8GB eMMC, Wi-Fi Realtek RTL8189FTV).
+> **Hardware Piloto Validado:** BTV E10 (Amlogic S905X2, 2GB RAM, 8GB eMMC, Wi-Fi Realtek RTL8189FTV).
 
 ---
 
@@ -32,7 +32,7 @@ multi-forge/
 │   └── src/            # UI Wizard de 4 etapas, 18 idiomas, suporte dark/light
 ├── ForgeOS/            # Stack de provisionamento on-device (BTV E10)
 │   ├── bin/            # start-ap.sh (wpa_supplicant m=2), apply-client.sh, watchdog.sh
-│   ├── web/            # Portal HTTP offline (server.py + Pico.css, PSK + 802.1X EAP)
+│   ├── web/            # Portal HTTP offline (server.py v2.1 REST API + Enterprise SPA Dark/Light)
 │   ├── display/        # Kiosk HDMI framebuffer 1080p pixel-perfect (qr_screen.py)
 │   └── tests/          # Suíte de testes (run_all.sh, Playwright E2E)
 ├── ForgeDB/            # Metadados de hardware e imagens de boot por dispositivo
@@ -111,6 +111,26 @@ graphify extract . --code-only --update
 * [Guia Técnico BTV E10 (Flashing, UART, Pinouts)](docs/btv-e10.md)
 * [Auditoria Interna de Engenharia](docs/audit-2026-08-24.md)
 * [Guia de Desenvolvimento do ForgeImager](ForgeImager/DEVELOPMENT.md)
+
+---
+
+## 📝 Changelog Recente
+
+### 28/08/2026 — Sprint de Consolidação (5 commits)
+
+**ForgeOS** (85% → **92%**):
+- `server.py` v2.1: REST API completa (`/rest/features`, `/rest/systemStatus`, `/rest/wifiStatus`, `/rest/wifiScan`, etc.) compatível com ESP32-SvelteKit
+- Novo Web UI enterprise-grade: Dark Mode (padrão) + Light Mode, sidebar navigation, KPI cards em tempo real (RAM, CPU, Uptime), Wi-Fi scanner com barras de sinal dBm, modal de conexão dual-mode (WPA-PSK + WPA2-Enterprise 802.1X)
+- Suporte cross-platform: fallback `netsh wlan` para Windows, `tempfile.gettempdir()`, correção de encoding `cp1252`
+- Logo e favicon customizados integrados ao brand header da sidebar
+- 16/16 testes unitários passando em Windows e Linux
+
+**ForgeImager** (98% — mantido):
+- Refactor completo de branding: Armbian → MultiForge (ícones, assets, temas, modais)
+- Integração dinâmica com GitHub Releases (`forge-images.json`) para download de imagens
+- Tema 3D overhaul com nova paleta de cores enterprise
+- Scripts de build e dev (`build.bat`, `start-dev.bat`, `start-app.bat`)
+- `release_assets/forge-images.json` como manifesto centralizado de imagens
 
 ---
 
