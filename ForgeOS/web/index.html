@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>FORGE-OS // APPLIANCE CORE HUD · BTV-E10</title>
+  <title>FORGE-OS // BTV-E10 CONSOLE</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       FORGE-OS HARDWARE CONSOLE DESIGN SYSTEM (DESKTOP & MOBILE OPTIMIZED)
+       FORGE-OS HARDWARE CONSOLE (FULLY FLUID & RESPONSIVE DESIGN SYSTEM)
        ========================================================================== */
     :root {
       --font-display: "Chakra Petch", -apple-system, sans-serif;
@@ -92,6 +92,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%;
+      height: 100dvh;
       width: 100%;
       font-family: var(--font-display);
       background-color: var(--bg-void);
@@ -125,9 +126,16 @@
     button { cursor: pointer; border: none; background: none; }
 
     /* Layout */
-    .app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; position: relative; }
+    .app-container {
+      display: flex;
+      height: 100%;
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
 
-    /* Mobile Sidebar Backdrop */
+    /* Mobile Sidebar Backdrop Overlay */
     .sidebar-backdrop {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -164,7 +172,7 @@
     }
 
     .brand-header {
-      padding: 1.15rem 1.15rem;
+      padding: 1.1rem 1.15rem;
       border-bottom: 2px solid var(--border-hull);
       display: flex;
       align-items: center;
@@ -333,7 +341,7 @@
 
     /* Topbar HUD */
     .topbar {
-      height: 54px;
+      height: 52px;
       border-bottom: 2px solid var(--border-hull);
       background: var(--bg-panel);
       display: flex;
@@ -347,7 +355,7 @@
     .topbar-left {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      gap: 0.75rem;
       min-width: 0;
     }
     .mobile-menu-btn {
@@ -425,7 +433,7 @@
     .content-area {
       flex: 1;
       overflow-y: auto;
-      padding: 1.25rem 1.5rem;
+      padding: clamp(0.75rem, 2vw, 1.25rem);
       -webkit-overflow-scrolling: touch;
     }
 
@@ -440,15 +448,30 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Responsive Grids */
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
-    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+    /* Fluid Responsive Grids */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+      margin-bottom: clamp(0.75rem, 1.5vw, 1.25rem);
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+      margin-bottom: clamp(0.75rem, 1.5vw, 1.25rem);
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+      margin-bottom: clamp(0.75rem, 1.5vw, 1.25rem);
+    }
 
     .card {
       background: var(--bg-panel);
       border: 1px solid var(--border-hull);
-      padding: 1.1rem;
+      padding: clamp(0.75rem, 2vw, 1.1rem);
       position: relative;
       clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
       display: flex;
@@ -468,17 +491,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.65rem;
       border-bottom: 1px dashed var(--border-hull);
-      padding-bottom: 0.5rem;
+      padding-bottom: 0.4rem;
       flex-wrap: wrap;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
     .card-title {
       font-size: 0.85rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       display: flex;
       align-items: center;
       gap: 0.45rem;
@@ -495,18 +518,18 @@
       background: linear-gradient(180deg, var(--bg-panel-elevated) 0%, var(--bg-panel) 100%);
       border: 2px solid var(--border-hull);
       border-left: 4px solid var(--neon-amber);
-      padding: 0.85rem 1.25rem;
-      margin-bottom: 1.25rem;
+      padding: 0.75rem 1.15rem;
+      margin-bottom: 1rem;
       box-shadow: 0 6px 16px rgba(0,0,0,0.6);
       position: relative;
       flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
     .rack-chassis-header::after {
       content: "";
       position: absolute;
       top: 0; right: 0; bottom: 0;
-      width: 80px;
+      width: 70px;
       background: var(--hazard-stripe);
       opacity: 0.25;
       pointer-events: none;
@@ -532,7 +555,7 @@
         0 100%
       );
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      padding: 1.25rem;
+      padding: clamp(0.85rem, 2.5vw, 1.25rem);
       overflow: hidden;
     }
     .cartridge-blade::before {
@@ -575,25 +598,25 @@
       border: 1px solid #000000;
       box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
     }
-    .rivet-top-left { top: 6px; left: 12px; }
-    .rivet-top-right { top: 6px; right: 20px; }
-    .rivet-bottom-left { bottom: 6px; left: 12px; }
-    .rivet-bottom-right { bottom: 6px; right: 20px; }
+    .rivet-top-left { top: 6px; left: 10px; }
+    .rivet-top-right { top: 6px; right: 18px; }
+    .rivet-bottom-left { bottom: 6px; left: 10px; }
+    .rivet-bottom-right { bottom: 6px; right: 18px; }
 
     /* Cartridge Header Strip */
     .cartridge-top-strip {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.75rem;
       border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-      padding-bottom: 0.5rem;
+      padding-bottom: 0.4rem;
     }
     .cartridge-bay-label {
       font-size: 0.65rem;
       font-family: var(--font-tech);
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       color: var(--neon-amber);
       display: flex;
       align-items: center;
@@ -607,7 +630,7 @@
       font-family: var(--font-tech);
       font-weight: 800;
       text-transform: uppercase;
-      padding: 0.15rem 0.55rem;
+      padding: 0.15rem 0.5rem;
       background: #000000;
       border: 1px solid var(--border-hull);
       color: var(--text-dim);
@@ -627,18 +650,18 @@
     .cartridge-identity {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
-      margin-bottom: 0.75rem;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
     }
     .cartridge-socket-icon {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       background: var(--bg-inset);
       border: 2px solid var(--border-hull);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 1.35rem;
       clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
       box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
       flex-shrink: 0;
@@ -649,7 +672,7 @@
     }
 
     .cartridge-name {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -668,26 +691,26 @@
     .cartridge-specs-strip {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
       flex-wrap: wrap;
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
       background: var(--bg-inset);
       border: 1px solid var(--border-hull);
-      padding: 0.4rem 0.6rem;
+      padding: 0.35rem 0.55rem;
     }
     .cartridge-spec-chip {
       font-size: 0.65rem;
       font-family: var(--font-tech);
       font-weight: 700;
       color: var(--neon-cyan);
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
     }
 
     /* Action Buttons */
     .cartridge-actions-bar {
       display: flex;
       gap: 0.5rem;
-      padding-top: 0.85rem;
+      padding-top: 0.75rem;
       border-top: 2px solid var(--border-hull);
     }
     .btn-engage-hardware {
@@ -744,36 +767,42 @@
       font-family: var(--font-tech);
       color: var(--neon-amber);
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       display: flex;
       align-items: center;
       gap: 0.35rem;
     }
     .stat-value {
-      font-size: 1.35rem;
+      font-size: clamp(1.15rem, 2.5vw, 1.4rem);
       font-weight: 800;
       font-family: var(--font-mono);
       letter-spacing: 0.02em;
       color: var(--text-glow);
       text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-      margin: 0.2rem 0;
+      margin: 0.15rem 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .stat-sub {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-family: var(--font-tech);
       color: var(--text-dim);
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* Progress Bar */
     .progress-bar-bg {
       width: 100%;
-      height: 6px;
+      height: 5px;
       background: var(--bg-void);
       border: 1px solid var(--border-hull);
-      margin-top: 0.45rem;
+      margin-top: 0.35rem;
       position: relative;
     }
     .progress-bar-fill {
@@ -803,18 +832,18 @@
     }
     .data-table th {
       text-align: left;
-      padding: 0.6rem 0.75rem;
+      padding: 0.55rem 0.7rem;
       font-size: 0.65rem;
       color: var(--neon-amber);
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       background: var(--bg-inset);
       border-bottom: 1px solid var(--border-hull);
       white-space: nowrap;
     }
     .data-table td {
-      padding: 0.65rem 0.75rem;
+      padding: 0.6rem 0.7rem;
       border-bottom: 1px solid var(--border-hull);
       color: var(--text-bright);
       white-space: nowrap;
@@ -828,7 +857,7 @@
     .wifi-action-bar {
       display: flex;
       gap: 0.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
     }
     .wifi-action-btns {
       display: flex;
@@ -852,13 +881,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.75rem 0.95rem;
+      padding: 0.7rem 0.85rem;
       background: var(--bg-panel);
       border: 1px solid var(--border-hull);
       clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
       transition: all 0.15s ease;
       position: relative;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
     .wifi-item::before {
       content: "";
@@ -878,7 +907,7 @@
     .wifi-left {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
       min-width: 0;
       flex: 1;
     }
@@ -915,11 +944,11 @@
     .wifi-meta {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.45rem;
       font-size: 0.68rem;
       font-family: var(--font-tech);
       color: var(--text-dim);
-      margin-top: 0.2rem;
+      margin-top: 0.15rem;
       flex-wrap: wrap;
     }
     .badge {
@@ -944,13 +973,13 @@
       align-items: center;
       justify-content: center;
       gap: 0.45rem;
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 0.85rem;
       min-height: 38px;
       font-family: var(--font-display);
       font-size: 0.82rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       transition: all 0.15s ease;
       cursor: pointer;
       position: relative;
@@ -983,10 +1012,10 @@
       background: var(--bg-hull);
       box-shadow: 0 4px 8px rgba(0, 240, 255, 0.2);
     }
-    .btn-sm { padding: 0.35rem 0.75rem; min-height: 34px; font-size: 0.72rem; }
+    .btn-sm { padding: 0.35rem 0.65rem; min-height: 34px; font-size: 0.72rem; }
 
     /* Form Inputs */
-    .form-group { margin-bottom: 0.95rem; }
+    .form-group { margin-bottom: 0.85rem; }
     .form-label {
       display: block;
       font-size: 0.7rem;
@@ -995,11 +1024,11 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--neon-amber);
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.25rem;
     }
     .form-control {
       width: 100%;
-      height: 42px;
+      height: 40px;
       padding: 0 0.75rem;
       background: var(--bg-inset);
       border: 1px solid var(--border-hull);
@@ -1026,12 +1055,12 @@
       background: var(--bg-inset);
       border: 1px solid var(--border-hull);
       padding: 3px;
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
     }
     .segment-btn {
       flex: 1;
-      padding: 0.6rem 0.5rem;
-      min-height: 40px;
+      padding: 0.55rem 0.4rem;
+      min-height: 38px;
       font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
@@ -1055,7 +1084,7 @@
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      padding: clamp(0.5rem, 2vw, 1rem);
       z-index: 200;
     }
     .modal-overlay.active { display: flex; }
@@ -1072,7 +1101,7 @@
       position: relative;
     }
     .modal-header {
-      padding: 1rem 1.25rem;
+      padding: 0.85rem 1.15rem;
       background: var(--bg-panel);
       border-bottom: 1px solid var(--border-hull);
       display: flex;
@@ -1081,18 +1110,18 @@
       flex-shrink: 0;
     }
     .modal-body {
-      padding: 1.25rem;
+      padding: 1.15rem;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
     .modal-footer {
-      padding: 0.85rem 1.25rem;
+      padding: 0.75rem 1.15rem;
       background: var(--bg-panel);
       border-top: 1px solid var(--border-hull);
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 0.65rem;
+      gap: 0.5rem;
       flex-shrink: 0;
     }
 
@@ -1118,7 +1147,7 @@
       gap: 0.4rem;
     }
     .terminal-window {
-      padding: 1rem;
+      padding: 0.85rem;
       font-family: var(--font-mono);
       font-size: 0.78rem;
       color: #00FF66;
@@ -1126,7 +1155,7 @@
       height: 380px;
       overflow-y: auto;
       white-space: pre-wrap;
-      line-height: 1.55;
+      line-height: 1.5;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -1136,10 +1165,6 @@
     @media (max-width: 1024px) {
       .grid-4 { grid-template-columns: repeat(2, 1fr); }
       .grid-3 { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (max-width: 768px) {
-      .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 640px) {
@@ -1157,17 +1182,24 @@
       .sidebar-close-btn { display: block; }
       .mobile-menu-btn { display: flex; }
       
-      .topbar { padding: 0 0.85rem; }
+      .topbar { padding: 0 0.75rem; }
       .topbar-right .hud-tag { display: none; }
       .topbar-right #btn-quick-reset { display: none; }
       
-      .content-area {
-        padding: 0.85rem 0.85rem;
+      /* Dashboard Metrics 2x2 on Mobile */
+      .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
       }
 
       /* Wi-Fi Action Bar Stacking */
       .wifi-action-bar {
         flex-direction: column;
+        gap: 0.4rem;
       }
       .wifi-action-btns {
         display: grid;
@@ -1196,7 +1228,7 @@
         </div>
         <div class="brand-info">
           <h1>FORGE·OS</h1>
-          <span>[BTV-E10 // APPLIANCE]</span>
+          <span>[BTV-E10 // CONSOLE]</span>
         </div>
       </div>
       <button class="sidebar-close-btn" id="sidebar-close" title="Fechar Menu">✕</button>
@@ -1277,25 +1309,26 @@
     <main class="content-area">
       <!-- 1. DASHBOARD -->
       <section class="page-view active" id="view-dashboard">
+        <!-- 4 Metric Cards (2x2 on mobile, 4x1 on desktop) -->
         <div class="grid-4">
           <div class="card">
             <div>
-              <span class="stat-label">// MODO OPERACIONAL</span>
-              <div class="stat-value" id="dash-mode" style="font-size:1.15rem; color:var(--neon-cyan);">CAPTIVE AP</div>
+              <span class="stat-label">// MODO WI-FI</span>
+              <div class="stat-value" id="dash-mode" style="color:var(--neon-cyan);">PONTO DE ACESSO</div>
             </div>
             <div class="stat-sub">
               <span class="status-dot" id="dash-mode-dot"></span>
-              <span id="dash-mode-sub">RTL8189FTV_AP // 192.168.4.1</span>
+              <span id="dash-mode-sub">192.168.4.1</span>
             </div>
           </div>
 
           <div class="card">
             <div>
-              <span class="stat-label">// ETHERNET UPLINK</span>
-              <div class="stat-value" id="dash-eth-ip" style="font-size:1.15rem; color:var(--text-glow);">192.168.1.153</div>
+              <span class="stat-label">// ETHERNET (CABO)</span>
+              <div class="stat-value" id="dash-eth-ip" style="color:var(--text-glow);">192.168.1.153</div>
             </div>
             <div class="stat-sub">
-              <span id="dash-eth-mac">PHY: EC:2E:AB:41:1E:75</span>
+              <span id="dash-eth-mac">1000 Mbps</span>
             </div>
           </div>
 
@@ -1308,17 +1341,17 @@
               </div>
             </div>
             <div class="stat-sub">
-              <span id="dash-mem-sub">TOTAL: 1.89 GB (75% LIVRE)</span>
+              <span id="dash-mem-sub">1.9 GB TOTAL</span>
             </div>
           </div>
 
           <div class="card">
             <div>
-              <span class="stat-label">// TEMPO ATIVO (UPTIME)</span>
+              <span class="stat-label">// TEMPO ATIVO</span>
               <div class="stat-value" id="dash-uptime" style="color:var(--neon-amber);">10h 45m</div>
             </div>
             <div class="stat-sub">
-              <span>KERNEL: 6.18-OPHUB // ARM64</span>
+              <span>UPTIME DO SISTEMA</span>
             </div>
           </div>
         </div>
@@ -1334,7 +1367,7 @@
               <button class="btn btn-secondary btn-sm" onclick="showTab('wifi')">Ver Todas</button>
             </div>
             <div id="dash-wifi-list">
-              <p style="color:var(--text-dim); font-family:var(--font-tech); font-size:0.8rem; padding: 0.5rem 0;">Procurando redes Wi-Fi...</p>
+              <p style="color:var(--text-dim); font-family:var(--font-tech); font-size:0.8rem; padding: 0.4rem 0;">Procurando redes Wi-Fi...</p>
             </div>
           </div>
 
@@ -1349,11 +1382,11 @@
             <div class="table-responsive">
               <table class="data-table" style="min-width: unset;">
                 <tbody>
-                  <tr><td>DISPOSITIVO / MODELO</td><td style="color:var(--neon-cyan);">BTV Express E10 Enterprise</td></tr>
-                  <tr><td>PROCESSADOR (SOC)</td><td style="color:var(--neon-cyan);">Amlogic S905X2 (4x Cortex-A53)</td></tr>
-                  <tr><td>CONTROLADOR WI-FI</td><td style="color:var(--neon-cyan);">Realtek RTL8189FTV (SDIO)</td></tr>
-                  <tr><td>ARMAZENAMENTO EMMC</td><td style="color:var(--neon-cyan);">29 GB (/dev/mmcblk1p2)</td></tr>
-                  <tr><td>WATCHDOG DE HARDWARE</td><td style="color:var(--neon-toxic);">ATIVO (Auto-Rollback)</td></tr>
+                  <tr><td>DISPOSITIVO</td><td style="color:var(--neon-cyan);">BTV Express E10 Enterprise</td></tr>
+                  <tr><td>PROCESSADOR</td><td style="color:var(--neon-cyan);">Amlogic S905X2 (4x A53)</td></tr>
+                  <tr><td>WI-FI CHIPSET</td><td style="color:var(--neon-cyan);">Realtek RTL8189FTV</td></tr>
+                  <tr><td>ARMAZENAMENTO</td><td style="color:var(--neon-cyan);">29 GB eMMC</td></tr>
+                  <tr><td>WATCHDOG</td><td style="color:var(--neon-toxic);">ATIVO (Auto-Rollback)</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1444,8 +1477,8 @@
                   <tr><td>INTERFACE WI-FI</td><td style="color:var(--neon-cyan);">wlan0 (Ponto de Acesso)</td></tr>
                   <tr><td>FAIXA DE IP DHCP</td><td style="color:var(--neon-cyan);">192.168.4.10 – 192.168.4.250</td></tr>
                   <tr><td>PORTAL CAPTIVO</td><td style="color:var(--neon-cyan);">dnsmasq (Porta 53 Hijack)</td></tr>
-                  <tr><td>PORTA DO SERVIDOR WEB</td><td style="color:var(--neon-cyan);">Porta 8080 (iptables :80 → :8080)</td></tr>
-                  <tr><td>COMPARTILHAMENTO NAT</td><td style="color:var(--neon-toxic);">ATIVO (Uplink eth0)</td></tr>
+                  <tr><td>PORTA WEB</td><td style="color:var(--neon-cyan);">Porta 8080 (iptables :80 → :8080)</td></tr>
+                  <tr><td>NAT UPLINK</td><td style="color:var(--neon-toxic);">ATIVO (eth0)</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1567,10 +1600,10 @@
         <!-- Rack Chassis Bay Header -->
         <div class="rack-chassis-header">
           <div>
-            <div style="font-size:1.05rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-glow);">
+            <div style="font-size:1.05rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-glow);">
               [ MÓDULOS DE APLICAÇÃO ] · FORGEHUB
             </div>
-            <div style="font-size:0.72rem; font-family:var(--font-tech); color:var(--neon-cyan); margin-top:0.25rem;">
+            <div style="font-size:0.72rem; font-family:var(--font-tech); color:var(--neon-cyan); margin-top:0.15rem;">
               APLICAÇÕES EMBARCADAS PARA ARM64 // BTV-E10
             </div>
           </div>
@@ -1878,9 +1911,9 @@ function renderWifiNetworks(networks) {
 
   // Render top 3 on dashboard
   dashContainer.innerHTML = filtered.slice(0, 3).map(net => `
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border-hull); gap:0.5rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.4rem 0; border-bottom:1px solid var(--border-hull); gap:0.5rem;">
       <div style="min-width:0; flex:1;">
-        <div style="font-weight:700; font-size:0.88rem; color:var(--text-glow); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(net.ssid)}</div>
+        <div style="font-weight:700; font-size:0.85rem; color:var(--text-glow); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(net.ssid)}</div>
         <div style="font-size:0.68rem; color:var(--neon-cyan); font-family:var(--font-tech);">[${net.encryption.toUpperCase()}] · ${net.rssi} dBm</div>
       </div>
       <button class="btn btn-secondary btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">[ CONECTAR ]</button>
@@ -1917,7 +1950,7 @@ async function updateStatus() {
       footerDot.className = 'status-dot';
     }
 
-    document.getElementById('dash-mode').textContent = s.ap_active ? 'CAPTIVE AP' : (s.client_ssid || 'CLIENTE');
+    document.getElementById('dash-mode').textContent = s.ap_active ? 'PONTO DE ACESSO' : (s.client_ssid || 'CLIENTE');
     document.getElementById('dash-mode-sub').textContent = s.ap_active ? (s.ssid + ' // 192.168.4.1') : (s.client_ip || 'SEM_IP');
 
     // Telemetry
@@ -1942,7 +1975,7 @@ async function updateStatus() {
     const eth = await ethRes.json();
     if (eth.local_ip) {
       document.getElementById('dash-eth-ip').textContent = eth.local_ip;
-      document.getElementById('dash-eth-mac').textContent = 'PHY: ' + eth.mac_address;
+      document.getElementById('dash-eth-mac').textContent = '1000 Mbps // ' + eth.mac_address;
       document.getElementById('eth-table-ip').textContent = eth.local_ip;
       document.getElementById('eth-table-mac').textContent = eth.mac_address;
     }
