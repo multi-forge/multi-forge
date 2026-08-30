@@ -19,22 +19,22 @@
       --font-tech: "Share Tech Mono", monospace;
       
       /* Dark Theme (Default — Void Metal, Carbon Grid & Cyber Phosphor) */
-      --bg-void: #06080D;
-      --bg-hull: #0C1017;
-      --bg-panel: #111722;
-      --bg-panel-elevated: #182030;
-      --bg-inset: #080B10;
+      --bg-void: #05070B;
+      --bg-hull: #0A0E15;
+      --bg-panel: #0F1520;
+      --bg-panel-elevated: #161F2E;
+      --bg-inset: #070A0F;
       
-      --grid-pattern: rgba(0, 229, 255, 0.03);
-      --scanline-color: rgba(0, 0, 0, 0.25);
+      --grid-pattern: rgba(0, 229, 255, 0.035);
+      --scanline-color: rgba(0, 0, 0, 0.3);
       
-      --border-hull: #1E293B;
+      --border-hull: #1B2434;
       --border-accent: #00F0FF;
       --border-amber: #FF9E00;
       
       --text-glow: #FFFFFF;
       --text-bright: #E2E8F0;
-      --text-dim: #8492A6;
+      --text-dim: #8292A6;
       --text-dark: #475569;
       
       /* Hardware Neon Accents */
@@ -45,26 +45,31 @@
       --neon-amber-glow: 0 0 10px rgba(255, 158, 0, 0.5), 0 0 20px rgba(255, 158, 0, 0.2);
       
       --neon-toxic: #00FF66;
-      --neon-toxic-glow: 0 0 8px rgba(0, 255, 102, 0.6);
+      --neon-toxic-glow: 0 0 10px rgba(0, 255, 102, 0.7), 0 0 22px rgba(0, 255, 102, 0.3);
       
       --neon-crimson: #FF0055;
-      --neon-crimson-glow: 0 0 10px rgba(255, 0, 85, 0.6);
+      --neon-crimson-glow: 0 0 10px rgba(255, 0, 85, 0.7);
       
       --hazard-stripe: repeating-linear-gradient(
         -45deg,
-        rgba(255, 158, 0, 0.15),
-        rgba(255, 158, 0, 0.15) 10px,
-        transparent 10px,
-        transparent 20px
+        rgba(255, 158, 0, 0.25),
+        rgba(255, 158, 0, 0.25) 8px,
+        rgba(0, 0, 0, 0.6) 8px,
+        rgba(0, 0, 0, 0.6) 16px
       );
+
+      --carbon-texture: radial-gradient(black 15%, transparent 16%) 0 0,
+        radial-gradient(black 15%, transparent 16%) 8px 8px,
+        radial-gradient(rgba(255,255,255,.05) 15%, transparent 20%) 0 1px,
+        radial-gradient(rgba(255,255,255,.05) 15%, transparent 20%) 8px 9px;
     }
 
     [data-theme="light"] {
-      --bg-void: #E8ECEF;
-      --bg-hull: #F1F4F8;
+      --bg-void: #E2E8F0;
+      --bg-hull: #EDF2F7;
       --bg-panel: #FFFFFF;
       --bg-panel-elevated: #E2E8F0;
-      --bg-inset: #D9E2EC;
+      --bg-inset: #CBD5E1;
       
       --grid-pattern: rgba(0, 100, 200, 0.04);
       --scanline-color: rgba(255, 255, 255, 0.4);
@@ -124,28 +129,6 @@
 
     /* Layout */
     .app-container { display: flex; height: 100vh; overflow: hidden; position: relative; }
-    
-    /* Chamfered Tech Panel Cut */
-    .cut-corner {
-      clip-path: polygon(
-        0 0,
-        calc(100% - 12px) 0,
-        100% 12px,
-        100% 100%,
-        12px 100%,
-        0 calc(100% - 12px)
-      );
-    }
-
-    .cut-top-right {
-      clip-path: polygon(
-        0 0,
-        calc(100% - 14px) 0,
-        100% 14px,
-        100% 100%,
-        0 100%
-      );
-    }
 
     /* Sidebar Navigation (Cockpit Rack Rail) */
     .sidebar {
@@ -418,7 +401,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Industrial Card & Instrument Panels */
+    /* General Industrial Panels */
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
     .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
@@ -461,7 +444,255 @@
       color: var(--neon-cyan);
     }
 
-    /* Telemetry Instrument Readouts */
+    /* ==========================================================================
+       FORGEHUB HARDWARE HOT-SWAP RACK & CARTRIDGE BLADE CHASSIS
+       ========================================================================== */
+    .rack-chassis-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(180deg, var(--bg-panel-elevated) 0%, var(--bg-panel) 100%);
+      border: 2px solid var(--border-hull);
+      border-left: 4px solid var(--neon-amber);
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+      position: relative;
+    }
+    .rack-chassis-header::after {
+      content: "";
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 120px;
+      background: var(--hazard-stripe);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* 3D Hardware Modular Cartridge Blade */
+    .cartridge-blade {
+      background: var(--bg-panel);
+      border: 2px solid var(--border-hull);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 8px 24px rgba(0, 0, 0, 0.8);
+      clip-path: polygon(
+        0 0,
+        calc(100% - 16px) 0,
+        100% 16px,
+        100% calc(100% - 16px),
+        calc(100% - 16px) 100%,
+        0 100%
+      );
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 1.25rem;
+      overflow: hidden;
+    }
+    .cartridge-blade::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 6px;
+      background: var(--border-hull);
+      transition: all 0.2s ease;
+    }
+    .cartridge-blade:hover {
+      transform: translateY(-4px);
+      border-color: var(--neon-cyan);
+      box-shadow: 
+        0 0 20px rgba(0, 240, 255, 0.2),
+        0 12px 32px rgba(0, 0, 0, 0.9);
+    }
+    .cartridge-blade:hover::before {
+      background: var(--neon-cyan);
+      box-shadow: var(--neon-cyan-glow);
+    }
+
+    /* Active Running Blade Glow */
+    .cartridge-blade.active-blade {
+      border-color: rgba(0, 255, 102, 0.5);
+      background: linear-gradient(180deg, #101B1A 0%, var(--bg-panel) 100%);
+    }
+    .cartridge-blade.active-blade::before {
+      background: var(--neon-toxic);
+      box-shadow: var(--neon-toxic-glow);
+    }
+
+    /* Metallic Rivet Bolts */
+    .rivet-bolt {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #8292A6 20%, #1A2434 90%);
+      border: 1px solid #000000;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
+    }
+    .rivet-top-left { top: 6px; left: 12px; }
+    .rivet-top-right { top: 6px; right: 20px; }
+    .rivet-bottom-left { bottom: 6px; left: 12px; }
+    .rivet-bottom-right { bottom: 6px; right: 20px; }
+
+    /* Cartridge Header Strip */
+    .cartridge-top-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+      padding-bottom: 0.5rem;
+    }
+    .cartridge-bay-label {
+      font-size: 0.65rem;
+      font-family: var(--font-tech);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--neon-amber);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .cartridge-beacon {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.68rem;
+      font-family: var(--font-tech);
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 0.15rem 0.55rem;
+      background: #000000;
+      border: 1px solid var(--border-hull);
+      color: var(--text-dim);
+    }
+    .cartridge-beacon.beacon-online {
+      color: var(--neon-toxic);
+      border-color: var(--neon-toxic);
+      box-shadow: var(--neon-toxic-glow);
+    }
+    .cartridge-beacon.beacon-standby {
+      color: var(--neon-cyan);
+      border-color: var(--neon-cyan);
+      box-shadow: var(--neon-cyan-glow);
+    }
+
+    /* Cartridge Main Chip Identity */
+    .cartridge-identity {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+    .cartridge-socket-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--bg-inset);
+      border: 2px solid var(--border-hull);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+      flex-shrink: 0;
+    }
+    .active-blade .cartridge-socket-icon {
+      border-color: var(--neon-toxic);
+      box-shadow: var(--neon-toxic-glow), inset 0 0 12px rgba(0, 255, 102, 0.25);
+    }
+
+    .cartridge-name {
+      font-size: 1.02rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-glow);
+      line-height: 1.2;
+    }
+    .cartridge-subtitle {
+      font-size: 0.68rem;
+      font-family: var(--font-tech);
+      color: var(--text-dim);
+      display: block;
+      margin-top: 0.15rem;
+    }
+
+    /* Stamped Hardware Specs Tag */
+    .cartridge-specs-strip {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      background: var(--bg-inset);
+      border: 1px solid var(--border-hull);
+      padding: 0.4rem 0.6rem;
+    }
+    .cartridge-spec-chip {
+      font-size: 0.65rem;
+      font-family: var(--font-tech);
+      font-weight: 700;
+      color: var(--neon-cyan);
+      letter-spacing: 0.05em;
+    }
+
+    /* Mechanical Push Buttons */
+    .cartridge-actions-bar {
+      display: flex;
+      gap: 0.5rem;
+      padding-top: 0.85rem;
+      border-top: 2px solid var(--border-hull);
+    }
+    .btn-engage-hardware {
+      background: linear-gradient(180deg, #FFB333 0%, var(--neon-amber) 100%);
+      color: #000000;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      box-shadow: 0 4px 0 #995E00, 0 6px 12px rgba(255, 158, 0, 0.4);
+      flex: 1;
+      padding: 0.65rem 0.85rem;
+      text-align: center;
+      border-radius: 2px;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+      transition: all 0.15s ease;
+    }
+    .btn-engage-hardware:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #995E00, 0 8px 18px rgba(255, 158, 0, 0.6);
+    }
+    .btn-engage-hardware:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #995E00;
+    }
+
+    .btn-disengage {
+      background: var(--bg-panel-elevated);
+      border: 1px solid var(--border-hull);
+      color: var(--neon-cyan);
+      font-weight: 700;
+      box-shadow: 0 3px 0 #070A0F;
+      flex: 1;
+      padding: 0.6rem 0.75rem;
+    }
+    .btn-purge {
+      background: rgba(255, 0, 85, 0.12);
+      border: 1px solid var(--neon-crimson);
+      color: var(--neon-crimson);
+      font-weight: 700;
+      box-shadow: 0 3px 0 #070A0F;
+      padding: 0.6rem 0.75rem;
+    }
+    .btn-purge:hover {
+      background: var(--neon-crimson);
+      color: #FFFFFF;
+      box-shadow: var(--neon-crimson-glow);
+    }
+
+    /* Telemetry Readouts */
     .stat-label {
       font-size: 0.65rem;
       font-family: var(--font-tech);
@@ -1166,20 +1397,25 @@
         </div>
       </section>
 
-      <!-- 6. FORGEHUB MODULE ARSENAL -->
+      <!-- 6. FORGEHUB HARDWARE MODULAR EXPANSION BAYS -->
       <section class="page-view" id="view-modules">
-        <div class="card-header" style="margin-bottom:0.85rem;">
+        <!-- Rack Chassis Bay Header -->
+        <div class="rack-chassis-header">
           <div>
-            <span class="card-title" style="font-size:1rem;">Arsenal de Módulos (ForgeHub)</span>
-            <p style="font-size:0.72rem; color:var(--text-dim); font-family:var(--font-tech); margin-top:0.1rem;">Contêineres e aplicações autônomas para nós de borda ARM64</p>
+            <div style="font-size:1.1rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-glow);">
+              [ RACK_BAY // CHASSIS-01 ] · FORGEHUB EXPANSION
+            </div>
+            <div style="font-size:0.72rem; font-family:var(--font-tech); color:var(--neon-cyan); margin-top:0.25rem;">
+              BUS STATUS: LOCKED // PCIE-SDIO HOT-SWAP SLOTS ARMED // ARCH: ARM64-V8A
+            </div>
           </div>
           <button class="btn btn-secondary btn-sm" id="btn-refresh-modules" onclick="loadModulesHub()">
-            <span>[ ATUALIZAR CATÁLOGO ]</span>
+            <span>[ SONDAR BARRAMENTO ]</span>
           </button>
         </div>
 
         <div class="grid-3" id="modules-container">
-          <!-- Dynamic Module Cards loaded via /rest/modules -->
+          <!-- Dynamic Module Cartridge Blades loaded via /rest/modules -->
         </div>
       </section>
 
@@ -1629,7 +1865,7 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// Module Hub Loader & Actions
+// Module Hub Loader & Actions (Hardware Hot-Swap Blade System)
 async function loadModulesHub() {
   const container = document.getElementById('modules-container');
   if (!container) return;
@@ -1640,92 +1876,133 @@ async function loadModulesHub() {
     const modules = data.modules || [];
 
     if (modules.length === 0) {
-      container.innerHTML = '<div class="card"><p style="color:var(--text-dim); font-family:var(--font-tech);">Nenhum pacote localizado no repositório.</p></div>';
+      container.innerHTML = '<div class="card"><p style="color:var(--text-dim); font-family:var(--font-tech);">Nenhum cartucho localizado nos slots do chassi.</p></div>';
       return;
     }
 
+    let bayIndex = 1;
     container.innerHTML = modules.map(m => {
       const state = (m.status && m.status.state) || 'available';
       const isRunning = state === 'running';
       const isInstalled = state === 'installed' || isRunning;
 
-      let stateBadge = '<span class="badge">[AVAILABLE]</span>';
-      if (isRunning) stateBadge = '<span class="badge badge-ok">[RUNNING]</span>';
-      else if (state === 'installed') stateBadge = '<span class="badge badge-ok">[INSTALLED]</span>';
-      else if (state === 'stopped') stateBadge = '<span class="badge badge-amber">[PAUSED]</span>';
+      let beaconHtml = '<span class="cartridge-beacon">[SLOT: UNMOUNTED]</span>';
+      let bladeClass = 'cartridge-blade';
+      if (isRunning) {
+        beaconHtml = '<span class="cartridge-beacon beacon-online"><span class="status-dot"></span>LOCKED_ONLINE</span>';
+        bladeClass = 'cartridge-blade active-blade';
+      } else if (isInstalled) {
+        beaconHtml = '<span class="cartridge-beacon beacon-standby">STANDBY_MOUNTED</span>';
+        bladeClass = 'cartridge-blade';
+      }
 
       const req = m.requirements || {};
-      const minRam = req.min_ram_mb ? `${req.min_ram_mb} MB RAM` : 'LIGHTWEIGHT';
+      const minRam = req.min_ram_mb ? `${req.min_ram_mb} MB RAM` : '32 MB MIN';
+      const bayNumStr = 'BAY 0' + (bayIndex++);
 
       let actionButtons = '';
       if (!isInstalled) {
-        actionButtons = `<button class="btn btn-primary btn-sm" style="width:100%;" onclick="moduleAction('${m.id}', 'install')">[ INSTALAR MÓDULO ]</button>`;
+        actionButtons = `<button class="btn-engage-hardware" onclick="moduleAction('${m.id}', 'install')">⚡ [ ENGAGE // INSTALAR MÓDULO ]</button>`;
       } else if (isRunning) {
         actionButtons = `
-          <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="moduleAction('${m.id}', 'stop')">[ PAUSAR ]</button>
-          <button class="btn btn-secondary btn-sm" style="color:var(--neon-crimson); border-color:var(--neon-crimson);" onclick="moduleAction('${m.id}', 'uninstall')">[ PURGAR ]</button>
+          <button class="btn btn-disengage btn-sm" onclick="moduleAction('${m.id}', 'stop')">[ DISENGAGE // PAUSAR ]</button>
+          <button class="btn btn-purge btn-sm" onclick="moduleAction('${m.id}', 'uninstall')">[ PURGE ]</button>
         `;
       } else {
         actionButtons = `
-          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="moduleAction('${m.id}', 'start')">[ INICIAR ]</button>
-          <button class="btn btn-secondary btn-sm" style="color:var(--neon-crimson); border-color:var(--neon-crimson);" onclick="moduleAction('${m.id}', 'uninstall')">[ PURGAR ]</button>
+          <button class="btn-engage-hardware" style="flex:1;" onclick="moduleAction('${m.id}', 'start')">[ ENGAGE // ATIVAR ]</button>
+          <button class="btn btn-purge btn-sm" onclick="moduleAction('${m.id}', 'uninstall')">[ PURGE ]</button>
         `;
       }
 
       return `
-        <div class="card">
+        <div class="${bladeClass}">
+          <!-- Metallic Rivet Bolts -->
+          <div class="rivet-bolt rivet-top-left"></div>
+          <div class="rivet-bolt rivet-top-right"></div>
+          <div class="rivet-bolt rivet-bottom-left"></div>
+          <div class="rivet-bolt rivet-bottom-right"></div>
+
           <div>
-            <div class="card-header" style="margin-bottom:0.6rem;">
-              <span class="card-title">
-                <span style="font-size:1.15rem;">${m.icon || '📦'}</span>
-                <span>${escapeHtml(m.name)}</span>
-              </span>
-              ${stateBadge}
+            <div class="cartridge-top-strip">
+              <div class="cartridge-bay-label">
+                <span>[${bayNumStr}]</span>
+                <span>// SLOT_HOTSWAP</span>
+              </div>
+              ${beaconHtml}
             </div>
+
+            <div class="cartridge-identity">
+              <div class="cartridge-socket-icon">${m.icon || '📦'}</div>
+              <div>
+                <div class="cartridge-name">${escapeHtml(m.name)}</div>
+                <span class="cartridge-subtitle">TAG: MF-MOD-${m.id.toUpperCase()} // REV ${m.version || '1.0'}</span>
+              </div>
+            </div>
+
             <p style="font-size:0.78rem; color:var(--text-dim); line-height:1.45; margin-bottom:0.85rem; min-height:48px;">
               ${escapeHtml(m.description)}
             </p>
-            <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:0.85rem;">
-              <span class="badge">${minRam}</span>
-              <span class="badge">[CAT: ${m.category || 'APP'}]</span>
-              <span class="badge">[VER: ${m.version || '1.0'}]</span>
+
+            <div class="cartridge-specs-strip">
+              <span class="cartridge-spec-chip">[REQ: ${minRam}]</span>
+              <span class="cartridge-spec-chip">[BUS: ${m.category ? m.category.toUpperCase() : 'APP'}]</span>
+              <span class="cartridge-spec-chip">[CHIPSET: S905X2]</span>
             </div>
           </div>
-          <div style="display:flex; gap:0.4rem; padding-top:0.65rem; border-top:1px dashed var(--border-hull);">
+
+          <div class="cartridge-actions-bar">
             ${actionButtons}
           </div>
         </div>
       `;
     }).join('');
 
-    // Built-in Kiosk Card
+    // Built-in Kiosk Blade Slot
     container.innerHTML += `
-      <div class="card">
+      <div class="cartridge-blade active-blade">
+        <!-- Metallic Rivet Bolts -->
+        <div class="rivet-bolt rivet-top-left"></div>
+        <div class="rivet-bolt rivet-top-right"></div>
+        <div class="rivet-bolt rivet-bottom-left"></div>
+        <div class="rivet-bolt rivet-bottom-right"></div>
+
         <div>
-          <div class="card-header" style="margin-bottom:0.6rem;">
-            <span class="card-title">
-              <span style="font-size:1.15rem;">📺</span>
-              <span>Kiosk HDMI Framebuffer</span>
-            </span>
-            <span class="badge badge-ok">[ACTIVE_CORE]</span>
+          <div class="cartridge-top-strip">
+            <div class="cartridge-bay-label">
+              <span>[BAY 03]</span>
+              <span>// INTEGRATED_GPU_SLOT</span>
+            </div>
+            <span class="cartridge-beacon beacon-online"><span class="status-dot"></span>LOCKED_ONLINE</span>
           </div>
+
+          <div class="cartridge-identity">
+            <div class="cartridge-socket-icon">📺</div>
+            <div>
+              <div class="cartridge-name">Kiosk HDMI Framebuffer</div>
+              <span class="cartridge-subtitle">TAG: MF-GPU-FB0 // BUILT-IN KERNEL DISPLAY</span>
+            </div>
+          </div>
+
           <p style="font-size:0.78rem; color:var(--text-dim); line-height:1.45; margin-bottom:0.85rem; min-height:48px;">
             Renderizador gráfico 1080p sem flicker em /dev/fb0 com Dual QR Code e telemetria de hardware ao vivo.
           </p>
-          <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:0.85rem;">
-            <span class="badge">32 MB RAM</span>
-            <span class="badge">[GPU: FB0]</span>
-            <span class="badge">[BUILT-IN]</span>
+
+          <div class="cartridge-specs-strip">
+            <span class="cartridge-spec-chip">[GPU: /DEV/FB0]</span>
+            <span class="cartridge-spec-chip">[VRAM: 32MB]</span>
+            <span class="cartridge-spec-chip">[CORE: DISPLAY]</span>
           </div>
         </div>
-        <div style="display:flex; gap:0.4rem; padding-top:0.65rem; border-top:1px dashed var(--border-hull);">
-          <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="alert('Controlador de vídeo HDMI ativo em /dev/fb0.')">[ CONFIGURAR DISPLAY ]</button>
+
+        <div class="cartridge-actions-bar">
+          <button class="btn btn-secondary btn-sm" style="width:100%; font-weight:800;" onclick="alert('Controlador gráfico ativo em /dev/fb0.')">[ CONFIGURAR SAÍDA HDMI ]</button>
         </div>
       </div>
     `;
   } catch (err) {
     console.error('Error loading modules:', err);
-    container.innerHTML = '<div class="card"><p style="color:var(--neon-crimson);">Falha ao consultar repositório de pacotes.</p></div>';
+    container.innerHTML = '<div class="card"><p style="color:var(--neon-crimson);">Falha ao comunicar com os barramentos do chassi.</p></div>';
   }
 }
 
