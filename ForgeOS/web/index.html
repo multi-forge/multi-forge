@@ -11,33 +11,33 @@
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       FORGE-OS CYBERDECK & INDUSTRIAL AVIONICS HARDWARE DESIGN SYSTEM
+       FORGE-OS HARDWARE CONSOLE DESIGN SYSTEM
        ========================================================================== */
     :root {
       --font-display: "Chakra Petch", -apple-system, sans-serif;
       --font-mono: "JetBrains Mono", "Share Tech Mono", monospace;
       --font-tech: "Share Tech Mono", monospace;
       
-      /* Dark Theme (Default — Void Metal, Carbon Grid & Cyber Phosphor) */
-      --bg-void: #05070B;
-      --bg-hull: #0A0E15;
-      --bg-panel: #0F1520;
-      --bg-panel-elevated: #161F2E;
-      --bg-inset: #070A0F;
+      /* Dark Theme */
+      --bg-void: #06080D;
+      --bg-hull: #0B0F17;
+      --bg-panel: #101622;
+      --bg-panel-elevated: #161F30;
+      --bg-inset: #080C12;
       
       --grid-pattern: rgba(0, 229, 255, 0.035);
-      --scanline-color: rgba(0, 0, 0, 0.3);
+      --scanline-color: rgba(0, 0, 0, 0.25);
       
-      --border-hull: #1B2434;
+      --border-hull: #1D2738;
       --border-accent: #00F0FF;
       --border-amber: #FF9E00;
       
       --text-glow: #FFFFFF;
       --text-bright: #E2E8F0;
-      --text-dim: #8292A6;
+      --text-dim: #8494A8;
       --text-dark: #475569;
       
-      /* Hardware Neon Accents */
+      /* Neon Accents */
       --neon-cyan: #00F0FF;
       --neon-cyan-glow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.2);
       
@@ -57,11 +57,6 @@
         rgba(0, 0, 0, 0.6) 8px,
         rgba(0, 0, 0, 0.6) 16px
       );
-
-      --carbon-texture: radial-gradient(black 15%, transparent 16%) 0 0,
-        radial-gradient(black 15%, transparent 16%) 8px 8px,
-        radial-gradient(rgba(255,255,255,.05) 15%, transparent 20%) 0 1px,
-        radial-gradient(rgba(255,255,255,.05) 15%, transparent 20%) 8px 9px;
     }
 
     [data-theme="light"] {
@@ -110,7 +105,7 @@
       overflow: hidden;
     }
     
-    /* CRT Scanlines Overlay */
+    /* CRT Scanlines */
     body::after {
       content: " ";
       display: block;
@@ -120,7 +115,7 @@
       background-size: 100% 3px;
       z-index: 999;
       pointer-events: none;
-      opacity: 0.35;
+      opacity: 0.3;
     }
 
     a { color: inherit; text-decoration: none; }
@@ -130,7 +125,7 @@
     /* Layout */
     .app-container { display: flex; height: 100vh; overflow: hidden; position: relative; }
 
-    /* Sidebar Navigation (Cockpit Rack Rail) */
+    /* Sidebar Navigation */
     .sidebar {
       width: 240px;
       background: var(--bg-hull);
@@ -303,7 +298,7 @@
       background: var(--bg-void);
     }
 
-    /* Cockpit Top HUD Bar */
+    /* Topbar HUD */
     .topbar {
       height: 52px;
       border-bottom: 2px solid var(--border-hull);
@@ -401,7 +396,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* General Industrial Panels */
+    /* Panels Grid */
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
     .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
@@ -445,7 +440,7 @@
     }
 
     /* ==========================================================================
-       FORGEHUB HARDWARE HOT-SWAP RACK & CARTRIDGE BLADE CHASSIS
+       FORGEHUB HARDWARE HOT-SWAP MODULE RACK
        ========================================================================== */
     .rack-chassis-header {
       display: flex;
@@ -463,13 +458,13 @@
       content: "";
       position: absolute;
       top: 0; right: 0; bottom: 0;
-      width: 120px;
+      width: 100px;
       background: var(--hazard-stripe);
-      opacity: 0.35;
+      opacity: 0.3;
       pointer-events: none;
     }
 
-    /* 3D Hardware Modular Cartridge Blade */
+    /* 3D Hardware Cartridge Blade */
     .cartridge-blade {
       background: var(--bg-panel);
       border: 2px solid var(--border-hull);
@@ -496,7 +491,7 @@
       content: "";
       position: absolute;
       top: 0; left: 0; bottom: 0;
-      width: 6px;
+      width: 5px;
       background: var(--border-hull);
       transition: all 0.2s ease;
     }
@@ -621,7 +616,7 @@
       margin-top: 0.15rem;
     }
 
-    /* Stamped Hardware Specs Tag */
+    /* Specs Tag */
     .cartridge-specs-strip {
       display: flex;
       align-items: center;
@@ -640,7 +635,7 @@
       letter-spacing: 0.05em;
     }
 
-    /* Mechanical Push Buttons */
+    /* Action Buttons */
     .cartridge-actions-bar {
       display: flex;
       gap: 0.5rem;
@@ -651,7 +646,7 @@
       background: linear-gradient(180deg, #FFB333 0%, var(--neon-amber) 100%);
       color: #000000;
       font-weight: 800;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       box-shadow: 0 4px 0 #995E00, 0 6px 12px rgba(255, 158, 0, 0.4);
       flex: 1;
       padding: 0.65rem 0.85rem;
@@ -721,7 +716,7 @@
       gap: 0.4rem;
     }
 
-    /* Phosphor Oscilloscope Progress Bar */
+    /* Progress Bar */
     .progress-bar-bg {
       width: 100%;
       height: 6px;
@@ -737,7 +732,7 @@
       transition: width 0.4s ease;
     }
 
-    /* Tables (Avionics Data Grid) */
+    /* Tables */
     .data-table {
       width: 100%;
       border-collapse: collapse;
@@ -765,7 +760,20 @@
       color: var(--neon-cyan);
     }
 
-    /* Radar Wi-Fi Spectrum Items */
+    /* Wi-Fi Spectrum Items & Container (Smooth Scroll & No Trapped Wheels) */
+    #wifi-networks-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    #wifi-networks-container::-webkit-scrollbar { width: 5px; }
+    #wifi-networks-container::-webkit-scrollbar-track { background: var(--bg-inset); }
+    #wifi-networks-container::-webkit-scrollbar-thumb { background: var(--border-hull); border-radius: 2px; }
+    #wifi-networks-container::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+
     .wifi-item {
       display: flex;
       align-items: center;
@@ -773,7 +781,6 @@
       padding: 0.75rem 0.95rem;
       background: var(--bg-panel);
       border: 1px solid var(--border-hull);
-      margin-bottom: 0.5rem;
       clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
       transition: all 0.15s ease;
       position: relative;
@@ -923,7 +930,7 @@
       border-style: dashed;
     }
 
-    /* Segmented Control / Cyber Tabs */
+    /* Segmented Control */
     .segmented-control {
       display: flex;
       background: var(--bg-inset);
@@ -989,7 +996,7 @@
       gap: 0.65rem;
     }
 
-    /* Cyberdeck Hacker Terminal */
+    /* Terminal */
     .terminal-container {
       background: #05070B;
       border: 1px solid var(--border-hull);
@@ -1037,7 +1044,7 @@
 <body>
 
 <div class="app-container">
-  <!-- Cockpit Sidebar Rail -->
+  <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="brand-header">
       <div class="brand-logo">
@@ -1045,43 +1052,43 @@
       </div>
       <div class="brand-info">
         <h1>FORGE·OS</h1>
-        <span>[SYS.NODE // BTV-E10]</span>
+        <span>[BTV-E10 // APPLIANCE]</span>
       </div>
     </div>
 
     <nav class="nav-menu">
-      <div class="nav-section-title">Navegação Principal</div>
+      <div class="nav-section-title">Principal</div>
       <a href="#dashboard" class="nav-item active" data-tab="dashboard">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span>Dashboard HUD</span>
+        <span>Dashboard</span>
       </a>
       <a href="#wifi" class="nav-item" data-tab="wifi">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
-        <span>Radar Spectrum</span>
-        <span class="nav-badge" id="badge-wifi-count">0 SINAIS</span>
+        <span>Scanner Wi-Fi</span>
+        <span class="nav-badge" id="badge-wifi-count">0 REDES</span>
       </a>
       <a href="#ap" class="nav-item" data-tab="ap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49"/></svg>
-        <span>Ponto de Acesso</span>
-        <span class="nav-badge" id="badge-ap-status">ARMED</span>
+        <span>Ponto de Acesso (AP)</span>
+        <span class="nav-badge" id="badge-ap-status">ATIVO</span>
       </a>
       <a href="#ethernet" class="nav-item" data-tab="ethernet">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-        <span>Interfaces &amp; Uplink</span>
+        <span>Interfaces de Rede</span>
       </a>
 
       <div class="nav-section-title">Hardware &amp; Módulos</div>
       <a href="#system" class="nav-item" data-tab="system">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
-        <span>Telemetria Core</span>
+        <span>Telemetria do Sistema</span>
       </a>
       <a href="#modules" class="nav-item" data-tab="modules">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        <span>Módulos ForgeHub</span>
+        <span>Módulos (ForgeHub)</span>
       </a>
       <a href="#logs" class="nav-item" data-tab="logs">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-        <span>Terminal Hacker</span>
+        <span>Terminal de Logs</span>
       </a>
     </nav>
 
@@ -1090,16 +1097,16 @@
         <span class="status-dot" id="footer-dot"></span>
         <span id="footer-mode-label">AP: 192.168.4.1</span>
       </div>
-      <button class="icon-btn" id="theme-toggle" title="Alternar Modo HUD">
+      <button class="icon-btn" id="theme-toggle" title="Alternar Tema">
         <svg id="theme-icon-sun" style="display:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="12" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         <svg id="theme-icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
     </div>
   </aside>
 
-  <!-- Main View Cockpit -->
+  <!-- Main View -->
   <div class="main-wrapper">
-    <!-- Topbar HUD -->
+    <!-- Topbar -->
     <header class="topbar">
       <div class="topbar-left">
         <button class="mobile-menu-btn" id="mobile-toggle">
@@ -1111,18 +1118,18 @@
       <div class="topbar-right">
         <div class="hud-tag" id="top-status-badge">
           <span class="status-dot"></span>
-          <span id="top-status-text">AP_BROADCAST_ACTIVE</span>
+          <span id="top-status-text">AP_ATIVO</span>
         </div>
         <button class="btn btn-secondary btn-sm" id="btn-quick-reset" title="Restaurar modo AP">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          <span>[ REARM AP ]</span>
+          <span>[ REINICIAR AP ]</span>
         </button>
       </div>
     </header>
 
     <!-- Cockpit View Screens -->
     <main class="content-area">
-      <!-- 1. DASHBOARD HUD -->
+      <!-- 1. DASHBOARD -->
       <section class="page-view active" id="view-dashboard">
         <div class="grid-4">
           <div class="card">
@@ -1138,7 +1145,7 @@
 
           <div class="card">
             <div>
-              <span class="stat-label">// ETHERNET UPLINK (GIGABIT)</span>
+              <span class="stat-label">// ETHERNET UPLINK</span>
               <div class="stat-value" id="dash-eth-ip" style="font-size:1.15rem; color:var(--text-glow);">192.168.1.153</div>
             </div>
             <div class="stat-sub">
@@ -1148,40 +1155,40 @@
 
           <div class="card">
             <div>
-              <span class="stat-label">// RAM TELEMETRY STREAM</span>
+              <span class="stat-label">// MEMÓRIA RAM</span>
               <div class="stat-value" id="dash-mem-val" style="color:var(--neon-toxic);">343 MB</div>
               <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="dash-mem-bar" style="width: 25%;"></div>
               </div>
             </div>
             <div class="stat-sub">
-              <span id="dash-mem-sub">POOL: 1.89 GB (75% DISPONÍVEL)</span>
+              <span id="dash-mem-sub">TOTAL: 1.89 GB (75% LIVRE)</span>
             </div>
           </div>
 
           <div class="card">
             <div>
-              <span class="stat-label">// TEMPO ATIVO (SYSTEM UPTIME)</span>
+              <span class="stat-label">// TEMPO ATIVO (UPTIME)</span>
               <div class="stat-value" id="dash-uptime" style="color:var(--neon-amber);">10h 45m</div>
             </div>
             <div class="stat-sub">
-              <span>KERNEL: 6.18-OPHUB // AARCH64</span>
+              <span>KERNEL: 6.18-OPHUB // ARM64</span>
             </div>
           </div>
         </div>
 
         <div class="grid-2">
-          <!-- Live Radar Scan HUD -->
+          <!-- Wi-Fi Quick Card -->
           <div class="card">
             <div class="card-header">
               <span class="card-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/></svg>
-                Radar de Frequências (2.4 GHz)
+                Redes Wi-Fi Próximas
               </span>
-              <button class="btn btn-secondary btn-sm" onclick="showTab('wifi')">Abrir Radar Completo</button>
+              <button class="btn btn-secondary btn-sm" onclick="showTab('wifi')">Ver Todas as Redes</button>
             </div>
             <div id="dash-wifi-list">
-              <p style="color:var(--text-dim); font-family:var(--font-tech); font-size:0.8rem; padding: 0.5rem 0;">Varrendo espectro de radiofrequência...</p>
+              <p style="color:var(--text-dim); font-family:var(--font-tech); font-size:0.8rem; padding: 0.5rem 0;">Procurando redes Wi-Fi...</p>
             </div>
           </div>
 
@@ -1190,77 +1197,77 @@
             <div class="card-header">
               <span class="card-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
-                Arquitetura do Appliance Físico
+                Hardware do Equipamento
               </span>
             </div>
             <table class="data-table">
               <tbody>
-                <tr><td>APPLIANCE / MODEL</td><td style="color:var(--neon-cyan);">BTV Express E10 Enterprise</td></tr>
-                <tr><td>SOC / PROCESSOR</td><td style="color:var(--neon-cyan);">Amlogic S905X2 (4x Cortex-A53)</td></tr>
-                <tr><td>WLAN TRANSCEIVER</td><td style="color:var(--neon-cyan);">Realtek RTL8189FTV (SDIO 25MHz)</td></tr>
-                <tr><td>EMMC DISK BLOCK</td><td style="color:var(--neon-cyan);">29 GB (/dev/mmcblk1p2)</td></tr>
-                <tr><td>HARDWARE WATCHDOG</td><td style="color:var(--neon-toxic);">ARMED (75s Auto-Rollback)</td></tr>
+                <tr><td>DISPOSITIVO / MODELO</td><td style="color:var(--neon-cyan);">BTV Express E10 Enterprise</td></tr>
+                <tr><td>PROCESSADOR (SOC)</td><td style="color:var(--neon-cyan);">Amlogic S905X2 (4x Cortex-A53)</td></tr>
+                <tr><td>CONTROLADOR WI-FI</td><td style="color:var(--neon-cyan);">Realtek RTL8189FTV (SDIO)</td></tr>
+                <tr><td>ARMAZENAMENTO EMMC</td><td style="color:var(--neon-cyan);">29 GB (/dev/mmcblk1p2)</td></tr>
+                <tr><td>WATCHDOG DE HARDWARE</td><td style="color:var(--neon-toxic);">ATIVO (Rollback automático)</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- 2. WI-FI & RADAR SPECTRUM -->
+      <!-- 2. SCANNER WI-FI -->
       <section class="page-view" id="view-wifi">
         <div class="card" style="margin-bottom:1.25rem;">
           <div class="card-header" style="margin-bottom:0.75rem;">
             <span class="card-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
-              Monitor de Espectro &amp; Redes de Rádio
+              Redes Wi-Fi Disponíveis
             </span>
           </div>
 
-          <!-- Radar Action Bar -->
+          <!-- Action Bar -->
           <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
-            <input type="text" class="form-control" id="wifi-filter-input" placeholder="Filtrar por SSID ou frequência..." style="flex:1;">
+            <input type="text" class="form-control" id="wifi-filter-input" placeholder="Filtrar redes..." style="flex:1;">
             <button class="btn btn-secondary btn-sm" id="btn-manual-network">
               <span>+ REDE OCULTA</span>
             </button>
             <button class="btn btn-primary btn-sm" id="btn-refresh-scan">
-              <span>[ ESCANEAR ESPECTRO ]</span>
+              <span>[ ESCANEAR AGORA ]</span>
             </button>
           </div>
 
           <div id="wifi-networks-container">
-            <p style="color:var(--text-dim); font-family:var(--font-tech); padding:0.75rem 0;">Sintonizando sinais...</p>
+            <p style="color:var(--text-dim); font-family:var(--font-tech); padding:0.75rem 0;">Procurando redes...</p>
           </div>
         </div>
       </section>
 
-      <!-- 3. ACCESS POINT TRANSMITTER (AP) -->
+      <!-- 3. ACCESS POINT (AP) -->
       <section class="page-view" id="view-ap">
         <div class="grid-2">
           <div class="card">
             <div class="card-header">
               <span class="card-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49"/></svg>
-                Transmissor Ponto de Acesso
+                Configuração do Ponto de Acesso
               </span>
             </div>
             <form id="form-ap-config">
               <div class="form-group">
-                <label class="form-label">// SSID DO PONTO DE ACESSO</label>
+                <label class="form-label">// NOME DA REDE (SSID)</label>
                 <input type="text" class="form-control" id="ap-cfg-ssid" value="RTL8189FTV_AP" required>
               </div>
 
               <div class="form-group">
-                <label class="form-label">// CHAVE CRIPTOGRÁFICA (DEIXE EM BRANCO PARA ABERTA)</label>
+                <label class="form-label">// SENHA (DEIXE EM BRANCO PARA REDE ABERTA)</label>
                 <input type="password" class="form-control" id="ap-cfg-pass" placeholder="Mínimo 8 caracteres (WPA2-PSK)">
               </div>
 
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.1rem;">
                 <div>
-                  <label class="form-label">// CANAL RF (2.4 GHz)</label>
+                  <label class="form-label">// CANAL WI-FI (2.4 GHz)</label>
                   <select class="form-control" id="ap-cfg-channel">
-                    <option value="1">CH 01 (2412 MHz)</option>
-                    <option value="6" selected>CH 06 (2437 MHz)</option>
-                    <option value="11">CH 11 (2462 MHz)</option>
+                    <option value="1">Canal 1 (2412 MHz)</option>
+                    <option value="6" selected>Canal 6 (2437 MHz)</option>
+                    <option value="11">Canal 11 (2462 MHz)</option>
                   </select>
                 </div>
                 <div>
@@ -1271,7 +1278,7 @@
 
               <div style="display:flex; justify-content:flex-end;">
                 <button type="submit" class="btn btn-primary">
-                  [ RECONFIGURAR TRANSMISSOR AP ]
+                  [ SALVAR E REINICIAR AP ]
                 </button>
               </div>
             </form>
@@ -1279,15 +1286,15 @@
 
           <div class="card">
             <div class="card-header">
-              <span class="card-title">DHCP Pool &amp; Roteamento IP</span>
+              <span class="card-title">DHCP &amp; Roteamento IP</span>
             </div>
             <table class="data-table">
               <tbody>
-                <tr><td>INTERFACE RF</td><td style="color:var(--neon-cyan);">wlan0 (wpa_supplicant mode=2)</td></tr>
-                <tr><td>DHCP LEASE POOL</td><td style="color:var(--neon-cyan);">192.168.4.10 – 192.168.4.250</td></tr>
-                <tr><td>CAPTIVE DNS ENGINE</td><td style="color:var(--neon-cyan);">dnsmasq (Port 53 Hijack)</td></tr>
-                <tr><td>HTTP PORTAL PORT</td><td style="color:var(--neon-cyan);">Port 8080 (iptables :80 → :8080)</td></tr>
-                <tr><td>NAT MASQUERADE</td><td style="color:var(--neon-toxic);">ARMED (eth0 Uplink)</td></tr>
+                <tr><td>INTERFACE WI-FI</td><td style="color:var(--neon-cyan);">wlan0 (Ponto de Acesso)</td></tr>
+                <tr><td>FAIXA DE IP DHCP</td><td style="color:var(--neon-cyan);">192.168.4.10 – 192.168.4.250</td></tr>
+                <tr><td>PORTAL CAPTIVO</td><td style="color:var(--neon-cyan);">dnsmasq (Porta 53 Hijack)</td></tr>
+                <tr><td>PORTA DO SERVIDOR WEB</td><td style="color:var(--neon-cyan);">Porta 8080 (iptables :80 → :8080)</td></tr>
+                <tr><td>COMPARTILHAMENTO NAT</td><td style="color:var(--neon-toxic);">ATIVO (Uplink eth0)</td></tr>
               </tbody>
             </table>
           </div>
@@ -1300,19 +1307,19 @@
           <div class="card-header">
             <span class="card-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>
-              Controladores Físicos de Rede (PHY)
+              Interfaces de Rede Físicas
             </span>
           </div>
           <table class="data-table">
             <thead>
               <tr>
                 <th>INTERFACE</th>
-                <th>CHIPSET CONTROLADOR</th>
-                <th>ENDEREÇO IPV4</th>
-                <th>HARDWARE MAC</th>
-                <th>NEGOCIAÇÃO LINK</th>
-                <th>VOLUME TRÁFEGO</th>
-                <th style="text-align:right;">ESTADO</th>
+                <th>CONTROLADOR</th>
+                <th>ENDEREÇO IP</th>
+                <th>ENDEREÇO MAC</th>
+                <th>VELOCIDADE</th>
+                <th>TRÁFEGO (RX / TX)</th>
+                <th style="text-align:right;">STATUS</th>
               </tr>
             </thead>
             <tbody>
@@ -1323,7 +1330,7 @@
                 <td id="eth-table-mac">EC:2E:AB:41:1E:75</td>
                 <td style="color:var(--neon-toxic);">1000 Mbps Full-Duplex</td>
                 <td>42.8 MB / 18.2 MB</td>
-                <td style="text-align:right;"><span class="badge badge-ok">LINK LOCKED</span></td>
+                <td style="text-align:right;"><span class="badge badge-ok">CONECTADO</span></td>
               </tr>
               <tr>
                 <td style="color:var(--neon-cyan); font-weight:700;">wlan0</td>
@@ -1332,7 +1339,7 @@
                 <td id="wlan-table-mac">3C:7A:AA:39:F6:C2</td>
                 <td style="color:var(--neon-amber);">72.2 Mbps (MCS7)</td>
                 <td>14.1 MB / 6.5 MB</td>
-                <td style="text-align:right;"><span class="badge badge-amber">AP TRANSMIT</span></td>
+                <td style="text-align:right;"><span class="badge badge-amber">AP ATIVO</span></td>
               </tr>
             </tbody>
           </table>
@@ -1344,22 +1351,22 @@
         <div class="grid-2">
           <div class="card">
             <div class="card-header">
-              <span class="card-title">Daemons do Kernel (systemd)</span>
+              <span class="card-title">Serviços do Sistema (systemd)</span>
             </div>
             <table class="data-table">
               <tbody>
-                <tr><td>forge-ap.service</td><td style="text-align:right;"><span class="badge badge-ok">RUNNING</span></td></tr>
-                <tr><td>forge-portal.service</td><td style="text-align:right;"><span class="badge badge-ok">RUNNING</span></td></tr>
-                <tr><td>forge-display.service</td><td style="text-align:right;"><span class="badge badge-ok">RUNNING</span></td></tr>
-                <tr><td>forge-watchdog.service</td><td style="text-align:right;"><span class="badge badge-ok">RUNNING</span></td></tr>
-                <tr><td>forge-fbcon-disable.service</td><td style="text-align:right;"><span class="badge badge-ok">EXECUTED</span></td></tr>
+                <tr><td>forge-ap.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
+                <tr><td>forge-portal.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
+                <tr><td>forge-display.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
+                <tr><td>forge-watchdog.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
+                <tr><td>forge-fbcon-disable.service</td><td style="text-align:right;"><span class="badge badge-ok">CONCLUÍDO</span></td></tr>
               </tbody>
             </table>
           </div>
 
           <div class="card">
             <div class="card-header">
-              <span class="card-title">Métricas de Silício &amp; Memória</span>
+              <span class="card-title">Recursos de Hardware</span>
             </div>
             <table class="data-table">
               <tbody>
@@ -1368,7 +1375,7 @@
                   <td style="color:var(--neon-cyan);">Armbian 26.08 Trixie (Debian 13)</td>
                 </tr>
                 <tr>
-                  <td>MICROARQUITETURA</td>
+                  <td>ARQUITETURA</td>
                   <td style="color:var(--neon-cyan);">aarch64 · 4x Cortex-A53 (1.8 GHz)</td>
                 </tr>
                 <tr>
@@ -1382,7 +1389,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>BLOCO DE DISCO EMMC</td>
+                  <td>ARMAZENAMENTO EMMC</td>
                   <td>
                     <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
                       <span style="color:var(--neon-amber);">2.6 GB / 29.0 GB</span>
@@ -1403,14 +1410,14 @@
         <div class="rack-chassis-header">
           <div>
             <div style="font-size:1.1rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-glow);">
-              [ RACK_BAY // CHASSIS-01 ] · FORGEHUB EXPANSION
+              [ MÓDULOS DE APLICAÇÃO ] · FORGEHUB
             </div>
             <div style="font-size:0.72rem; font-family:var(--font-tech); color:var(--neon-cyan); margin-top:0.25rem;">
-              BUS STATUS: LOCKED // PCIE-SDIO HOT-SWAP SLOTS ARMED // ARCH: ARM64-V8A
+              APLICAÇÕES EMBARCADAS PARA ARM64 // BTV-E10
             </div>
           </div>
           <button class="btn btn-secondary btn-sm" id="btn-refresh-modules" onclick="loadModulesHub()">
-            <span>[ SONDAR BARRAMENTO ]</span>
+            <span>[ ATUALIZAR CATÁLOGO ]</span>
           </button>
         </div>
 
@@ -1419,14 +1426,14 @@
         </div>
       </section>
 
-      <!-- 7. HACKER CONSOLE & LIVE LOGS -->
+      <!-- 7. TERMINAL DE LOGS -->
       <section class="page-view" id="view-logs">
         <div class="card" style="padding:0; overflow:hidden;">
           <div class="terminal-container">
             <div class="terminal-toolbar">
               <div style="display:flex; align-items:center; gap:0.5rem;">
-                <span style="font-weight:700;">// LIVE DIAGNOSTIC STREAM</span>
-                <span style="color:var(--text-dim);">[PORT: 8080 // TTY: SERIAL]</span>
+                <span style="font-weight:700;">// LOGS DO SISTEMA EM TEMPO REAL</span>
+                <span style="color:var(--text-dim);">[PORTA: 8080 // TTY: SERIAL]</span>
               </div>
               <div style="display:flex; gap:0.4rem;">
                 <button class="btn btn-secondary btn-sm" id="btn-copy-logs">[ COPIAR ]</button>
@@ -1445,11 +1452,11 @@
   </div>
 </div>
 
-<!-- CONNECT MODAL (TACTILE HARDWARE DIALOG) -->
+<!-- CONNECT MODAL -->
 <div class="modal-overlay" id="connect-modal">
   <div class="modal-card">
     <div class="modal-header">
-      <h3 style="font-size:0.95rem; font-weight:700; text-transform:uppercase; color:var(--neon-cyan);" id="modal-network-title">// SINTONIZAR REDE WI-FI</h3>
+      <h3 style="font-size:0.95rem; font-weight:700; text-transform:uppercase; color:var(--neon-cyan);" id="modal-network-title">// CONECTAR À REDE WI-FI</h3>
       <button class="icon-btn" onclick="closeModal()">✕</button>
     </div>
     <form id="form-provision">
@@ -1464,8 +1471,8 @@
 
         <div id="fields-psk">
           <div class="form-group">
-            <label class="form-label">// CHAVE DE SEGURANÇA PSK</label>
-            <input type="password" class="form-control" id="prov-psk-pass" placeholder="Digite a chave da rede..." autofocus>
+            <label class="form-label">// SENHA DO WI-FI</label>
+            <input type="password" class="form-control" id="prov-psk-pass" placeholder="Digite a senha..." autofocus>
           </div>
         </div>
 
@@ -1481,7 +1488,7 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">// FASE 2 AUTH</label>
+              <label class="form-label">// FASE 2</label>
               <select class="form-control" id="prov-eap-phase2">
                 <option value="MSCHAPV2" selected>MSCHAPV2</option>
                 <option value="PAP">PAP</option>
@@ -1492,12 +1499,12 @@
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;">
             <div class="form-group">
-              <label class="form-label">// USUÁRIO / IDENTIDADE</label>
+              <label class="form-label">// USUÁRIO</label>
               <input type="text" class="form-control" id="prov-eap-user" placeholder="usuario@unesp.br">
             </div>
             <div class="form-group">
-              <label class="form-label">// SENHA EAP</label>
-              <input type="password" class="form-control" id="prov-eap-pass" placeholder="Senha institucional">
+              <label class="form-label">// SENHA</label>
+              <input type="password" class="form-control" id="prov-eap-pass" placeholder="Senha">
             </div>
           </div>
 
@@ -1507,19 +1514,19 @@
               <input type="text" class="form-control" id="prov-eap-anon" placeholder="anonymous@unesp.br">
             </div>
             <div class="form-group">
-              <label class="form-label">// DOMÍNIO DE VALIDAÇÃO</label>
+              <label class="form-label">// DOMÍNIO</label>
               <input type="text" class="form-control" id="prov-eap-domain" placeholder="unesp.br">
             </div>
           </div>
         </div>
 
         <div style="background:var(--bg-inset); border:1px solid var(--border-hull); padding:0.6rem 0.75rem; font-size:0.7rem; color:var(--neon-amber); font-family:var(--font-tech); margin-top:0.4rem;">
-          ⚠️ [AVISO DE ENLACE]: O ponto de acesso sairá do ar temporariamente para handshake de autenticação.
+          ⚠️ [AVISO]: O ponto de acesso será reiniciado para conectar à rede selecionada.
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" onclick="closeModal()">CANCELAR</button>
-        <button type="submit" class="btn btn-primary" id="btn-submit-provision">[ EXECUTAR CONEXÃO ]</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit-provision">[ CONECTAR ]</button>
       </div>
     </form>
   </div>
@@ -1527,7 +1534,7 @@
 
 <script>
 /* ==========================================================================
-   FORGE-OS CYBERDECK HARDWARE CONTROLLER SCRIPT
+   FORGE-OS HARDWARE CONTROLLER SCRIPT
    ========================================================================== */
 let currentNetworks = [];
 let currentProvMode = 'psk';
@@ -1541,15 +1548,15 @@ function showTab(tabId) {
     el.classList.toggle('active', el.id === 'view-' + tabId);
   });
   const titles = {
-    dashboard: 'Dashboard HUD // Telemetria Geral',
-    wifi: 'Radar de Frequências // Wi-Fi Scanner',
-    ap: 'Transmissor // Ponto de Acesso',
-    ethernet: 'Controladores PHY // Interfaces',
-    system: 'Métricas de Silício // Telemetria Core',
-    modules: 'Arsenal de Módulos // ForgeHub',
-    logs: 'Terminal Hacker // Live Event Log'
+    dashboard: 'Dashboard // Visão Geral',
+    wifi: 'Scanner Wi-Fi // Redes Disponíveis',
+    ap: 'Ponto de Acesso // Configurações AP',
+    ethernet: 'Interfaces Físicas // Rede & Uplink',
+    system: 'Telemetria // Recursos do Sistema',
+    modules: 'Módulos // Arsenal ForgeHub',
+    logs: 'Terminal // Logs do Sistema'
   };
-  document.getElementById('page-title').textContent = titles[tabId] || 'FORGE-OS CONSOLE';
+  document.getElementById('page-title').textContent = titles[tabId] || 'FORGE-OS';
   if (tabId === 'modules') {
     loadModulesHub();
   }
@@ -1577,7 +1584,7 @@ document.getElementById('mobile-toggle').addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('open');
 });
 
-// Theme Switcher (Cyber-Dark / Industrial-Light)
+// Theme Switcher (Dark / Light)
 const themeToggle = document.getElementById('theme-toggle');
 const sunIcon = document.getElementById('theme-icon-sun');
 const moonIcon = document.getElementById('theme-icon-moon');
@@ -1612,7 +1619,7 @@ function setProvMode(mode) {
 }
 
 function openConnectModal(ssid, enc) {
-  document.getElementById('modal-network-title').textContent = '// SINTONIZAR: ' + ssid;
+  document.getElementById('modal-network-title').textContent = '// CONECTAR: ' + ssid;
   document.getElementById('prov-ssid').value = ssid;
   const isEap = enc === 'eap' || ssid.toLowerCase().includes('eduroam');
   setProvMode(isEap ? 'eap' : 'psk');
@@ -1625,11 +1632,11 @@ function closeModal() {
 }
 
 document.getElementById('btn-manual-network').addEventListener('click', () => {
-  const ssid = prompt('Digite o SSID da rede de destino:');
+  const ssid = prompt('Digite o SSID da rede:');
   if (ssid) openConnectModal(ssid.trim(), 'psk');
 });
 
-// Wi-Fi Spectrum Scanning & Rendering
+// Wi-Fi Scanning & Rendering
 async function fetchScan() {
   const btn = document.getElementById('btn-refresh-scan');
   btn.style.opacity = '0.6';
@@ -1649,14 +1656,14 @@ function renderWifiNetworks(networks) {
   const filter = document.getElementById('wifi-filter-input').value.toLowerCase();
   const filtered = networks.filter(n => n.ssid.toLowerCase().includes(filter));
   
-  document.getElementById('badge-wifi-count').textContent = networks.length + ' SINAIS';
+  document.getElementById('badge-wifi-count').textContent = networks.length + ' REDES';
   
   const container = document.getElementById('wifi-networks-container');
   const dashContainer = document.getElementById('dash-wifi-list');
   
   if (filtered.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-dim); font-family:var(--font-tech); padding:0.75rem 0;">Nenhum sinal detectado no espectro.</p>';
-    dashContainer.innerHTML = '<p style="color:var(--text-dim); font-family:var(--font-tech); font-size:0.8rem;">Silêncio de rádio detectado.</p>';
+    container.innerHTML = '<p style="color:var(--text-dim); font-family:var(--font-tech); padding:0.75rem 0;">Nenhuma rede encontrada.</p>';
+    dashContainer.innerHTML = '<p style="color:var(--text-dim); font-family:var(--font-tech); font-size:0.8rem;">Nenhuma rede encontrada.</p>';
     return;
   }
 
@@ -1669,10 +1676,10 @@ function renderWifiNetworks(networks) {
     else if (rssi < -60) { signalClass = 'active'; barsActive = 3; }
 
     const encBadge = net.encryption === 'eap' 
-      ? '<span class="badge badge-amber">[SEC: 802.1X-EAP]</span>' 
+      ? '<span class="badge badge-amber">[802.1X EAP]</span>' 
       : (net.encryption === 'open' 
-        ? '<span class="badge badge-ok">[SEC: UNENCRYPTED]</span>' 
-        : '<span class="badge">[SEC: WPA2-PSK]</span>');
+        ? '<span class="badge badge-ok">[ABERTA]</span>' 
+        : '<span class="badge">[WPA/WPA2]</span>');
 
     return `
       <div class="wifi-item">
@@ -1687,7 +1694,7 @@ function renderWifiNetworks(networks) {
             <h4>${escapeHtml(net.ssid)}</h4>
             <div class="wifi-meta">
               ${encBadge}
-              <span>[CH ${net.channel || 6} // ${2407 + (net.channel || 6)*5} MHz]</span>
+              <span>Canal ${net.channel || 6}</span>
               <span style="color:var(--neon-toxic); font-weight:700;">${rssi} dBm</span>
             </div>
           </div>
@@ -1729,21 +1736,21 @@ async function updateStatus() {
     const footerDot = document.getElementById('footer-dot');
     
     if (s.provisioning) {
-      badgeText.textContent = 'PROVISIONING_IN_PROGRESS...';
-      footerLabel.textContent = 'LINKING_WIFI...';
+      badgeText.textContent = 'CONECTANDO...';
+      footerLabel.textContent = 'CONECTANDO...';
       footerDot.className = 'status-dot warn';
     } else if (s.client_connected) {
-      badgeText.textContent = 'CLIENT_LOCKED: ' + s.client_ssid;
-      footerLabel.textContent = 'CLIENT_IP: ' + s.client_ip;
+      badgeText.textContent = 'CONECTADO: ' + s.client_ssid;
+      footerLabel.textContent = 'IP: ' + s.client_ip;
       footerDot.className = 'status-dot';
     } else {
-      badgeText.textContent = 'AP_BROADCAST: ' + (s.ssid || 'RTL8189FTV_AP');
+      badgeText.textContent = 'AP_ATIVO: ' + (s.ssid || 'RTL8189FTV_AP');
       footerLabel.textContent = 'AP: 192.168.4.1';
       footerDot.className = 'status-dot';
     }
 
-    document.getElementById('dash-mode').textContent = s.ap_active ? 'CAPTIVE AP' : (s.client_ssid || 'CLIENT');
-    document.getElementById('dash-mode-sub').textContent = s.ap_active ? (s.ssid + ' // 192.168.4.1') : (s.client_ip || 'NO_IP');
+    document.getElementById('dash-mode').textContent = s.ap_active ? 'CAPTIVE AP' : (s.client_ssid || 'CLIENTE');
+    document.getElementById('dash-mode-sub').textContent = s.ap_active ? (s.ssid + ' // 192.168.4.1') : (s.client_ip || 'SEM_IP');
 
     // Telemetry
     const sysRes = await fetch('/rest/systemStatus');
@@ -1754,7 +1761,7 @@ async function updateStatus() {
       const pct = Math.round((usedMb / totalMb) * 100);
       document.getElementById('dash-mem-val').textContent = usedMb + ' MB';
       document.getElementById('dash-mem-bar').style.width = pct + '%';
-      document.getElementById('dash-mem-sub').textContent = `POOL: ${totalMb} MB (${100 - pct}% DISPONÍVEL)`;
+      document.getElementById('dash-mem-sub').textContent = `TOTAL: ${totalMb} MB (${100 - pct}% LIVRE)`;
     }
     if (sys.uptime) {
       const hrs = Math.floor(sys.uptime / 3600);
@@ -1796,7 +1803,7 @@ document.getElementById('form-provision').addEventListener('submit', async (e) =
 
   const submitBtn = document.getElementById('btn-submit-provision');
   submitBtn.disabled = true;
-  submitBtn.textContent = '[ TRANSMITINDO... ]';
+  submitBtn.textContent = '[ CONECTANDO... ]';
 
   try {
     const res = await fetch('/api/provision', {
@@ -1806,18 +1813,18 @@ document.getElementById('form-provision').addEventListener('submit', async (e) =
     });
     const j = await res.json();
     if (!res.ok || j.error) {
-      alert('Erro de Enlace: ' + (j.error || 'Falha de Handshake'));
+      alert('Erro de conexão: ' + (j.error || 'Falha de autenticação'));
       submitBtn.disabled = false;
-      submitBtn.textContent = '[ EXECUTAR CONEXÃO ]';
+      submitBtn.textContent = '[ CONECTAR ]';
       return;
     }
     closeModal();
-    alert('Comando transmitido! O nó de rádio sintonizará a nova rede.');
+    alert('Comando enviado! O dispositivo irá se conectar à rede.');
     updateStatus();
   } catch (err) {
-    alert('Falha de I/O no Barramento');
+    alert('Erro ao enviar credenciais');
     submitBtn.disabled = false;
-    submitBtn.textContent = '[ EXECUTAR CONEXÃO ]';
+    submitBtn.textContent = '[ CONECTAR ]';
   }
 });
 
@@ -1835,16 +1842,16 @@ document.getElementById('form-ap-config').addEventListener('submit', async (e) =
       body: JSON.stringify({ ssid, password, channel })
     });
     const j = await res.json();
-    alert(j.message || 'Parâmetros de RF atualizados!');
+    alert(j.message || 'Configurações de AP atualizadas!');
     updateStatus();
   } catch (err) {
-    alert('Erro ao configurar rádio');
+    alert('Erro ao configurar Ponto de Acesso');
   }
 });
 
 // Quick Reset AP
 document.getElementById('btn-quick-reset').addEventListener('click', async () => {
-  if (confirm('Rearmar transmissor AP de contingência?')) {
+  if (confirm('Deseja reiniciar o Ponto de Acesso (AP)?')) {
     await fetch('/api/reset', { method: 'POST' });
     setTimeout(updateStatus, 2000);
   }
@@ -1856,7 +1863,7 @@ document.getElementById('btn-clear-logs').addEventListener('click', () => {
 
 document.getElementById('btn-copy-logs').addEventListener('click', () => {
   const text = document.getElementById('terminal-logs').textContent;
-  navigator.clipboard.writeText(text).then(() => alert('Log buffer capturado para o clipboard!'));
+  navigator.clipboard.writeText(text).then(() => alert('Logs copiados para a área de transferência!'));
 });
 
 function escapeHtml(text) {
@@ -1865,7 +1872,7 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// Module Hub Loader & Actions (Hardware Hot-Swap Blade System)
+// Module Hub Loader & Actions
 async function loadModulesHub() {
   const container = document.getElementById('modules-container');
   if (!container) return;
@@ -1876,7 +1883,7 @@ async function loadModulesHub() {
     const modules = data.modules || [];
 
     if (modules.length === 0) {
-      container.innerHTML = '<div class="card"><p style="color:var(--text-dim); font-family:var(--font-tech);">Nenhum cartucho localizado nos slots do chassi.</p></div>';
+      container.innerHTML = '<div class="card"><p style="color:var(--text-dim); font-family:var(--font-tech);">Nenhum módulo encontrado.</p></div>';
       return;
     }
 
@@ -1886,32 +1893,32 @@ async function loadModulesHub() {
       const isRunning = state === 'running';
       const isInstalled = state === 'installed' || isRunning;
 
-      let beaconHtml = '<span class="cartridge-beacon">[SLOT: UNMOUNTED]</span>';
+      let beaconHtml = '<span class="cartridge-beacon">[DISPONÍVEL]</span>';
       let bladeClass = 'cartridge-blade';
       if (isRunning) {
-        beaconHtml = '<span class="cartridge-beacon beacon-online"><span class="status-dot"></span>LOCKED_ONLINE</span>';
+        beaconHtml = '<span class="cartridge-beacon beacon-online"><span class="status-dot"></span>RODANDO</span>';
         bladeClass = 'cartridge-blade active-blade';
       } else if (isInstalled) {
-        beaconHtml = '<span class="cartridge-beacon beacon-standby">STANDBY_MOUNTED</span>';
+        beaconHtml = '<span class="cartridge-beacon beacon-standby">INSTALADO</span>';
         bladeClass = 'cartridge-blade';
       }
 
       const req = m.requirements || {};
       const minRam = req.min_ram_mb ? `${req.min_ram_mb} MB RAM` : '32 MB MIN';
-      const bayNumStr = 'BAY 0' + (bayIndex++);
+      const bayNumStr = 'SLOT 0' + (bayIndex++);
 
       let actionButtons = '';
       if (!isInstalled) {
-        actionButtons = `<button class="btn-engage-hardware" onclick="moduleAction('${m.id}', 'install')">⚡ [ ENGAGE // INSTALAR MÓDULO ]</button>`;
+        actionButtons = `<button class="btn-engage-hardware" onclick="moduleAction('${m.id}', 'install')">[ INSTALAR MÓDULO ]</button>`;
       } else if (isRunning) {
         actionButtons = `
-          <button class="btn btn-disengage btn-sm" onclick="moduleAction('${m.id}', 'stop')">[ DISENGAGE // PAUSAR ]</button>
-          <button class="btn btn-purge btn-sm" onclick="moduleAction('${m.id}', 'uninstall')">[ PURGE ]</button>
+          <button class="btn btn-disengage btn-sm" onclick="moduleAction('${m.id}', 'stop')">[ PAUSAR ]</button>
+          <button class="btn btn-purge btn-sm" onclick="moduleAction('${m.id}', 'uninstall')">[ DESINSTALAR ]</button>
         `;
       } else {
         actionButtons = `
-          <button class="btn-engage-hardware" style="flex:1;" onclick="moduleAction('${m.id}', 'start')">[ ENGAGE // ATIVAR ]</button>
-          <button class="btn btn-purge btn-sm" onclick="moduleAction('${m.id}', 'uninstall')">[ PURGE ]</button>
+          <button class="btn-engage-hardware" style="flex:1;" onclick="moduleAction('${m.id}', 'start')">[ INICIAR MÓDULO ]</button>
+          <button class="btn btn-purge btn-sm" onclick="moduleAction('${m.id}', 'uninstall')">[ DESINSTALAR ]</button>
         `;
       }
 
@@ -1927,7 +1934,7 @@ async function loadModulesHub() {
             <div class="cartridge-top-strip">
               <div class="cartridge-bay-label">
                 <span>[${bayNumStr}]</span>
-                <span>// SLOT_HOTSWAP</span>
+                <span>// MÓDULO</span>
               </div>
               ${beaconHtml}
             </div>
@@ -1936,7 +1943,7 @@ async function loadModulesHub() {
               <div class="cartridge-socket-icon">${m.icon || '📦'}</div>
               <div>
                 <div class="cartridge-name">${escapeHtml(m.name)}</div>
-                <span class="cartridge-subtitle">TAG: MF-MOD-${m.id.toUpperCase()} // REV ${m.version || '1.0'}</span>
+                <span class="cartridge-subtitle">ID: ${m.id} // v${m.version || '1.0'}</span>
               </div>
             </div>
 
@@ -1945,9 +1952,9 @@ async function loadModulesHub() {
             </p>
 
             <div class="cartridge-specs-strip">
-              <span class="cartridge-spec-chip">[REQ: ${minRam}]</span>
-              <span class="cartridge-spec-chip">[BUS: ${m.category ? m.category.toUpperCase() : 'APP'}]</span>
-              <span class="cartridge-spec-chip">[CHIPSET: S905X2]</span>
+              <span class="cartridge-spec-chip">[RAM: ${minRam}]</span>
+              <span class="cartridge-spec-chip">[CATEGORIA: ${m.category ? m.category.toUpperCase() : 'APP'}]</span>
+              <span class="cartridge-spec-chip">[ARCH: ARM64]</span>
             </div>
           </div>
 
@@ -1958,7 +1965,7 @@ async function loadModulesHub() {
       `;
     }).join('');
 
-    // Built-in Kiosk Blade Slot
+    // Built-in Kiosk Slot
     container.innerHTML += `
       <div class="cartridge-blade active-blade">
         <!-- Metallic Rivet Bolts -->
@@ -1970,17 +1977,17 @@ async function loadModulesHub() {
         <div>
           <div class="cartridge-top-strip">
             <div class="cartridge-bay-label">
-              <span>[BAY 03]</span>
-              <span>// INTEGRATED_GPU_SLOT</span>
+              <span>[SLOT 03]</span>
+              <span>// INTEGRADO</span>
             </div>
-            <span class="cartridge-beacon beacon-online"><span class="status-dot"></span>LOCKED_ONLINE</span>
+            <span class="cartridge-beacon beacon-online"><span class="status-dot"></span>RODANDO</span>
           </div>
 
           <div class="cartridge-identity">
             <div class="cartridge-socket-icon">📺</div>
             <div>
               <div class="cartridge-name">Kiosk HDMI Framebuffer</div>
-              <span class="cartridge-subtitle">TAG: MF-GPU-FB0 // BUILT-IN KERNEL DISPLAY</span>
+              <span class="cartridge-subtitle">DISPLAY NATIVO EM /DEV/FB0</span>
             </div>
           </div>
 
@@ -1989,20 +1996,20 @@ async function loadModulesHub() {
           </p>
 
           <div class="cartridge-specs-strip">
-            <span class="cartridge-spec-chip">[GPU: /DEV/FB0]</span>
-            <span class="cartridge-spec-chip">[VRAM: 32MB]</span>
-            <span class="cartridge-spec-chip">[CORE: DISPLAY]</span>
+            <span class="cartridge-spec-chip">[DISPOSITIVO: FB0]</span>
+            <span class="cartridge-spec-chip">[RAM: 32MB]</span>
+            <span class="cartridge-spec-chip">[STATUS: NATIVO]</span>
           </div>
         </div>
 
         <div class="cartridge-actions-bar">
-          <button class="btn btn-secondary btn-sm" style="width:100%; font-weight:800;" onclick="alert('Controlador gráfico ativo em /dev/fb0.')">[ CONFIGURAR SAÍDA HDMI ]</button>
+          <button class="btn btn-secondary btn-sm" style="width:100%; font-weight:800;" onclick="alert('Controlador de display ativo em /dev/fb0.')">[ CONFIGURAR DISPLAY ]</button>
         </div>
       </div>
     `;
   } catch (err) {
     console.error('Error loading modules:', err);
-    container.innerHTML = '<div class="card"><p style="color:var(--neon-crimson);">Falha ao comunicar com os barramentos do chassi.</p></div>';
+    container.innerHTML = '<div class="card"><p style="color:var(--neon-crimson);">Falha ao consultar módulos.</p></div>';
   }
 }
 
@@ -2020,7 +2027,7 @@ async function moduleAction(modId, action) {
       alert(j.error || 'Falha na instrução do módulo');
     }
   } catch (err) {
-    alert('Falha de I/O com o daemon');
+    alert('Erro de comunicação com o servidor');
   }
 }
 
