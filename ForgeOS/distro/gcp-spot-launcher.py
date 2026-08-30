@@ -17,8 +17,8 @@ import argparse
 INSTANCE_NAME = "forgeos-builder-spot-32"
 ZONE = "us-central1-a"
 PROJECT = "stt-465818"
-MACHINE_TYPES = ["c2-standard-32", "c3-standard-32", "e2-highcpu-32", "c2-standard-16"]
-BOOT_DISK_SIZE = "60GB"
+MACHINE_TYPES = ["e2-standard-8", "c2-standard-8", "n2-standard-8", "e2-standard-4"]
+BOOT_DISK_SIZE = "50GB"
 IMAGE_FAMILY = "ubuntu-2404-lts-amd64"
 IMAGE_PROJECT = "ubuntu-os-cloud"
 
@@ -102,8 +102,9 @@ def build_and_download():
     os.makedirs(os.path.dirname(tar_path), exist_ok=True)
     
     def exclude_filter(tarinfo):
-        name = tarinfo.name
-        if ".git" in name or "node_modules" in name or "target" in name or "dist" in name:
+        parts = tarinfo.name.replace("\\", "/").split("/")
+        excluded_dirs = {".git", "node_modules", "target", "dist", ".cargo"}
+        if any(p in excluded_dirs for p in parts):
             return None
         return tarinfo
 
@@ -158,13 +159,13 @@ def delete_spot_vm():
 
 
 def main():
+    global PROJECT, ZONE
     parser = argparse.ArgumentParser(description="MultiForge GCP Spot VM 32 vCPU Builder")
     parser.add_argument("--project", default=PROJECT, help="ID do projeto GCP")
     parser.add_argument("--zone", default=ZONE, help="Zona GCP")
     parser.add_argument("--keep-vm", action="store_true", help="Não deletar a VM ao final (para debug)")
     args = parser.parse_args()
 
-    global PROJECT, ZONE
     PROJECT = args.project
     ZONE = args.zone
 
