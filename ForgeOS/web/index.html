@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MultiForge OS · Enterprise Control Center</title>
+  <title>MultiForge OS · Enterprise Provisioner</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="manifest" href="/manifest.json">
   <style>
@@ -19,7 +19,7 @@
       --bg-surface: #0F172A;
       --bg-surface-elevated: #1E293B;
       --bg-card: rgba(30, 41, 59, 0.7);
-      --bg-glass: rgba(15, 23, 42, 0.85);
+      --bg-glass: rgba(15, 23, 42, 0.75);
       --border: #334155;
       --border-subtle: #1E293B;
       
@@ -44,7 +44,6 @@
       --danger-glow: rgba(239, 68, 68, 0.25);
       
       --purple: #8B5CF6;
-      --cyan: #06B6D4;
       
       --radius-sm: 6px;
       --radius-md: 10px;
@@ -62,7 +61,7 @@
       --bg-surface: #FFFFFF;
       --bg-surface-elevated: #F1F5F9;
       --bg-card: #FFFFFF;
-      --bg-glass: rgba(255, 255, 255, 0.9);
+      --bg-glass: rgba(255, 255, 255, 0.85);
       --border: #E2E8F0;
       --border-subtle: #CBD5E1;
       
@@ -179,7 +178,6 @@
     }
     .nav-badge.active { background: var(--success); color: white; }
     .nav-badge.warn { background: var(--warning); color: #000; }
-    .nav-badge.cockpit { background: #0066CC; color: white; }
 
     .sidebar-footer {
       padding: 1rem;
@@ -361,8 +359,6 @@
     }
     .progress-bar-fill.success { background: linear-gradient(90deg, var(--success), #34D399); }
     .progress-bar-fill.blue { background: linear-gradient(90deg, var(--secondary), #60A5FA); }
-    .progress-bar-fill.purple { background: linear-gradient(90deg, var(--purple), #C084FC); }
-    .progress-bar-fill.danger { background: linear-gradient(90deg, var(--danger), #F87171); }
 
     /* Tables */
     .data-table {
@@ -449,7 +445,6 @@
     .badge-psk { background: rgba(59, 130, 246, 0.15); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.3); }
     .badge-eap { background: rgba(139, 92, 246, 0.15); color: #A78BFA; border: 1px solid rgba(139, 92, 246, 0.3); }
     .badge-open { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-danger { background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
 
     /* Buttons & Form Inputs */
     .btn {
@@ -476,12 +471,6 @@
       color: var(--text-main);
     }
     .btn-secondary:hover { background: var(--border); }
-    .btn-cockpit {
-      background: #0066CC;
-      color: white;
-      box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
-    }
-    .btn-cockpit:hover { background: #0052A3; transform: translateY(-1px); }
     .btn-danger {
       background: rgba(239, 68, 68, 0.15);
       border: 1px solid rgba(239, 68, 68, 0.3);
@@ -560,34 +549,12 @@
       border-radius: var(--radius-md);
       padding: 1rem;
       font-family: var(--font-mono);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: #A3E635;
-      height: 420px;
+      height: 380px;
       overflow-y: auto;
       white-space: pre-wrap;
-      line-height: 1.45;
-    }
-    .terminal-input-bar {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-    }
-
-    /* Service Grid Card */
-    .service-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1.1rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 0.75rem;
-      transition: all 0.2s ease;
-    }
-    .service-card:hover {
-      border-color: var(--primary);
-      box-shadow: var(--shadow-md);
+      line-height: 1.4;
     }
 
     /* Responsive */
@@ -603,7 +570,7 @@
 <body>
 
 <div class="app-container">
-  <!-- Sidebar Navigation (ESP32-SvelteKit + Cockpit Architecture) -->
+  <!-- Sidebar Navigation (ESP32-SvelteKit Architecture) -->
   <aside class="sidebar" id="sidebar">
     <div class="brand-header">
       <div class="brand-logo">
@@ -631,35 +598,23 @@
         <span>Ponto de Acesso (AP)</span>
         <span class="nav-badge active" id="badge-ap-status">ON</span>
       </a>
+      <a href="#ethernet" class="nav-item" data-tab="ethernet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        <span>Rede & Ethernet</span>
+      </a>
 
-      <div class="nav-section-title">Cockpit & Sistema</div>
+      <div class="nav-section-title">Hardware & Módulos</div>
       <a href="#system" class="nav-item" data-tab="system">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
-        <span>Métricas de Hardware</span>
+        <span>Sistema & Métricas</span>
       </a>
-      <a href="#services" class="nav-item" data-tab="services">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        <span>Serviços (Systemd)</span>
-        <span class="nav-badge" id="badge-services-count">9 units</span>
-      </a>
-      <a href="#cockpit" class="nav-item" data-tab="cockpit">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        <span>Cockpit Web Console</span>
-        <span class="nav-badge cockpit">:9090</span>
-      </a>
-      <a href="#terminal" class="nav-item" data-tab="terminal">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-        <span>Terminal & Diagnósticos</span>
-      </a>
-      <a href="#logs" class="nav-item" data-tab="logs">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        <span>Logs (Journalctl)</span>
-      </a>
-
-      <div class="nav-section-title">Módulos & Aplicações</div>
       <a href="#modules" class="nav-item" data-tab="modules">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        <span>ForgeHub (Módulos AI)</span>
+        <span>Módulos (Totem/AI)</span>
+      </a>
+      <a href="#logs" class="nav-item" data-tab="logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span>Logs & Terminal</span>
       </a>
     </nav>
 
@@ -721,21 +676,21 @@
           </div>
 
           <div class="card stat-box">
-            <span class="stat-label">Memória RAM + ZRAM</span>
-            <span class="stat-value" id="dash-mem-val">420 MB</span>
+            <span class="stat-label">Memória RAM</span>
+            <span class="stat-value" id="dash-mem-val">343 MB</span>
             <div class="progress-bar-bg">
-              <div class="progress-bar-fill" id="dash-mem-bar" style="width: 22%;"></div>
+              <div class="progress-bar-fill" id="dash-mem-bar" style="width: 25%;"></div>
             </div>
             <div class="stat-sub" style="margin-top:0.35rem;">
-              <span id="dash-mem-sub">Física: 1.8 GB · ZRAM: 925 MB (ZSTD)</span>
+              <span id="dash-mem-sub">Total: 1.8 GB (75% Livre)</span>
             </div>
           </div>
 
           <div class="card stat-box">
-            <span class="stat-label">Temperatura do SoC</span>
-            <span class="stat-value" id="dash-temp-val" style="color:var(--success)">43.8 °C</span>
+            <span class="stat-label">Tempo Ativo (Uptime)</span>
+            <span class="stat-value" id="dash-uptime">10h 45m</span>
             <div class="stat-sub">
-              <span id="dash-cpu-sub">4x Cortex-A53 @ 1.8 GHz</span>
+              <span>Kernel 6.18-ophub · aarch64</span>
             </div>
           </div>
         </div>
@@ -765,11 +720,11 @@
             </div>
             <table class="data-table">
               <tbody>
-                <tr><td>Dispositivo / Modelo</td><td class="strong">BTV Express E10 (Amlogic S905X2)</td></tr>
-                <tr><td>Device Tree Blob (DTB)</td><td class="strong" style="color:var(--primary)">meson-g12a-btv-e10-enterprise.dtb</td></tr>
-                <tr><td>Rádio Wi-Fi</td><td class="strong">Realtek RTL8189FTV (SDIO 25MHz)</td></tr>
-                <tr><td>Armazenamento eMMC / SD</td><td class="strong">29 GB (/dev/mmcblk1p2)</td></tr>
-                <tr><td>Cockpit Web Service</td><td class="strong" style="color:#60A5FA"><a href="#cockpit" onclick="showTab('cockpit')">Porta :9090 (Ativo)</a></td></tr>
+                <tr><td>Dispositivo / Modelo</td><td class="strong">BTV Express E10</td></tr>
+                <tr><td>SoC / Processador</td><td class="strong">Amlogic S905X2 (4x Cortex-A53)</td></tr>
+                <tr><td>Rádio Wi-Fi</td><td class="strong">Realtek RTL8189FTV (8189fs)</td></tr>
+                <tr><td>Armazenamento eMMC</td><td class="strong">29 GB (/dev/mmcblk1p2)</td></tr>
+                <tr><td>Watchdog de Provisionamento</td><td class="strong" style="color:var(--success)">Ativo (Rollback 75s)</td></tr>
               </tbody>
             </table>
           </div>
@@ -795,18 +750,18 @@
               </button>
             </div>
           </div>
-
-          <div style="margin-bottom:1rem;">
-            <input type="text" id="wifi-filter-input" class="form-control" placeholder="Filtrar por nome de rede (SSID)...">
+          
+          <div style="margin-bottom:1rem; display:flex; gap:0.75rem;">
+            <input type="text" class="form-control" id="wifi-filter-input" placeholder="Filtrar por nome (SSID)..." style="max-width:320px;">
           </div>
 
           <div id="wifi-networks-container">
-            <p style="color:var(--text-faint); padding:1rem 0;">Aguardando varredura do rádio...</p>
+            <p style="color:var(--text-faint); padding:1rem 0;">Carregando redes...</p>
           </div>
         </div>
       </section>
 
-      <!-- 3. ACCESS POINT CONFIG -->
+      <!-- 3. ACCESS POINT (AP) -->
       <section class="page-view" id="view-ap">
         <div class="grid-2">
           <div class="card">
@@ -818,357 +773,236 @@
             </div>
             <form id="form-ap-config">
               <div class="form-group">
-                <label class="form-label">Nome da Rede Wi-Fi (SSID)</label>
-                <input type="text" id="ap-cfg-ssid" class="form-control" value="ForgeOS-Setup-E10" required>
+                <label class="form-label">Nome da Rede AP (SSID)</label>
+                <input type="text" class="form-control" id="ap-cfg-ssid" value="RTL8189FTV_AP" required>
               </div>
+
               <div class="form-group">
-                <label class="form-label">Senha WPA2-PSK (Opcional - deixe vazio para aberta)</label>
-                <input type="password" id="ap-cfg-pass" class="form-control" placeholder="Mínimo 8 caracteres">
+                <label class="form-label">Senha (Opcional - Em branco para Aberta)</label>
+                <input type="password" class="form-control" id="ap-cfg-pass" placeholder="Mínimo 8 caracteres (WPA2-PSK)">
               </div>
-              <div class="form-group">
-                <label class="form-label">Canal de Transmissão (2.4 GHz)</label>
-                <select id="ap-cfg-channel" class="form-control">
-                  <option value="1">Canal 1 (2412 MHz)</option>
-                  <option value="6" selected>Canal 6 (2437 MHz - Recomendado)</option>
-                  <option value="11">Canal 11 (2462 MHz)</option>
-                </select>
+
+              <div class="grid-2" style="margin-bottom:0;">
+                <div class="form-group">
+                  <label class="form-label">Canal Wi-Fi (2.4 GHz)</label>
+                  <select class="form-control" id="ap-cfg-channel">
+                    <option value="1">Canal 1 (2412 MHz)</option>
+                    <option value="6" selected>Canal 6 (2437 MHz)</option>
+                    <option value="11">Canal 11 (2462 MHz)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">IP do Gateway</label>
+                  <input type="text" class="form-control" value="192.168.4.1" disabled>
+                </div>
               </div>
-              <button type="submit" class="btn btn-primary" style="width:100%;">Salvar Configurações do AP</button>
+
+              <button type="submit" class="btn btn-primary" style="width:100%; margin-top:0.5rem;">
+                Salvar e Reiniciar AP
+              </button>
             </form>
           </div>
 
           <div class="card">
             <div class="card-header">
-              <span class="card-title">Informações de Conexão</span>
+              <span class="card-title">Status do Servidor DHCP</span>
             </div>
             <table class="data-table">
               <tbody>
-                <tr><td>IP do Gateway / DNS</td><td class="strong">192.168.4.1</td></tr>
-                <tr><td>Porta do Portal Web</td><td class="strong">8080 (e 80 redirecionado)</td></tr>
-                <tr><td>Redirecionamento Captive</td><td class="strong" style="color:var(--success)">Ativo (Android / Apple / Windows)</td></tr>
-                <tr><td>Modo do Driver RTL8189</td><td class="strong">Anti-Sleep (rtw_power_mgnt=0)</td></tr>
+                <tr><td>Interface AP</td><td class="strong">wlan0 (wpa_supplicant mode=2)</td></tr>
+                <tr><td>Faixa de IPs DHCP</td><td class="strong">192.168.4.10 – 192.168.4.250</td></tr>
+                <tr><td>DNS Cativo</td><td class="strong">dnsmasq (Redirecionamento automático)</td></tr>
+                <tr><td>Portal Web UI</td><td class="strong">Porta 8080 (iptables :80 → :8080)</td></tr>
+                <tr><td>Uplink NAT (MASQUERADE)</td><td class="strong" style="color:var(--success)">Habilitado em eth0</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- 4. HARDWARE TELEMETRY (COCKPIT GRADE) -->
-      <section class="page-view" id="view-system">
-        <div class="grid-4">
-          <div class="card stat-box">
-            <span class="stat-label">SoC Temperature</span>
-            <span class="stat-value" id="telem-temp" style="color:var(--success)">43.8 °C</span>
-            <div class="stat-sub">
-              <span>Sensor: thermal_zone0 (Normal &lt; 65°C)</span>
-            </div>
-          </div>
-
-          <div class="card stat-box">
-            <span class="stat-label">Frequência da CPU</span>
-            <span class="stat-value" id="telem-freq">1.80 GHz</span>
-            <div class="stat-sub">
-              <span>Governor: schedutil (Dynamic)</span>
-            </div>
-          </div>
-
-          <div class="card stat-box">
-            <span class="stat-label">Uptime do Sistema</span>
-            <span class="stat-value" id="telem-uptime">2d 14h</span>
-            <div class="stat-sub">
-              <span>Carga: 0.05, 0.08, 0.12</span>
-            </div>
-          </div>
-
-          <div class="card stat-box">
-            <span class="stat-label">Watchdog de Hardware</span>
-            <span class="stat-value" style="color:var(--success)">ONLINE</span>
-            <div class="stat-sub">
-              <span>/dev/watchdog (Amlogic Silicon)</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <!-- Detailed RAM & ZRAM breakdown -->
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>
-                Memória RAM Física + ZRAM ZSTD
-              </span>
-              <span class="badge badge-open">ZRAM 3:1</span>
-            </div>
-            <div style="margin-bottom:1.25rem;">
-              <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
-                <span>RAM Física Usada</span>
-                <span id="telem-ram-used-text" class="strong">380 MB / 1850 MB (20%)</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill success" id="telem-ram-bar" style="width: 20%;"></div>
-              </div>
-            </div>
-
-            <div>
-              <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
-                <span>ZRAM Swap Compactada (ZSTD)</span>
-                <span class="strong">925 MB Disponível (Zero Desgaste eMMC)</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill blue" style="width: 5%;"></div>
-              </div>
-            </div>
-
-            <table class="data-table" style="margin-top:1.25rem;">
-              <tbody>
-                <tr><td>CMA Alocado no DTB</td><td class="strong">64 MB (+192 MB liberados para Apps)</td></tr>
-                <tr><td>Memória Cache &amp; Buffers</td><td class="strong" id="telem-ram-cache">440 MB</td></tr>
-                <tr><td>Algoritmo de Reclaim</td><td class="strong">MGLRU (Multi-Gen LRU Gen 2)</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Storage & Partition visualizer -->
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                Armazenamento &amp; Partições
-              </span>
-            </div>
-            
-            <div style="margin-bottom:1.25rem;">
-              <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
-                <span>Raiz (/) — MicroSD / eMMC 5.1</span>
-                <span id="telem-disk-root" class="strong">3.5 GB / 29.0 GB (12%)</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill purple" id="telem-disk-root-bar" style="width: 12%;"></div>
-              </div>
-            </div>
-
-            <div style="margin-bottom:1.25rem;">
-              <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
-                <span>Bootloader (/boot) — FAT32</span>
-                <span id="telem-disk-boot" class="strong">170 MB / 510 MB (34%)</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill success" id="telem-disk-boot-bar" style="width: 34%;"></div>
-              </div>
-            </div>
-
-            <table class="data-table">
-              <tbody>
-                <tr><td>Proteção de I/O na Flash</td><td class="strong">vm.dirty_background_ratio = 5</td></tr>
-                <tr><td>Algoritmo TCP de Rede</td><td class="strong">Google BBRv3 + FQ</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- 5. SERVICES MANAGER (SYSTEMD) -->
-      <section class="page-view" id="view-services">
-        <div class="card" style="margin-bottom:1.5rem;">
-          <div class="card-header">
-            <span class="card-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-              Gerenciador de Serviços &amp; Daemons (Systemd)
-            </span>
-            <button class="btn btn-primary btn-sm" onclick="loadServices()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-              <span>Atualizar Serviços</span>
-            </button>
-          </div>
-
-          <div class="grid-3" id="services-grid">
-            <p style="color:var(--text-faint); padding:1rem;">Carregando status dos serviços...</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 6. COCKPIT WEB CONSOLE BRIDGE -->
-      <section class="page-view" id="view-cockpit">
-        <div class="card" style="margin-bottom:1.5rem;">
-          <div class="card-header">
-            <span class="card-title">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-              Cockpit Project — Painel Web de Administração Linux
-            </span>
-            <a href="http://192.168.1.153:9090" target="_blank" class="btn btn-cockpit btn-sm" id="btn-open-cockpit-link">
-              <span>Abrir Cockpit em Nova Aba (:9090) ↗</span>
-            </a>
-          </div>
-
-          <div style="background:var(--bg-surface-elevated); border:1px solid var(--border); border-radius:var(--radius-md); padding:1.25rem; margin-bottom:1.5rem;">
-            <h4 style="font-size:1rem; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
-              <span class="status-dot"></span>
-              Serviço Cockpit Ativo no Armbian (Porta 9090)
-            </h4>
-            <p style="font-size:0.88rem; color:var(--text-muted); line-height:1.5; margin-bottom:1rem;">
-              O <strong>Cockpit</strong> é a ferramenta empresarial padrão para administração de servidores Linux. Ele permite gerenciar contas de usuário, redes avançadas, partições RAID/LVM, logs detalhados e containers.
-            </p>
-            <div style="display:flex; gap:1rem; flex-wrap:wrap; font-size:0.82rem; font-family:var(--font-mono); color:var(--text-faint);">
-              <span>🔑 <strong>Usuário:</strong> root</span>
-              <span>🔒 <strong>Senha:</strong> forgeos</span>
-              <span>🌐 <strong>URL:</strong> https://192.168.1.153:9090</span>
-            </div>
-          </div>
-
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
-            <span style="font-size:0.9rem; font-weight:600;">Visualização Embutida do Cockpit:</span>
-            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('cockpit-iframe').src = document.getElementById('cockpit-iframe').src">Recarregar Painel</button>
-          </div>
-          <iframe id="cockpit-iframe" src="http://192.168.1.153:9090" style="width:100%; height:600px; border:1px solid var(--border); border-radius:var(--radius-md); background:#000;"></iframe>
-        </div>
-      </section>
-
-      <!-- 7. INTERACTIVE TERMINAL -->
-      <section class="page-view" id="view-terminal">
+      <!-- 4. ETHERNET & NETWORK -->
+      <section class="page-view" id="view-ethernet">
         <div class="card">
           <div class="card-header">
             <span class="card-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-              Console de Diagnósticos &amp; Comandos
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>
+              Interfaces de Rede Físicas e Roteamento
             </span>
-            <div style="display:flex; gap:0.5rem;">
-              <button class="btn btn-secondary btn-sm" onclick="runCommand('dmesg | tail -n 25')">dmesg</button>
-              <button class="btn btn-secondary btn-sm" onclick="runCommand('free -h')">free -h</button>
-              <button class="btn btn-secondary btn-sm" onclick="runCommand('df -h')">df -h</button>
-              <button class="btn btn-secondary btn-sm" onclick="runCommand('ip a')">ip a</button>
-              <button class="btn btn-secondary btn-sm" onclick="runCommand('neofetch || uname -a')">uname</button>
-              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('terminal-box').textContent = 'root@forgeos-btv:~# '">Limpar</button>
-            </div>
           </div>
-
-          <div class="terminal-window" id="terminal-box">root@forgeos-btv:~# MultiForge OS Terminal Ready. Digite um comando abaixo ou use os atalhos.
-</div>
-
-          <form id="terminal-form" class="terminal-input-bar">
-            <span style="display:flex; align-items:center; font-family:var(--font-mono); color:var(--primary); font-weight:700;">#</span>
-            <input type="text" id="terminal-input" class="form-control" placeholder="Digite um comando (ex: uname -a, ps aux, systemctl status forge-ap)..." autocomplete="off">
-            <button type="submit" class="btn btn-primary">Executar</button>
-          </form>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Interface</th>
+                <th>Tipo</th>
+                <th>Endereço IPv4</th>
+                <th>Endereço MAC</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="strong">eth0</td>
+                <td>Ethernet 100/1000M</td>
+                <td class="strong" id="eth-table-ip">192.168.1.153</td>
+                <td class="strong" id="eth-table-mac">EC:2E:AB:41:1E:75</td>
+                <td><span class="badge badge-open">CONECTADO</span></td>
+              </tr>
+              <tr>
+                <td class="strong">wlan0</td>
+                <td>Wi-Fi (RTL8189FTV)</td>
+                <td class="strong" id="wlan-table-ip">192.168.4.1</td>
+                <td class="strong" id="wlan-table-mac">3C:7A:AA:39:F6:C2</td>
+                <td><span class="badge badge-psk">AP ATIVO</span></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
-      <!-- 8. JOURNALCTL LOGS -->
+      <!-- 5. SYSTEM & METRICS -->
+      <section class="page-view" id="view-system">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Serviços do ForgeOS (systemd)</span>
+            </div>
+            <table class="data-table">
+              <tbody>
+                <tr><td>forge-ap.service</td><td><span class="badge badge-open">ATIVO (EXITED)</span></td></tr>
+                <tr><td>forge-portal.service</td><td><span class="badge badge-open">RODANDO</span></td></tr>
+                <tr><td>forge-display.service</td><td><span class="badge badge-open">RODANDO</span></td></tr>
+                <tr><td>forge-watchdog.service</td><td><span class="badge badge-open">RODANDO</span></td></tr>
+                <tr><td>forge-fbcon-disable.service</td><td><span class="badge badge-open">ATIVO</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Telemetria do Sistema</span>
+            </div>
+            <table class="data-table">
+              <tbody>
+                <tr><td>Sistema Operacional</td><td class="strong">Armbian 26.08 Trixie (Debian 13)</td></tr>
+                <tr><td>Arquitetura</td><td class="strong">aarch64 (ARM 64-bit)</td></tr>
+                <tr><td>Frequência da CPU</td><td class="strong">1.20 GHz – 1.80 GHz Dynamic</td></tr>
+                <tr><td>Memória Total</td><td class="strong">1.89 GB LPDDR4</td></tr>
+                <tr><td>Partição Raiz (/)</td><td class="strong">2.6 GB usado de 29 GB (9%)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. MODULES HUB -->
+      <section class="page-view" id="view-modules">
+        <div class="view-header" style="margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h2 style="font-size:1.25rem; font-weight:700;">MultiForge Module Hub</h2>
+            <p style="font-size:0.85rem; color:var(--text-muted);">Módulos e aplicações inteligentes para nós de borda ARM (BTV E10)</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btn-refresh-modules" onclick="loadModulesHub()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Atualizar Catálogo
+          </button>
+        </div>
+
+        <div class="grid-3" id="modules-container">
+          <!-- Dynamic Module Cards loaded via /rest/modules -->
+        </div>
+      </section>
+
+      <!-- 7. LOGS & TERMINAL -->
       <section class="page-view" id="view-logs">
         <div class="card">
           <div class="card-header">
             <span class="card-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-              Logs do Sistema (Journalctl Stream)
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              Console do Sistema e Provisionamento em Tempo Real
             </span>
-            <div style="display:flex; gap:0.5rem;">
-              <select id="log-unit-select" class="form-control" style="width:auto; padding:0.35rem 0.75rem;" onchange="fetchLogs()">
-                <option value="system">Todos os Serviços</option>
-                <option value="forge-ap">forge-ap.service</option>
-                <option value="forge-portal">forge-portal.service</option>
-                <option value="forge-display">forge-display.service</option>
-                <option value="forge-watchdog">forge-watchdog.service</option>
-                <option value="cockpit">cockpit.socket</option>
-                <option value="ssh">ssh.service</option>
-              </select>
-              <button class="btn btn-primary btn-sm" onclick="fetchLogs()">Atualizar Logs</button>
-            </div>
+            <button class="btn btn-secondary btn-sm" id="btn-clear-logs">Limpar</button>
           </div>
-          <div class="terminal-window" id="journal-logs-box">Carregando logs...</div>
-        </div>
-      </section>
-
-      <!-- 9. MODULE HUB (FORGEHUB) -->
-      <section class="page-view" id="view-modules">
-        <div class="card" style="margin-bottom:1.5rem;">
-          <div class="card-header">
-            <span class="card-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-              ForgeHub — Catálogo de Módulos &amp; Aplicações
-            </span>
-            <button class="btn btn-primary btn-sm" onclick="loadModulesHub()">Recarregar Módulos</button>
-          </div>
-          <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1.5rem;">
-            Selecione e instale módulos de inteligência artificial, quiosque e agentes de dados no ForgeOS com um único clique.
-          </p>
-
-          <div class="grid-3" id="modules-container">
-            <p style="color:var(--text-faint);">Carregando catálogo...</p>
-          </div>
+          <div class="terminal-window" id="terminal-logs">[00:00:00] [PORTAL] Sistema iniciado com sucesso na porta 8080.
+[00:00:01] [AP] wpa_supplicant e dnsmasq ativos no rádio wlan0.
+[00:00:02] [WATCHDOG] Monitor de contingência ativo (75s rollback).</div>
         </div>
       </section>
     </main>
   </div>
 </div>
 
-<!-- Modal: Connect to Wi-Fi -->
+<!-- CONNECT MODAL (WPA-PSK + 802.1X Eduroam) -->
 <div class="modal-overlay" id="connect-modal">
   <div class="modal-card">
     <div class="modal-header">
-      <h3 style="font-size:1.1rem; font-weight:700;">Conectar à Rede Wi-Fi</h3>
+      <h3 style="font-size:1.1rem; font-weight:700;" id="modal-network-title">Conectar ao Wi-Fi</h3>
       <button class="icon-btn" onclick="closeModal()">✕</button>
     </div>
     <form id="form-provision">
       <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">Nome da Rede (SSID)</label>
-          <input type="text" id="prov-ssid" class="form-control" required readonly>
+        <input type="hidden" id="prov-ssid">
+        
+        <div style="display:flex; gap:1rem; margin-bottom:1.25rem;">
+          <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.88rem; font-weight:600; cursor:pointer;">
+            <input type="radio" name="prov-mode" value="psk" checked onchange="toggleProvMode()">
+            Rede Doméstica (WPA-PSK)
+          </label>
+          <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.88rem; font-weight:600; cursor:pointer;">
+            <input type="radio" name="prov-mode" value="eap" onchange="toggleProvMode()">
+            Eduroam / 802.1X EAP
+          </label>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Tipo de Autenticação</label>
-          <div style="display:flex; gap:1rem; margin-top:0.25rem;">
-            <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.85rem; cursor:pointer;">
-              <input type="radio" name="prov-mode" value="psk" checked onchange="toggleProvMode()"> WPA / WPA2-PSK (Doméstica)
-            </label>
-            <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.85rem; cursor:pointer;">
-              <input type="radio" name="prov-mode" value="eap" onchange="toggleProvMode()"> 802.1X EAP (Corporativa/Eduroam)
-            </label>
-          </div>
-        </div>
-
+        <!-- PSK Fields -->
         <div id="fields-psk">
           <div class="form-group">
-            <label class="form-label">Senha da Rede Wi-Fi</label>
-            <input type="password" id="prov-psk-pass" class="form-control" placeholder="Digite a senha..." autofocus>
+            <label class="form-label">Senha do Wi-Fi</label>
+            <input type="password" class="form-control" id="prov-psk-pass" placeholder="Mínimo 8 caracteres">
           </div>
         </div>
 
+        <!-- EAP Fields -->
         <div id="fields-eap" style="display:none;">
-          <div class="form-group">
-            <label class="form-label">Método EAP</label>
-            <select id="prov-eap-method" class="form-control">
-              <option value="PEAP" selected>PEAP</option>
-              <option value="TTLS">TTLS</option>
-              <option value="TLS">TLS</option>
-            </select>
+          <div class="grid-2" style="margin-bottom:0;">
+            <div class="form-group">
+              <label class="form-label">Método EAP</label>
+              <select class="form-control" id="prov-eap-method">
+                <option value="PEAP" selected>PEAP</option>
+                <option value="TTLS">TTLS</option>
+                <option value="PWD">PWD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fase 2 (Auth)</label>
+              <select class="form-control" id="prov-eap-phase2">
+                <option value="MSCHAPV2" selected>MSCHAPv2</option>
+                <option value="PAP">PAP</option>
+                <option value="GTC">GTC</option>
+              </select>
+            </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Autenticação de Fase 2</label>
-            <select id="prov-eap-phase2" class="form-control">
-              <option value="MSCHAPV2" selected>MSCHAPV2</option>
-              <option value="PAP">PAP</option>
-              <option value="GTC">GTC</option>
-            </select>
+            <label class="form-label">Identidade / Usuário</label>
+            <input type="text" class="form-control" id="prov-eap-user" placeholder="usuario@instituicao.edu.br">
           </div>
           <div class="form-group">
-            <label class="form-label">Usuário / Identidade</label>
-            <input type="text" id="prov-eap-user" class="form-control" placeholder="ex: usuario@unesp.br">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Senha EAP</label>
-            <input type="password" id="prov-eap-pass" class="form-control">
+            <label class="form-label">Senha</label>
+            <input type="password" class="form-control" id="prov-eap-pass">
           </div>
           <div class="form-group">
             <label class="form-label">Identidade Anônima (Opcional)</label>
-            <input type="text" id="prov-eap-anon" class="form-control" placeholder="anonymous@unesp.br">
+            <input type="text" class="form-control" id="prov-eap-anon" placeholder="anonymous@instituicao.edu.br">
           </div>
           <div class="form-group">
-            <label class="form-label">Domínio (Opcional)</label>
-            <input type="text" id="prov-eap-domain" class="form-control">
+            <label class="form-label">Domínio do Certificado (Opcional)</label>
+            <input type="text" class="form-control" id="prov-eap-domain" placeholder="instituicao.edu.br">
           </div>
         </div>
-      </div>
 
+        <div style="background:rgba(245, 158, 11, 0.1); border:1px solid rgba(245, 158, 11, 0.3); border-radius:var(--radius-md); padding:0.75rem; font-size:0.78rem; color:var(--warning);">
+          ⚠️ <strong>Rádio Único:</strong> Durante a conexão, o Ponto de Acesso sai do ar por ~75s para testar o enlace. Se a conexão falhar, o watchdog restaura o AP automaticamente.
+        </div>
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
         <button type="submit" class="btn btn-primary" id="btn-submit-provision">Conectar Agora</button>
@@ -1178,75 +1012,64 @@
 </div>
 
 <script>
-// State
+/* ==========================================================================
+   MultiForge Enterprise Client Controller
+   ========================================================================== */
 let currentNetworks = [];
 
-// Dynamic Host Detection for Cockpit
-const currentHost = window.location.hostname || '192.168.1.153';
-document.getElementById('btn-open-cockpit-link').href = `http://${currentHost}:9090`;
-document.getElementById('cockpit-iframe').src = `http://${currentHost}:9090`;
-
-// Navigation Router
+// Tab Navigation
 function showTab(tabId) {
-  document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-  
-  const targetView = document.getElementById('view-' + tabId);
-  const targetNav = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
-  
-  if (targetView) targetView.classList.add('active');
-  if (targetNav) targetNav.classList.add('active');
-  
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('data-tab') === tabId);
+  });
+  document.querySelectorAll('.page-view').forEach(el => {
+    el.classList.toggle('active', el.id === 'view-' + tabId);
+  });
   const titles = {
-    dashboard: 'Dashboard',
-    wifi: 'Wi-Fi & Scanner de Redes',
+    dashboard: 'Dashboard do Appliance',
+    wifi: 'Wi-Fi & Redes Disponíveis',
     ap: 'Configuração do Ponto de Acesso',
-    system: 'Métricas de Hardware (SoC & RAM)',
-    services: 'Gerenciador de Serviços (Systemd)',
-    cockpit: 'Cockpit Web Console (:9090)',
-    terminal: 'Console & Diagnósticos',
-    logs: 'Logs do Sistema (Journalctl)',
-    modules: 'ForgeHub (Módulos & AI)'
+    ethernet: 'Rede & Interfaces Físicas',
+    system: 'Sistema & Telemetria',
+    modules: 'Módulos MultiForge',
+    logs: 'Logs & Diagnóstico'
   };
   document.getElementById('page-title').textContent = titles[tabId] || 'MultiForge OS';
-  
-  if (tabId === 'modules') loadModulesHub();
-  if (tabId === 'services') loadServices();
-  if (tabId === 'system') updateTelemetry();
-  if (tabId === 'logs') fetchLogs();
-  
-  // Close sidebar on mobile after navigation
-  document.getElementById('sidebar').classList.remove('open');
+  if (tabId === 'modules') {
+    loadModulesHub();
+  }
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('open');
+  }
 }
 
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', (e) => {
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', (e) => {
     e.preventDefault();
-    const tab = item.getAttribute('data-tab');
+    const tab = el.getAttribute('data-tab');
     location.hash = tab;
     showTab(tab);
   });
 });
 
-// Mobile menu toggle
+window.addEventListener('hashchange', () => {
+  const tab = location.hash.replace('#', '') || 'dashboard';
+  showTab(tab);
+});
+
+// Mobile Sidebar Toggle
 document.getElementById('mobile-toggle').addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('open');
 });
 
-// Dark / Light Theme Toggle
-const themeToggleBtn = document.getElementById('theme-toggle');
+// Theme Switcher (Dark / Light)
+const themeToggle = document.getElementById('theme-toggle');
 const sunIcon = document.getElementById('theme-icon-sun');
 const moonIcon = document.getElementById('theme-icon-moon');
 
-themeToggleBtn.addEventListener('click', () => {
-  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem('forgeos_theme', newTheme);
-  updateThemeIcons(newTheme);
-});
-
-function updateThemeIcons(theme) {
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('mf_theme', theme);
   if (theme === 'light') {
     sunIcon.style.display = 'block';
     moonIcon.style.display = 'none';
@@ -1255,18 +1078,23 @@ function updateThemeIcons(theme) {
     moonIcon.style.display = 'block';
   }
 }
-const savedTheme = localStorage.getItem('forgeos_theme') || 'dark';
-document.documentElement.setAttribute('data-theme', savedTheme);
-updateThemeIcons(savedTheme);
 
-// Wi-Fi Connection Modal
-function openConnectModal(ssid, encryption) {
+const savedTheme = localStorage.getItem('mf_theme') || 'dark';
+setTheme(savedTheme);
+
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  setTheme(current === 'dark' ? 'light' : 'dark');
+});
+
+// Modal Logic
+function openConnectModal(ssid, enc) {
+  document.getElementById('modal-network-title').textContent = 'Conectar a: ' + ssid;
   document.getElementById('prov-ssid').value = ssid;
-  const isEap = encryption === 'eap';
+  const isEap = enc === 'eap' || ssid.toLowerCase().includes('eduroam');
   document.querySelector(`input[name="prov-mode"][value="${isEap ? 'eap' : 'psk'}"]`).checked = true;
   toggleProvMode();
   document.getElementById('connect-modal').classList.add('active');
-  if (!isEap) setTimeout(() => document.getElementById('prov-psk-pass').focus(), 150);
 }
 
 function closeModal() {
@@ -1284,10 +1112,10 @@ document.getElementById('btn-manual-network').addEventListener('click', () => {
   if (ssid) openConnectModal(ssid.trim(), 'psk');
 });
 
-// Wi-Fi Scanning
+// Wi-Fi Scanning & Rendering
 async function fetchScan() {
   const btn = document.getElementById('btn-refresh-scan');
-  btn.style.opacity = '0.5';
+  btn.classList.add('loading');
   try {
     const res = await fetch('/api/scan');
     const data = await res.json();
@@ -1296,7 +1124,7 @@ async function fetchScan() {
   } catch (err) {
     console.error('Scan error:', err);
   } finally {
-    btn.style.opacity = '1';
+    btn.classList.remove('loading');
   }
 }
 
@@ -1305,6 +1133,7 @@ function renderWifiNetworks(networks) {
   const filtered = networks.filter(n => n.ssid.toLowerCase().includes(filter));
   
   document.getElementById('badge-wifi-count').textContent = networks.length + ' redes';
+  
   const container = document.getElementById('wifi-networks-container');
   const dashContainer = document.getElementById('dash-wifi-list');
   
@@ -1326,7 +1155,7 @@ function renderWifiNetworks(networks) {
       ? '<span class="badge badge-eap">802.1X EAP</span>'
       : (net.encryption === 'open' 
         ? '<span class="badge badge-open">ABERTA</span>' 
-        : '<span class="badge badge-psk">WPA2-PSK</span>');
+        : '<span class="badge badge-psk">WPA/WPA2-PSK</span>');
 
     return `
       <div class="wifi-item">
@@ -1355,6 +1184,7 @@ function renderWifiNetworks(networks) {
 
   container.innerHTML = html;
 
+  // Render top 3 on dashboard
   dashContainer.innerHTML = filtered.slice(0, 3).map(net => `
     <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid var(--border-subtle);">
       <div>
@@ -1371,12 +1201,13 @@ document.getElementById('wifi-filter-input').addEventListener('input', () => {
 });
 document.getElementById('btn-refresh-scan').addEventListener('click', fetchScan);
 
-// System & Telemetry Polling
+// System Status Polling
 async function updateStatus() {
   try {
     const res = await fetch('/api/status');
     const s = await res.json();
     
+    // Topbar and Footer badges
     const badge = document.getElementById('top-status-badge');
     const badgeText = document.getElementById('top-status-text');
     const footerLabel = document.getElementById('footer-mode-label');
@@ -1399,172 +1230,38 @@ async function updateStatus() {
       footerDot.className = 'status-dot';
     }
 
+    // Dashboard
     document.getElementById('dash-mode').textContent = s.ap_active ? 'Captive AP' : (s.client_ssid || 'Cliente');
     document.getElementById('dash-mode-sub').textContent = s.ap_active ? (s.ssid + ' (192.168.4.1)') : (s.client_ip || 'Sem IP');
 
-    updateTelemetry();
+    // Telemetry
+    const sysRes = await fetch('/rest/systemStatus');
+    const sys = await sysRes.json();
+    if (sys.total_heap) {
+      const usedMb = Math.round((sys.total_heap - sys.free_heap) / 1048576);
+      const totalMb = Math.round(sys.total_heap / 1048576);
+      const pct = Math.round((usedMb / totalMb) * 100);
+      document.getElementById('dash-mem-val').textContent = usedMb + ' MB';
+      document.getElementById('dash-mem-bar').style.width = pct + '%';
+      document.getElementById('dash-mem-sub').textContent = `Total: ${totalMb} MB (${100 - pct}% Livre)`;
+    }
+    if (sys.uptime) {
+      const hrs = Math.floor(sys.uptime / 3600);
+      const mins = Math.floor((sys.uptime % 3600) / 60);
+      document.getElementById('dash-uptime').textContent = `${hrs}h ${mins}m`;
+    }
+
+    // Ethernet
+    const ethRes = await fetch('/rest/ethernetStatus');
+    const eth = await ethRes.json();
+    if (eth.local_ip) {
+      document.getElementById('dash-eth-ip').textContent = eth.local_ip;
+      document.getElementById('dash-eth-mac').textContent = 'MAC: ' + eth.mac_address;
+      document.getElementById('eth-table-ip').textContent = eth.local_ip;
+      document.getElementById('eth-table-mac').textContent = eth.mac_address;
+    }
   } catch (err) {
     console.error('Status poll error:', err);
-  }
-}
-
-async function updateTelemetry() {
-  try {
-    const res = await fetch('/api/cockpit/telemetry');
-    const t = await res.json();
-
-    // SoC Temperature
-    const temp = t.cpu.temp_c;
-    document.getElementById('dash-temp-val').textContent = temp + ' °C';
-    document.getElementById('telem-temp').textContent = temp + ' °C';
-    if (temp > 75) {
-      document.getElementById('dash-temp-val').style.color = 'var(--danger)';
-    } else if (temp > 60) {
-      document.getElementById('dash-temp-val').style.color = 'var(--warning)';
-    } else {
-      document.getElementById('dash-temp-val').style.color = 'var(--success)';
-    }
-
-    // CPU Freq
-    document.getElementById('telem-freq').textContent = (t.cpu.freq_mhz / 1000).toFixed(2) + ' GHz';
-
-    // RAM
-    const ram = t.ram;
-    document.getElementById('dash-mem-val').textContent = ram.used_mb + ' MB';
-    document.getElementById('dash-mem-bar').style.width = ram.usage_pct + '%';
-    document.getElementById('dash-mem-sub').textContent = `Física: ${ram.total_mb} MB · ZRAM: ${t.zram.disksize_mb || 925} MB (ZSTD)`;
-    document.getElementById('telem-ram-used-text').textContent = `${ram.used_mb} MB / ${ram.total_mb} MB (${ram.usage_pct}%)`;
-    document.getElementById('telem-ram-bar').style.width = ram.usage_pct + '%';
-    document.getElementById('telem-ram-cache').textContent = ram.cached_mb + ' MB';
-
-    // Uptime
-    document.getElementById('telem-uptime').textContent = t.device.uptime_str;
-
-    // Disks
-    const rootDisk = t.storage.find(s => s.mount === '/');
-    if (rootDisk) {
-      document.getElementById('telem-disk-root').textContent = `${rootDisk.used_gb} GB / ${rootDisk.total_gb} GB (${rootDisk.percent}%)`;
-      document.getElementById('telem-disk-root-bar').style.width = rootDisk.percent + '%';
-    }
-    const bootDisk = t.storage.find(s => s.mount === '/boot');
-    if (bootDisk) {
-      document.getElementById('telem-disk-boot').textContent = `${(bootDisk.used_gb*1024).toFixed(0)} MB / ${(bootDisk.total_gb*1024).toFixed(0)} MB (${bootDisk.percent}%)`;
-      document.getElementById('telem-disk-boot-bar').style.width = bootDisk.percent + '%';
-    }
-  } catch (err) {
-    console.error('Telemetry error:', err);
-  }
-}
-
-// Services Manager Loader & Actions
-async function loadServices() {
-  const container = document.getElementById('services-grid');
-  try {
-    const res = await fetch('/api/cockpit/services');
-    const data = await res.json();
-    const services = data.services || [];
-    
-    document.getElementById('badge-services-count').textContent = services.length + ' units';
-
-    container.innerHTML = services.map(s => {
-      const isActive = s.active;
-      const stateBadge = isActive 
-        ? '<span class="badge badge-open">Ativo (Running)</span>' 
-        : (s.state === 'failed' 
-          ? '<span class="badge badge-danger">Falhou (Failed)</span>' 
-          : '<span class="badge badge-eap">Inativo (Stopped)</span>');
-
-      return `
-        <div class="service-card">
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
-              <div>
-                <h4 style="font-size:0.92rem; font-weight:700;">${escapeHtml(s.name)}</h4>
-                <span style="font-size:0.72rem; color:var(--text-faint); font-family:var(--font-mono);">${s.unit}</span>
-              </div>
-              ${stateBadge}
-            </div>
-            <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:0.75rem;">
-              ${escapeHtml(s.description)}
-            </p>
-          </div>
-          <div style="display:flex; gap:0.4rem; padding-top:0.6rem; border-top:1px solid var(--border-subtle); flex-wrap:wrap;">
-            ${isActive 
-              ? `<button class="btn btn-secondary btn-sm" onclick="serviceAction('${s.unit}', 'restart')">🔄 Reiniciar</button>
-                 <button class="btn btn-danger btn-sm" onclick="serviceAction('${s.unit}', 'stop')">⏹ Parar</button>`
-              : `<button class="btn btn-primary btn-sm" onclick="serviceAction('${s.unit}', 'start')">▶ Iniciar</button>`}
-            <button class="btn btn-secondary btn-sm" onclick="showServiceLogs('${s.unit}')">📄 Logs</button>
-          </div>
-        </div>
-      `;
-    }).join('');
-  } catch (err) {
-    container.innerHTML = '<p style="color:var(--danger);">Erro ao carregar lista de serviços.</p>';
-  }
-}
-
-async function serviceAction(unit, action) {
-  try {
-    const res = await fetch(`/api/cockpit/service/${unit}/${action}`, { method: 'POST' });
-    const j = await res.json();
-    if (j.ok) {
-      loadServices();
-    } else {
-      alert('Erro na ação: ' + (j.error || 'Falha ao executar'));
-    }
-  } catch (err) {
-    alert('Erro de comunicação com o servidor');
-  }
-}
-
-function showServiceLogs(unit) {
-  showTab('logs');
-  const sel = document.getElementById('log-unit-select');
-  sel.value = unit;
-  fetchLogs();
-}
-
-// Terminal Diagnostics Execution
-document.getElementById('terminal-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const input = document.getElementById('terminal-input');
-  const cmd = input.value.trim();
-  if (cmd) {
-    runCommand(cmd);
-    input.value = '';
-  }
-});
-
-async function runCommand(cmd) {
-  const box = document.getElementById('terminal-box');
-  box.textContent += `\nroot@forgeos-btv:~# ${cmd}\n`;
-  box.scrollTop = box.scrollHeight;
-  try {
-    const res = await fetch('/api/cockpit/exec', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ command: cmd })
-    });
-    const j = await res.json();
-    box.textContent += j.output + '\n';
-  } catch (err) {
-    box.textContent += `Erro na execução: ${err}\n`;
-  }
-  box.scrollTop = box.scrollHeight;
-}
-
-// Journalctl Logs Fetcher
-async function fetchLogs() {
-  const unit = document.getElementById('log-unit-select').value;
-  const box = document.getElementById('journal-logs-box');
-  box.textContent = 'Buscando logs recentes...\n';
-  try {
-    const res = await fetch(`/api/cockpit/logs?unit=${unit}&lines=60`);
-    const data = await res.json();
-    box.textContent = (data.logs || []).join('\n') || 'Nenhum registro encontrado.';
-    box.scrollTop = box.scrollHeight;
-  } catch (err) {
-    box.textContent = 'Erro ao ler logs do journalctl.';
   }
 }
 
@@ -1640,6 +1337,10 @@ document.getElementById('btn-quick-reset').addEventListener('click', async () =>
     await fetch('/api/reset', { method: 'POST' });
     setTimeout(updateStatus, 2000);
   }
+});
+
+document.getElementById('btn-clear-logs').addEventListener('click', () => {
+  document.getElementById('terminal-logs').textContent = '';
 });
 
 function escapeHtml(text) {
@@ -1751,7 +1452,7 @@ async function loadModulesHub() {
 
 async function moduleAction(modId, action) {
   try {
-    const res = await fetch(`/api/modules/${modId}/${action}`, {
+    const res = await fetch(\`/api/modules/\${modId}/\${action}\`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({})
