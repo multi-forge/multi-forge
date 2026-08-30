@@ -8,27 +8,27 @@
   <link rel="manifest" href="/manifest.json">
   <style>
     /* ==========================================================================
-       MultiForge Enterprise Design System (Sober Hardware & Infrastructure UI)
+       MultiForge Enterprise Design System — SOBER HARDWARE & INFRASTRUCTURE UI
        ========================================================================== */
     :root {
       --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-mono: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       
-      /* Dark Theme (Default — Sober Slate & Graphite) */
-      --bg-base: #0B0F19;
-      --bg-surface: #111827;
-      --bg-surface-elevated: #182234;
-      --bg-card: #151D2E;
-      --bg-glass: rgba(17, 24, 39, 0.92);
-      --border: #1E293B;
-      --border-subtle: #192333;
+      /* Dark Theme (Default — Deep Graphite & Subtle Slate) */
+      --bg-base: #0B0E14;
+      --bg-surface: #111620;
+      --bg-surface-elevated: #18202F;
+      --bg-card: #141A26;
+      --bg-glass: rgba(17, 22, 32, 0.94);
+      --border: #1E2738;
+      --border-subtle: #172030;
       --border-focus: #3B82F6;
       
       --text-main: #F1F5F9;
-      --text-muted: #94A3B8;
-      --text-faint: #64748B;
+      --text-muted: #8E9BAE;
+      --text-faint: #5A677D;
       
-      /* Single Refined Corporate Accent (Enterprise Cobalt) */
+      /* Single Refined Corporate Accent (Enterprise Steel Blue) */
       --primary: #2563EB;
       --primary-hover: #1D4ED8;
       --primary-subtle: rgba(37, 99, 235, 0.12);
@@ -44,20 +44,20 @@
       --danger-subtle: rgba(239, 68, 68, 0.12);
       
       --radius-sm: 4px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
+      --radius-md: 6px;
+      --radius-lg: 10px;
       --radius-full: 9999px;
       
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35);
     }
 
     [data-theme="light"] {
-      --bg-base: #F8FAFC;
+      --bg-base: #F4F6F9;
       --bg-surface: #FFFFFF;
-      --bg-surface-elevated: #F1F5F9;
+      --bg-surface-elevated: #EDF2F7;
       --bg-card: #FFFFFF;
-      --bg-glass: rgba(255, 255, 255, 0.95);
+      --bg-glass: rgba(255, 255, 255, 0.96);
       --border: #E2E8F0;
       --border-subtle: #EDF2F7;
       --border-focus: #2563EB;
@@ -76,7 +76,7 @@
 
     /* Reset & Base */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; font-family: var(--font-sans); background: var(--bg-base); color: var(--text-main); -webkit-font-smoothing: antialiased; font-size: 14px; line-height: 1.5; }
+    html, body { height: 100%; font-family: var(--font-sans); background: var(--bg-base); color: var(--text-main); -webkit-font-smoothing: antialiased; font-size: 13.5px; line-height: 1.5; }
     
     a { color: inherit; text-decoration: none; }
     button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
@@ -87,26 +87,26 @@
     
     /* Sidebar Navigation */
     .sidebar {
-      width: 240px;
+      width: 230px;
       background: var(--bg-surface);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
-      transition: transform 0.25s ease;
+      transition: transform 0.2s ease;
       z-index: 40;
     }
 
     .brand-header {
-      padding: 1.1rem 1.25rem;
+      padding: 1.1rem 1.15rem;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 0.75rem;
     }
     .brand-logo {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
@@ -116,42 +116,38 @@
       border: 1px solid var(--border);
       flex-shrink: 0;
     }
-    .brand-logo-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .brand-info h1 { font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text-main); }
-    .brand-info span { font-size: 0.72rem; color: var(--text-faint); font-family: var(--font-mono); display: block; }
+    .brand-logo-img { width: 100%; height: 100%; object-fit: cover; }
+    .brand-info h1 { font-size: 0.92rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text-main); }
+    .brand-info span { font-size: 0.7rem; color: var(--text-faint); font-family: var(--font-mono); display: block; }
 
     .nav-menu {
       flex: 1;
-      padding: 0.85rem 0.6rem;
+      padding: 0.85rem 0.55rem;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 0.15rem;
     }
 
     .nav-section-title {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       color: var(--text-faint);
-      padding: 0.65rem 0.65rem 0.25rem;
+      padding: 0.75rem 0.65rem 0.25rem;
     }
 
     .nav-item {
       display: flex;
       align-items: center;
       gap: 0.65rem;
-      padding: 0.55rem 0.65rem;
+      padding: 0.5rem 0.65rem;
       border-radius: var(--radius-md);
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 500;
       color: var(--text-muted);
-      transition: all 0.15s ease;
+      transition: all 0.12s ease;
       position: relative;
     }
     .nav-item:hover { background: var(--bg-surface-elevated); color: var(--text-main); }
@@ -166,24 +162,23 @@
       left: 0;
       top: 6px;
       bottom: 6px;
-      width: 3px;
+      width: 2px;
       background: var(--primary);
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     }
-    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--text-faint); }
+    .nav-item svg { width: 15px; height: 15px; flex-shrink: 0; color: var(--text-faint); }
     .nav-item.active svg { color: var(--primary); }
 
     .nav-badge {
       margin-left: auto;
       font-size: 0.68rem;
       font-weight: 500;
-      padding: 0.1rem 0.45rem;
+      padding: 0.08rem 0.45rem;
       border-radius: var(--radius-full);
       background: var(--bg-surface-elevated);
       color: var(--text-muted);
       border: 1px solid var(--border);
     }
-    .nav-badge.active { background: var(--success-subtle); color: var(--success); border-color: transparent; }
 
     .sidebar-footer {
       padding: 0.85rem 1rem;
@@ -202,8 +197,8 @@
       font-family: var(--font-mono);
     }
     .status-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: var(--success);
       flex-shrink: 0;
@@ -222,7 +217,7 @@
 
     /* Top Navbar */
     .topbar {
-      height: 52px;
+      height: 50px;
       border-bottom: 1px solid var(--border);
       background: var(--bg-glass);
       backdrop-filter: blur(8px);
@@ -246,7 +241,7 @@
       color: var(--text-muted);
     }
     .topbar-title {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 600;
       color: var(--text-main);
     }
@@ -261,19 +256,18 @@
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.25rem 0.65rem;
+      padding: 0.2rem 0.55rem;
       border-radius: var(--radius-full);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 500;
       background: var(--bg-surface);
       border: 1px solid var(--border);
+      color: var(--text-muted);
     }
-    .status-badge.ok { color: var(--success); background: var(--success-subtle); border-color: transparent; }
-    .status-badge.warn { color: var(--warning); background: var(--warning-subtle); border-color: transparent; }
 
     .icon-btn {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
@@ -281,7 +275,7 @@
       color: var(--text-muted);
       border: 1px solid var(--border);
       background: var(--bg-surface);
-      transition: all 0.15s ease;
+      transition: all 0.12s ease;
     }
     .icon-btn:hover { color: var(--text-main); border-color: var(--text-faint); }
 
@@ -294,7 +288,7 @@
 
     .page-view {
       display: none;
-      animation: fadeIn 0.15s ease;
+      animation: fadeIn 0.12s ease;
     }
     .page-view.active { display: block; }
 
@@ -312,28 +306,29 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 1.1rem;
+      padding: 1rem 1.1rem;
       box-shadow: var(--shadow-sm);
       height: 100%;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
     }
 
     .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.75rem;
     }
     .card-title {
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 0.45rem;
       color: var(--text-main);
     }
-    .card-title svg { color: var(--text-faint); width: 16px; height: 16px; }
+    .card-title svg { color: var(--text-faint); width: 15px; height: 15px; }
 
     .stat-box {
       display: flex;
@@ -341,18 +336,18 @@
       gap: 0.2rem;
       justify-content: space-between;
     }
-    .stat-label { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-    .stat-value { font-size: 1.4rem; font-weight: 600; font-family: var(--font-mono); letter-spacing: -0.02em; color: var(--text-main); }
+    .stat-label { font-size: 0.7rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .stat-value { font-size: 1.25rem; font-weight: 600; font-family: var(--font-mono); letter-spacing: -0.02em; color: var(--text-main); }
     .stat-sub { font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; margin-top: 0.25rem; }
 
     /* Progress Bar */
     .progress-bar-bg {
       width: 100%;
-      height: 5px;
+      height: 4px;
       background: var(--bg-surface-elevated);
       border-radius: var(--radius-full);
       overflow: hidden;
-      margin-top: 0.45rem;
+      margin-top: 0.4rem;
     }
     .progress-bar-fill {
       height: 100%;
@@ -369,8 +364,8 @@
     }
     .data-table th {
       text-align: left;
-      padding: 0.6rem 0.85rem;
-      font-size: 0.7rem;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.68rem;
       color: var(--text-faint);
       font-weight: 600;
       text-transform: uppercase;
@@ -378,24 +373,46 @@
       border-bottom: 1px solid var(--border);
     }
     .data-table td {
-      padding: 0.7rem 0.85rem;
+      padding: 0.65rem 0.75rem;
       border-bottom: 1px solid var(--border-subtle);
       color: var(--text-muted);
     }
     .data-table tr:hover td { background: var(--bg-surface-elevated); color: var(--text-main); }
     .data-table td.strong { font-weight: 500; color: var(--text-main); font-family: var(--font-mono); }
 
+    /* Unified Toolbar */
+    .toolbar-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.85rem;
+    }
+    .toolbar-search {
+      flex: 1;
+      height: 34px;
+      padding: 0 0.75rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.82rem;
+    }
+    .toolbar-search:focus {
+      outline: none;
+      border-color: var(--border-focus);
+    }
+
     /* Wi-Fi Scanner Item */
     .wifi-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.75rem 0.9rem;
+      padding: 0.65rem 0.85rem;
       border-radius: var(--radius-md);
       border: 1px solid var(--border);
       background: var(--bg-surface);
-      margin-bottom: 0.5rem;
-      transition: all 0.15s ease;
+      margin-bottom: 0.45rem;
+      transition: all 0.12s ease;
     }
     .wifi-item:hover {
       border-color: var(--border-focus);
@@ -405,8 +422,8 @@
       display: flex;
       align-items: flex-end;
       gap: 2px;
-      height: 14px;
-      width: 14px;
+      height: 13px;
+      width: 13px;
     }
     .wifi-bar {
       width: 2px;
@@ -421,12 +438,12 @@
     .wifi-bar:nth-child(3) { height: 75%; }
     .wifi-bar:nth-child(4) { height: 100%; }
 
-    .wifi-details h4 { font-size: 0.88rem; font-weight: 500; color: var(--text-main); }
+    .wifi-details h4 { font-size: 0.85rem; font-weight: 500; color: var(--text-main); }
     .wifi-meta {
       display: flex;
       align-items: center;
       gap: 0.45rem;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-faint);
       font-family: var(--font-mono);
       margin-top: 0.1rem;
@@ -434,28 +451,53 @@
     .badge {
       display: inline-flex;
       align-items: center;
-      padding: 0.12rem 0.45rem;
+      padding: 0.1rem 0.45rem;
       border-radius: var(--radius-sm);
       font-size: 0.68rem;
       font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
+      background: var(--bg-surface-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
     }
-    .badge-psk { background: var(--bg-surface-elevated); color: var(--text-muted); border: 1px solid var(--border); }
-    .badge-eap { background: var(--primary-subtle); color: var(--primary); }
-    .badge-open { background: var(--success-subtle); color: var(--success); }
+    .badge-status-ok { background: var(--success-subtle); color: var(--success); border-color: transparent; }
+
+    /* Segmented Control / Tabs */
+    .segmented-control {
+      display: flex;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 2px;
+      margin-bottom: 1rem;
+    }
+    .segment-btn {
+      flex: 1;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      text-align: center;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      transition: all 0.12s ease;
+    }
+    .segment-btn.active {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
 
     /* Buttons & Form Inputs */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
-      padding: 0.45rem 0.85rem;
+      gap: 0.35rem;
+      padding: 0.4rem 0.75rem;
       border-radius: var(--radius-md);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 500;
-      transition: all 0.15s ease;
+      transition: all 0.12s ease;
       cursor: pointer;
     }
     .btn-primary {
@@ -464,25 +506,25 @@
     }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-secondary {
-      background: var(--bg-surface-elevated);
+      background: var(--bg-surface);
       border: 1px solid var(--border);
       color: var(--text-main);
     }
-    .btn-secondary:hover { background: var(--border); }
-    .btn-sm { padding: 0.3rem 0.65rem; font-size: 0.75rem; }
+    .btn-secondary:hover { background: var(--bg-surface-elevated); border-color: var(--text-faint); }
+    .btn-sm { padding: 0.28rem 0.6rem; font-size: 0.74rem; }
 
-    .form-group { margin-bottom: 0.95rem; }
-    .form-label { display: block; font-size: 0.75rem; font-weight: 500; margin-bottom: 0.3rem; color: var(--text-muted); }
+    .form-group { margin-bottom: 0.85rem; }
+    .form-label { display: block; font-size: 0.72rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--text-muted); }
     .form-control {
       width: 100%;
-      height: 36px;
-      padding: 0 0.75rem;
+      height: 34px;
+      padding: 0 0.65rem;
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       color: var(--text-main);
-      font-size: 0.82rem;
-      transition: border-color 0.15s ease;
+      font-size: 0.8rem;
+      transition: border-color 0.12s ease;
     }
     .form-control:focus {
       outline: none;
@@ -512,20 +554,20 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       width: 100%;
-      max-width: 460px;
+      max-width: 450px;
       box-shadow: var(--shadow-md);
       overflow: hidden;
     }
     .modal-header {
-      padding: 1rem 1.25rem;
+      padding: 0.85rem 1.15rem;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .modal-body { padding: 1.25rem; max-height: 75vh; overflow-y: auto; }
+    .modal-body { padding: 1.15rem; }
     .modal-footer {
-      padding: 0.85rem 1.25rem;
+      padding: 0.75rem 1.15rem;
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -534,23 +576,38 @@
       background: var(--bg-surface-elevated);
     }
 
-    /* Terminal */
-    .terminal-window {
+    /* Modern Terminal Console */
+    .terminal-container {
       background: #090C10;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .terminal-toolbar {
+      padding: 0.45rem 0.75rem;
+      background: #111620;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .terminal-window {
       padding: 0.85rem;
       font-family: var(--font-mono);
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: #94A3B8;
-      height: 380px;
+      height: 350px;
       overflow-y: auto;
       white-space: pre-wrap;
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
     /* Responsive */
-    @media (max-width: 900px) {
+    @media (max-width: 960px) {
       .grid-4 { grid-template-columns: repeat(2, 1fr); }
       .grid-3 { grid-template-columns: 1fr; }
     }
@@ -592,14 +649,14 @@
       <a href="#ap" class="nav-item" data-tab="ap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49"/></svg>
         <span>Ponto de Acesso (AP)</span>
-        <span class="nav-badge active" id="badge-ap-status">ON</span>
+        <span class="nav-badge" id="badge-ap-status">ON</span>
       </a>
       <a href="#ethernet" class="nav-item" data-tab="ethernet">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
         <span>Rede &amp; Ethernet</span>
       </a>
 
-      <div class="nav-section-title">Infraestrutura</div>
+      <div class="nav-section-title">Hardware &amp; Módulos</div>
       <a href="#system" class="nav-item" data-tab="system">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
         <span>Sistema &amp; Métricas</span>
@@ -620,8 +677,8 @@
         <span id="footer-mode-label">AP: 192.168.4.1</span>
       </div>
       <button class="icon-btn" id="theme-toggle" title="Alternar Modo Escuro / Claro">
-        <svg id="theme-icon-sun" style="display:none;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        <svg id="theme-icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="theme-icon-sun" style="display:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="theme-icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
     </div>
   </aside>
@@ -632,18 +689,18 @@
     <header class="topbar">
       <div class="topbar-left">
         <button class="mobile-menu-btn" id="mobile-toggle">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
         <span class="topbar-title" id="page-title">Dashboard do Appliance</span>
       </div>
 
       <div class="topbar-right">
-        <div class="status-badge ok" id="top-status-badge">
+        <div class="status-badge" id="top-status-badge">
           <span class="status-dot"></span>
           <span id="top-status-text">AP Ativo</span>
         </div>
         <button class="btn btn-secondary btn-sm" id="btn-quick-reset" title="Restaurar modo AP">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
           <span>Reset AP</span>
         </button>
       </div>
@@ -651,13 +708,13 @@
 
     <!-- Content Sections -->
     <main class="content-area">
-      <!-- 1. DASHBOARD -->
+      <!-- 1. DASHBOARD (UNIFIED 4-CARD TOP ROW + SYMMETRICAL BOTTOM ROW) -->
       <section class="page-view active" id="view-dashboard">
         <div class="grid-4">
           <div class="card stat-box">
             <div>
               <span class="stat-label">Modo Operacional</span>
-              <div class="stat-value" id="dash-mode" style="font-size:1.15rem; color:var(--text-main);">Captive AP</div>
+              <div class="stat-value" id="dash-mode" style="font-size:1.15rem;">Captive AP</div>
             </div>
             <div class="stat-sub">
               <span class="status-dot" id="dash-mode-dot"></span>
@@ -684,7 +741,7 @@
               </div>
             </div>
             <div class="stat-sub">
-              <span id="dash-mem-sub">Total: 1.8 GB (75% Livre)</span>
+              <span id="dash-mem-sub">Total: 1.89 GB (75% Livre)</span>
             </div>
           </div>
 
@@ -707,7 +764,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/></svg>
                 Redes Wi-Fi Próximas
               </span>
-              <button class="btn btn-primary btn-sm" onclick="showTab('wifi')">Ver Todas</button>
+              <button class="btn btn-secondary btn-sm" onclick="showTab('wifi')">Ver Todas</button>
             </div>
             <div id="dash-wifi-list">
               <p style="color:var(--text-faint); font-size:0.8rem; padding: 0.5rem 0;">Escaneando redes ao redor...</p>
@@ -735,28 +792,27 @@
         </div>
       </section>
 
-      <!-- 2. WI-FI & SCANNER -->
+      <!-- 2. WI-FI & SCANNER (UNIFIED TOOLBAR + DISCRETE BUTTONS) -->
       <section class="page-view" id="view-wifi">
         <div class="card" style="margin-bottom:1.25rem;">
-          <div class="card-header">
+          <div class="card-header" style="margin-bottom:0.6rem;">
             <span class="card-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
               Radar de Redes Wi-Fi Disponíveis
             </span>
-            <div style="display:flex; gap:0.5rem;">
-              <button class="btn btn-secondary btn-sm" id="btn-manual-network">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <span>Rede Oculta / Manual</span>
-              </button>
-              <button class="btn btn-primary btn-sm" id="btn-refresh-scan">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                <span>Escanear Agora</span>
-              </button>
-            </div>
           </div>
-          
-          <div style="margin-bottom:0.85rem;">
-            <input type="text" class="form-control" id="wifi-filter-input" placeholder="Filtrar por nome de rede (SSID)..." style="max-width:320px;">
+
+          <!-- Unified Toolbar -->
+          <div class="toolbar-bar">
+            <input type="text" class="toolbar-search" id="wifi-filter-input" placeholder="Filtrar por nome de rede (SSID)...">
+            <button class="btn btn-secondary btn-sm" id="btn-manual-network">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>+ Rede Oculta</span>
+            </button>
+            <button class="btn btn-primary btn-sm" id="btn-refresh-scan">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>Escanear Agora</span>
+            </button>
           </div>
 
           <div id="wifi-networks-container">
@@ -765,7 +821,7 @@
         </div>
       </section>
 
-      <!-- 3. ACCESS POINT (AP) -->
+      <!-- 3. ACCESS POINT (AP) (BALANCED FORM & BUTTON) -->
       <section class="page-view" id="view-ap">
         <div class="grid-2">
           <div class="card">
@@ -786,7 +842,7 @@
                 <input type="password" class="form-control" id="ap-cfg-pass" placeholder="Mínimo 8 caracteres (WPA2-PSK)">
               </div>
 
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.95rem;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1rem;">
                 <div>
                   <label class="form-label">Canal Wi-Fi (2.4 GHz)</label>
                   <select class="form-control" id="ap-cfg-channel">
@@ -801,15 +857,17 @@
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-primary" style="width:100%;">
-                Salvar e Reiniciar AP
-              </button>
+              <div style="display:flex; justify-content:flex-end;">
+                <button type="submit" class="btn btn-primary">
+                  Salvar e Reiniciar AP
+                </button>
+              </div>
             </form>
           </div>
 
           <div class="card">
             <div class="card-header">
-              <span class="card-title">Status do Servidor DHCP</span>
+              <span class="card-title">Status do Servidor DHCP &amp; Roteamento</span>
             </div>
             <table class="data-table">
               <tbody>
@@ -824,7 +882,7 @@
         </div>
       </section>
 
-      <!-- 4. ETHERNET & NETWORK -->
+      <!-- 4. ETHERNET & NETWORK (ENRICHED TABLE) -->
       <section class="page-view" id="view-ethernet">
         <div class="card">
           <div class="card-header">
@@ -837,33 +895,39 @@
             <thead>
               <tr>
                 <th>Interface</th>
-                <th>Tipo</th>
+                <th>Tipo / Adaptador</th>
                 <th>Endereço IPv4</th>
                 <th>Endereço MAC</th>
-                <th>Estado</th>
+                <th>Link / Velocidade</th>
+                <th>Tráfego (RX / TX)</th>
+                <th style="text-align:right;">Estado</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td class="strong">eth0</td>
-                <td>Ethernet 100/1000M</td>
+                <td>Realtek RTL8211F</td>
                 <td class="strong" id="eth-table-ip">192.168.1.153</td>
                 <td class="strong" id="eth-table-mac">EC:2E:AB:41:1E:75</td>
-                <td><span class="badge badge-open">CONECTADO</span></td>
+                <td class="strong">1000 Mbps Full-Duplex</td>
+                <td class="strong">42.8 MB / 18.2 MB</td>
+                <td style="text-align:right;"><span class="badge badge-status-ok">CONECTADO</span></td>
               </tr>
               <tr>
                 <td class="strong">wlan0</td>
-                <td>Wi-Fi (RTL8189FTV)</td>
+                <td>Realtek RTL8189FTV</td>
                 <td class="strong" id="wlan-table-ip">192.168.4.1</td>
                 <td class="strong" id="wlan-table-mac">3C:7A:AA:39:F6:C2</td>
-                <td><span class="badge badge-psk">AP ATIVO</span></td>
+                <td class="strong">72.2 Mbps (802.11n)</td>
+                <td class="strong">14.1 MB / 6.5 MB</td>
+                <td style="text-align:right;"><span class="badge">AP ATIVO</span></td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- 5. SYSTEM & METRICS -->
+      <!-- 5. SYSTEM & METRICS (ALIGNED LABELS & PROGRESS BARS) -->
       <section class="page-view" id="view-system">
         <div class="grid-2">
           <div class="card">
@@ -872,11 +936,11 @@
             </div>
             <table class="data-table">
               <tbody>
-                <tr><td>forge-ap.service</td><td><span class="badge badge-open">ATIVO</span></td></tr>
-                <tr><td>forge-portal.service</td><td><span class="badge badge-open">RODANDO</span></td></tr>
-                <tr><td>forge-display.service</td><td><span class="badge badge-open">RODANDO</span></td></tr>
-                <tr><td>forge-watchdog.service</td><td><span class="badge badge-open">RODANDO</span></td></tr>
-                <tr><td>forge-fbcon-disable.service</td><td><span class="badge badge-open">ATIVO</span></td></tr>
+                <tr><td>forge-ap.service</td><td style="text-align:right;"><span class="badge badge-status-ok">ATIVO</span></td></tr>
+                <tr><td>forge-portal.service</td><td style="text-align:right;"><span class="badge badge-status-ok">RODANDO</span></td></tr>
+                <tr><td>forge-display.service</td><td style="text-align:right;"><span class="badge badge-status-ok">RODANDO</span></td></tr>
+                <tr><td>forge-watchdog.service</td><td style="text-align:right;"><span class="badge badge-status-ok">RODANDO</span></td></tr>
+                <tr><td>forge-fbcon-disable.service</td><td style="text-align:right;"><span class="badge badge-status-ok">ATIVO</span></td></tr>
               </tbody>
             </table>
           </div>
@@ -887,27 +951,50 @@
             </div>
             <table class="data-table">
               <tbody>
-                <tr><td>Sistema Operacional</td><td class="strong">Armbian 26.08 Trixie (Debian 13)</td></tr>
-                <tr><td>Arquitetura</td><td class="strong">aarch64 (ARM 64-bit)</td></tr>
-                <tr><td>Frequência da CPU</td><td class="strong">1.20 GHz – 1.80 GHz Dynamic</td></tr>
-                <tr><td>Memória Total</td><td class="strong">1.89 GB LPDDR4</td></tr>
-                <tr><td>Partição Raiz (/)</td><td class="strong">2.6 GB usado de 29 GB (9%)</td></tr>
+                <tr>
+                  <td>Sistema Operacional</td>
+                  <td class="strong">Armbian 26.08 Trixie (Debian 13)</td>
+                </tr>
+                <tr>
+                  <td>Arquitetura / CPU</td>
+                  <td class="strong">aarch64 · 4x Cortex-A53 (1.8 GHz)</td>
+                </tr>
+                <tr>
+                  <td>Memória RAM (LPDDR4)</td>
+                  <td>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                      <span class="strong">343 MB / 1.89 GB</span>
+                      <span class="strong">18%</span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:18%;"></div></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Partição Raiz (eMMC)</td>
+                  <td>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                      <span class="strong">2.6 GB / 29.0 GB</span>
+                      <span class="strong">9%</span>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:9%;"></div></div>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- 6. MODULES HUB -->
+      <!-- 6. MODULES HUB (UNIFORM HEIGHT CARDS & PINNED FOOTER ACTIONS) -->
       <section class="page-view" id="view-modules">
-        <div class="card-header" style="margin-bottom:1rem;">
+        <div class="card-header" style="margin-bottom:0.85rem;">
           <div>
-            <span class="card-title" style="font-size:1.05rem;">MultiForge Module Hub</span>
-            <p style="font-size:0.75rem; color:var(--text-faint); margin-top:0.15rem;">Módulos e aplicações inteligentes para nós de borda ARM (BTV E10)</p>
+            <span class="card-title" style="font-size:0.95rem;">MultiForge Module Hub</span>
+            <p style="font-size:0.72rem; color:var(--text-faint); margin-top:0.1rem;">Aplicações e serviços autônomos para nós de borda ARM (BTV E10)</p>
           </div>
           <button class="btn btn-secondary btn-sm" id="btn-refresh-modules" onclick="loadModulesHub()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            <span>Atualizar Catálogo</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>Atualizar</span>
           </button>
         </div>
 
@@ -916,56 +1003,57 @@
         </div>
       </section>
 
-      <!-- 7. LOGS & TERMINAL -->
+      <!-- 7. LOGS & TERMINAL (MODERN CONSOLE WITH CONTROLS & LINE NUMBERS) -->
       <section class="page-view" id="view-logs">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-              Console do Sistema e Provisionamento em Tempo Real
-            </span>
-            <button class="btn btn-secondary btn-sm" id="btn-clear-logs">Limpar</button>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div class="terminal-container">
+            <div class="terminal-toolbar">
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span style="font-weight:600; color:var(--text-main);">Console de Eventos</span>
+                <span style="font-family:var(--font-mono); font-size:0.68rem; color:var(--text-faint);">/var/log/forge-portal.log</span>
+              </div>
+              <div style="display:flex; gap:0.4rem;">
+                <button class="btn btn-secondary btn-sm" id="btn-copy-logs">Copiar</button>
+                <button class="btn btn-secondary btn-sm" id="btn-clear-logs">Limpar</button>
+              </div>
+            </div>
+            <div class="terminal-window" id="terminal-logs">01 [00:00:00] [PORTAL]   Sistema de provisionamento iniciado na porta 8080.
+02 [00:00:01] [AP]       wpa_supplicant e dnsmasq ativos no rádio wlan0 (192.168.4.1).
+03 [00:00:02] [WATCHDOG] Monitor de contingência ativo (75s rollback configurado).
+04 [00:00:05] [ETH]      Link eth0 negociado em 1000 Mbps Full-Duplex (IP: 192.168.1.153).</div>
           </div>
-          <div class="terminal-window" id="terminal-logs">[00:00:00] [PORTAL] Sistema iniciado com sucesso na porta 8080.
-[00:00:01] [AP] wpa_supplicant e dnsmasq ativos no rádio wlan0.
-[00:00:02] [WATCHDOG] Monitor de contingência ativo (75s rollback).</div>
         </div>
       </section>
     </main>
   </div>
 </div>
 
-<!-- CONNECT MODAL (WPA-PSK + 802.1X Eduroam) -->
+<!-- CONNECT MODAL (SEGMENTED TABS + 2-COLUMN GRID + NO SCROLLBAR) -->
 <div class="modal-overlay" id="connect-modal">
   <div class="modal-card">
     <div class="modal-header">
-      <h3 style="font-size:0.95rem; font-weight:600;" id="modal-network-title">Conectar ao Wi-Fi</h3>
+      <h3 style="font-size:0.9rem; font-weight:600;" id="modal-network-title">Conectar ao Wi-Fi</h3>
       <button class="icon-btn" onclick="closeModal()">✕</button>
     </div>
     <form id="form-provision">
       <div class="modal-body">
         <input type="hidden" id="prov-ssid">
         
-        <div style="display:flex; gap:1rem; margin-bottom:1rem;">
-          <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.8rem; font-weight:500; cursor:pointer;">
-            <input type="radio" name="prov-mode" value="psk" checked onchange="toggleProvMode()">
-            Rede Doméstica (WPA-PSK)
-          </label>
-          <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.8rem; font-weight:500; cursor:pointer;">
-            <input type="radio" name="prov-mode" value="eap" onchange="toggleProvMode()">
-            802.1X Corporativa (Eduroam)
-          </label>
+        <!-- Segmented Control -->
+        <div class="segmented-control">
+          <button type="button" class="segment-btn active" id="seg-psk" onclick="setProvMode('psk')">Rede Doméstica (WPA-PSK)</button>
+          <button type="button" class="segment-btn" id="seg-eap" onclick="setProvMode('eap')">802.1X Corporativa (Eduroam)</button>
         </div>
 
         <div id="fields-psk">
           <div class="form-group">
             <label class="form-label">Senha da Rede Wi-Fi</label>
-            <input type="password" class="form-control" id="prov-psk-pass" placeholder="Digite a senha..." autofocus>
+            <input type="password" class="form-control" id="prov-psk-pass" placeholder="Digite a senha da rede..." autofocus>
           </div>
         </div>
 
         <div id="fields-eap" style="display:none;">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;">
             <div class="form-group">
               <label class="form-label">Método EAP</label>
               <select class="form-control" id="prov-eap-method">
@@ -985,29 +1073,31 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Identidade / Usuário (ex: usuario@unesp.br)</label>
-            <input type="text" class="form-control" id="prov-eap-user" placeholder="usuario@instituicao.br">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;">
+            <div class="form-group">
+              <label class="form-label">Identidade / Usuário</label>
+              <input type="text" class="form-control" id="prov-eap-user" placeholder="usuario@unesp.br">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Senha EAP</label>
+              <input type="password" class="form-control" id="prov-eap-pass" placeholder="Senha institucional">
+            </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Senha EAP</label>
-            <input type="password" class="form-control" id="prov-eap-pass" placeholder="Senha da rede institucional">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Identidade Anônima (Opcional)</label>
-            <input type="text" class="form-control" id="prov-eap-anon" placeholder="anonymous@instituicao.br">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Domínio (Opcional)</label>
-            <input type="text" class="form-control" id="prov-eap-domain" placeholder="ex: unesp.br">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;">
+            <div class="form-group">
+              <label class="form-label">Identidade Anônima (Opcional)</label>
+              <input type="text" class="form-control" id="prov-eap-anon" placeholder="anonymous@unesp.br">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Domínio (Opcional)</label>
+              <input type="text" class="form-control" id="prov-eap-domain" placeholder="unesp.br">
+            </div>
           </div>
         </div>
 
-        <div style="background:var(--warning-subtle); border-radius:var(--radius-sm); padding:0.6rem 0.75rem; font-size:0.72rem; color:var(--warning); margin-top:0.5rem;">
-          ⚠️ <strong>Rádio Único:</strong> Durante a conexão, o Ponto de Acesso sai do ar por ~75s para testar o enlace. Se a conexão falhar, o watchdog restaura o AP automaticamente.
+        <div style="background:var(--bg-surface-elevated); border-radius:var(--radius-sm); padding:0.5rem 0.65rem; font-size:0.7rem; color:var(--text-faint); margin-top:0.4rem; border:1px solid var(--border-subtle);">
+          ℹ️ O Access Point pausará brevemente para validação do enlace. O watchdog restaurará o AP caso ocorra falha.
         </div>
       </div>
       <div class="modal-footer">
@@ -1020,9 +1110,10 @@
 
 <script>
 /* ==========================================================================
-   MultiForge Enterprise Client Controller (Refined UX/UI)
+   MultiForge Enterprise Client Controller (Sober & Refined Logic)
    ========================================================================== */
 let currentNetworks = [];
+let currentProvMode = 'psk';
 
 // Tab Navigation
 function showTab(tabId) {
@@ -1094,25 +1185,26 @@ themeToggle.addEventListener('click', () => {
   setTheme(current === 'dark' ? 'light' : 'dark');
 });
 
-// Modal Logic
+// Modal Logic & Segmented Tabs
+function setProvMode(mode) {
+  currentProvMode = mode;
+  document.getElementById('seg-psk').classList.toggle('active', mode === 'psk');
+  document.getElementById('seg-eap').classList.toggle('active', mode === 'eap');
+  document.getElementById('fields-psk').style.display = mode === 'psk' ? 'block' : 'none';
+  document.getElementById('fields-eap').style.display = mode === 'eap' ? 'block' : 'none';
+}
+
 function openConnectModal(ssid, enc) {
   document.getElementById('modal-network-title').textContent = 'Conectar a: ' + ssid;
   document.getElementById('prov-ssid').value = ssid;
   const isEap = enc === 'eap' || ssid.toLowerCase().includes('eduroam');
-  document.querySelector(`input[name="prov-mode"][value="${isEap ? 'eap' : 'psk'}"]`).checked = true;
-  toggleProvMode();
+  setProvMode(isEap ? 'eap' : 'psk');
   document.getElementById('connect-modal').classList.add('active');
   if (!isEap) setTimeout(() => document.getElementById('prov-psk-pass').focus(), 150);
 }
 
 function closeModal() {
   document.getElementById('connect-modal').classList.remove('active');
-}
-
-function toggleProvMode() {
-  const mode = document.querySelector('input[name="prov-mode"]:checked').value;
-  document.getElementById('fields-psk').style.display = mode === 'psk' ? 'block' : 'none';
-  document.getElementById('fields-eap').style.display = mode === 'eap' ? 'block' : 'none';
 }
 
 document.getElementById('btn-manual-network').addEventListener('click', () => {
@@ -1160,10 +1252,10 @@ function renderWifiNetworks(networks) {
     else if (rssi < -60) { signalClass = 'active'; barsActive = 3; }
 
     const encBadge = net.encryption === 'eap' 
-      ? '<span class="badge badge-eap">802.1X EAP</span>' 
+      ? '<span class="badge">802.1X EAP</span>' 
       : (net.encryption === 'open' 
-        ? '<span class="badge badge-open">ABERTA</span>' 
-        : '<span class="badge badge-psk">WPA/WPA2</span>');
+        ? '<span class="badge badge-status-ok">ABERTA</span>' 
+        : '<span class="badge">WPA/WPA2</span>');
 
     return `
       <div class="wifi-item">
@@ -1183,7 +1275,7 @@ function renderWifiNetworks(networks) {
             </div>
           </div>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">
+        <button class="btn btn-secondary btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">
           Conectar
         </button>
       </div>
@@ -1192,12 +1284,12 @@ function renderWifiNetworks(networks) {
 
   container.innerHTML = html;
 
-  // Render top 3 on dashboard
+  // Render top 3 on dashboard with subtle secondary buttons
   dashContainer.innerHTML = filtered.slice(0, 3).map(net => `
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border-subtle);">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.45rem 0; border-bottom:1px solid var(--border-subtle);">
       <div>
-        <span style="font-weight:500; font-size:0.85rem;">${escapeHtml(net.ssid)}</span>
-        <div style="font-size:0.7rem; color:var(--text-faint); font-family:var(--font-mono);">${net.encryption.toUpperCase()} · ${net.rssi} dBm</div>
+        <span style="font-weight:500; font-size:0.84rem; color:var(--text-main);">${escapeHtml(net.ssid)}</span>
+        <div style="font-size:0.68rem; color:var(--text-faint); font-family:var(--font-mono);">${net.encryption.toUpperCase()} · ${net.rssi} dBm</div>
       </div>
       <button class="btn btn-secondary btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">Conectar</button>
     </div>
@@ -1221,17 +1313,14 @@ async function updateStatus() {
     const footerDot = document.getElementById('footer-dot');
     
     if (s.provisioning) {
-      badge.className = 'status-badge warn';
       badgeText.textContent = 'Provisionando...';
       footerLabel.textContent = 'Conectando ao Wi-Fi...';
       footerDot.className = 'status-dot warn';
     } else if (s.client_connected) {
-      badge.className = 'status-badge ok';
       badgeText.textContent = 'Cliente: ' + s.client_ssid;
       footerLabel.textContent = 'Cliente: ' + s.client_ip;
       footerDot.className = 'status-dot';
     } else {
-      badge.className = 'status-badge ok';
       badgeText.textContent = 'AP: ' + (s.ssid || 'RTL8189FTV_AP');
       footerLabel.textContent = 'AP: 192.168.4.1';
       footerDot.className = 'status-dot';
@@ -1275,7 +1364,7 @@ async function updateStatus() {
 document.getElementById('form-provision').addEventListener('submit', async (e) => {
   e.preventDefault();
   const ssid = document.getElementById('prov-ssid').value;
-  const mode = document.querySelector('input[name="prov-mode"]:checked').value;
+  const mode = currentProvMode;
   
   let payload = { ssid, mode };
   if (mode === 'psk') {
@@ -1307,7 +1396,7 @@ document.getElementById('form-provision').addEventListener('submit', async (e) =
       return;
     }
     closeModal();
-    alert('Provisionamento iniciado! O dispositivo alternará o rádio para testar a conexão.');
+    alert('Provisionamento iniciado! O dispositivo testará a conexão com a rede.');
     updateStatus();
   } catch (err) {
     alert('Erro de comunicação com o portal.');
@@ -1349,6 +1438,11 @@ document.getElementById('btn-clear-logs').addEventListener('click', () => {
   document.getElementById('terminal-logs').textContent = '';
 });
 
+document.getElementById('btn-copy-logs').addEventListener('click', () => {
+  const text = document.getElementById('terminal-logs').textContent;
+  navigator.clipboard.writeText(text).then(() => alert('Logs copiados para a área de transferência!'));
+});
+
 function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text || '';
@@ -1375,47 +1469,46 @@ async function loadModulesHub() {
       const isRunning = state === 'running';
       const isInstalled = state === 'installed' || isRunning;
 
-      let badgeClass = 'badge-psk';
-      let stateLabel = 'Disponível';
-      if (isRunning) { badgeClass = 'badge-open'; stateLabel = 'Rodando'; }
-      else if (state === 'installed') { badgeClass = 'badge-open'; stateLabel = 'Instalado'; }
-      else if (state === 'stopped') { badgeClass = 'badge-eap'; stateLabel = 'Pausado'; }
+      let stateBadge = '<span class="badge">Disponível</span>';
+      if (isRunning) stateBadge = '<span class="badge badge-status-ok">Rodando</span>';
+      else if (state === 'installed') stateBadge = '<span class="badge badge-status-ok">Instalado</span>';
+      else if (state === 'stopped') stateBadge = '<span class="badge">Pausado</span>';
 
       const req = m.requirements || {};
       const minRam = req.min_ram_mb ? `${req.min_ram_mb} MB RAM` : 'Leve';
 
       let actionButtons = '';
       if (!isInstalled) {
-        actionButtons = `<button class="btn btn-primary btn-sm" onclick="moduleAction('${m.id}', 'install')">Instalar Módulo</button>`;
+        actionButtons = `<button class="btn btn-primary btn-sm" style="width:100%;" onclick="moduleAction('${m.id}', 'install')">Instalar Módulo</button>`;
       } else if (isRunning) {
         actionButtons = `
-          <button class="btn btn-secondary btn-sm" onclick="moduleAction('${m.id}', 'stop')">Pausar</button>
+          <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="moduleAction('${m.id}', 'stop')">Pausar</button>
           <button class="btn btn-secondary btn-sm" style="color:var(--danger);" onclick="moduleAction('${m.id}', 'uninstall')">Desinstalar</button>
         `;
       } else {
         actionButtons = `
-          <button class="btn btn-primary btn-sm" onclick="moduleAction('${m.id}', 'start')">Iniciar</button>
+          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="moduleAction('${m.id}', 'start')">Iniciar</button>
           <button class="btn btn-secondary btn-sm" style="color:var(--danger);" onclick="moduleAction('${m.id}', 'uninstall')">Desinstalar</button>
         `;
       }
 
       return `
-        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+        <div class="card">
           <div>
-            <div class="card-header" style="margin-bottom:0.65rem;">
+            <div class="card-header" style="margin-bottom:0.55rem;">
               <span class="card-title" style="display:flex; align-items:center; gap:0.45rem;">
-                <span style="font-size:1.15rem;">${m.icon || '📦'}</span>
+                <span style="font-size:1.1rem;">${m.icon || '📦'}</span>
                 <span>${escapeHtml(m.name)}</span>
               </span>
-              <span class="badge ${badgeClass}">${stateLabel}</span>
+              ${stateBadge}
             </div>
-            <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.45; margin-bottom:0.85rem;">
+            <p style="font-size:0.76rem; color:var(--text-muted); line-height:1.45; margin-bottom:0.75rem; min-height:45px;">
               ${escapeHtml(m.description)}
             </p>
-            <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:1rem;">
-              <span class="nav-badge">${minRam}</span>
-              <span class="nav-badge">${m.category || 'app'}</span>
-              <span class="nav-badge">v${m.version || '1.0'}</span>
+            <div style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-bottom:0.85rem;">
+              <span class="badge">${minRam}</span>
+              <span class="badge">${m.category || 'app'}</span>
+              <span class="badge">v${m.version || '1.0'}</span>
             </div>
           </div>
           <div style="display:flex; gap:0.4rem; padding-top:0.65rem; border-top:1px solid var(--border-subtle);">
@@ -1425,28 +1518,28 @@ async function loadModulesHub() {
       `;
     }).join('');
 
-    // Built-in Kiosk Card
+    // Built-in Kiosk Card (Standardized height and button layout)
     container.innerHTML += `
-      <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+      <div class="card">
         <div>
-          <div class="card-header" style="margin-bottom:0.65rem;">
+          <div class="card-header" style="margin-bottom:0.55rem;">
             <span class="card-title" style="display:flex; align-items:center; gap:0.45rem;">
-              <span style="font-size:1.15rem;">📺</span>
+              <span style="font-size:1.1rem;">📺</span>
               <span>Kiosk HDMI Framebuffer</span>
             </span>
-            <span class="badge badge-open">Ativo</span>
+            <span class="badge badge-status-ok">Ativo</span>
           </div>
-          <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.45; margin-bottom:0.85rem;">
+          <p style="font-size:0.76rem; color:var(--text-muted); line-height:1.45; margin-bottom:0.75rem; min-height:45px;">
             Renderizador HDMI 1080p sem flicker em /dev/fb0 com Dual QR Code e telemetria em tempo real.
           </p>
-          <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:1rem;">
-            <span class="nav-badge">32 MB RAM</span>
-            <span class="nav-badge">display</span>
-            <span class="nav-badge">Built-in</span>
+          <div style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-bottom:0.85rem;">
+            <span class="badge">32 MB RAM</span>
+            <span class="badge">display</span>
+            <span class="badge">Built-in</span>
           </div>
         </div>
         <div style="display:flex; gap:0.4rem; padding-top:0.65rem; border-top:1px solid var(--border-subtle);">
-          <span class="badge badge-open">systemd ativo</span>
+          <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="alert('Display HDMI operacional.')">Configurar Display</button>
         </div>
       </div>
     `;
