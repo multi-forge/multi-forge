@@ -1452,7 +1452,7 @@ async function loadModulesHub() {
 
 async function moduleAction(modId, action) {
   try {
-    const res = await fetch(\`/api/modules/\${modId}/\${action}\`, {
+    const res = await fetch(`/api/modules/${modId}/${action}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({})
