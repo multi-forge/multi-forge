@@ -1,29 +1,36 @@
-# 🗺️ Roadmap do MultiForge
+# Roadmap do MultiForge
 
-Desenvolvimento estruturado em fases de maturidade da plataforma:
+Planejamento estrategico e etapas de maturidade do projeto MultiForge:
 
 ---
 
-## 🎯 Phase 1 — Hackathon MVP
-* **Foco**: Prova de conceito funcional e validação da arquitetura piloto (BTV E10).
-* **Entregáveis**:
-  * ForgeDB estruturado de forma simplificada em arquivos YAML declarativos.
-  * ForgeImager compilável e capaz de gravar e injetar configurações via `forge.yaml`.
-  * Criação do Forge Provisioner básico capaz de ler o manifesto e configurar usuário/rede.
-  * Lançamento da imagem ForgeOS como distribuição principal, com suporte a imagens compatíveis (Armbian).
+## Fase 1 - Piloto e Prova de Conceito (Concluída)
 
-## 🚀 Phase 2 — Community
-* **Foco**: Expansão do ecossistema e ferramentas automatizadas de inventário.
-* **Entregáveis**:
-  * Lançamento do Forge Agent para inventário dinâmico pós-boot.
-  * Envio automático de conformidade e detecção real de barramentos para o ForgeDB.
-  * Suporte a múltiplos dispositivos de outras famílias de SoCs (Rockchip, Allwinner).
-  * Criação de templates de CI para o build e teste automático das aplicações.
+- **Objetivo:** Validacao da arquitetura funcional na plataforma piloto BTV Express E10 (Amlogic S905X2).
+- **Entregas Concluidas:**
+  - Base de dados declarativa ForgeDB com schemas JSON formais (Draft 2020-12).
+  - Aplicativo ForgeImager capaz de gravar discos e injetar configuracoes em particoes ext4 via `forge-write-conf`.
+  - Stack ForgeOS com Ponto de Acesso resiliente, portal web cativo e watchdog de contingencia.
+  - Distribuicao Linux otimizada com DTB Enterprise compilado (SDIO 25 MHz, 64 MB CMA e Watchdog).
+  - Integracao dos modulos de aplicacao Totem (Mina AI) e Web Scraping (RAG).
 
-## 💎 Phase 3 — Production Ecosystem
-* **Foco**: Lançamento comercial da plataforma e expansão de mercado.
-* **Entregáveis**:
-  * ForgeHub totalmente interativo (interface web e marketplace com assinaturas).
-  * Imagem de sistema operacional unificada (ForgeOS nativo).
-  * Gestão de frotas e automação de atualizações Over-the-Air (OTA).
-  * Integração nativa com nós de inteligência artificial de borda (Edge AI).
+---
+
+## Fase 2 - Expansão e Multi-Hardware (Em Andamento)
+
+- **Objetivo:** Expansao do catalogo de hardware e ferramentas de conformidade automatizadas.
+- **Metas:**
+  - Inclusao de novos modelos de TV Box no ForgeDB (familias Amlogic S905W/S905X3/S912, Rockchip RK3328/RK3566, Allwinner H6/H616).
+  - Ferramenta CLI `forge-agent` para deteccao automatica de barramentos e geracao de manifestos `device.yaml`.
+  - Integracao de pipeline de compilacao e testes continuos para os modulos do ecossistema.
+  - Conexao do executor em segundo plano no portal web para instalacao automatizada de modulos.
+
+---
+
+## Fase 3 - Ecossistema de Produção e Atualizações
+
+- **Objetivo:** Operacao em escala e gerenciamento de frotas de dispositivos.
+- **Metas:**
+  - Mecanismo de atualizacao Over-The-Air (OTA) para kernel, device trees e aplicacoes.
+  - Painel de gerenciamento centralizado para inventario de nos em rede local e remota.
+  - Integracao de novos templates de aplicacoes para automacao e sinalizacao digital.

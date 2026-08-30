@@ -1,114 +1,100 @@
-# 🗄️ ForgeDB
+# ForgeDB
 
-**ForgeDB** é a base de dados centralizada e fonte única da verdade (*single source of truth*) para hardware **e** módulos do ecossistema MultiForge/ForgeOS.
+Base de dados centralizada e declarativa contendo metadados de hardware, definicoes de arvore de dispositivos (Device Tree), metodos de gravacao e catalogo de modulos do ecossistema MultiForge.
 
-## Visão Geral
+---
 
-O ForgeDB armazena metadados estruturados em YAML/JSON que descrevem:
+## Estrutura do Repositório
 
-- **Dispositivos de hardware** — specs, SoC, boot, imagens de SO e problemas conhecidos
-- **Módulos de software** — dependências, lifecycle, variantes de deploy e compatibilidade
-
-Todas as ferramentas do ecossistema (Forge Agent, Forge Installer, Forge CLI) consomem estes dados para automação de instalação, verificação de compatibilidade e provisionamento.
-
-## Estrutura
-
-```
+```text
 ForgeDB/
-├── README.md                         # ← Este arquivo
-├── devices/                          # Descritores de hardware
-│   └── {manufacturer}/
-│       └── {model}/
-│           ├── device.yaml           # Specs, boot config, imagens
-│           ├── images.yaml           # Catálogo de imagens de SO
-│           ├── docs/                 # Documentação do dispositivo
-│           ├── photos/               # Fotos do hardware
-│           └── revisions/            # Revisões de hardware
-├── modules/                          # Manifestos de módulos de software
-│   ├── catalog.yaml                  # Catálogo central de todos os módulos
-│   ├── {module-id}/
-│   │   └── module.yaml              # Manifesto individual do módulo
-├── images/                           # Assets compartilhados
-└── schemas/                          # Schemas de validação
-    ├── device.schema.json            # JSON Schema para device.yaml
-    └── module.schema.json            # JSON Schema para module.yaml
+|-- devices/             # Metadados de placas e SBCs homologadas
+|   `-- btv/
+|       `-- e10/
+|           |-- device.yaml    # Especificacao completa de hardware e boot
+|           `-- dtb/           # Binarios de arvore de dispositivos associados
+|-- modules/             # Catalogo e manifestos de aplicacoes
+|   |-- catalog.yaml     # Indice central de modulos disponiveis
+|   |-- totem/
+|   |   `-- module.yaml  # Manifesto do modulo Mina AI Totem
+|   `-- web-scraping/
+|       `-- module.yaml  # Manifesto do modulo Coletor / RAG
+`-- schemas/             # Validadores formais JSON Schema (Draft 2020-12)
+    |-- device.schema.json  # Schema para validacao de device.yaml
+    `-- module.schema.json  # Schema para validacao de module.yaml
 ```
 
-## Dispositivos (`devices/`)
+---
 
-Cada dispositivo suportado possui um diretório próprio organizado por fabricante e modelo.
+## Especificação de Dispositivos (`device.yaml`)
 
-O arquivo principal `device.yaml` segue o schema `forgedb/v1` e contém:
+Cada dispositivo cadastrado contem identificacao completa de pinout, SoC, perifericos de rede e particionamento:
 
-| Seção | Descrição |
-|---|---|
-| `hardware.soc` | Fabricante, modelo e arquitetura do SoC |
-| `hardware.memory` | RAM e armazenamento |
-| `hardware.wireless` | Chipset Wi-Fi/Bluetooth |
-| `boot` | DTB, autoscript, ferramenta de instalação |
-| `images` | Imagens de SO disponíveis para download |
-| `known_issues` | Problemas conhecidos e soluções |
+```yaml
+id: btv-e10
+name: BTV Express E10
+vendor: BTV
+soc:
+  family: Amlogic
+  model: S905X2
+  architecture: aarch64
+  cores: 4
+  frequency_max_mhz: 1800
+memory:
+  ram_mb: 2048
+  type: LPDDR4
+storage:
+  type: eMMC
+  size_gb: 8
+connectivity:
+  wifi:
+    chipset: Realtek RTL8189FTV
+    bus: SDIO
+    max_frequency_hz: 25000000
+  ethernet:
+    chipset: Realtek RTL8211F
+    speed_mbps: 100
+boot:
+  dtb: meson-g12a-btv-e10-enterprise.dtb
+  uenv_cmdline: "root=LABEL=ROOTFS rootflags=data=writeback rw console=ttyAML0,115200n8 console=tty0 video=HDMI-A-1:1920x1080@60e"
+```
 
-**Exemplo:** `devices/btv/e10/device.yaml` — BTV E10 com Amlogic S905X2
+---
 
-## Módulos (`modules/`)
+## Especificação de Módulos (`module.yaml`)
 
-Cada módulo do ForgeOS possui um manifesto `module.yaml` que descreve:
+Manifesto declarativo contendo requisitos de execucao, dependencias e comandos de ciclo de vida:
 
-| Seção | Descrição |
-|---|---|
-| Metadados | ID, nome, versão, categoria, autor, licença |
-| `requirements` | RAM mínima, Python, pacotes de sistema e pip |
-| `source` | Tipo e caminho do código-fonte |
-| `lifecycle` | Comandos de install, start, stop, healthcheck |
-| `variants` | Variantes de deploy (Docker completo vs SQLite local) |
-| `conflicts_with` | Módulos incompatíveis |
+```yaml
+id: totem
+name: Mina - Assistente Virtual Acadêmica
+version: 1.0.0
+category: ai
+requirements:
+  min_ram_mb: 512
+  min_storage_mb: 200
+  python: ">=3.9"
+  system_packages:
+    - portaudio19-dev
+    - python3-pyqt5
+lifecycle:
+  install: "python install.py --headless"
+  start: "python main_cli.py"
+  stop: "pkill -f main_cli.py"
+  healthcheck: "pgrep -f main_cli.py"
+  systemd_unit: "forge-totem.service"
+```
 
-### Módulos Registrados
+---
 
-| ID | Nome | Categoria | Tier |
-|---|---|---|---|
-| `totem` | Mina — Assistente Virtual Acadêmica | AI | stable |
-| `web-scraping` | Coletor Acadêmico & RAG Agent | Data | beta |
+## Validação Automatizada
 
-O arquivo `catalog.yaml` lista todos os módulos disponíveis com metadados resumidos.
-
-## Schemas (`schemas/`)
-
-Schemas JSON Draft 2020-12 para validação automatizada:
-
-- **`device.schema.json`** — valida arquivos `device.yaml`
-- **`module.schema.json`** — valida arquivos `module.yaml`
-
-### Validação Local
+Para validar a integridade de todos os arquivos contra os schemas JSON:
 
 ```bash
-# Instalar validador
-pip install jsonschema pyyaml
+# Validacao de dispositivos:
+python -c "import yaml, json, jsonschema; jsonschema.validate(yaml.safe_load(open('devices/btv/e10/device.yaml')), json.load(open('schemas/device.schema.json'))); print('device.yaml valido.')"
 
-# Validar um device.yaml
-python -c "
-import yaml, json, jsonschema
-with open('schemas/device.schema.json') as s:
-    schema = json.load(s)
-with open('devices/btv/e10/device.yaml') as d:
-    data = yaml.safe_load(d)
-jsonschema.validate(data, schema)
-print('✅ Valid!')
-"
+# Validacao de modulos:
+python -c "import yaml, json, jsonschema; jsonschema.validate(yaml.safe_load(open('modules/totem/module.yaml')), json.load(open('schemas/module.schema.json'))); print('module.yaml valido.')"
 ```
-
-## Convenções
-
-- **Caminhos** são sempre relativos à raiz do repositório `multi-forge/`
-- **IDs** usam lowercase com hífens (`web-scraping`, não `WebScraping`)
-- **Versões** seguem [Semantic Versioning](https://semver.org/)
-- Arquivos YAML usam indentação de 2 espaços
-- Módulos que compartilham recursos (portas, GPIO, etc.) devem declarar `conflicts_with`
-
-## Contribuindo
-
-1. Adicione um diretório para o novo dispositivo/módulo
-2. Crie o `device.yaml` ou `module.yaml` seguindo o schema correspondente
-3. Valide contra o JSON Schema antes de submeter
-4. Atualize `modules/catalog.yaml` se adicionando um módulo novo

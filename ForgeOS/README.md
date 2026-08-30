@@ -1,150 +1,137 @@
-# 🔥 ForgeOS — Sistema Operacional Embarcado & Provisionamento Autônomo
+# ForgeOS
 
-> **ForgeOS** é a distribuição oficial do ecossistema **MultiForge** projetada para transformar TV Boxes comerciais (como a **BTV Express E10 - Amlogic S905X2**) e SBCs ARM64 em plataformas industriais seguras, autônomas e de alto desempenho para IoT, Kiosk e Inteligência Artificial de Borda.
-
----
-
-## 🏗️ Arquitetura do Sistema
-
-```mermaid
-flowchart TD
-    subgraph HARDWARE ["1. Hardware & Kernel (Amlogic S905X2)"]
-        DTB["DTB Enterprise (meson-g12a-btv-e10-enterprise.dtb)"]
-        SDIO["RTL8189FTV Wi-Fi (Clock 25MHz + Anti-Sleep)"]
-        WDT["Hardware Watchdog (/dev/watchdog)"]
-        PERF["Tweaks: MGLRU + ZRAM ZSTD + TCP BBR + CMA 64MB"]
-    end
-
-    subgraph PROVISIONING ["2. Pilha de Provisionamento On-Boot (/opt/forgeos)"]
-        AP["forge-ap.service (Access Point 192.168.4.1)"]
-        PORTAL["forge-portal.service (Portal Web v2.1 na :80/:8080)"]
-        DISPLAY["forge-display.service (Kiosk HDMI 1080p Framebuffer)"]
-        WATCHDOG["forge-watchdog.service (Recuperação de Wi-Fi em 75s)"]
-    end
-
-    subgraph HUB ["3. Central de Módulos (ForgeHub Integrado)"]
-        MOD_API["REST API (/rest/modules)"]
-        TOTEM["Módulo Totem / Mina AI"]
-        SCRAPING["Módulo Coletor & RAG"]
-    end
-
-    HARDWARE --> PROVISIONING
-    PROVISIONING --> HUB
-```
+Sistema operacional customizado e stack de provisionamento on-device para TV Boxes e computadores de placa única (SBCs) baseados na arquitetura ARM64 (Amlogic, Allwinner, Rockchip).
 
 ---
 
-## ⚡ Sumário dos Patches e Otimizações de Desempenho
+## Especificações do Hardware Piloto
 
-| Camada | Tweak / Patch Aplicado | Impacto / Benefício Real |
-|---|---|---|
-| **Device Tree (DTB)** | `size = <0x00 0x04000000>;` (64 MB CMA) | **+192 MB de memória RAM física livre** para o sistema e aplicações. |
-| **Wi-Fi SDIO** | `max-frequency = <0x17d7840>;` (25 MHz) | **Estabilidade de 100% no sinal do Access Point**, eliminando perdas de sincronismo no RTL8189FTV. |
-| **Driver RTL8189FTV** | `options 8189fs rtw_power_mgnt=0` | Resposta instantânea de conexão Wi-Fi sem atraso de economia de energia. |
-| **Hardware Watchdog** | `watchdog@f0d0` (`status = "okay"`) | Autorrecuperação e reinicialização física em caso de travamento do kernel (**99.99% Uptime**). |
-| **Memória RAM** | **MGLRU** + **ZRAM ZSTD (50% RAM)** | Transforma os 2GB de RAM física em **~3.5GB de RAM útil**, prevenindo *OOM Thrashing*. |
-| **I/O Storage** | `vm.dirty_background_ratio = 5` | Protege a memória flash eMMC de 8GB contra desgaste prematuro e previne travamentos de gravação. |
-| **Rede & Roteamento** | **TCP BBRv3** + **Netfilter Flow Offload** | Vazão máxima de rede, baixa latência e encaminhamento até 900 Mbps com baixo uso de CPU. |
-| **Bootloader** | `video=HDMI-A-1:1920x1080@60e` | Resolução nativa Full HD 1080p sem dependência de handshake EDID de monitores. |
-
-> 📖 **Consulte o manual técnico aprofundado:** [`ForgeOS/docs/tweaks-and-patches.md`](file:///C:/Users/Aluno/multi-forge/ForgeOS/docs/tweaks-and-patches.md)
+- **Dispositivo:** BTV Express E10
+- **Processador (SoC):** Amlogic S905X2 (Meson G12A), 4x Cortex-A53 @ 1.80 GHz
+- **GPU:** ARM Mali-G31 MP2
+- **Memória RAM:** 2 GB LPDDR4 (1.85 GB visíveis ao kernel)
+- **Armazenamento:** 8 GB eMMC 5.1 Flash + leitor de cartão MicroSD
+- **Interface Wi-Fi:** Realtek RTL8189FTV (SDIO 1-bit / 4-bit, 2.4 GHz 802.11b/g/n)
+- **Ethernet:** Realtek RTL8211F (RMII 10/100 Mbps)
+- **Saída de Vídeo:** HDMI 2.0a (1080p @ 60Hz com sincronismo forçado)
+- **Kernel Base:** Linux 6.18.44-ophub (ARM64)
+- **Espaço de Usuário:** Armbian Linux 26.08 Trixie (Debian 13 Minimal)
 
 ---
 
-## 📂 Estrutura de Diretórios do ForgeOS
+## Camadas de Otimização e Tweaks
 
-```
+A distribuição inclui patches estruturais em nível de kernel, árvore de dispositivos (Device Tree), rede e gerenciamento de memória:
+
+### 1. Device Tree Blob (DTB) Enterprise
+- **Arquivo:** `dtb/meson-g12a-btv-e10-enterprise.dtb`
+- **Barramento SDIO do Wi-Fi:** Frequência travada em 25 MHz (`max-frequency = <25000000>`) e modo cap-sd-highspeed desativado para eliminar erros de CRC e perdas de firmware no chip RTL8189FTV.
+- **Redução do Buffer CMA:** Buffer de vídeo contíguo reduzido de 256 MB para 64 MB (`cma = <0x04000000>`), liberando 192 MB de memória RAM para processos de usuário.
+- **Watchdog de Silício:** Ativação do módulo `/dev/watchdog` nativo do SoC Amlogic (`meson-gxbb-wdt`).
+- **Controlador Ethernet:** Compatibilidade estrita `amlogic,meson-g12a-dwmac` com delays calibrados para TX/RX no barramento RMII.
+
+### 2. Gerenciamento de Memória e I/O
+- **MGLRU (Multi-Gen LRU):** Escalonador de memória ativado com suporte a múltiplos geradores de reclaim.
+- **ZRAM com Compressão ZSTD:** Swap comprimido em RAM alocado em 50% do total (925 MB), atingindo taxa média de compressão de 3:1 e eliminando desgaste de escrita na flash eMMC.
+- **Proteção de Escrita Flash:** `vm.dirty_background_ratio = 5` e `vm.dirty_ratio = 10` para prevenir travamentos de I/O em cartões MicroSD classe 10.
+- **Pilha de Rede:** Algoritmo de controle de congestionamento Google BBRv3 com enfileiramento `fq`.
+
+---
+
+## Estrutura do Diretório
+
+```text
 ForgeOS/
-├── README.md                  # Este documento (Visão Geral e Guia de Uso)
-├── install.sh                 # Instalador local da stack no Armbian
-├── bin/                       # Scripts executáveis de rede e inicialização
-│   ├── start-ap.sh            # Inicia o Access Point RTL8189FTV com wpa_supplicant e dnsmasq
-│   ├── stop-ap.sh             # Encerra o AP e limpa interfaces de rede
-│   ├── apply-sta.sh           # Aplica credenciais Wi-Fi fornecidas pelo usuário
-│   ├── reset-provision.sh     # Reseta o sistema para o estado de fábrica
-│   └── forge-vm.sh            # Utilitário CLI para emulação e testes em sandbox QEMU/KVM
-├── display/                   # Kiosk gráfico HDMI direto no Framebuffer (/dev/fb0)
-│   ├── display_manager.py     # Renderizador gráfico Full HD (Pillow + QR Code)
-│   └── test_display.py        # Script de teste de renderização
-├── dtb/                       # Códigos-fonte e binários do Device Tree
-│   ├── README.md              # Documentação dos registradores e nós do DTB
-│   ├── meson-g12a-btv-e10-enterprise.dts  # Código-fonte DTS Enterprise com todas as melhorias
-│   └── meson-g12a-btv-e10-enterprise.dtb  # Binário compilado oficial para produção
-├── distro/                    # Pipeline de compilação da imagem oficial (.img.xz)
-│   ├── README.md              # Guia de compilação da distro
-│   ├── build-image.sh         # Script mestre de empacotamento, chroot e compressão XZ
-│   ├── gcp-spot-launcher.py   # Orquestrador de compilação em Spot VM (Google Cloud)
-│   └── config/                # Arquivos de configuração de patches
-│       ├── 8189fs-performance.conf   # Opções anti-sleep do módulo Wi-Fi
-│       ├── kernel_patches.config     # Flags de compilação de kernel
-│       └── sysctl-performance.conf   # Tweaks de TCP BBR, ZRAM e eMMC
-├── docs/                      # Manuais e documentações técnicas
-│   └── tweaks-and-patches.md  # Manual completo de todos os patches
-├── network/                   # Configurações de rede
-│   ├── dnsmasq_portal.conf    # DNS Captive Portal (redirecionamento 302)
-│   └── wpa_ap.conf            # Configuração do Access Point WPA2/Aberto
-├── systemd/                   # Units de serviços do systemd
-│   ├── forge-ap.service       # Serviço do Access Point Wi-Fi
-│   ├── forge-portal.service   # Serviço do Portal Web v2.1
-│   ├── forge-display.service  # Serviço da tela HDMI Kiosk
-│   ├── forge-watchdog.service # Serviço de autorrecuperação de conexão
-│   └── forge-fbcon-disable.service # Oculta cursor do console sobre o Kiosk
-└── web/                       # Portal Web de Provisionamento e Module Hub
-    ├── server.py              # Servidor HTTP leve em Python (REST API + Static Server)
-    └── static/                # Interface HTML/CSS/JS moderna do portal
+|-- bin/
+|   |-- start-ap.sh          # Inicializacao do ponto de acesso via wpa_supplicant mode=2
+|   |-- apply-sta.sh         # Aplicacao de credenciais cliente e validacao de gateway
+|   |-- watchdog.sh          # Monitoramento de conectividade e rollback automatico (75s)
+|   `-- install.sh           # Instalador do sistema e configuracao de servicos systemd
+|-- web/
+|   |-- server.py            # Servidor HTTP REST (Python 3 standard library)
+|   |-- index.html           # Interface web SPA responsiva (Dark/Light mode)
+|   `-- static/              # Ativos estaticos e manifestos PWA
+|-- display/
+|   |-- display_manager.py   # Renderizacao de tela HDMI via framebuffer Linux (/dev/fb0)
+|   `-- assets/              # Tipografia e recursos visuais
+|-- dtb/
+|   |-- meson-g12a-btv-e10-enterprise.dts  # Codigo-fonte do Device Tree
+|   |-- meson-g12a-btv-e10-enterprise.dtb  # Blob compilado pronto para boot
+|   `-- README.md            # Documentacao de registradores e instrucoes de compilacao
+|-- distro/
+|   |-- build-image.sh       # Pipeline de construcao de imagem rootfs/boot
+|   |-- gcp-spot-launcher.py # Script de compilacao automatizada em instancia Spot no GCP
+|   `-- README.md            # Guia de geracao de imagens
+|-- docs/
+|   `-- tweaks-and-patches.md # Manual tecnico detalhado dos patches aplicados
+`-- tests/
+    |-- test_server.py       # Testes da API REST
+    |-- test_dtb.py          # Validacao de integridade e nos do DTB
+    `-- run_all.sh           # Script de execucao de toda a suite de testes
 ```
 
 ---
 
-## 📡 Fluxo de Provisionamento On-Boot (100% Autônomo)
+## Serviços do Systemd
 
-1. **Ligando a TV Box:**
-   * O bootloader carrega o kernel Linux com o **DTB Enterprise**.
-   * O serviço `forge-ap.service` sobe o Wi-Fi `ForgeOS-Setup-XXXX`.
-   * O serviço `forge-display.service` desenha na TV/Monitor HDMI o status do sistema e **dois QR Codes**:
-     * 📱 **QR Code 1:** Conectar automaticamente à rede Wi-Fi da TV Box.
-     * 🌐 **QR Code 2:** Abrir o Portal Web no navegador do celular (`http://192.168.4.1:8080`).
-2. **Configuração pelo Usuário:**
-   * O usuário escaneia as redes Wi-Fi locais pelo portal, digita a senha da sua rede e clica em **"Salvar e Conectar"**.
-3. **Validação e Transição:**
-   * O ForgeOS conecta à rede informada. Se a senha estiver correta, desativa o AP e inicia a operação normal.
-   * Se a senha estiver incorreta ou o roteador sumir, o **`forge-watchdog.service`** reativa o Access Point em **75 segundos**, evitando que a TV Box fique inacessível.
+| Unidade | Tipo | Funcao |
+|---------|------|--------|
+| `forge-ap.service` | oneshot | Configura interface wlan0, gateway 192.168.4.1 e inicia dnsmasq |
+| `forge-portal.service` | simple | Executa o servidor HTTP na porta 8080 (e 80 redirecionada) |
+| `forge-display.service` | simple | Inicializa renderizacao grafica do kiosk no `/dev/fb0` |
+| `forge-watchdog.service` | simple | Monitor de conectividade com rollback em 75s |
+| `forge-fbcon-disable.service` | oneshot | Desativa cursor de terminal e blanking de tela no HDMI |
 
 ---
 
-## 🔌 Referência da REST API do ForgeOS
+## Referência da API REST
 
-O servidor `/opt/forgeos/web/server.py` responde nas portas `80` e `8080`:
+### Estado e Provisionamento
 
-| Método | Endpoint | Descrição |
-|---|---|---|
-| `GET` | `/api/status` | Retorna o estado atual da rede (modo AP ou conectado em STA, IP e SSID). |
-| `GET` | `/api/scan` | Escaneia e retorna a lista de redes Wi-Fi 2.4GHz ao alcance com nível de sinal. |
-| `POST` | `/api/connect` | Recebe payload JSON `{"ssid": "MinhaRede", "password": "senha"}` e conecta. |
-| `POST` | `/api/reset` | Reseta a configuração de rede e força retorno ao modo Access Point. |
-| `GET` | `/rest/modules` | Central de Módulos (ForgeHub) — lista todos os módulos instalados e catálogo. |
-| `GET` | `/rest/system/info` | Informações de hardware, temperatura do SoC, RAM livre e uptime. |
+- **`GET /api/status`**
+  Retorna o estado operacional atual (modo AP ou modo Cliente).
+  ```json
+  {
+    "ap_active": true,
+    "ssid": "ForgeOS-Setup-E10",
+    "provisioning": false,
+    "client_connected": false,
+    "client_ssid": null,
+    "client_ip": null
+  }
+  ```
+
+- **`GET /api/scan`**
+  Executa varredura de redes Wi-Fi proximas com medicao de RSSI e tipo de criptografia (WPA2-PSK ou 802.1X EAP).
+
+- **`POST /api/provision`**
+  Aplica configuracao de rede Wi-Fi recebida via JSON e aciona teste de conectividade.
+
+- **`POST /api/reset`**
+  Reverte imediatamente o adaptador de rede para o modo Ponto de Acesso.
+
+### Telemetria e Módulos
+
+- **`GET /api/telemetry`** ou **`GET /rest/systemStatus`**
+  Retorna telemetria de hardware (temperatura da CPU em graus Celsius, frequencia dos nucleos, uso de memoria RAM, taxa de swap ZRAM e espaco em disco).
+
+- **`GET /rest/modules`**
+  Retorna a lista de modulos de aplicacao cadastrados no catalogo do ForgeDB e seu estado local de instalacao.
 
 ---
 
-## 🚀 Como Compilar a Imagem Oficial do ForgeOS
+## Compilação e Testes
 
-### Opção 1: Compilação Ultrarrápida na Google Cloud Spot VM (32/8 vCPUs)
-Executa a compilação paralela na nuvem da GCP, baixa a imagem compactada para sua pasta `Downloads` e destrói a VM em ~3 a 5 minutos (custo < R$ 0,15):
-```powershell
-python ForgeOS/distro/gcp-spot-launcher.py --project=stt-465818 --zone=us-central1-a
-```
+### Execução de Testes Unitários
 
-### Opção 2: Compilação Local via Linux ou WSL2
 ```bash
-sudo ./ForgeOS/distro/build-image.sh
+cd ForgeOS
+python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
----
+### Compilação do Device Tree
 
-## 🔑 Credenciais Padrão da Imagem
-
-* **Usuário Administrador:** `root` | **Senha:** `forgeos`
-* **Usuário Padrão:** `kali` | **Senha:** `forgeos`
-* **Hostname Oficial:** `forgeos-btv`
-* **IP do Modo Access Point:** `192.168.4.1` (Gateway / DNS)
+```bash
+cd ForgeOS/dtb
+dtc -I dts -O dtb -o meson-g12a-btv-e10-enterprise.dtb meson-g12a-btv-e10-enterprise.dts
+```
