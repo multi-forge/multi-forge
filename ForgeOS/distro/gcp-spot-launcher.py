@@ -10,13 +10,14 @@
 import os
 import sys
 import time
+import tarfile
 import subprocess
 import argparse
 
 INSTANCE_NAME = "forgeos-builder-spot-32"
 ZONE = "us-central1-a"
 PROJECT = "stt-465818"
-MACHINE_TYPE = "c2-standard-32"  # 32 vCPUs, 128 GB RAM
+MACHINE_TYPES = ["c2-standard-32", "c3-standard-32", "e2-highcpu-32", "c2-standard-16"]
 BOOT_DISK_SIZE = "60GB"
 IMAGE_FAMILY = "ubuntu-2404-lts-amd64"
 IMAGE_PROJECT = "ubuntu-os-cloud"
@@ -41,9 +42,11 @@ def err(msg):
 
 
 def run_gcloud(args, check=True):
+    env = os.environ.copy()
+    env["CLOUDSDK_PYTHON"] = r"C:\Users\Aluno\AppData\Local\Programs\Python\Python312\python.exe"
     cmd = [GCLOUD_CMD] + args + [f"--project={PROJECT}"]
     log(f"Executando: {' '.join(cmd)}")
-    res = subprocess.run(cmd, text=True, capture_output=True)
+    res = subprocess.run(cmd, text=True, capture_output=True, env=env)
     if res.returncode != 0 and check:
         err(f"Comando falhou com código {res.returncode}:\n{res.stderr}")
         raise RuntimeError(res.stderr)
@@ -51,31 +54,39 @@ def run_gcloud(args, check=True):
 
 
 def create_spot_vm():
-    log(f"1. Criando Instância Spot 32 vCPUs ({MACHINE_TYPE}) na zona {ZONE}...")
-    args = [
-        "compute", "instances", "create", INSTANCE_NAME,
-        f"--zone={ZONE}",
-        f"--machine-type={MACHINE_TYPE}",
-        "--provisioning-model=SPOT",
-        "--instance-termination-action=DELETE",
-        f"--boot-disk-size={BOOT_DISK_SIZE}",
-        "--boot-disk-type=pd-ssd",
-        f"--image-family={IMAGE_FAMILY}",
-        f"--image-project={IMAGE_PROJECT}",
-        "--scopes=cloud-platform",
-        "--metadata=enable-oslogin=TRUE"
-    ]
-    run_gcloud(args)
-    ok("Instância Spot criada com sucesso!")
+    for mtype in MACHINE_TYPES:
+        log(f"1. Tentando criar Instância Spot ({mtype}) na zona {ZONE}...")
+        args = [
+            "compute", "instances", "create", INSTANCE_NAME,
+            f"--zone={ZONE}",
+            f"--machine-type={mtype}",
+            "--provisioning-model=SPOT",
+            "--instance-termination-action=DELETE",
+            f"--boot-disk-size={BOOT_DISK_SIZE}",
+            "--boot-disk-type=pd-ssd",
+            f"--image-family={IMAGE_FAMILY}",
+            f"--image-project={IMAGE_PROJECT}",
+            "--scopes=cloud-platform"
+        ]
+        res = run_gcloud(args, check=False)
+        if res.returncode == 0:
+            ok(f"Instância Spot ({mtype}) criada com sucesso!")
+            return True
+        log(f"Máquina {mtype} indisponível no momento em {ZONE}, tentando alternativa...")
+    
+    raise RuntimeError("Não foi possível alocar uma instância Spot nas configurações solicitadas.")
 
 
 def wait_for_ssh():
-    log("2. Aguardando inicialização do SSH na VM (até 60s)...")
-    for i in range(12):
+    log("2. Aguardando inicialização do SSH na VM (até 90s)...")
+    env = os.environ.copy()
+    env["CLOUDSDK_PYTHON"] = r"C:\Users\Aluno\AppData\Local\Programs\Python\Python312\python.exe"
+    
+    for i in range(18):
         time.sleep(5)
         res = subprocess.run(
             [GCLOUD_CMD, "compute", "ssh", INSTANCE_NAME, f"--zone={ZONE}", f"--project={PROJECT}", "--command=echo ready", "--quiet"],
-            capture_output=True, text=True
+            capture_output=True, text=True, env=env
         )
         if "ready" in res.stdout:
             ok("SSH pronto e conectado!")
@@ -86,29 +97,38 @@ def wait_for_ssh():
 
 
 def build_and_download():
-    log("3. Enviando código do MultiForge para a Spot VM...")
-    # Compacta e envia via scp
+    log("3. Compactando e enviando código do MultiForge para a Spot VM...")
     tar_path = os.path.join(os.environ.get("TEMP", r"C:\tmp"), "multiforge.tar.gz")
     os.makedirs(os.path.dirname(tar_path), exist_ok=True)
     
-    log("Gerando arquivo de código...")
-    subprocess.run(["tar", "-czf", tar_path, "-C", REPO_ROOT, "--exclude=.git", "--exclude=ForgeImager/node_modules", "."], check=True)
+    def exclude_filter(tarinfo):
+        name = tarinfo.name
+        if ".git" in name or "node_modules" in name or "target" in name or "dist" in name:
+            return None
+        return tarinfo
+
+    with tarfile.open(tar_path, "w:gz") as tar:
+        tar.add(REPO_ROOT, arcname="multi-forge", filter=exclude_filter)
     
-    log("Transferindo para a VM via gcloud scp...")
+    log(f"Arquivo gerado ({os.path.getsize(tar_path)} bytes). Enviando via gcloud scp...")
     run_gcloud(["compute", "scp", tar_path, f"{INSTANCE_NAME}:/tmp/multiforge.tar.gz", f"--zone={ZONE}", "--quiet"])
     
-    log("4. Executando compilação paralela com 32 vCPUs na Spot VM...")
-    remote_script = """
-    set -e
-    mkdir -p /root/multi-forge
-    tar -xzf /tmp/multiforge.tar.gz -C /root/multi-forge
-    chmod +x /root/multi-forge/ForgeOS/distro/build-image.sh
-    OUTPUT_DIR=/root/distro_output /root/multi-forge/ForgeOS/distro/build-image.sh
-    """
+    log("4. Executando compilação paralela com vCPUs na Spot VM...")
+    remote_script = (
+        "sudo bash -c '"
+        "mkdir -p /root && "
+        "tar -xzf /tmp/multiforge.tar.gz -C /root/ && "
+        "chmod +x /root/multi-forge/ForgeOS/distro/build-image.sh && "
+        "OUTPUT_DIR=/root/distro_output /root/multi-forge/ForgeOS/distro/build-image.sh"
+        "'"
+    )
+    
+    env = os.environ.copy()
+    env["CLOUDSDK_PYTHON"] = r"C:\Users\Aluno\AppData\Local\Programs\Python\Python312\python.exe"
     
     res = subprocess.run(
         [GCLOUD_CMD, "compute", "ssh", INSTANCE_NAME, f"--zone={ZONE}", f"--project={PROJECT}", f"--command={remote_script}", "--quiet"],
-        text=True
+        text=True, env=env
     )
     if res.returncode != 0:
         err("Erro na compilação dentro da Spot VM!")
@@ -116,16 +136,23 @@ def build_and_download():
 
     log("5. Baixando a imagem gerada (.img.xz e .sha256) para Downloads...")
     dest_dir = DOWNLOADS_DIR
-    run_gcloud(["compute", "scp", f"{INSTANCE_NAME}:/root/distro_output/*", dest_dir, f"--zone={ZONE}", "--quiet"])
+    
+    # Copia para pasta temporária com permissão no guest antes do scp
+    fix_perm = "sudo cp -r /root/distro_output /tmp/distro_output && sudo chmod -R 777 /tmp/distro_output"
+    subprocess.run([GCLOUD_CMD, "compute", "ssh", INSTANCE_NAME, f"--zone={ZONE}", f"--project={PROJECT}", f"--command={fix_perm}", "--quiet"], env=env)
+    
+    run_gcloud(["compute", "scp", "--recurse", f"{INSTANCE_NAME}:/tmp/distro_output/*", dest_dir, f"--zone={ZONE}", "--quiet"])
     ok(f"Arquivos baixados com sucesso para: {dest_dir}")
     return True
 
 
 def delete_spot_vm():
     log(f"6. DESTRUINDO INSTÂNCIA SPOT {INSTANCE_NAME} (Economia 100%)...")
+    env = os.environ.copy()
+    env["CLOUDSDK_PYTHON"] = r"C:\Users\Aluno\AppData\Local\Programs\Python\Python312\python.exe"
     subprocess.run(
         [GCLOUD_CMD, "compute", "instances", "delete", INSTANCE_NAME, f"--zone={ZONE}", f"--project={PROJECT}", "--quiet"],
-        capture_output=True, text=True
+        capture_output=True, text=True, env=env
     )
     ok("Instância deletada. Zero cobrança contínua!")
 
