@@ -14,7 +14,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 WORK_DIR="/tmp/forgeos_distro_build"
 OUTPUT_DIR="${OUTPUT_DIR:-$REPO_ROOT/distro_output}"
 DISTRO_NAME="ForgeOS_BTV_E10_v1.0.0"
-BASE_IMG_URL="https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_kernel_2026.08/Armbian_24.8.0_amlogic_s905x2_trixie_6.18.44_server.img.gz"
+BASE_IMG_URL="https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_trixie_arm64_server_2026.08/Armbian_26.08.0_amlogic_s905x2_trixie_6.18.44_server_2026.08.15.img.gz"
 
 log() { echo -e "\033[1;34m[BUILDER]\033[0m $*"; }
 ok()  { echo -e "\033[1;32m[BUILDER OK]\033[0m $*"; }
@@ -27,7 +27,7 @@ log "1. Instalando dependências de empacotamento no host..."
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
 apt-get install -y -qq \
-    qemu-user-static binfmt-support losetup parted dosfstools \
+    qemu-user-static binfmt-support util-linux parted dosfstools \
     e2fsprogs xz-utils curl wget ca-certificates gzip device-tree-compiler
 
 log "2. Obtendo imagem base minimal Armbian S905X2..."
