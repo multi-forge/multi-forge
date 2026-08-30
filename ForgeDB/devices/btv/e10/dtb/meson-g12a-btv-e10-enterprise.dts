@@ -2786,6 +2786,7 @@
 				compatible = "amlogic,meson-gxbb-wdt";
 				reg = <0x00 0xf0d0 0x00 0x10>;
 				clocks = <0x08>;
+				status = "okay";
 				phandle = <0x121>;
 			};
 
