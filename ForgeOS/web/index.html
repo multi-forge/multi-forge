@@ -2,7 +2,7 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>FORGE-OS // APPLIANCE CORE HUD · BTV-E10</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="manifest" href="/manifest.json">
@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       FORGE-OS HARDWARE CONSOLE DESIGN SYSTEM
+       FORGE-OS HARDWARE CONSOLE DESIGN SYSTEM (DESKTOP & MOBILE OPTIMIZED)
        ========================================================================== */
     :root {
       --font-display: "Chakra Petch", -apple-system, sans-serif;
@@ -92,6 +92,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%;
+      width: 100%;
       font-family: var(--font-display);
       background-color: var(--bg-void);
       background-image: 
@@ -100,9 +101,10 @@
       background-size: 24px 24px;
       color: var(--text-bright);
       -webkit-font-smoothing: antialiased;
-      font-size: 13.5px;
+      font-size: 14px;
       line-height: 1.4;
       overflow: hidden;
+      touch-action: manipulation;
     }
     
     /* CRT Scanlines */
@@ -115,7 +117,7 @@
       background-size: 100% 3px;
       z-index: 999;
       pointer-events: none;
-      opacity: 0.3;
+      opacity: 0.25;
     }
 
     a { color: inherit; text-decoration: none; }
@@ -123,18 +125,34 @@
     button { cursor: pointer; border: none; background: none; }
 
     /* Layout */
-    .app-container { display: flex; height: 100vh; overflow: hidden; position: relative; }
+    .app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; position: relative; }
 
-    /* Sidebar Navigation */
+    /* Mobile Sidebar Backdrop */
+    .sidebar-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .sidebar-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Sidebar Navigation (Rack Rail) */
     .sidebar {
-      width: 240px;
+      width: 250px;
       background: var(--bg-hull);
       border-right: 2px solid var(--border-hull);
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 40;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
       position: relative;
     }
     .sidebar::before {
@@ -146,13 +164,19 @@
     }
 
     .brand-header {
-      padding: 1.25rem 1.15rem;
+      padding: 1.15rem 1.15rem;
       border-bottom: 2px solid var(--border-hull);
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      justify-content: space-between;
+      gap: 0.75rem;
       background: var(--bg-panel);
       position: relative;
+    }
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
     .brand-logo {
       width: 36px;
@@ -184,10 +208,16 @@
       letter-spacing: 0.05em;
       display: block;
     }
+    .sidebar-close-btn {
+      display: none;
+      padding: 0.4rem;
+      color: var(--text-dim);
+      font-size: 1.1rem;
+    }
 
     .nav-menu {
       flex: 1;
-      padding: 1rem 0.65rem;
+      padding: 0.85rem 0.65rem;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -216,7 +246,8 @@
       display: flex;
       align-items: center;
       gap: 0.65rem;
-      padding: 0.6rem 0.75rem;
+      padding: 0.65rem 0.75rem;
+      min-height: 42px;
       font-size: 0.85rem;
       font-weight: 600;
       text-transform: uppercase;
@@ -241,7 +272,7 @@
       box-shadow: var(--neon-cyan-glow);
       font-weight: 700;
     }
-    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
 
     .nav-badge {
       margin-left: auto;
@@ -283,6 +314,7 @@
       box-shadow: var(--neon-toxic-glow);
       clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
       animation: blink-pulse 1.8s infinite;
+      flex-shrink: 0;
     }
     @keyframes blink-pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -296,18 +328,18 @@
       flex-direction: column;
       overflow: hidden;
       background: var(--bg-void);
+      min-width: 0;
     }
 
     /* Topbar HUD */
     .topbar {
-      height: 52px;
+      height: 54px;
       border-bottom: 2px solid var(--border-hull);
-      background: var(--bg-glass);
-      backdrop-filter: blur(10px);
+      background: var(--bg-panel);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 1.5rem;
+      padding: 0 1.25rem;
       flex-shrink: 0;
       z-index: 30;
     }
@@ -315,24 +347,33 @@
     .topbar-left {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.85rem;
+      min-width: 0;
     }
     .mobile-menu-btn {
       display: none;
+      min-width: 36px;
+      height: 36px;
       padding: 0.4rem;
       border: 1px solid var(--border-hull);
-      background: var(--bg-panel);
+      background: var(--bg-panel-elevated);
       color: var(--neon-cyan);
+      align-items: center;
+      justify-content: center;
+      clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
     }
     .topbar-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--text-glow);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .topbar-title::before {
       content: "//";
@@ -343,7 +384,8 @@
     .topbar-right {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
+      flex-shrink: 0;
     }
 
     .hud-tag {
@@ -355,14 +397,15 @@
       font-family: var(--font-tech);
       font-weight: 700;
       text-transform: uppercase;
-      background: var(--bg-panel);
+      background: var(--bg-inset);
       border: 1px solid var(--border-hull);
       color: var(--neon-toxic);
+      white-space: nowrap;
     }
 
     .icon-btn {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -383,6 +426,7 @@
       flex: 1;
       overflow-y: auto;
       padding: 1.25rem 1.5rem;
+      -webkit-overflow-scrolling: touch;
     }
 
     .page-view {
@@ -396,7 +440,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Panels Grid */
+    /* Responsive Grids */
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
     .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
@@ -427,6 +471,8 @@
       margin-bottom: 0.85rem;
       border-bottom: 1px dashed var(--border-hull);
       padding-bottom: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.4rem;
     }
     .card-title {
       font-size: 0.85rem;
@@ -453,14 +499,16 @@
       margin-bottom: 1.25rem;
       box-shadow: 0 6px 16px rgba(0,0,0,0.6);
       position: relative;
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
     .rack-chassis-header::after {
       content: "";
       position: absolute;
       top: 0; right: 0; bottom: 0;
-      width: 100px;
+      width: 80px;
       background: var(--hazard-stripe);
-      opacity: 0.3;
+      opacity: 0.25;
       pointer-events: none;
     }
 
@@ -496,7 +544,7 @@
       transition: all 0.2s ease;
     }
     .cartridge-blade:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
       border-color: var(--neon-cyan);
       box-shadow: 
         0 0 20px rgba(0, 240, 255, 0.2),
@@ -507,7 +555,7 @@
       box-shadow: var(--neon-cyan-glow);
     }
 
-    /* Active Running Blade Glow */
+    /* Active Blade */
     .cartridge-blade.active-blade {
       border-color: rgba(0, 255, 102, 0.5);
       background: linear-gradient(180deg, #101B1A 0%, var(--bg-panel) 100%);
@@ -517,7 +565,7 @@
       box-shadow: var(--neon-toxic-glow);
     }
 
-    /* Metallic Rivet Bolts */
+    /* Rivet Bolts */
     .rivet-bolt {
       position: absolute;
       width: 6px;
@@ -575,7 +623,7 @@
       box-shadow: var(--neon-cyan-glow);
     }
 
-    /* Cartridge Main Chip Identity */
+    /* Cartridge Main Chip */
     .cartridge-identity {
       display: flex;
       align-items: center;
@@ -601,7 +649,7 @@
     }
 
     .cartridge-name {
-      font-size: 1.02rem;
+      font-size: 1rem;
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -650,6 +698,7 @@
       box-shadow: 0 4px 0 #995E00, 0 6px 12px rgba(255, 158, 0, 0.4);
       flex: 1;
       padding: 0.65rem 0.85rem;
+      min-height: 42px;
       text-align: center;
       border-radius: 2px;
       clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
@@ -671,6 +720,7 @@
       font-weight: 700;
       box-shadow: 0 3px 0 #070A0F;
       flex: 1;
+      min-height: 40px;
       padding: 0.6rem 0.75rem;
     }
     .btn-purge {
@@ -679,6 +729,7 @@
       color: var(--neon-crimson);
       font-weight: 700;
       box-shadow: 0 3px 0 #070A0F;
+      min-height: 40px;
       padding: 0.6rem 0.75rem;
     }
     .btn-purge:hover {
@@ -699,7 +750,7 @@
       gap: 0.35rem;
     }
     .stat-value {
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       font-weight: 800;
       font-family: var(--font-mono);
       letter-spacing: 0.02em;
@@ -732,12 +783,23 @@
       transition: width 0.4s ease;
     }
 
-    /* Tables */
+    /* Tables & Responsive Wrapper */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 0.25rem;
+    }
+    .table-responsive::-webkit-scrollbar { height: 5px; }
+    .table-responsive::-webkit-scrollbar-track { background: var(--bg-inset); }
+    .table-responsive::-webkit-scrollbar-thumb { background: var(--border-hull); border-radius: 2px; }
+
     .data-table {
       width: 100%;
       border-collapse: collapse;
       font-family: var(--font-mono);
       font-size: 0.8rem;
+      min-width: 480px;
     }
     .data-table th {
       text-align: left;
@@ -749,30 +811,42 @@
       letter-spacing: 0.1em;
       background: var(--bg-inset);
       border-bottom: 1px solid var(--border-hull);
+      white-space: nowrap;
     }
     .data-table td {
       padding: 0.65rem 0.75rem;
       border-bottom: 1px solid var(--border-hull);
       color: var(--text-bright);
+      white-space: nowrap;
     }
     .data-table tr:hover td {
       background: rgba(0, 240, 255, 0.04);
       color: var(--neon-cyan);
     }
 
-    /* Wi-Fi Spectrum Items & Container (Smooth Scroll & No Trapped Wheels) */
+    /* Wi-Fi Action Bar & Items */
+    .wifi-action-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .wifi-action-btns {
+      display: flex;
+      gap: 0.5rem;
+    }
+
     #wifi-networks-container {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
       max-height: 520px;
       overflow-y: auto;
-      padding-right: 4px;
+      padding-right: 2px;
+      -webkit-overflow-scrolling: touch;
     }
     #wifi-networks-container::-webkit-scrollbar { width: 5px; }
     #wifi-networks-container::-webkit-scrollbar-track { background: var(--bg-inset); }
     #wifi-networks-container::-webkit-scrollbar-thumb { background: var(--border-hull); border-radius: 2px; }
-    #wifi-networks-container::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
 
     .wifi-item {
       display: flex;
@@ -784,6 +858,7 @@
       clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
       transition: all 0.15s ease;
       position: relative;
+      gap: 0.75rem;
     }
     .wifi-item::before {
       content: "";
@@ -796,17 +871,24 @@
     .wifi-item:hover {
       border-color: var(--neon-cyan);
       background: var(--bg-panel-elevated);
-      transform: translateX(4px);
+      transform: translateX(3px);
     }
     .wifi-item:hover::before { opacity: 1; box-shadow: var(--neon-cyan-glow); }
 
-    .wifi-left { display: flex; align-items: center; gap: 0.85rem; }
+    .wifi-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 0;
+      flex: 1;
+    }
     .wifi-signal-meter {
       display: flex;
       align-items: flex-end;
       gap: 3px;
       height: 16px;
       width: 18px;
+      flex-shrink: 0;
     }
     .wifi-bar {
       width: 3px;
@@ -820,25 +902,30 @@
     .wifi-bar:nth-child(3) { height: 80%; }
     .wifi-bar:nth-child(4) { height: 100%; }
 
+    .wifi-details { min-width: 0; flex: 1; }
     .wifi-details h4 {
       font-size: 0.9rem;
       font-weight: 700;
       letter-spacing: 0.04em;
       color: var(--text-glow);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .wifi-meta {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.5rem;
       font-size: 0.68rem;
       font-family: var(--font-tech);
       color: var(--text-dim);
       margin-top: 0.2rem;
+      flex-wrap: wrap;
     }
     .badge {
       display: inline-flex;
       align-items: center;
-      padding: 0.12rem 0.5rem;
+      padding: 0.12rem 0.45rem;
       font-size: 0.65rem;
       font-family: var(--font-tech);
       font-weight: 700;
@@ -846,6 +933,7 @@
       background: var(--bg-void);
       border: 1px solid var(--border-hull);
       color: var(--neon-cyan);
+      white-space: nowrap;
     }
     .badge-ok { color: var(--neon-toxic); border-color: var(--neon-toxic); }
     .badge-amber { color: var(--neon-amber); border-color: var(--neon-amber); }
@@ -857,6 +945,7 @@
       justify-content: center;
       gap: 0.45rem;
       padding: 0.5rem 1rem;
+      min-height: 38px;
       font-family: var(--font-display);
       font-size: 0.82rem;
       font-weight: 700;
@@ -866,6 +955,7 @@
       cursor: pointer;
       position: relative;
       clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+      white-space: nowrap;
     }
     .btn-primary {
       background: var(--neon-amber);
@@ -893,7 +983,7 @@
       background: var(--bg-hull);
       box-shadow: 0 4px 8px rgba(0, 240, 255, 0.2);
     }
-    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.72rem; }
+    .btn-sm { padding: 0.35rem 0.75rem; min-height: 34px; font-size: 0.72rem; }
 
     /* Form Inputs */
     .form-group { margin-bottom: 0.95rem; }
@@ -909,7 +999,7 @@
     }
     .form-control {
       width: 100%;
-      height: 38px;
+      height: 42px;
       padding: 0 0.75rem;
       background: var(--bg-inset);
       border: 1px solid var(--border-hull);
@@ -940,11 +1030,12 @@
     }
     .segment-btn {
       flex: 1;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.78rem;
+      padding: 0.6rem 0.5rem;
+      min-height: 40px;
+      font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.04em;
       text-align: center;
       color: var(--text-dim);
       transition: all 0.15s ease;
@@ -965,7 +1056,7 @@
       align-items: center;
       justify-content: center;
       padding: 1rem;
-      z-index: 100;
+      z-index: 200;
     }
     .modal-overlay.active { display: flex; }
     .modal-card {
@@ -973,6 +1064,9 @@
       border: 2px solid var(--neon-cyan);
       width: 100%;
       max-width: 480px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
       box-shadow: 0 0 30px rgba(0, 240, 255, 0.25);
       clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
       position: relative;
@@ -984,8 +1078,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0;
     }
-    .modal-body { padding: 1.25rem; }
+    .modal-body {
+      padding: 1.25rem;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
     .modal-footer {
       padding: 0.85rem 1.25rem;
       background: var(--bg-panel);
@@ -994,6 +1093,7 @@
       align-items: center;
       justify-content: flex-end;
       gap: 0.65rem;
+      flex-shrink: 0;
     }
 
     /* Terminal */
@@ -1014,6 +1114,8 @@
       font-family: var(--font-tech);
       font-size: 0.72rem;
       color: var(--neon-amber);
+      flex-wrap: wrap;
+      gap: 0.4rem;
     }
     .terminal-window {
       padding: 1rem;
@@ -1025,35 +1127,79 @@
       overflow-y: auto;
       white-space: pre-wrap;
       line-height: 1.55;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* Responsive */
-    @media (max-width: 960px) {
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS (TABLETS & SMARTPHONES)
+       ========================================================================== */
+    @media (max-width: 1024px) {
       .grid-4 { grid-template-columns: repeat(2, 1fr); }
-      .grid-3 { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
     }
+
+    @media (max-width: 768px) {
+      .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+    }
+
     @media (max-width: 640px) {
-      .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
+      .sidebar {
+        position: fixed;
+        left: 0; top: 0; bottom: 0;
+        width: 270px;
+        transform: translateX(-100%);
+        box-shadow: none;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+      }
+      .sidebar-close-btn { display: block; }
       .mobile-menu-btn { display: flex; }
-      .grid-4, .grid-2 { grid-template-columns: 1fr; }
-      .content-area { padding: 1rem; }
+      
+      .topbar { padding: 0 0.85rem; }
+      .topbar-right .hud-tag { display: none; }
+      .topbar-right #btn-quick-reset { display: none; }
+      
+      .content-area {
+        padding: 0.85rem 0.85rem;
+      }
+
+      /* Wi-Fi Action Bar Stacking */
+      .wifi-action-bar {
+        flex-direction: column;
+      }
+      .wifi-action-btns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      /* Modal Form Grid Single Column on Mobile */
+      .modal-grid-2col {
+        grid-template-columns: 1fr !important;
+      }
     }
   </style>
 </head>
 <body>
 
 <div class="app-container">
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="brand-header">
-      <div class="brand-logo">
-        <img src="/logo.png" alt="Forge Logo" class="brand-logo-img">
+      <div class="brand-left">
+        <div class="brand-logo">
+          <img src="/logo.png" alt="Forge Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-info">
+          <h1>FORGE·OS</h1>
+          <span>[BTV-E10 // APPLIANCE]</span>
+        </div>
       </div>
-      <div class="brand-info">
-        <h1>FORGE·OS</h1>
-        <span>[BTV-E10 // APPLIANCE]</span>
-      </div>
+      <button class="sidebar-close-btn" id="sidebar-close" title="Fechar Menu">✕</button>
     </div>
 
     <nav class="nav-menu">
@@ -1109,8 +1255,8 @@
     <!-- Topbar -->
     <header class="topbar">
       <div class="topbar-left">
-        <button class="mobile-menu-btn" id="mobile-toggle">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <button class="mobile-menu-btn" id="mobile-toggle" aria-label="Abrir Menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
         <span class="topbar-title" id="page-title">Console de Hardware</span>
       </div>
@@ -1127,7 +1273,7 @@
       </div>
     </header>
 
-    <!-- Cockpit View Screens -->
+    <!-- Content Screens -->
     <main class="content-area">
       <!-- 1. DASHBOARD -->
       <section class="page-view active" id="view-dashboard">
@@ -1185,7 +1331,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/></svg>
                 Redes Wi-Fi Próximas
               </span>
-              <button class="btn btn-secondary btn-sm" onclick="showTab('wifi')">Ver Todas as Redes</button>
+              <button class="btn btn-secondary btn-sm" onclick="showTab('wifi')">Ver Todas</button>
             </div>
             <div id="dash-wifi-list">
               <p style="color:var(--text-dim); font-family:var(--font-tech); font-size:0.8rem; padding: 0.5rem 0;">Procurando redes Wi-Fi...</p>
@@ -1200,15 +1346,17 @@
                 Hardware do Equipamento
               </span>
             </div>
-            <table class="data-table">
-              <tbody>
-                <tr><td>DISPOSITIVO / MODELO</td><td style="color:var(--neon-cyan);">BTV Express E10 Enterprise</td></tr>
-                <tr><td>PROCESSADOR (SOC)</td><td style="color:var(--neon-cyan);">Amlogic S905X2 (4x Cortex-A53)</td></tr>
-                <tr><td>CONTROLADOR WI-FI</td><td style="color:var(--neon-cyan);">Realtek RTL8189FTV (SDIO)</td></tr>
-                <tr><td>ARMAZENAMENTO EMMC</td><td style="color:var(--neon-cyan);">29 GB (/dev/mmcblk1p2)</td></tr>
-                <tr><td>WATCHDOG DE HARDWARE</td><td style="color:var(--neon-toxic);">ATIVO (Rollback automático)</td></tr>
-              </tbody>
-            </table>
+            <div class="table-responsive">
+              <table class="data-table" style="min-width: unset;">
+                <tbody>
+                  <tr><td>DISPOSITIVO / MODELO</td><td style="color:var(--neon-cyan);">BTV Express E10 Enterprise</td></tr>
+                  <tr><td>PROCESSADOR (SOC)</td><td style="color:var(--neon-cyan);">Amlogic S905X2 (4x Cortex-A53)</td></tr>
+                  <tr><td>CONTROLADOR WI-FI</td><td style="color:var(--neon-cyan);">Realtek RTL8189FTV (SDIO)</td></tr>
+                  <tr><td>ARMAZENAMENTO EMMC</td><td style="color:var(--neon-cyan);">29 GB (/dev/mmcblk1p2)</td></tr>
+                  <tr><td>WATCHDOG DE HARDWARE</td><td style="color:var(--neon-toxic);">ATIVO (Auto-Rollback)</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -1223,15 +1371,17 @@
             </span>
           </div>
 
-          <!-- Action Bar -->
-          <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+          <!-- Responsive Action Bar -->
+          <div class="wifi-action-bar">
             <input type="text" class="form-control" id="wifi-filter-input" placeholder="Filtrar redes..." style="flex:1;">
-            <button class="btn btn-secondary btn-sm" id="btn-manual-network">
-              <span>+ REDE OCULTA</span>
-            </button>
-            <button class="btn btn-primary btn-sm" id="btn-refresh-scan">
-              <span>[ ESCANEAR AGORA ]</span>
-            </button>
+            <div class="wifi-action-btns">
+              <button class="btn btn-secondary btn-sm" id="btn-manual-network" style="flex:1;">
+                <span>+ OCULTA</span>
+              </button>
+              <button class="btn btn-primary btn-sm" id="btn-refresh-scan" style="flex:1;">
+                <span>[ ESCANEAR ]</span>
+              </button>
+            </div>
           </div>
 
           <div id="wifi-networks-container">
@@ -1261,7 +1411,7 @@
                 <input type="password" class="form-control" id="ap-cfg-pass" placeholder="Mínimo 8 caracteres (WPA2-PSK)">
               </div>
 
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.1rem;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.1rem;" class="modal-grid-2col">
                 <div>
                   <label class="form-label">// CANAL WI-FI (2.4 GHz)</label>
                   <select class="form-control" id="ap-cfg-channel">
@@ -1277,7 +1427,7 @@
               </div>
 
               <div style="display:flex; justify-content:flex-end;">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" style="width:100%;">
                   [ SALVAR E REINICIAR AP ]
                 </button>
               </div>
@@ -1288,15 +1438,17 @@
             <div class="card-header">
               <span class="card-title">DHCP &amp; Roteamento IP</span>
             </div>
-            <table class="data-table">
-              <tbody>
-                <tr><td>INTERFACE WI-FI</td><td style="color:var(--neon-cyan);">wlan0 (Ponto de Acesso)</td></tr>
-                <tr><td>FAIXA DE IP DHCP</td><td style="color:var(--neon-cyan);">192.168.4.10 – 192.168.4.250</td></tr>
-                <tr><td>PORTAL CAPTIVO</td><td style="color:var(--neon-cyan);">dnsmasq (Porta 53 Hijack)</td></tr>
-                <tr><td>PORTA DO SERVIDOR WEB</td><td style="color:var(--neon-cyan);">Porta 8080 (iptables :80 → :8080)</td></tr>
-                <tr><td>COMPARTILHAMENTO NAT</td><td style="color:var(--neon-toxic);">ATIVO (Uplink eth0)</td></tr>
-              </tbody>
-            </table>
+            <div class="table-responsive">
+              <table class="data-table" style="min-width: unset;">
+                <tbody>
+                  <tr><td>INTERFACE WI-FI</td><td style="color:var(--neon-cyan);">wlan0 (Ponto de Acesso)</td></tr>
+                  <tr><td>FAIXA DE IP DHCP</td><td style="color:var(--neon-cyan);">192.168.4.10 – 192.168.4.250</td></tr>
+                  <tr><td>PORTAL CAPTIVO</td><td style="color:var(--neon-cyan);">dnsmasq (Porta 53 Hijack)</td></tr>
+                  <tr><td>PORTA DO SERVIDOR WEB</td><td style="color:var(--neon-cyan);">Porta 8080 (iptables :80 → :8080)</td></tr>
+                  <tr><td>COMPARTILHAMENTO NAT</td><td style="color:var(--neon-toxic);">ATIVO (Uplink eth0)</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -1310,39 +1462,41 @@
               Interfaces de Rede Físicas
             </span>
           </div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>INTERFACE</th>
-                <th>CONTROLADOR</th>
-                <th>ENDEREÇO IP</th>
-                <th>ENDEREÇO MAC</th>
-                <th>VELOCIDADE</th>
-                <th>TRÁFEGO (RX / TX)</th>
-                <th style="text-align:right;">STATUS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="color:var(--neon-cyan); font-weight:700;">eth0</td>
-                <td>Realtek RTL8211F Gigabit</td>
-                <td id="eth-table-ip">192.168.1.153</td>
-                <td id="eth-table-mac">EC:2E:AB:41:1E:75</td>
-                <td style="color:var(--neon-toxic);">1000 Mbps Full-Duplex</td>
-                <td>42.8 MB / 18.2 MB</td>
-                <td style="text-align:right;"><span class="badge badge-ok">CONECTADO</span></td>
-              </tr>
-              <tr>
-                <td style="color:var(--neon-cyan); font-weight:700;">wlan0</td>
-                <td>Realtek RTL8189FTV 802.11n</td>
-                <td id="wlan-table-ip">192.168.4.1</td>
-                <td id="wlan-table-mac">3C:7A:AA:39:F6:C2</td>
-                <td style="color:var(--neon-amber);">72.2 Mbps (MCS7)</td>
-                <td>14.1 MB / 6.5 MB</td>
-                <td style="text-align:right;"><span class="badge badge-amber">AP ATIVO</span></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>INTERFACE</th>
+                  <th>CONTROLADOR</th>
+                  <th>ENDEREÇO IP</th>
+                  <th>ENDEREÇO MAC</th>
+                  <th>VELOCIDADE</th>
+                  <th>TRÁFEGO (RX / TX)</th>
+                  <th style="text-align:right;">STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color:var(--neon-cyan); font-weight:700;">eth0</td>
+                  <td>Realtek RTL8211F Gigabit</td>
+                  <td id="eth-table-ip">192.168.1.153</td>
+                  <td id="eth-table-mac">EC:2E:AB:41:1E:75</td>
+                  <td style="color:var(--neon-toxic);">1000 Mbps Full-Duplex</td>
+                  <td>42.8 MB / 18.2 MB</td>
+                  <td style="text-align:right;"><span class="badge badge-ok">CONECTADO</span></td>
+                </tr>
+                <tr>
+                  <td style="color:var(--neon-cyan); font-weight:700;">wlan0</td>
+                  <td>Realtek RTL8189FTV 802.11n</td>
+                  <td id="wlan-table-ip">192.168.4.1</td>
+                  <td id="wlan-table-mac">3C:7A:AA:39:F6:C2</td>
+                  <td style="color:var(--neon-amber);">72.2 Mbps (MCS7)</td>
+                  <td>14.1 MB / 6.5 MB</td>
+                  <td style="text-align:right;"><span class="badge badge-amber">AP ATIVO</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -1353,53 +1507,57 @@
             <div class="card-header">
               <span class="card-title">Serviços do Sistema (systemd)</span>
             </div>
-            <table class="data-table">
-              <tbody>
-                <tr><td>forge-ap.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
-                <tr><td>forge-portal.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
-                <tr><td>forge-display.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
-                <tr><td>forge-watchdog.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
-                <tr><td>forge-fbcon-disable.service</td><td style="text-align:right;"><span class="badge badge-ok">CONCLUÍDO</span></td></tr>
-              </tbody>
-            </table>
+            <div class="table-responsive">
+              <table class="data-table" style="min-width: unset;">
+                <tbody>
+                  <tr><td>forge-ap.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
+                  <tr><td>forge-portal.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
+                  <tr><td>forge-display.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
+                  <tr><td>forge-watchdog.service</td><td style="text-align:right;"><span class="badge badge-ok">RODANDO</span></td></tr>
+                  <tr><td>forge-fbcon-disable.service</td><td style="text-align:right;"><span class="badge badge-ok">CONCLUÍDO</span></td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div class="card">
             <div class="card-header">
               <span class="card-title">Recursos de Hardware</span>
             </div>
-            <table class="data-table">
-              <tbody>
-                <tr>
-                  <td>SISTEMA OPERACIONAL</td>
-                  <td style="color:var(--neon-cyan);">Armbian 26.08 Trixie (Debian 13)</td>
-                </tr>
-                <tr>
-                  <td>ARQUITETURA</td>
-                  <td style="color:var(--neon-cyan);">aarch64 · 4x Cortex-A53 (1.8 GHz)</td>
-                </tr>
-                <tr>
-                  <td>MEMÓRIA RAM LPDDR4</td>
-                  <td>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                      <span style="color:var(--neon-toxic);">343 MB / 1.89 GB</span>
-                      <span style="color:var(--neon-toxic);">18%</span>
-                    </div>
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:18%;"></div></div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>ARMAZENAMENTO EMMC</td>
-                  <td>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                      <span style="color:var(--neon-amber);">2.6 GB / 29.0 GB</span>
-                      <span style="color:var(--neon-amber);">9%</span>
-                    </div>
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:9%;"></div></div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="table-responsive">
+              <table class="data-table" style="min-width: unset;">
+                <tbody>
+                  <tr>
+                    <td>SISTEMA OPERACIONAL</td>
+                    <td style="color:var(--neon-cyan);">Armbian 26.08 Trixie (Debian 13)</td>
+                  </tr>
+                  <tr>
+                    <td>ARQUITETURA</td>
+                    <td style="color:var(--neon-cyan);">aarch64 · 4x Cortex-A53 (1.8 GHz)</td>
+                  </tr>
+                  <tr>
+                    <td>MEMÓRIA RAM LPDDR4</td>
+                    <td>
+                      <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                        <span style="color:var(--neon-toxic);">343 MB / 1.89 GB</span>
+                        <span style="color:var(--neon-toxic);">18%</span>
+                      </div>
+                      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:18%;"></div></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>ARMAZENAMENTO EMMC</td>
+                    <td>
+                      <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                        <span style="color:var(--neon-amber);">2.6 GB / 29.0 GB</span>
+                        <span style="color:var(--neon-amber);">9%</span>
+                      </div>
+                      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:9%;"></div></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -1409,7 +1567,7 @@
         <!-- Rack Chassis Bay Header -->
         <div class="rack-chassis-header">
           <div>
-            <div style="font-size:1.1rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-glow);">
+            <div style="font-size:1.05rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-glow);">
               [ MÓDULOS DE APLICAÇÃO ] · FORGEHUB
             </div>
             <div style="font-size:0.72rem; font-family:var(--font-tech); color:var(--neon-cyan); margin-top:0.25rem;">
@@ -1417,7 +1575,7 @@
             </div>
           </div>
           <button class="btn btn-secondary btn-sm" id="btn-refresh-modules" onclick="loadModulesHub()">
-            <span>[ ATUALIZAR CATÁLOGO ]</span>
+            <span>[ ATUALIZAR ]</span>
           </button>
         </div>
 
@@ -1433,7 +1591,6 @@
             <div class="terminal-toolbar">
               <div style="display:flex; align-items:center; gap:0.5rem;">
                 <span style="font-weight:700;">// LOGS DO SISTEMA EM TEMPO REAL</span>
-                <span style="color:var(--text-dim);">[PORTA: 8080 // TTY: SERIAL]</span>
               </div>
               <div style="display:flex; gap:0.4rem;">
                 <button class="btn btn-secondary btn-sm" id="btn-copy-logs">[ COPIAR ]</button>
@@ -1477,7 +1634,7 @@
         </div>
 
         <div id="fields-eap" style="display:none;">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;" class="modal-grid-2col">
             <div class="form-group">
               <label class="form-label">// MÉTODO EAP</label>
               <select class="form-control" id="prov-eap-method">
@@ -1497,7 +1654,7 @@
             </div>
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;" class="modal-grid-2col">
             <div class="form-group">
               <label class="form-label">// USUÁRIO</label>
               <input type="text" class="form-control" id="prov-eap-user" placeholder="usuario@unesp.br">
@@ -1508,7 +1665,7 @@
             </div>
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;" class="modal-grid-2col">
             <div class="form-group">
               <label class="form-label">// IDENTIDADE ANÔNIMA</label>
               <input type="text" class="form-control" id="prov-eap-anon" placeholder="anonymous@unesp.br">
@@ -1534,10 +1691,28 @@
 
 <script>
 /* ==========================================================================
-   FORGE-OS HARDWARE CONTROLLER SCRIPT
+   FORGE-OS HARDWARE CONTROLLER SCRIPT (RESPONSIVE & MOBILE READY)
    ========================================================================== */
 let currentNetworks = [];
 let currentProvMode = 'psk';
+
+// Drawer Helpers
+const sidebarEl = document.getElementById('sidebar');
+const backdropEl = document.getElementById('sidebar-backdrop');
+
+function openSidebar() {
+  sidebarEl.classList.add('open');
+  backdropEl.classList.add('active');
+}
+
+function closeSidebar() {
+  sidebarEl.classList.remove('open');
+  backdropEl.classList.remove('active');
+}
+
+document.getElementById('mobile-toggle').addEventListener('click', openSidebar);
+document.getElementById('sidebar-close').addEventListener('click', closeSidebar);
+backdropEl.addEventListener('click', closeSidebar);
 
 // Tab Navigation
 function showTab(tabId) {
@@ -1549,20 +1724,18 @@ function showTab(tabId) {
   });
   const titles = {
     dashboard: 'Dashboard // Visão Geral',
-    wifi: 'Scanner Wi-Fi // Redes Disponíveis',
-    ap: 'Ponto de Acesso // Configurações AP',
-    ethernet: 'Interfaces Físicas // Rede & Uplink',
-    system: 'Telemetria // Recursos do Sistema',
-    modules: 'Módulos // Arsenal ForgeHub',
-    logs: 'Terminal // Logs do Sistema'
+    wifi: 'Scanner Wi-Fi // Redes',
+    ap: 'Ponto de Acesso // AP',
+    ethernet: 'Interfaces Físicas // Rede',
+    system: 'Telemetria // Recursos',
+    modules: 'Módulos // ForgeHub',
+    logs: 'Terminal // Logs'
   };
   document.getElementById('page-title').textContent = titles[tabId] || 'FORGE-OS';
   if (tabId === 'modules') {
     loadModulesHub();
   }
-  if (window.innerWidth <= 640) {
-    document.getElementById('sidebar').classList.remove('open');
-  }
+  closeSidebar();
 }
 
 document.querySelectorAll('.nav-item').forEach(el => {
@@ -1577,11 +1750,6 @@ document.querySelectorAll('.nav-item').forEach(el => {
 window.addEventListener('hashchange', () => {
   const tab = location.hash.replace('#', '') || 'dashboard';
   showTab(tab);
-});
-
-// Mobile Sidebar Toggle
-document.getElementById('mobile-toggle').addEventListener('click', () => {
-  document.getElementById('sidebar').classList.toggle('open');
 });
 
 // Theme Switcher (Dark / Light)
@@ -1710,9 +1878,9 @@ function renderWifiNetworks(networks) {
 
   // Render top 3 on dashboard
   dashContainer.innerHTML = filtered.slice(0, 3).map(net => `
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border-hull);">
-      <div>
-        <span style="font-weight:700; font-size:0.88rem; color:var(--text-glow);">${escapeHtml(net.ssid)}</span>
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border-hull); gap:0.5rem;">
+      <div style="min-width:0; flex:1;">
+        <div style="font-weight:700; font-size:0.88rem; color:var(--text-glow); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(net.ssid)}</div>
         <div style="font-size:0.68rem; color:var(--neon-cyan); font-family:var(--font-tech);">[${net.encryption.toUpperCase()}] · ${net.rssi} dBm</div>
       </div>
       <button class="btn btn-secondary btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">[ CONECTAR ]</button>
