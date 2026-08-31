@@ -326,6 +326,17 @@ def get_realtime_metrics():
     except Exception:
         uptime_sec = int(time.time() - 1756500000)
 
+    # 5. Disk Usage
+    disk_total_gb = 29.0
+    disk_used_gb = 3.5
+    try:
+        st = os.statvfs("/")
+        disk_total_gb = round((st.f_blocks * st.f_frsize) / (1024**3), 1)
+        disk_free_gb = round((st.f_bavail * st.f_frsize) / (1024**3), 1)
+        disk_used_gb = round(disk_total_gb - disk_free_gb, 1)
+    except Exception:
+        pass
+
     # 6. Real-time CPU Frequency (MHz)
     cpu_cur_freq_mhz = 1400
     try:
