@@ -137,9 +137,9 @@ chroot "$MOUNT_ROOT" /bin/bash -c "
     echo 'forgeos-btv' > /etc/hostname
     sed -i 's/127.0.1.1.*/127.0.1.1\tforgeos-btv/' /etc/hosts 2>/dev/null || true
     
-    # Define senhas padrão 'kali' para root e kali
-    echo 'root:kali' | chpasswd 2>/dev/null || true
-    echo 'kali:kali' | chpasswd 2>/dev/null || true
+    # Define senhas padrão 'forge' para root e kali
+    echo 'root:forge' | chpasswd 2>/dev/null || true
+    echo 'kali:forge' | chpasswd 2>/dev/null || true
     
     # Limpa caches de pacotes e logs
     apt-get clean 2>/dev/null || true
