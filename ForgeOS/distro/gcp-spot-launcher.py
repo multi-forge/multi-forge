@@ -16,18 +16,16 @@ import argparse
 
 INSTANCE_NAME = "forgeos-builder-spot-32"
 ZONE = "us-central1-a"
+ZONES = ["us-central1-a", "us-central1-b", "us-central1-c", "us-central1-f"]
 PROJECT = "stt-465818"
 BOOT_DISK_SIZE = "60GB"
 MACHINE_TYPES = [
-    "c2-standard-60",  # 60 vCPUs / 240GB RAM (Compute-Optimized Ultra)
-    "c2-standard-30",  # 30 vCPUs / 120GB RAM (Compute-Optimized 3.8GHz Turbo)
-    "n2-standard-32",  # 32 vCPUs / 128GB RAM (Intel Ice Lake)
-    "c2-standard-16",  # 16 vCPUs / 64GB RAM (Compute-Optimized)
-    "n2-standard-16",  # 16 vCPUs / 64GB RAM (Intel Ice Lake)
-    "e2-standard-16",  # 16 vCPUs / 64GB RAM (Cost-Optimized)
-    "c2-standard-8",   # 8 vCPUs / 32GB RAM (Fallback Alta Performance)
-    "n2-standard-8",   # 8 vCPUs / 32GB RAM (Fallback)
-    "e2-standard-8"    # 8 vCPUs / 32GB RAM (Fallback Garantido)
+    "n2-standard-32",   # 32 vCPUs / 128GB RAM (Intel Ice Lake - Max Quota)
+    "c2d-standard-32",  # 32 vCPUs / 128GB RAM (AMD EPYC Milan - Max Quota)
+    "n2-standard-16",   # 16 vCPUs / 64GB RAM (Intel Ice Lake)
+    "c2d-standard-16",  # 16 vCPUs / 64GB RAM (AMD EPYC Milan)
+    "n2-standard-8",    # 8 vCPUs / 32GB RAM (Intel Ice Lake)
+    "e2-standard-8"     # 8 vCPUs / 32GB RAM (Fallback)
 ]
 IMAGE_FAMILY = "ubuntu-2404-lts-amd64"
 IMAGE_PROJECT = "ubuntu-os-cloud"
@@ -64,25 +62,28 @@ def run_gcloud(args, check=True):
 
 
 def create_spot_vm():
+    global ZONE
     for mtype in MACHINE_TYPES:
-        log(f"1. Tentando criar Instância Spot ({mtype}) na zona {ZONE}...")
-        args = [
-            "compute", "instances", "create", INSTANCE_NAME,
-            f"--zone={ZONE}",
-            f"--machine-type={mtype}",
-            "--provisioning-model=SPOT",
-            "--instance-termination-action=DELETE",
-            f"--boot-disk-size={BOOT_DISK_SIZE}",
-            "--boot-disk-type=pd-ssd",
-            f"--image-family={IMAGE_FAMILY}",
-            f"--image-project={IMAGE_PROJECT}",
-            "--scopes=cloud-platform"
-        ]
-        res = run_gcloud(args, check=False)
-        if res.returncode == 0:
-            ok(f"Instância Spot ({mtype}) criada com sucesso!")
-            return True
-        log(f"Máquina {mtype} indisponível no momento em {ZONE}, tentando alternativa...")
+        for z in ZONES:
+            log(f"1. Tentando criar Instância Spot ({mtype}) na zona {z}...")
+            args = [
+                "compute", "instances", "create", INSTANCE_NAME,
+                f"--zone={z}",
+                f"--machine-type={mtype}",
+                "--provisioning-model=SPOT",
+                "--instance-termination-action=DELETE",
+                f"--boot-disk-size={BOOT_DISK_SIZE}",
+                "--boot-disk-type=pd-ssd",
+                f"--image-family={IMAGE_FAMILY}",
+                f"--image-project={IMAGE_PROJECT}",
+                "--scopes=cloud-platform"
+            ]
+            res = run_gcloud(args, check=False)
+            if res.returncode == 0:
+                ZONE = z
+                ok(f"Instância Spot ({mtype}) criada com sucesso na zona {ZONE}!")
+                return True
+            log(f"Máquina {mtype} indisponível na zona {z}, tentando próxima...")
     
     raise RuntimeError("Não foi possível alocar uma instância Spot nas configurações solicitadas.")
 
