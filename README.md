@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/gasiepgodoy/Hackathon-TV-Box-E10/main/Projeto%20Equipe%201/imagens/logo.png" alt="MultiForge Banner" width="100%" />
+</p>
+
 # MultiForge
 
 Plataforma open-source para identificacao, compatibilizacao, gravacao, provisionamento e modularizacao de hardware ARM reaproveitado (TV Boxes e SBCs comerciais legadas).
