@@ -239,6 +239,11 @@
       color: var(--pf-orange-warning);
       border-color: rgba(240, 171, 0, 0.3);
     }
+    .status-badge.info {
+      background: var(--pf-blue-surface);
+      color: var(--pf-blue-light);
+      border-color: rgba(43, 154, 243, 0.3);
+    }
 
     .status-dot-sm {
       width: 6px;
@@ -1188,14 +1193,15 @@
           <div class="pf-card" id="wifi-active-conn-banner" style="margin-bottom:0.75rem;">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
               <div style="display:flex; align-items:center; gap:0.6rem;">
-                <span class="status-dot-sm live-pulse" style="background:#3E8635; width:10px; height:10px;"></span>
                 <div>
-                  <div style="font-weight:700; font-size:0.9rem;" id="wifi-status-title">Conectado à Rede Wi-Fi</div>
-                  <div style="font-size:0.75rem; color:var(--pf-text-muted);" id="wifi-status-subtitle">SSID: eduroam · IP: 10.129.75.97 · Internet Ativa</div>
+                  <div style="font-weight:700; font-size:0.9rem;" id="wifi-status-title">
+                    <span class="status-dot-sm live-pulse" style="background:var(--pf-blue-light); display:inline-block; margin-right:6px;"></span>Modo Ponto de Acesso: <strong style="color:var(--pf-blue-light);">RTL8189FTV_AP</strong>
+                  </div>
+                  <div style="font-size:0.75rem; color:var(--pf-text-muted);" id="wifi-status-subtitle">Endereço IP: 192.168.4.1 · Servidor DHCP dnsmasq Ativo · Portal Cativo</div>
                 </div>
               </div>
-              <div style="display:flex; gap:0.35rem;">
-                <button class="pf-btn pf-btn-danger pf-btn-sm" id="btn-disconnect-wifi" onclick="disconnectWifi()">Restaurar Modo Ponto de Acesso</button>
+              <div style="display:flex; gap:0.35rem;" id="wifi-banner-actions">
+                <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="showTab('networking')" aria-label="Configurar Ponto de Acesso">Configurar AP</button>
               </div>
             </div>
           </div>
@@ -2012,6 +2018,8 @@ async function updateStatus() {
     const wlanIpEl = document.getElementById('wlan-table-ip');
     const wlanStatusEl = document.getElementById('wlan-table-status');
     
+    const wifiBannerActions = document.getElementById('wifi-banner-actions');
+    
     if (s.provisioning) {
       badgeText.textContent = 'Conectando ao Wi-Fi...';
       badgeEl.className = 'status-badge warn';
@@ -2024,6 +2032,7 @@ async function updateStatus() {
         wifiBanner.style.display = 'block';
         if (wifiTitle) wifiTitle.innerHTML = `<span class="status-dot-sm live-pulse" style="background:var(--pf-green-light); display:inline-block; margin-right:6px;"></span>Conectado à Rede: <strong style="color:var(--pf-green-light);">${escapeHtml(s.client_ssid)}</strong>`;
         if (wifiSubtitle) wifiSubtitle.textContent = `Endereço IP: ${s.client_ip} · Gateway: 10.129.75.2 · Rede Institucional (Internet Ativa)`;
+        if (wifiBannerActions) wifiBannerActions.innerHTML = `<button class="pf-btn pf-btn-danger pf-btn-sm" onclick="disconnectWifi()">Restaurar Modo Ponto de Acesso</button>`;
       }
       
       if (wlanIpEl) wlanIpEl.textContent = s.client_ip;
@@ -2033,16 +2042,17 @@ async function updateStatus() {
     } else {
       currentClientSsid = null;
       badgeText.textContent = 'AP: 192.168.4.1';
-      badgeEl.className = 'status-badge';
+      badgeEl.className = 'status-badge info';
       
       if (wifiBanner) {
         wifiBanner.style.display = 'block';
         if (wifiTitle) wifiTitle.innerHTML = `<span class="status-dot-sm live-pulse" style="background:var(--pf-blue-light); display:inline-block; margin-right:6px;"></span>Modo Ponto de Acesso: <strong style="color:var(--pf-blue-light);">${escapeHtml(s.ssid || 'RTL8189FTV_AP')}</strong>`;
         if (wifiSubtitle) wifiSubtitle.textContent = `Endereço IP: 192.168.4.1 · Servidor DHCP dnsmasq Ativo · Portal Cativo`;
+        if (wifiBannerActions) wifiBannerActions.innerHTML = `<button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="showTab('networking')">Configurar AP</button>`;
       }
       
       if (wlanIpEl) wlanIpEl.textContent = '192.168.4.1';
-      if (wlanStatusEl) wlanStatusEl.innerHTML = `<span class="pf-pill warning">AP Ativo</span>`;
+      if (wlanStatusEl) wlanStatusEl.innerHTML = `<span class="pf-pill info"><span class="status-dot-sm live-pulse" style="background:var(--pf-blue-light);"></span>AP Ativo</span>`;
       
       document.getElementById('dash-mode-sub').textContent = s.ap_active ? (s.ssid + ' (192.168.4.1)') : 'Sem IP';
     }
