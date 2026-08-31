@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&family=Red+Hat+Mono:wght@400;500;700&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       COCKPIT PROJECT / PATTERNFLY DESIGN SYSTEM FOR FORGEOS APPLIANCE
+       COCKPIT PROJECT / PATTERNFLY DESIGN SYSTEM (LIVE REAL-TIME STREAMING)
        ========================================================================== */
     :root {
       --pf-font-sans: "Red Hat Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -219,6 +219,13 @@
       border-radius: 50%;
       background: currentColor;
     }
+    .live-pulse {
+      animation: pfPulse 1.5s infinite;
+    }
+    @keyframes pfPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.85); }
+    }
 
     .masthead-btn {
       height: 32px;
@@ -371,7 +378,7 @@
     .page-header-banner {
       background: var(--pf-bg-card);
       border-bottom: 1px solid var(--pf-border-base);
-      padding: 1rem 1.5rem;
+      padding: 0.85rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -380,7 +387,7 @@
       gap: 0.75rem;
     }
     .page-header-title-group h2 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 700;
       font-family: var(--pf-font-display);
       color: var(--pf-text-primary);
@@ -393,7 +400,7 @@
     }
 
     .page-body-content {
-      padding: 1.25rem 1.5rem;
+      padding: 1.15rem 1.5rem;
       flex: 1;
     }
 
@@ -409,7 +416,7 @@
     }
 
     /* ==========================================================================
-       PATTERNFLY GRID, CARDS & GAUGES
+       PATTERNFLY GRID, CARDS & SPARKLINE REAL-TIME CHARTS
        ========================================================================== */
     .pf-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
     .pf-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
@@ -493,6 +500,51 @@
     }
     .pf-progress-fill.green { background: var(--pf-green-success); }
     .pf-progress-fill.orange { background: var(--pf-orange-warning); }
+
+    /* Live Sparkline Graph SVG Container */
+    .sparkline-box {
+      width: 100%;
+      height: 38px;
+      margin-top: 0.45rem;
+      background: var(--pf-bg-inset);
+      border: 1px solid var(--pf-border-subtle);
+      border-radius: var(--pf-radius-sm);
+      overflow: hidden;
+      position: relative;
+    }
+    .sparkline-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Live Performance Monitor Section */
+    .perf-chart-card {
+      background: var(--pf-bg-card);
+      border: 1px solid var(--pf-border-base);
+      border-radius: var(--pf-radius-md);
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .perf-chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--pf-border-subtle);
+      padding-bottom: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .perf-chart-canvas-container {
+      width: 100%;
+      height: 120px;
+      position: relative;
+      background: var(--pf-bg-inset);
+      border: 1px solid var(--pf-border-subtle);
+      border-radius: var(--pf-radius-sm);
+      overflow: hidden;
+    }
 
     /* ==========================================================================
        PATTERNFLY DATA TABLES
@@ -830,8 +882,8 @@
         transform: translateX(0);
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
       }
-      .page-header-banner { padding: 0.85rem 1rem; }
-      .page-body-content { padding: 0.85rem 1rem; }
+      .page-header-banner { padding: 0.75rem 1rem; }
+      .page-body-content { padding: 0.75rem 1rem; }
     }
 
     @media (max-width: 640px) {
@@ -869,7 +921,7 @@
 
     <div class="masthead-tools">
       <div class="status-badge" id="top-status-badge">
-        <span class="status-dot-sm"></span>
+        <span class="status-dot-sm live-pulse"></span>
         <span id="top-status-text">AP Ativo: 192.168.4.1</span>
       </div>
 
@@ -931,7 +983,7 @@
           <strong style="color:var(--pf-text-primary);">root@armbian</strong>
           <div style="font-size:0.7rem;">Sessão Ativa · Linux 6.18</div>
         </div>
-        <span class="pf-pill success">OK</span>
+        <span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>1s LIVE</span>
       </div>
     </aside>
 
@@ -941,10 +993,11 @@
       <div class="page-header-banner">
         <div class="page-header-title-group">
           <h2 id="page-banner-title">Visão Geral do Sistema</h2>
-          <p id="page-banner-subtitle">Telemetria de hardware, rede e status de operação do appliance.</p>
+          <p id="page-banner-subtitle">Telemetria contínua em tempo real (atualização a cada 1.0s).</p>
         </div>
-        <div id="page-banner-actions">
-          <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="updateStatus()">
+        <div id="page-banner-actions" style="display:flex; align-items:center; gap:0.5rem;">
+          <span class="pf-pill success" id="live-indicator"><span class="status-dot-sm live-pulse"></span>Em Tempo Real (1s)</span>
+          <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="tickRealtime(true)">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
             <span>Atualizar</span>
           </button>
@@ -955,49 +1008,68 @@
       <div class="page-body-content">
         <!-- 1. OVERVIEW (DASHBOARD) -->
         <section class="tab-section active" id="view-overview">
-          <!-- 4 KPI Metrics Matrix -->
+          <!-- 4 KPI Metrics Matrix with Live Sparklines -->
           <div class="pf-grid-4">
+            <!-- CPU Usage % Card -->
             <div class="pf-card">
               <div>
-                <div class="metric-label">Modo de Operação</div>
-                <div class="metric-value" id="dash-mode" style="color:var(--pf-blue-light); font-size:1.15rem;">Ponto de Acesso</div>
-              </div>
-              <div class="metric-subtext">
-                <span class="status-dot-sm" style="background:var(--pf-green-light);"></span>
-                <span id="dash-mode-sub">RTL8189FTV_AP // 192.168.4.1</span>
-              </div>
-            </div>
-
-            <div class="pf-card">
-              <div>
-                <div class="metric-label">Uplink Ethernet (eth0)</div>
-                <div class="metric-value" id="dash-eth-ip" style="font-size:1.15rem;">192.168.1.153</div>
-              </div>
-              <div class="metric-subtext">
-                <span id="dash-eth-mac">1000 Mbps Full-Duplex</span>
-              </div>
-            </div>
-
-            <div class="pf-card">
-              <div>
-                <div class="metric-label">Uso de Memória RAM</div>
-                <div class="metric-value" id="dash-mem-val" style="color:var(--pf-green-light);">343 MB</div>
-                <div class="pf-progress-bar">
-                  <div class="pf-progress-fill green" id="dash-mem-bar" style="width: 18%;"></div>
+                <div class="metric-label">Uso do Processador (CPU)</div>
+                <div class="metric-value" id="dash-cpu-val" style="color:var(--pf-blue-light);">4.2%</div>
+                <div class="sparkline-box">
+                  <svg class="sparkline-svg" id="sparkline-cpu" viewBox="0 0 100 30" preserveAspectRatio="none">
+                    <path d="M 0 30 L 100 30" fill="none" stroke="#2B9AF3" stroke-width="2"/>
+                  </svg>
                 </div>
               </div>
-              <div class="metric-subtext">
+              <div class="metric-subtext" style="margin-top:0.35rem;">
+                <span id="dash-cpu-sub">4x Cortex-A53 @ 1.8 GHz</span>
+              </div>
+            </div>
+
+            <!-- RAM Usage Card -->
+            <div class="pf-card">
+              <div>
+                <div class="metric-label">Memória RAM</div>
+                <div class="metric-value" id="dash-mem-val" style="color:var(--pf-green-light);">343 MB</div>
+                <div class="sparkline-box">
+                  <svg class="sparkline-svg" id="sparkline-ram" viewBox="0 0 100 30" preserveAspectRatio="none">
+                    <path d="M 0 30 L 100 30" fill="none" stroke="#3E8635" stroke-width="2"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="metric-subtext" style="margin-top:0.35rem;">
                 <span id="dash-mem-sub">Total: 1.89 GB (82% Livre)</span>
               </div>
             </div>
 
+            <!-- Network Throughput Card -->
             <div class="pf-card">
               <div>
-                <div class="metric-label">Tempo Ativo (Uptime)</div>
-                <div class="metric-value" id="dash-uptime" style="color:var(--pf-orange-warning);">10h 45m</div>
+                <div class="metric-label">Tráfego de Rede (I/O)</div>
+                <div class="metric-value" id="dash-net-val" style="color:var(--pf-orange-warning); font-size:1.15rem;">RX: 14.2 KB/s</div>
+                <div class="sparkline-box">
+                  <svg class="sparkline-svg" id="sparkline-net" viewBox="0 0 100 30" preserveAspectRatio="none">
+                    <path d="M 0 30 L 100 30" fill="none" stroke="#F0AB00" stroke-width="2"/>
+                  </svg>
+                </div>
               </div>
-              <div class="metric-subtext">
-                <span>Kernel 6.18-ophub (arm64)</span>
+              <div class="metric-subtext" style="margin-top:0.35rem;">
+                <span id="dash-net-sub">TX: 8.1 KB/s · Gigabit eth0</span>
+              </div>
+            </div>
+
+            <!-- Operating Mode / Uptime Card -->
+            <div class="pf-card">
+              <div>
+                <div class="metric-label">Modo &amp; Tempo Ativo</div>
+                <div class="metric-value" id="dash-uptime" style="color:var(--pf-text-primary); font-size:1.25rem;">10h 45m</div>
+                <div class="pf-progress-bar" style="margin-top:0.6rem;">
+                  <div class="pf-progress-fill" id="dash-mem-bar" style="width: 18%;"></div>
+                </div>
+              </div>
+              <div class="metric-subtext" style="margin-top:0.35rem;">
+                <span class="status-dot-sm" style="background:var(--pf-green-light);"></span>
+                <span id="dash-mode-sub">RTL8189FTV_AP (192.168.4.1)</span>
               </div>
             </div>
           </div>
@@ -1031,8 +1103,8 @@
                     <tr><td>Dispositivo / Modelo</td><td style="color:var(--pf-blue-light); font-weight:600;">BTV Express E10 Enterprise</td></tr>
                     <tr><td>Processador (SoC)</td><td style="color:var(--pf-text-primary);">Amlogic S905X2 (4x Cortex-A53 @ 1.8GHz)</td></tr>
                     <tr><td>Controlador Wi-Fi</td><td style="color:var(--pf-text-primary);">Realtek RTL8189FTV (SDIO 802.11n)</td></tr>
-                    <tr><td>Armazenamento eMMC</td><td style="color:var(--pf-text-primary);">29.0 GB (/dev/mmcblk1p2)</td></tr>
-                    <tr><td>Watchdog de Contingência</td><td><span class="pf-pill success">Ativo (Auto-Rollback)</span></td></tr>
+                    <tr><td>Armazenamento eMMC</td><td id="dash-disk-stat" style="color:var(--pf-text-primary);">2.6 GB / 29.0 GB</td></tr>
+                    <tr><td>Watchdog de Contingência</td><td><span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>Ativo (Auto-Rollback 75s)</span></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1127,7 +1199,7 @@
                     <th>Endereço IPv4</th>
                     <th>Endereço MAC</th>
                     <th>Velocidade</th>
-                    <th>Tráfego (RX / TX)</th>
+                    <th>Tráfego em Tempo Real</th>
                     <th style="text-align:right;">Status</th>
                   </tr>
                 </thead>
@@ -1138,8 +1210,8 @@
                     <td class="pf-table-mono" id="eth-table-ip">192.168.1.153</td>
                     <td class="pf-table-mono" id="eth-table-mac">EC:2E:AB:41:1E:75</td>
                     <td style="color:var(--pf-green-light);">1000 Mbps Full-Duplex</td>
-                    <td class="pf-table-mono">42.8 MB / 18.2 MB</td>
-                    <td style="text-align:right;"><span class="pf-pill success">Conectado</span></td>
+                    <td class="pf-table-mono" id="eth-traffic-rate">RX: 14.2 KB/s · TX: 8.1 KB/s</td>
+                    <td style="text-align:right;"><span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>Conectado</span></td>
                   </tr>
                   <tr>
                     <td style="color:var(--pf-blue-light); font-weight:700;">wlan0</td>
@@ -1147,7 +1219,7 @@
                     <td class="pf-table-mono" id="wlan-table-ip">192.168.4.1</td>
                     <td class="pf-table-mono" id="wlan-table-mac">3C:7A:AA:39:F6:C2</td>
                     <td style="color:var(--pf-orange-warning);">72.2 Mbps (MCS7)</td>
-                    <td class="pf-table-mono">14.1 MB / 6.5 MB</td>
+                    <td class="pf-table-mono" id="wlan-traffic-rate">RX: 2.1 KB/s · TX: 1.4 KB/s</td>
                     <td style="text-align:right;"><span class="pf-pill warning">AP Ativo</span></td>
                   </tr>
                 </tbody>
@@ -1194,20 +1266,20 @@
                       <td>Memória RAM LPDDR4</td>
                       <td>
                         <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                          <span style="color:var(--pf-green-light);">343 MB / 1.89 GB</span>
-                          <span style="color:var(--pf-green-light);">18%</span>
+                          <span style="color:var(--pf-green-light);" id="serv-ram-text">343 MB / 1.89 GB</span>
+                          <span style="color:var(--pf-green-light);" id="serv-ram-pct">18%</span>
                         </div>
-                        <div class="pf-progress-bar"><div class="pf-progress-fill green" style="width:18%;"></div></div>
+                        <div class="pf-progress-bar"><div class="pf-progress-fill green" id="serv-ram-bar" style="width:18%;"></div></div>
                       </td>
                     </tr>
                     <tr>
                       <td>Armazenamento eMMC</td>
                       <td>
                         <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                          <span style="color:var(--pf-orange-warning);">2.6 GB / 29.0 GB</span>
-                          <span style="color:var(--pf-orange-warning);">9%</span>
+                          <span style="color:var(--pf-orange-warning);" id="serv-disk-text">2.6 GB / 29.0 GB</span>
+                          <span style="color:var(--pf-orange-warning);" id="serv-disk-pct">9%</span>
                         </div>
-                        <div class="pf-progress-bar"><div class="pf-progress-fill orange" style="width:9%;"></div></div>
+                        <div class="pf-progress-bar"><div class="pf-progress-fill orange" id="serv-disk-bar" style="width:9%;"></div></div>
                       </td>
                     </tr>
                   </tbody>
@@ -1229,7 +1301,8 @@
           <div class="cockpit-terminal">
             <div class="terminal-header-bar">
               <div style="display:flex; align-items:center; gap:0.5rem;">
-                <span style="font-weight:600;">Logs do Kernel e Serviços (journalctl)</span>
+                <span class="status-dot-sm live-pulse" style="background:#3E8635;"></span>
+                <span style="font-weight:600;">Logs do Kernel e Serviços (journalctl em tempo real)</span>
               </div>
               <div style="display:flex; gap:0.4rem;">
                 <button class="pf-btn pf-btn-secondary pf-btn-sm" id="btn-copy-logs">Copiar Logs</button>
@@ -1330,10 +1403,16 @@
 
 <script>
 /* ==========================================================================
-   COCKPIT PROJECT / FORGEOS CLIENT CONTROLLER SCRIPT
+   COCKPIT PROJECT REAL-TIME STREAMING CLIENT SCRIPT
    ========================================================================== */
 let currentNetworks = [];
 let currentProvMode = 'psk';
+
+// Rolling Sparkline History Data Buffers (20 samples)
+const HISTORY_LENGTH = 20;
+const historyCpu = new Array(HISTORY_LENGTH).fill(4.0);
+const historyRam = new Array(HISTORY_LENGTH).fill(340);
+const historyNet = new Array(HISTORY_LENGTH).fill(10.0);
 
 // Drawer & Backdrop Control
 const sidebarEl = document.getElementById('sidebar');
@@ -1364,7 +1443,7 @@ function showTab(tabId) {
   const headerMetadata = {
     overview: {
       title: 'Visão Geral do Sistema',
-      subtitle: 'Telemetria de hardware, rede e status de operação do appliance.'
+      subtitle: 'Telemetria contínua em tempo real (atualização a cada 1.0s).'
     },
     logs: {
       title: 'Logs do Sistema',
@@ -1555,7 +1634,100 @@ document.getElementById('wifi-filter-input').addEventListener('input', () => {
 });
 document.getElementById('btn-refresh-scan').addEventListener('click', fetchScan);
 
-// System Status Polling
+// Render SVG Sparkline Path
+function renderSvgSparkline(svgId, dataArray, maxVal, strokeColor, fillColor) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  const n = dataArray.length;
+  if (n === 0) return;
+
+  const points = dataArray.map((val, idx) => {
+    const x = (idx / (n - 1)) * 100;
+    const norm = Math.max(0, Math.min(1, val / maxVal));
+    const y = 28 - (norm * 24);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+
+  const pathLine = 'M ' + points.join(' L ');
+  const pathArea = `${pathLine} L 100,30 L 0,30 Z`;
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="grad-${svgId}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${strokeColor}" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="${strokeColor}" stop-opacity="0.0"/>
+      </linearGradient>
+    </defs>
+    <path d="${pathArea}" fill="url(#grad-${svgId})"/>
+    <path d="${pathLine}" fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  `;
+}
+
+// Real-time 1.0s Metrics Ticker (Cockpit Streaming Engine)
+async function tickRealtime(force) {
+  try {
+    const res = await fetch('/rest/metrics');
+    if (!res.ok) return;
+    const m = await res.json();
+
+    // 1. Update CPU
+    const cpuPct = m.cpu_pct || 0;
+    document.getElementById('dash-cpu-val').textContent = cpuPct.toFixed(1) + '%';
+    historyCpu.shift();
+    historyCpu.push(cpuPct);
+    renderSvgSparkline('sparkline-cpu', historyCpu, 100, '#2B9AF3', 'rgba(43, 154, 243, 0.2)');
+
+    // 2. Update RAM
+    const ramUsed = m.ram_used_mb || 340;
+    const ramTotal = m.ram_total_mb || 1980;
+    const ramPct = m.ram_pct || Math.round((ramUsed / ramTotal) * 100);
+    document.getElementById('dash-mem-val').textContent = ramUsed + ' MB';
+    document.getElementById('dash-mem-bar').style.width = ramPct + '%';
+    document.getElementById('dash-mem-sub').textContent = `Total: ${(ramTotal/1024).toFixed(2)} GB (${100 - ramPct}% Livre)`;
+    historyRam.shift();
+    historyRam.push(ramUsed);
+    renderSvgSparkline('sparkline-ram', historyRam, ramTotal, '#3E8635', 'rgba(62, 134, 53, 0.2)');
+
+    // Services tab RAM & Disk
+    document.getElementById('serv-ram-text').textContent = `${ramUsed} MB / ${(ramTotal/1024).toFixed(2)} GB`;
+    document.getElementById('serv-ram-pct').textContent = ramPct + '%';
+    document.getElementById('serv-ram-bar').style.width = ramPct + '%';
+
+    if (m.disk_used_gb) {
+      const diskPct = Math.round((m.disk_used_gb / m.disk_total_gb) * 100);
+      document.getElementById('dash-disk-stat').textContent = `${m.disk_used_gb} GB / ${m.disk_total_gb} GB (${diskPct}%)`;
+      document.getElementById('serv-disk-text').textContent = `${m.disk_used_gb} GB / ${m.disk_total_gb} GB`;
+      document.getElementById('serv-disk-pct').textContent = diskPct + '%';
+      document.getElementById('serv-disk-bar').style.width = diskPct + '%';
+    }
+
+    // 3. Update Network Throughput
+    const rxKbs = m.rx_kbs || 0;
+    const txKbs = m.tx_kbs || 0;
+    const netVal = rxKbs >= 1024 ? (rxKbs/1024).toFixed(2) + ' MB/s' : rxKbs.toFixed(1) + ' KB/s';
+    const txVal = txKbs >= 1024 ? (txKbs/1024).toFixed(2) + ' MB/s' : txKbs.toFixed(1) + ' KB/s';
+    document.getElementById('dash-net-val').textContent = `RX: ${netVal}`;
+    document.getElementById('dash-net-sub').textContent = `TX: ${txVal} · Gigabit eth0`;
+    document.getElementById('eth-traffic-rate').textContent = `RX: ${netVal} · TX: ${txVal}`;
+
+    historyNet.shift();
+    historyNet.push(rxKbs + txKbs);
+    const maxNet = Math.max(50, ...historyNet);
+    renderSvgSparkline('sparkline-net', historyNet, maxNet, '#F0AB00', 'rgba(240, 171, 0, 0.2)');
+
+    // 4. Update Uptime
+    if (m.uptime) {
+      const hrs = Math.floor(m.uptime / 3600);
+      const mins = Math.floor((m.uptime % 3600) / 60);
+      const secs = m.uptime % 60;
+      document.getElementById('dash-uptime').textContent = `${hrs}h ${mins}m ${secs}s`;
+    }
+  } catch (err) {
+    console.error('Realtime tick error:', err);
+  }
+}
+
+// System Status Polling (AP, Client IP & Connectivity)
 async function updateStatus() {
   try {
     const res = await fetch('/api/status');
@@ -1575,32 +1747,13 @@ async function updateStatus() {
       badgeEl.className = 'status-badge';
     }
 
-    document.getElementById('dash-mode').textContent = s.ap_active ? 'Ponto de Acesso' : (s.client_ssid || 'Cliente');
     document.getElementById('dash-mode-sub').textContent = s.ap_active ? (s.ssid + ' (192.168.4.1)') : (s.client_ip || 'Sem IP');
-
-    // Telemetry
-    const sysRes = await fetch('/rest/systemStatus');
-    const sys = await sysRes.json();
-    if (sys.total_heap) {
-      const usedMb = Math.round((sys.total_heap - sys.free_heap) / 1048576);
-      const totalMb = Math.round(sys.total_heap / 1048576);
-      const pct = Math.round((usedMb / totalMb) * 100);
-      document.getElementById('dash-mem-val').textContent = usedMb + ' MB';
-      document.getElementById('dash-mem-bar').style.width = pct + '%';
-      document.getElementById('dash-mem-sub').textContent = `Total: ${totalMb} MB (${100 - pct}% Livre)`;
-    }
-    if (sys.uptime) {
-      const hrs = Math.floor(sys.uptime / 3600);
-      const mins = Math.floor((sys.uptime % 3600) / 60);
-      document.getElementById('dash-uptime').textContent = `${hrs}h ${mins}m`;
-    }
 
     // Ethernet
     const ethRes = await fetch('/rest/ethernetStatus');
     const eth = await ethRes.json();
     if (eth.local_ip) {
       document.getElementById('dash-eth-ip').textContent = eth.local_ip;
-      document.getElementById('dash-eth-mac').textContent = '1000 Mbps · ' + eth.mac_address;
       document.getElementById('eth-table-ip').textContent = eth.local_ip;
       document.getElementById('eth-table-mac').textContent = eth.mac_address;
       document.getElementById('masthead-host-text').textContent = 'armbian (' + eth.local_ip + ')';
@@ -1721,7 +1874,7 @@ async function loadModulesHub() {
 
       let statusPill = '<span class="pf-pill">Disponível</span>';
       if (isRunning) {
-        statusPill = '<span class="pf-pill success"><span class="status-dot-sm"></span>Rodando</span>';
+        statusPill = '<span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>Rodando</span>';
       } else if (isInstalled) {
         statusPill = '<span class="pf-pill info">Instalado</span>';
       }
@@ -1783,7 +1936,7 @@ async function loadModulesHub() {
         <div>
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
             <div class="app-icon-box">📺</div>
-            <span class="pf-pill success"><span class="status-dot-sm"></span>Rodando</span>
+            <span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>Rodando</span>
           </div>
 
           <h3 style="font-size:1rem; font-weight:700; color:var(--pf-text-primary); margin-bottom:0.25rem;">
@@ -1833,12 +1986,15 @@ async function moduleAction(modId, action) {
   }
 }
 
-// Initial Run
+// Initial Run & Real-time Loop (1.0 second ticker)
 const initialTab = location.hash.replace('#', '') || 'overview';
 showTab(initialTab);
 fetchScan();
 updateStatus();
-setInterval(updateStatus, 5000);
+tickRealtime(true);
+
+setInterval(tickRealtime, 1000);  // High-frequency 1.0s live telemetry ticker
+setInterval(updateStatus, 4000);  // Network & AP status loop
 </script>
 </body>
 </html>
