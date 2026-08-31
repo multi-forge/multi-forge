@@ -326,20 +326,18 @@ def get_realtime_metrics():
     except Exception:
         uptime_sec = int(time.time() - 1756500000)
 
-    # 5. Disk Usage
-    disk_total_gb = 29.0
-    disk_used_gb = 2.6
+    # 6. Real-time CPU Frequency (MHz)
+    cpu_cur_freq_mhz = 1400
     try:
-        st = os.statvfs("/")
-        disk_total_gb = round((st.f_blocks * st.f_frsize) / (1024**3), 1)
-        disk_free_gb = round((st.f_bavail * st.f_frsize) / (1024**3), 1)
-        disk_used_gb = round(disk_total_gb - disk_free_gb, 1)
+        with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq") as f:
+            cpu_cur_freq_mhz = int(f.read().strip()) // 1000
     except Exception:
         pass
 
     return {
         "timestamp": now,
         "cpu_pct": cpu_pct,
+        "cpu_freq_mhz": cpu_cur_freq_mhz,
         "ram_used_mb": ram_used,
         "ram_total_mb": mem_total,
         "ram_pct": ram_pct,
@@ -348,6 +346,58 @@ def get_realtime_metrics():
         "uptime": uptime_sec,
         "disk_used_gb": disk_used_gb,
         "disk_total_gb": disk_total_gb
+    }
+
+
+def get_hardware_info():
+    model = "BTV Express E10 (SEI510)"
+    try:
+        with open("/proc/device-tree/model", "rb") as f:
+            raw = f.read().decode('utf-8', errors='ignore').strip('\x00\n\r ')
+            if raw:
+                model = f"{raw} (BTV Express E10)"
+    except Exception:
+        pass
+
+    os_name = "Armbian GNU/Linux"
+    try:
+        with open("/etc/os-release") as f:
+            for line in f:
+                if line.startswith("PRETTY_NAME="):
+                    os_name = line.split("=", 1)[1].strip('"\n')
+                    break
+    except Exception:
+        pass
+
+    kernel = "Linux 6.18-ophub"
+    try:
+        kernel = os.uname().release
+    except Exception:
+        pass
+
+    cores = os.cpu_count() or 4
+    
+    # Disk /boot
+    boot_used_mb = 170
+    boot_total_mb = 510
+    try:
+        st = os.statvfs("/boot")
+        boot_total_mb = round((st.f_blocks * st.f_frsize) / (1024**2))
+        boot_free_mb = round((st.f_bavail * st.f_frsize) / (1024**2))
+        boot_used_mb = boot_total_mb - boot_free_mb
+    except Exception:
+        pass
+
+    return {
+        "device_model": model,
+        "os_name": os_name,
+        "kernel": kernel,
+        "cpu_arch": "aarch64 (ARMv8-A)",
+        "cpu_soc": "Amlogic S905X2",
+        "cpu_cores": cores,
+        "dtb": "meson-g12a-btv-e10-enterprise.dtb",
+        "boot_used_mb": boot_used_mb,
+        "boot_total_mb": boot_total_mb
     }
 
 
@@ -660,6 +710,8 @@ class Handler(BaseHTTPRequestHandler):
         # --- ESP32-sveltekit REST compat ---
         if path in ("/rest/metrics", "/api/telemetry"):
             return self._send(200, get_realtime_metrics())
+        if path in ("/api/hardware", "/api/systemInfo"):
+            return self._send(200, get_hardware_info())
         if path == "/rest/features":
             return self._send(200, esp32_features())
         if path == "/rest/systemStatus":

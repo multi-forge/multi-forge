@@ -1110,9 +1110,9 @@
               <div class="table-responsive">
                 <table class="pf-table">
                   <tbody>
-                    <tr><td>Dispositivo</td><td style="color:var(--pf-blue-light); font-weight:600;">BTV Express E10 Enterprise</td></tr>
-                    <tr><td>Processador</td><td style="color:var(--pf-text-primary);">Amlogic S905X2 (4x A53)</td></tr>
-                    <tr><td>Controlador Wi-Fi</td><td style="color:var(--pf-text-primary);">Realtek RTL8189FTV</td></tr>
+                    <tr><td>Dispositivo</td><td style="color:var(--pf-blue-light); font-weight:600;" id="dash-hw-model">SEI Robotics SEI510 (BTV E10)</td></tr>
+                    <tr><td>Processador</td><td style="color:var(--pf-text-primary);" id="dash-hw-soc">Amlogic S905X2 (4x A53)</td></tr>
+                    <tr><td>Controlador Wi-Fi</td><td style="color:var(--pf-text-primary);">Realtek RTL8189FTV (SDIO)</td></tr>
                     <tr><td>Armazenamento</td><td id="dash-disk-stat" style="color:var(--pf-text-primary);">3.5 GB / 28.7 GB</td></tr>
                     <tr><td>Watchdog</td><td><span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>Ativo (Auto-Rollback 75s)</span></td></tr>
                   </tbody>
@@ -1292,10 +1292,10 @@
               <div class="table-responsive">
                 <table class="pf-table">
                   <tbody>
-                    <tr><td>Distribuição Linux</td><td style="color:var(--pf-blue-light); font-weight:600;">Armbian 26.08 Trixie (Debian 13)</td></tr>
-                    <tr><td>Versão do Kernel</td><td class="pf-table-mono">Linux 6.18-ophub-arm64</td></tr>
-                    <tr><td>Processador (SoC)</td><td>Amlogic S905X2 (4x A53 @ 1.80 GHz)</td></tr>
-                    <tr><td>Árvore de Dispositivos</td><td class="pf-table-mono">meson-g12a-btv-e10-enterprise.dtb</td></tr>
+                    <tr><td>Distribuição Linux</td><td style="color:var(--pf-blue-light); font-weight:600;" id="serv-hw-distro">Armbian 26.08 Trixie (Debian 13)</td></tr>
+                    <tr><td>Versão do Kernel</td><td class="pf-table-mono" id="serv-hw-kernel">Linux 6.18-ophub-arm64</td></tr>
+                    <tr><td>Processador (SoC)</td><td id="serv-hw-soc">Amlogic S905X2 (4x A53)</td></tr>
+                    <tr><td>Árvore de Dispositivos</td><td class="pf-table-mono" id="serv-hw-dtb">meson-g12a-btv-e10-enterprise.dtb</td></tr>
                     <tr><td>Inicialização</td><td>U-Boot SPL + eMMC 5.1 HS200</td></tr>
                   </tbody>
                 </table>
@@ -1327,10 +1327,10 @@
                       <td>Partição Boot <code>/boot</code></td>
                       <td>
                         <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:0.72rem;">
-                          <span>128 MB / 256 MB (FAT32)</span>
-                          <span style="color:var(--pf-blue-light); font-weight:600;">50%</span>
+                          <span id="serv-boot-disk">170 MB / 510 MB (FAT32)</span>
+                          <span style="color:var(--pf-blue-light); font-weight:600;" id="serv-boot-pct">34%</span>
                         </div>
-                        <div class="pf-progress-bar"><div class="pf-progress-fill" style="width:50%;"></div></div>
+                        <div class="pf-progress-bar"><div class="pf-progress-fill" id="serv-boot-bar" style="width:34%;"></div></div>
                       </td>
                     </tr>
                     <tr>
@@ -2137,11 +2137,49 @@ async function moduleAction(modId, action) {
   }
 }
 
+async function loadHardwareInfo() {
+  try {
+    const res = await fetch('/api/hardware');
+    if (!res.ok) return;
+    const hw = await res.json();
+
+    // Overview box
+    const dashModel = document.getElementById('dash-hw-model');
+    const dashSoc = document.getElementById('dash-hw-soc');
+    if (dashModel && hw.device_model) dashModel.textContent = hw.device_model;
+    if (dashSoc && hw.cpu_soc) dashSoc.textContent = `${hw.cpu_soc} (${hw.cpu_cores}x A53)`;
+
+    // Services tab
+    const servDistro = document.getElementById('serv-hw-distro');
+    const servKernel = document.getElementById('serv-hw-kernel');
+    const servSoc = document.getElementById('serv-hw-soc');
+    const servDtb = document.getElementById('serv-hw-dtb');
+    const servBootDisk = document.getElementById('serv-boot-disk');
+    const servBootPct = document.getElementById('serv-boot-pct');
+    const servBootBar = document.getElementById('serv-boot-bar');
+
+    if (servDistro && hw.os_name) servDistro.textContent = hw.os_name;
+    if (servKernel && hw.kernel) servKernel.textContent = hw.kernel;
+    if (servSoc && hw.cpu_soc) servSoc.textContent = `${hw.cpu_soc} (${hw.cpu_cores}x Cortex-A53)`;
+    if (servDtb && hw.dtb) servDtb.textContent = hw.dtb;
+
+    if (hw.boot_total_mb) {
+      const pct = Math.round((hw.boot_used_mb / hw.boot_total_mb) * 100);
+      if (servBootDisk) servBootDisk.textContent = `${hw.boot_used_mb} MB / ${hw.boot_total_mb} MB (FAT32)`;
+      if (servBootPct) servBootPct.textContent = `${pct}%`;
+      if (servBootBar) servBootBar.style.width = `${pct}%`;
+    }
+  } catch (err) {
+    console.error('Error fetching hardware info:', err);
+  }
+}
+
 // Initial Run & Real-time Loop (1.0 second ticker)
 const initialTab = location.hash.replace('#', '') || 'overview';
 showTab(initialTab);
 fetchScan();
 updateStatus();
+loadHardwareInfo();
 tickRealtime(true);
 
 setInterval(tickRealtime, 1000);  // High-frequency 1.0s live telemetry ticker
