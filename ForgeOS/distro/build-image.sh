@@ -20,15 +20,29 @@ log() { echo -e "\033[1;34m[BUILDER]\033[0m $*"; }
 ok()  { echo -e "\033[1;32m[BUILDER OK]\033[0m $*"; }
 err() { echo -e "\033[1;31m[BUILDER ERROR]\033[0m $*" >&2; }
 
+# Otimizações de Compilação & Hardware
+NPROC=$(nproc)
+export CCACHE_DIR=/root/.ccache
+export USE_CCACHE=1
+export MAKEFLAGS="-j$NPROC"
+
 mkdir -p "$WORK_DIR" "$OUTPUT_DIR"
+
+# Se houver mais de 12GB de RAM, monta WORK_DIR em RAM-Disk (tmpfs) com 0ms I/O latency
+FREE_RAM_MB=$(free -m | awk '/^Mem:/{print $2}' 2>/dev/null || echo 0)
+if [ "$FREE_RAM_MB" -gt 12000 ]; then
+    log "RAM Total Alta ($FREE_RAM_MB MB detectada). Montando WORK_DIR em RAM-Disk (tmpfs 16GB) para I/O instantâneo..."
+    mount -t tmpfs -o size=16G tmpfs "$WORK_DIR" 2>/dev/null || true
+fi
+
 cd "$WORK_DIR"
 
-log "1. Instalando dependências de empacotamento no host..."
+log "1. Instalando dependências de empacotamento & ferramentas paralelas ($NPROC vCPUs)..."
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
 apt-get install -y -qq \
     qemu-user-static binfmt-support util-linux parted dosfstools \
-    e2fsprogs xz-utils curl wget ca-certificates gzip device-tree-compiler
+    e2fsprogs xz-utils curl wget ca-certificates gzip pigz pixz ccache zstd pv device-tree-compiler
 
 log "2. Obtendo imagem base minimal Armbian S905X2..."
 BASE_IMG_GZ="$WORK_DIR/base_image.img.gz"
@@ -36,7 +50,6 @@ RAW_IMG="$WORK_DIR/${DISTRO_NAME}.img"
 
 if [[ ! -f "$BASE_IMG_GZ" && ! -f "$RAW_IMG" ]]; then
     log "Baixando base image Armbian Trixie G12A..."
-    # Se a URL externa não estiver disponível, gera ou usa imagem de fallback
     if ! curl -fsSL -m 180 "$BASE_IMG_URL" -o "$BASE_IMG_GZ"; then
         log "URL direta indisponível, buscando release mais recente do Ophub..."
         LATEST_URL=$(curl -fsSL https://api.github.com/repos/ophub/amlogic-s9xxx-armbian/releases/latest | grep "browser_download_url.*s905x2.*\.img\.gz" | head -n 1 | cut -d '"' -f 4 || true)
@@ -50,8 +63,8 @@ if [[ ! -f "$BASE_IMG_GZ" && ! -f "$RAW_IMG" ]]; then
 fi
 
 if [[ -f "$BASE_IMG_GZ" && ! -f "$RAW_IMG" ]]; then
-    log "Descompactando imagem base..."
-    gzip -dc "$BASE_IMG_GZ" > "$RAW_IMG"
+    log "Descompactando imagem base com pigz paralelo ($NPROC threads)..."
+    pigz -dc "$BASE_IMG_GZ" > "$RAW_IMG" || gzip -dc "$BASE_IMG_GZ" > "$RAW_IMG"
 fi
 
 log "3. Configurando loop devices e partições..."
