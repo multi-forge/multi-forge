@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ForgeOS Kiosk Display Engine v2.6 — Calibrated 10-Foot UI (1920x1080 fb0).
+"""ForgeOS Kiosk Display Engine v2.7 — Calibrated 10-Foot UI (1920x1080 fb0).
 
 Audited according to 10-foot UI guidelines, pairing state machine, and ISO/IEC 18004.
 Supports dynamic state transitions: Pairing (AP) -> Applying -> Connected -> Failed -> Status.
@@ -189,9 +189,9 @@ def render(shift_x=0, shift_y=0):
     img = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img)
 
-    # Safe Area Insets: 96px laterais, 54px verticais
+    # Safe Area Insets: 96px laterais, 48px verticais
     safe_l, safe_r = 96 + shift_x, W - 96 + shift_x
-    safe_t, safe_b = 54 + shift_y, H - 54 + shift_y
+    safe_t, safe_b = 48 + shift_y, H - 48 + shift_y
 
     # 1. Grid sutil de fundo
     for gy in range(48, H - 48, 48):
@@ -202,26 +202,27 @@ def render(shift_x=0, shift_y=0):
     state_mode, state_ssid, state_ip = get_device_state()
 
     # =========================================================================
-    # 1. CABEÇALHO SUPERIOR
+    # 1. CABEÇALHO SUPERIOR (Logo Ampliado 80x80 + Espaçamento Simétrico)
     # =========================================================================
     logo_path = os.path.join(WEB, "logo.png")
     if not os.path.exists(logo_path):
         logo_path = os.path.join(BASE, "imagens", "ForgeOSlogo.png")
 
+    logo_size = 80
     if os.path.exists(logo_path):
         try:
-            logo_img = Image.open(logo_path).convert("RGBA").resize((64, 64), Image.LANCZOS)
+            logo_img = Image.open(logo_path).convert("RGBA").resize((logo_size, logo_size), Image.LANCZOS)
             img.paste(logo_img, (safe_l, safe_t), logo_img)
         except Exception:
-            d.rounded_rectangle([safe_l, safe_t, safe_l + 64, safe_t + 64], radius=16, fill=ACCENT_BLUE)
-            d.text((safe_l + 32, safe_t + 32), "F", font=F("Inter-Bold.ttf", 38), fill="white", anchor="mm")
+            d.rounded_rectangle([safe_l, safe_t, safe_l + logo_size, safe_t + logo_size], radius=18, fill=ACCENT_BLUE)
+            d.text((safe_l + logo_size/2, safe_t + logo_size/2), "F", font=F("Inter-Bold.ttf", 46), fill="white", anchor="mm")
     else:
-        d.rounded_rectangle([safe_l, safe_t, safe_l + 64, safe_t + 64], radius=16, fill=ACCENT_BLUE)
-        d.text((safe_l + 32, safe_t + 32), "F", font=F("Inter-Bold.ttf", 38), fill="white", anchor="mm")
+        d.rounded_rectangle([safe_l, safe_t, safe_l + logo_size, safe_t + logo_size], radius=18, fill=ACCENT_BLUE)
+        d.text((safe_l + logo_size/2, safe_t + logo_size/2), "F", font=F("Inter-Bold.ttf", 46), fill="white", anchor="mm")
 
-    title_x = safe_l + 82
-    title_font = F("Inter-Bold.ttf", 44)
-    d.text((title_x, safe_t + 20), "ForgeOS", font=title_font, fill=TXT_TITLE, anchor="lm")
+    title_x = safe_l + 100
+    title_font = F("Inter-Bold.ttf", 48)
+    d.text((title_x, safe_t + 24), "ForgeOS", font=title_font, fill=TXT_TITLE, anchor="lm")
     title_w = d.textlength("ForgeOS", font=title_font)
 
     # Badge de Estado Dinâmico
@@ -238,15 +239,15 @@ def render(shift_x=0, shift_y=0):
         badge_txt = "P A R E A M E N T O"
         badge_col = ACCENT_BLUE
 
-    badge_font = F("Inter-Bold.ttf", 15)
+    badge_font = F("Inter-Bold.ttf", 16)
     badge_w = d.textlength(badge_txt, font=badge_font)
-    badge_x = title_x + title_w + 24
-    d.rounded_rectangle([badge_x, safe_t + 6, badge_x + badge_w + 32, safe_t + 36], radius=15, outline=badge_col, width=2)
-    d.text((badge_x + (badge_w + 32) / 2, safe_t + 21), badge_txt, font=badge_font, fill=badge_col, anchor="mm")
+    badge_x = title_x + title_w + 26
+    d.rounded_rectangle([badge_x, safe_t + 8, badge_x + badge_w + 34, safe_t + 40], radius=16, outline=badge_col, width=2)
+    d.text((badge_x + (badge_w + 34) / 2, safe_t + 24), badge_txt, font=badge_font, fill=badge_col, anchor="mm")
 
-    # Subtítulo (Hardware Specs)
-    d.text((title_x, safe_t + 56), "SEI Robotics SEI510 (BTV E10)  •  Amlogic S905X2  •  Armbian Appliance",
-           font=F("Inter-Medium.ttf", 22), fill=TXT_MUTED, anchor="lm")
+    # Subtítulo (Hardware Specs) com distância vertical simétrica
+    d.text((title_x, safe_t + 68), "SEI Robotics SEI510 (BTV E10)  •  Amlogic S905X2  •  Armbian Appliance",
+           font=F("Inter-Medium.ttf", 23), fill=TXT_MUTED, anchor="lm")
 
     # =========================================================================
     # 2. CORPO CENTRAL BASEADO NA MÁQUINA DE ESTADOS
@@ -255,55 +256,56 @@ def render(shift_x=0, shift_y=0):
         # ---------------------------------------------------------------------
         # ESTADO OPERACIONAL / CONECTADO (S4 resolvido - credenciais ocultas)
         # ---------------------------------------------------------------------
-        cw, chh = 740, 720
+        cw, chh = 750, 735
         gap = 80
         sx = (W - (cw * 2 + gap)) // 2 + shift_x
-        cy = safe_t + 115
+        cy = safe_t + 130
 
         portal_url = f"http://{state_ip}:8080"
-        qr_portal = qr_png(portal_url, 310)
+        qr_portal = qr_png(portal_url, 300)
 
         # Card 1: Acesso ao Portal Web na Rede
         d.rounded_rectangle([sx, cy, sx + cw, cy + chh], radius=24, fill=CARD_BG, outline=CARD_BORDER, width=2)
-        bx, by, bd = sx + 38, cy + 34, 50
+        bx, by, bd = sx + 36, cy + 34, 52
         d.ellipse([bx, by, bx + bd, by + bd], fill=ACCENT_GREEN)
         d.text((bx + bd / 2, by + bd / 2), "✓", font=F("Inter-Bold.ttf", 28), fill="white", anchor="mm")
-        d.text((bx + bd + 20, by + bd / 2), "Painel ForgeOS na Rede", font=F("Inter-Bold.ttf", 32), fill=TXT_TITLE, anchor="lm")
-        d.line([sx + 38, cy + 104, sx + cw - 38, cy + 104], fill=CARD_BORDER, width=1)
+        d.text((bx + bd + 20, by + bd / 2), "Painel ForgeOS na Rede", font=F("Inter-Bold.ttf", 34), fill=TXT_TITLE, anchor="lm")
+        d.line([sx + 36, cy + 104, sx + cw - 36, cy + 104], fill=CARD_BORDER, width=1)
 
         # QR Code Card 1
-        qbox = 310
+        qbox = 324
         qx = sx + (cw - qbox) // 2
         qy = cy + 128
-        d.rounded_rectangle([qx - 2, qy - 2, qx + qbox + 2, qy + qbox + 2], radius=18, fill=(15, 20, 32))
-        d.rounded_rectangle([qx, qy, qx + qbox, qy + qbox], radius=16, fill="white")
+        d.rounded_rectangle([qx - 2, qy - 2, qx + qbox + 2, qy + qbox + 2], radius=20, fill=(15, 20, 32))
+        d.rounded_rectangle([qx, qy, qx + qbox, qy + qbox], radius=18, fill="white")
         qw, qh = qr_portal.size
         img.paste(qr_portal, (qx + (qbox - qw) // 2, qy + (qbox - qh) // 2))
 
         # Chips de dados
-        ry = cy + 466
-        chip_h = 74
-        d.rounded_rectangle([sx + 38, ry, sx + cw - 38, ry + chip_h], radius=12, fill=CHIP_BG, outline=CHIP_BORDER, width=1)
-        d.text((sx + 56, ry + 13), "ENDEREÇO IP DO PAINEL", font=F("JetBrainsMono-Bold.ttf", 14), fill=TXT_MUTED)
-        d.text((sx + 56, ry + 38), portal_url, font=F("JetBrainsMono-Bold.ttf", 25), fill=ACCENT_GREEN)
+        ry = cy + 476
+        chip_h = 82
+        chip_pad = 32
+        d.rounded_rectangle([sx + chip_pad, ry, sx + cw - chip_pad, ry + chip_h], radius=14, fill=CHIP_BG, outline=CHIP_BORDER, width=1)
+        d.text((sx + chip_pad + 20, ry + 15), "ENDEREÇO IP DO PAINEL", font=F("JetBrainsMono-Bold.ttf", 15), fill=TXT_MUTED)
+        d.text((sx + chip_pad + 20, ry + 43), portal_url, font=F("JetBrainsMono-Bold.ttf", 27), fill=ACCENT_GREEN)
 
-        ry += chip_h + 12
-        d.rounded_rectangle([sx + 38, ry, sx + cw - 38, ry + chip_h], radius=12, fill=CHIP_BG, outline=CHIP_BORDER, width=1)
-        d.text((sx + 56, ry + 13), "REDE ASSOCIADA", font=F("JetBrainsMono-Bold.ttf", 14), fill=TXT_MUTED)
-        d.text((sx + 56, ry + 38), f"{state_ssid} (Internet Ativa)", font=F("JetBrainsMono-Bold.ttf", 24), fill=TXT_TITLE)
+        ry += chip_h + 14
+        d.rounded_rectangle([sx + chip_pad, ry, sx + cw - chip_pad, ry + chip_h], radius=14, fill=CHIP_BG, outline=CHIP_BORDER, width=1)
+        d.text((sx + chip_pad + 20, ry + 15), "REDE ASSOCIADA", font=F("JetBrainsMono-Bold.ttf", 15), fill=TXT_MUTED)
+        d.text((sx + chip_pad + 20, ry + 43), f"{state_ssid} (Internet Ativa)", font=F("JetBrainsMono-Bold.ttf", 25), fill=TXT_TITLE)
 
-        d.text((sx + cw // 2, cy + chh - 52), "Dispositivo online e pronto para uso", font=F("Inter-Medium.ttf", 19), fill=TXT_MUTED, anchor="mm")
+        d.text((sx + cw // 2, cy + chh - 54), "Dispositivo online e pronto para uso", font=F("Inter-Medium.ttf", 20), fill=TXT_MUTED, anchor="mm")
         d.text((sx + cw // 2, cy + chh - 24), "Acesse o painel pelo navegador em qualquer dispositivo da rede", font=F("Inter-Regular.ttf", 17), fill=TXT_HINT, anchor="mm")
 
         # Card 2: Telemetria & Recursos do Hardware
         temp_c, ram_str, up_str = get_hardware_telemetry()
         cx2 = sx + cw + gap
         d.rounded_rectangle([cx2, cy, cx2 + cw, cy + chh], radius=24, fill=CARD_BG, outline=CARD_BORDER, width=2)
-        bx2, by2 = cx2 + 38, cy + 34
+        bx2, by2 = cx2 + 36, cy + 34
         d.ellipse([bx2, by2, bx2 + bd, by2 + bd], fill=ACCENT_BLUE)
         d.text((bx2 + bd / 2, by2 + bd / 2), "⚙", font=F("Inter-Bold.ttf", 28), fill="white", anchor="mm")
-        d.text((bx2 + bd + 20, by2 + bd / 2), "Telemetria do Sistema", font=F("Inter-Bold.ttf", 32), fill=TXT_TITLE, anchor="lm")
-        d.line([cx2 + 38, cy + 104, cx2 + cw - 38, cy + 104], fill=CARD_BORDER, width=1)
+        d.text((bx2 + bd + 20, by2 + bd / 2), "Telemetria do Sistema", font=F("Inter-Bold.ttf", 34), fill=TXT_TITLE, anchor="lm")
+        d.line([cx2 + 36, cy + 104, cx2 + cw - 36, cy + 104], fill=CARD_BORDER, width=1)
 
         metrics = [
             ("TEMPERATURA DA CPU (S905X2)", f"{temp_c}°C", ACCENT_GREEN if temp_c < 75 else ACCENT_RED),
@@ -315,9 +317,9 @@ def render(shift_x=0, shift_y=0):
         m_y = cy + 128
         m_h = 92
         for lbl, val, col in metrics:
-            d.rounded_rectangle([cx2 + 38, m_y, cx2 + cw - 38, m_y + m_h], radius=12, fill=CHIP_BG, outline=CHIP_BORDER, width=1)
-            d.text((cx2 + 56, m_y + 18), lbl, font=F("JetBrainsMono-Bold.ttf", 15), fill=TXT_MUTED)
-            d.text((cx2 + 56, m_y + 48), val, font=F("JetBrainsMono-Bold.ttf", 26), fill=col)
+            d.rounded_rectangle([cx2 + 32, m_y, cx2 + cw - 32, m_y + m_h], radius=14, fill=CHIP_BG, outline=CHIP_BORDER, width=1)
+            d.text((cx2 + 52, m_y + 18), lbl, font=F("JetBrainsMono-Bold.ttf", 15), fill=TXT_MUTED)
+            d.text((cx2 + 52, m_y + 48), val, font=F("JetBrainsMono-Bold.ttf", 26), fill=col)
             m_y += m_h + 12
 
     elif state_mode == "applying":
@@ -345,13 +347,13 @@ def render(shift_x=0, shift_y=0):
         # ---------------------------------------------------------------------
         # ESTADO PADRÃO: PAREAMENTO / MODO AP ATIVO (Setup Mode)
         # ---------------------------------------------------------------------
-        cw, chh = 740, 720
+        cw, chh = 750, 735
         gap = 80
         sx = (W - (cw * 2 + gap)) // 2 + shift_x
-        cy = safe_t + 115
+        cy = safe_t + 130
 
-        qr_wifi = qr_png(f"WIFI:S:{AP_SSID};T:WPA;P:{AP_PASS};;", 290)
-        qr_url = qr_png(PORTAL_AP_URL, 290)
+        qr_wifi = qr_png(f"WIFI:S:{AP_SSID};T:WPA;P:{AP_PASS};;", 300)
+        qr_url = qr_png(PORTAL_AP_URL, 300)
 
         cards = [
             (sx, "1", "Conecte-se ao Wi-Fi", qr_wifi,
@@ -371,32 +373,33 @@ def render(shift_x=0, shift_y=0):
             d.rounded_rectangle([cx, cy, cx + cw, cy + chh], radius=24, fill=CARD_BG, outline=CARD_BORDER, width=2)
 
             # Header do Card: Círculo com número + Título do Passo
-            bx, by, bd = cx + 38, cy + 34, 50
+            bx, by, bd = cx + 36, cy + 34, 52
             d.ellipse([bx, by, bx + bd, by + bd], fill=ACCENT_BLUE)
-            d.text((bx + bd / 2, by + bd / 2), num, font=F("Inter-Bold.ttf", 26), fill="white", anchor="mm")
-            d.text((bx + bd + 20, by + bd / 2), step_title, font=F("Inter-Bold.ttf", 32), fill=TXT_TITLE, anchor="lm")
-            d.line([cx + 38, cy + 104, cx + cw - 38, cy + 104], fill=CARD_BORDER, width=1)
+            d.text((bx + bd / 2, by + bd / 2), num, font=F("Inter-Bold.ttf", 28), fill="white", anchor="mm")
+            d.text((bx + bd + 20, by + bd / 2), step_title, font=F("Inter-Bold.ttf", 34), fill=TXT_TITLE, anchor="lm")
+            d.line([cx + 36, cy + 104, cx + cw - 36, cy + 104], fill=CARD_BORDER, width=1)
 
-            # QR Code Box Branco
-            qbox = 310
+            # QR Code Box Branco Ampliado (324px)
+            qbox = 324
             qx = cx + (cw - qbox) // 2
             qy = cy + 128
-            d.rounded_rectangle([qx - 2, qy - 2, qx + qbox + 2, qy + qbox + 2], radius=18, fill=(15, 20, 32))
-            d.rounded_rectangle([qx, qy, qx + qbox, qy + qbox], radius=16, fill="white")
+            d.rounded_rectangle([qx - 2, qy - 2, qx + qbox + 2, qy + qbox + 2], radius=20, fill=(15, 20, 32))
+            d.rounded_rectangle([qx, qy, qx + qbox, qy + qbox], radius=18, fill="white")
             qw, qh = qr.size
             img.paste(qr, (qx + (qbox - qw) // 2, qy + (qbox - qh) // 2))
 
-            # Chips de Dados com visual industrial e tipografia JetBrains Mono de alto impacto
-            ry = cy + 466
-            chip_h = 74
+            # Chips de Dados Ampliados (Altura 82px)
+            ry = cy + 476
+            chip_h = 82
+            chip_pad = 32
             for label, value, vcol in rows:
-                d.rounded_rectangle([cx + 38, ry, cx + cw - 38, ry + chip_h], radius=12, fill=CHIP_BG, outline=CHIP_BORDER, width=1)
-                d.text((cx + 56, ry + 13), label, font=F("JetBrainsMono-Bold.ttf", 14), fill=TXT_MUTED)
-                d.text((cx + 56, ry + 38), value, font=F("JetBrainsMono-Bold.ttf", 25), fill=vcol)
-                ry += chip_h + 12
+                d.rounded_rectangle([cx + chip_pad, ry, cx + cw - chip_pad, ry + chip_h], radius=14, fill=CHIP_BG, outline=CHIP_BORDER, width=1)
+                d.text((cx + chip_pad + 20, ry + 15), label, font=F("JetBrainsMono-Bold.ttf", 15), fill=TXT_MUTED)
+                d.text((cx + chip_pad + 20, ry + 43), value, font=F("JetBrainsMono-Bold.ttf", 27), fill=vcol)
+                ry += chip_h + 14
 
-            # Textos de Ajuda (Hints) perfeitamente distribuídos
-            d.text((cx + cw // 2, cy + chh - 52), hint1, font=F("Inter-Medium.ttf", 19), fill=TXT_MUTED, anchor="mm")
+            # Textos de Orientação (Hints)
+            d.text((cx + cw // 2, cy + chh - 54), hint1, font=F("Inter-Medium.ttf", 20), fill=TXT_MUTED, anchor="mm")
             d.text((cx + cw // 2, cy + chh - 24), hint2, font=F("Inter-Regular.ttf", 17), fill=TXT_HINT, anchor="mm")
 
     # =========================================================================
