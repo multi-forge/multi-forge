@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="Cockpit Web Management Console & Real-time Telemetry Portal for ForgeOS on Amlogic ARM64.">
+  <meta name="theme-color" content="#151515">
   <title>Cockpit // ForgeOS — BTV Express E10</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="manifest" href="/manifest.json">
@@ -11,14 +13,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&family=Red+Hat+Mono:wght@400;500;700&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       COCKPIT PROJECT / PATTERNFLY DESIGN SYSTEM (COMPACT & RESPONSIVE)
+       COCKPIT / PATTERNFLY ENTERPRISE DESIGN SYSTEM & PERFORMANCE ENGINE
        ========================================================================== */
     :root {
       --pf-font-sans: "Red Hat Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --pf-font-display: "Red Hat Display", var(--pf-font-sans);
       --pf-font-mono: "Red Hat Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-      /* Cockpit Dark Theme Palette */
+      /* Dark Theme Palette */
       --pf-bg-base: #0F1214;
       --pf-bg-masthead: #151515;
       --pf-bg-sidebar: #1B1D21;
@@ -36,7 +38,7 @@
       --pf-text-muted: #8A8D90;
       --pf-text-disabled: #6A6E73;
 
-      /* PatternFly Status Colors */
+      /* Status Colors */
       --pf-blue-primary: #0066CC;
       --pf-blue-hover: #004080;
       --pf-blue-light: #2B9AF3;
@@ -53,10 +55,12 @@
       --pf-red-light: #E03E3E;
       --pf-red-surface: rgba(201, 25, 11, 0.15);
 
-      --pf-radius-sm: 3px;
-      --pf-radius-md: 4px;
-      --pf-radius-lg: 6px;
-
+      /* Standardized Component Tokens */
+      --pf-radius: 4px;
+      --pf-card-padding: 0.85rem 1rem;
+      --pf-header-height: 48px;
+      --pf-btn-height: 32px;
+      --pf-input-height: 36px;
       --pf-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35);
       --pf-shadow-popover: 0 4px 16px rgba(0, 0, 0, 0.5);
     }
@@ -108,7 +112,7 @@
     button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
     button { cursor: pointer; border: none; background: none; }
 
-    /* Cockpit Layout Container */
+    /* Layout Root */
     .cockpit-app {
       display: flex;
       flex-direction: column;
@@ -119,25 +123,26 @@
     }
 
     /* ==========================================================================
-       MASTHEAD (COCKPIT HEADER BAR)
+       MASTHEAD (TOP APPLICATION BAR)
        ========================================================================== */
     .cockpit-masthead {
-      height: 46px;
+      height: var(--pf-header-height);
       background: var(--pf-bg-masthead);
       color: #FFFFFF;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 0.75rem;
+      padding: 0 0.85rem;
       flex-shrink: 0;
       z-index: 100;
       border-bottom: 1px solid #2B2D30;
+      contain: layout style;
     }
 
     .masthead-brand {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
       min-width: 0;
     }
 
@@ -148,7 +153,7 @@
       align-items: center;
       justify-content: center;
       color: #D2D2D2;
-      border-radius: var(--pf-radius-sm);
+      border-radius: var(--pf-radius);
       background: #212427;
       border: 1px solid #383838;
       flex-shrink: 0;
@@ -158,25 +163,25 @@
     .masthead-logo {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.45rem;
       min-width: 0;
     }
     .cockpit-icon-badge {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       background: var(--pf-blue-primary);
-      border-radius: var(--pf-radius-sm);
+      border-radius: var(--pf-radius);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: #FFFFFF;
       font-family: var(--pf-font-display);
       flex-shrink: 0;
     }
     .masthead-title {
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       font-weight: 700;
       font-family: var(--pf-font-display);
       letter-spacing: -0.01em;
@@ -185,7 +190,7 @@
       text-overflow: ellipsis;
     }
     .masthead-host {
-      font-size: 0.75rem;
+      font-size: 0.76rem;
       color: #8A8D90;
       font-weight: 400;
       margin-left: 0.25rem;
@@ -194,16 +199,16 @@
     .masthead-tools {
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.4rem;
       flex-shrink: 0;
     }
 
     .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      padding: 0.15rem 0.45rem;
-      font-size: 0.7rem;
+      gap: 0.35rem;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.72rem;
       font-weight: 600;
       border-radius: 12px;
       background: var(--pf-green-surface);
@@ -218,32 +223,33 @@
     }
 
     .status-dot-sm {
-      width: 5px;
-      height: 5px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: currentColor;
     }
     .live-pulse {
       animation: pfPulse 1.5s infinite;
+      will-change: transform, opacity;
     }
     @keyframes pfPulse {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.3; transform: scale(0.85); }
+      50% { opacity: 0.35; transform: scale(0.85); }
     }
 
     .masthead-btn {
       height: 28px;
-      padding: 0 0.5rem;
+      padding: 0 0.55rem;
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      font-size: 0.72rem;
+      gap: 0.35rem;
+      font-size: 0.74rem;
       font-weight: 500;
       color: #D2D2D2;
       border: 1px solid #383838;
-      border-radius: var(--pf-radius-sm);
+      border-radius: var(--pf-radius);
       background: #212427;
-      transition: all 0.15s ease;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
     }
     .masthead-btn:hover {
       background: #2B2D30;
@@ -262,7 +268,7 @@
     /* Backdrop for Mobile Drawer */
     .cockpit-sidebar-backdrop {
       position: fixed;
-      top: 46px; left: 0; right: 0; bottom: 0;
+      top: var(--pf-header-height); left: 0; right: 0; bottom: 0;
       background: rgba(0, 0, 0, 0.65);
       backdrop-filter: blur(3px);
       z-index: 80;
@@ -276,7 +282,7 @@
     }
 
     /* ==========================================================================
-       PATTERNFLY VERTICAL SIDEBAR NAVIGATION
+       SIDEBAR NAVIGATION
        ========================================================================== */
     .cockpit-sidebar {
       width: 230px;
@@ -287,6 +293,7 @@
       flex-shrink: 0;
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 90;
+      contain: layout style;
     }
 
     .sidebar-nav-scroll {
@@ -316,8 +323,8 @@
       font-size: 0.82rem;
       font-weight: 500;
       color: var(--pf-text-secondary);
-      border-radius: var(--pf-radius-sm);
-      transition: all 0.15s ease;
+      border-radius: var(--pf-radius);
+      transition: background-color 0.15s ease, color 0.15s ease;
       position: relative;
     }
     .pf-nav-link:hover {
@@ -367,7 +374,7 @@
     }
 
     /* ==========================================================================
-       CONTENT AREA & PATTERNFLY PAGE HEADER
+       PAGE HEADER & CONTENT AREA
        ========================================================================== */
     .cockpit-content-viewport {
       flex: 1;
@@ -382,29 +389,30 @@
     .page-header-banner {
       background: var(--pf-bg-card);
       border-bottom: 1px solid var(--pf-border-base);
-      padding: 0.6rem 1rem;
+      padding: 0.65rem 1.1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
       flex-wrap: wrap;
       gap: 0.4rem;
+      contain: layout style;
     }
     .page-header-title-group h2 {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 700;
       font-family: var(--pf-font-display);
       color: var(--pf-text-primary);
       letter-spacing: -0.01em;
     }
     .page-header-title-group p {
-      font-size: 0.75rem;
+      font-size: 0.76rem;
       color: var(--pf-text-muted);
       margin-top: 0.05rem;
     }
 
     .page-body-content {
-      padding: 0.75rem 1rem;
+      padding: 0.85rem 1.1rem;
       flex: 1;
     }
 
@@ -420,48 +428,58 @@
     }
 
     /* ==========================================================================
-       PATTERNFLY GRID, CARDS & SPARKLINE REAL-TIME CHARTS (COMPACT)
+       STANDARDIZED GRIDS & CARD ARCHITECTURE
        ========================================================================== */
-    .pf-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65rem; margin-bottom: 0.75rem; }
-    .pf-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.65rem; margin-bottom: 0.75rem; }
-    .pf-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem; margin-bottom: 0.75rem; }
+    .pf-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 0.85rem; }
+    .pf-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 0.85rem; }
+    .pf-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 0.85rem; }
 
+    /* Standard Card Container */
     .pf-card {
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border-base);
-      border-radius: var(--pf-radius-md);
+      border-radius: var(--pf-radius);
       box-shadow: var(--pf-shadow-card);
-      padding: 0.75rem 0.85rem;
+      padding: var(--pf-card-padding);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.75rem;
+      contain: layout style;
+    }
+
+    /* Fixed Height for Standardized KPI Metric Cards */
+    .pf-kpi-card {
+      min-height: 116px;
+      height: 100%;
+      padding: 0.75rem 0.85rem;
     }
 
     .pf-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
-      padding-bottom: 0.35rem;
+      min-height: 32px;
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.4rem;
       border-bottom: 1px solid var(--pf-border-subtle);
       flex-wrap: wrap;
       gap: 0.35rem;
     }
     .pf-card-title {
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       font-weight: 700;
       font-family: var(--pf-font-display);
       color: var(--pf-text-primary);
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.4rem;
     }
 
-    /* Metrics & Gauges (Compact) */
+    /* Standardized Metrics & Gauges */
     .metric-label {
-      font-size: 0.65rem;
+      font-size: 0.66rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.03em;
@@ -470,7 +488,7 @@
       line-height: 1.2;
     }
     .metric-value {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 700;
       font-family: var(--pf-font-display);
       color: var(--pf-text-primary);
@@ -481,7 +499,7 @@
       text-overflow: ellipsis;
     }
     .metric-subtext {
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       color: var(--pf-text-muted);
       display: flex;
       align-items: center;
@@ -505,20 +523,23 @@
       background: var(--pf-blue-primary);
       border-radius: 2px;
       transition: width 0.3s ease;
+      will-change: width;
     }
     .pf-progress-fill.green { background: var(--pf-green-success); }
     .pf-progress-fill.orange { background: var(--pf-orange-warning); }
 
-    /* Live Sparkline Graph SVG Container */
+    /* Standardized Sparkline Graph SVG Container */
     .sparkline-box {
       width: 100%;
-      height: 26px;
+      height: 28px;
       margin-top: 0.25rem;
       background: var(--pf-bg-inset);
       border: 1px solid var(--pf-border-subtle);
-      border-radius: var(--pf-radius-sm);
+      border-radius: 2px;
       overflow: hidden;
       position: relative;
+      contain: strict;
+      transform: translateZ(0);
     }
     .sparkline-svg {
       width: 100%;
@@ -527,7 +548,7 @@
     }
 
     /* ==========================================================================
-       PATTERNFLY DATA TABLES
+       DATA TABLES
        ========================================================================== */
     .table-responsive {
       width: 100%;
@@ -537,22 +558,22 @@
     .pf-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       text-align: left;
     }
     .pf-table th {
-      padding: 0.5rem 0.65rem;
+      padding: 0.55rem 0.75rem;
       background: var(--pf-bg-table-header);
       color: var(--pf-text-muted);
       font-weight: 600;
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       border-bottom: 1px solid var(--pf-border-base);
       white-space: nowrap;
     }
     .pf-table td {
-      padding: 0.55rem 0.65rem;
+      padding: 0.6rem 0.75rem;
       border-bottom: 1px solid var(--pf-border-subtle);
       color: var(--pf-text-secondary);
       white-space: nowrap;
@@ -561,15 +582,15 @@
       background: var(--pf-bg-card-hover);
       color: var(--pf-text-primary);
     }
-    .pf-table-mono { font-family: var(--pf-font-mono); font-size: 0.78rem; }
+    .pf-table-mono { font-family: var(--pf-font-mono); font-size: 0.8rem; }
 
     /* Badges */
     .pf-pill {
       display: inline-flex;
       align-items: center;
       gap: 0.3rem;
-      padding: 0.1rem 0.4rem;
-      font-size: 0.68rem;
+      padding: 0.12rem 0.45rem;
+      font-size: 0.7rem;
       font-weight: 600;
       border-radius: 10px;
       background: var(--pf-bg-inset);
@@ -604,12 +625,12 @@
       align-items: center;
       justify-content: center;
       gap: 0.35rem;
-      padding: 0.35rem 0.75rem;
-      min-height: 32px;
-      font-size: 0.78rem;
+      padding: 0.35rem 0.8rem;
+      min-height: var(--pf-btn-height);
+      font-size: 0.8rem;
       font-weight: 600;
-      border-radius: var(--pf-radius-sm);
-      transition: all 0.15s ease;
+      border-radius: var(--pf-radius);
+      transition: background-color 0.15s ease, border-color 0.15s ease;
       cursor: pointer;
       white-space: nowrap;
     }
@@ -640,27 +661,27 @@
       background: var(--pf-red-danger);
       color: #FFFFFF;
     }
-    .pf-btn-sm { padding: 0.2rem 0.5rem; min-height: 26px; font-size: 0.72rem; }
+    .pf-btn-sm { padding: 0.2rem 0.55rem; min-height: 28px; font-size: 0.74rem; }
 
     /* Form Controls */
-    .pf-form-group { margin-bottom: 0.75rem; }
+    .pf-form-group { margin-bottom: 0.8rem; }
     .pf-label {
       display: block;
-      font-size: 0.74rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: var(--pf-text-primary);
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.25rem;
     }
     .pf-input, .pf-select {
       width: 100%;
-      height: 36px;
-      padding: 0 0.55rem;
+      height: var(--pf-input-height);
+      padding: 0 0.6rem;
       background: var(--pf-bg-inset);
       border: 1px solid var(--pf-border-base);
-      border-radius: var(--pf-radius-sm);
-      font-size: 0.82rem;
+      border-radius: var(--pf-radius);
+      font-size: 0.84rem;
       color: var(--pf-text-primary);
-      transition: border-color 0.15s ease;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
     .pf-input:focus, .pf-select:focus {
       outline: none;
@@ -674,49 +695,49 @@
       display: flex;
       background: var(--pf-bg-inset);
       border: 1px solid var(--pf-border-base);
-      border-radius: var(--pf-radius-sm);
+      border-radius: var(--pf-radius);
       padding: 2px;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.8rem;
     }
     .pf-segment-btn {
       flex: 1;
-      padding: 0.35rem 0.45rem;
-      font-size: 0.75rem;
+      padding: 0.4rem 0.5rem;
+      font-size: 0.76rem;
       font-weight: 600;
       text-align: center;
       color: var(--pf-text-muted);
       border-radius: 2px;
-      transition: all 0.15s ease;
+      transition: background-color 0.15s ease, color 0.15s ease;
     }
     .pf-segment-btn.active {
       background: var(--pf-blue-primary);
       color: #FFFFFF;
     }
 
-    /* Wi-Fi List */
+    /* Wi-Fi Row */
     .wifi-item-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.55rem 0.7rem;
+      padding: 0.6rem 0.75rem;
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border-base);
-      border-radius: var(--pf-radius-sm);
-      margin-bottom: 0.35rem;
-      transition: all 0.15s ease;
-      gap: 0.55rem;
+      border-radius: var(--pf-radius);
+      margin-bottom: 0.4rem;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+      gap: 0.6rem;
     }
     .wifi-item-row:hover {
       border-color: var(--pf-blue-primary);
       background: var(--pf-bg-card-hover);
     }
     .wifi-meta-tag {
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       color: var(--pf-text-muted);
       display: flex;
       align-items: center;
-      gap: 0.3rem;
-      margin-top: 0.1rem;
+      gap: 0.35rem;
+      margin-top: 0.15rem;
     }
 
     /* Signal Bars */
@@ -724,11 +745,11 @@
       display: flex;
       align-items: flex-end;
       gap: 2px;
-      height: 12px;
-      width: 14px;
+      height: 13px;
+      width: 15px;
       flex-shrink: 0;
     }
-    .signal-bar { width: 2.5px; background: var(--pf-border-base); border-radius: 1px; }
+    .signal-bar { width: 3px; background: var(--pf-border-base); border-radius: 1px; }
     .signal-bar.on { background: var(--pf-green-light); }
     .signal-bar.warn { background: var(--pf-orange-warning); }
     .signal-bar.weak { background: var(--pf-red-light); }
@@ -737,33 +758,34 @@
     .signal-bar:nth-child(3) { height: 75%; }
     .signal-bar:nth-child(4) { height: 100%; }
 
-    /* Module Application Blade Card (Cockpit App Store Style) */
+    /* Module Application Blade Card (Standardized App Store Card) */
     .app-store-card {
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border-base);
-      border-radius: var(--pf-radius-md);
-      padding: 0.85rem 0.95rem;
+      border-radius: var(--pf-radius);
+      padding: 0.95rem 1rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       box-shadow: var(--pf-shadow-card);
-      transition: all 0.15s ease;
-      margin-bottom: 0.65rem;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+      margin-bottom: 0.75rem;
+      min-height: 240px;
     }
     .app-store-card:hover {
       border-color: var(--pf-blue-primary);
       transform: translateY(-1px);
     }
     .app-icon-box {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--pf-radius-md);
+      width: 38px;
+      height: 38px;
+      border-radius: var(--pf-radius);
       background: var(--pf-bg-inset);
       border: 1px solid var(--pf-border-subtle);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       flex-shrink: 0;
     }
 
@@ -776,14 +798,14 @@
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 0.65rem;
+      padding: 0.75rem;
       z-index: 200;
     }
     .pf-modal-backdrop.active { display: flex; }
     .pf-modal-dialog {
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border-base);
-      border-radius: var(--pf-radius-md);
+      border-radius: var(--pf-radius);
       width: 100%;
       max-width: 480px;
       max-height: 90vh;
@@ -792,19 +814,19 @@
       box-shadow: var(--pf-shadow-popover);
     }
     .pf-modal-header {
-      padding: 0.75rem 1rem;
+      padding: 0.85rem 1.1rem;
       border-bottom: 1px solid var(--pf-border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .pf-modal-body {
-      padding: 1rem;
+      padding: 1.1rem;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
     .pf-modal-footer {
-      padding: 0.65rem 1rem;
+      padding: 0.75rem 1.1rem;
       border-top: 1px solid var(--pf-border-subtle);
       display: flex;
       align-items: center;
@@ -816,37 +838,37 @@
     .cockpit-terminal {
       background: #000000;
       border: 1px solid var(--pf-border-base);
-      border-radius: var(--pf-radius-sm);
+      border-radius: var(--pf-radius);
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
     .terminal-header-bar {
       background: #181A1D;
-      padding: 0.45rem 0.75rem;
+      padding: 0.5rem 0.8rem;
       border-bottom: 1px solid #2B2D30;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       color: #8A8D90;
       flex-wrap: wrap;
       gap: 0.35rem;
     }
     .terminal-body {
-      padding: 0.75rem;
+      padding: 0.85rem;
       font-family: var(--pf-font-mono);
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: #3E8635;
-      line-height: 1.45;
-      height: 340px;
+      line-height: 1.5;
+      height: 350px;
       overflow-y: auto;
       white-space: pre-wrap;
       -webkit-overflow-scrolling: touch;
     }
 
     /* ==========================================================================
-       RESPONSIVE BREAKPOINTS (TABLETS & SMARTPHONES)
+       RESPONSIVE RULES (TABLETS & SMARTPHONES)
        ========================================================================== */
     @media (max-width: 1024px) {
       .pf-grid-4 { grid-template-columns: repeat(2, 1fr); }
@@ -857,7 +879,7 @@
       .masthead-toggle-btn { display: flex; }
       .cockpit-sidebar {
         position: fixed;
-        left: 0; top: 46px; bottom: 0;
+        left: 0; top: var(--pf-header-height); bottom: 0;
         transform: translateX(-100%);
         box-shadow: none;
       }
@@ -865,8 +887,8 @@
         transform: translateX(0);
         box-shadow: 0 0 24px rgba(0, 0, 0, 0.8);
       }
-      .page-header-banner { padding: 0.5rem 0.75rem; }
-      .page-body-content { padding: 0.65rem 0.75rem; }
+      .page-header-banner { padding: 0.55rem 0.85rem; }
+      .page-body-content { padding: 0.65rem 0.85rem; }
     }
 
     @media (max-width: 640px) {
@@ -880,7 +902,12 @@
       }
 
       .pf-card {
-        padding: 0.6rem 0.7rem;
+        padding: 0.65rem 0.75rem;
+      }
+
+      .pf-kpi-card {
+        min-height: 98px;
+        padding: 0.55rem 0.65rem;
       }
 
       .metric-label { font-size: 0.62rem; }
@@ -906,7 +933,7 @@
     @media (max-width: 380px) {
       .metric-value { font-size: 0.95rem; }
       .metric-subtext { font-size: 0.62rem; }
-      .pf-card { padding: 0.5rem 0.6rem; }
+      .pf-card { padding: 0.55rem 0.65rem; }
     }
   </style>
 </head>
@@ -916,7 +943,7 @@
   <!-- Top Masthead Bar -->
   <header class="cockpit-masthead">
     <div class="masthead-brand">
-      <button class="masthead-toggle-btn" id="sidebar-toggle" aria-label="Menu Lateral">
+      <button class="masthead-toggle-btn" id="sidebar-toggle" aria-label="Abrir Menu de Navegação">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <div class="masthead-logo">
@@ -934,12 +961,12 @@
         <span id="top-status-text">AP: 192.168.4.1</span>
       </div>
 
-      <button class="masthead-btn" id="btn-quick-reset" title="Restaurar modo Ponto de Acesso">
+      <button class="masthead-btn" id="btn-quick-reset" title="Restaurar modo Ponto de Acesso" aria-label="Reiniciar Ponto de Acesso">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         <span>Reiniciar AP</span>
       </button>
 
-      <button class="masthead-btn" id="theme-toggle" title="Alternar Modo Escuro / Claro">
+      <button class="masthead-btn" id="theme-toggle" title="Alternar Tema" aria-label="Alternar Modo Escuro e Claro">
         <svg id="theme-icon-sun" style="display:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         <svg id="theme-icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
@@ -953,7 +980,7 @@
 
     <!-- Vertical Sidebar Navigation -->
     <aside class="cockpit-sidebar" id="sidebar">
-      <nav class="sidebar-nav-scroll">
+      <nav class="sidebar-nav-scroll" aria-label="Navegação Principal">
         <div class="nav-group-title">Sistema</div>
         <a href="#overview" class="pf-nav-link active" data-tab="overview">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -1007,7 +1034,7 @@
         </div>
         <div id="page-banner-actions" style="display:flex; align-items:center; gap:0.35rem;">
           <span class="pf-pill success" id="live-indicator"><span class="status-dot-sm live-pulse"></span>1s LIVE</span>
-          <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="tickRealtime(true)">
+          <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="tickRealtime(true)" aria-label="Atualizar Telemetria">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
             <span>Atualizar</span>
           </button>
@@ -1018,12 +1045,12 @@
       <div class="page-body-content">
         <!-- 1. OVERVIEW (DASHBOARD) -->
         <section class="tab-section active" id="view-overview">
-          <!-- 4 KPI Metrics Matrix with Live Sparklines (2x2 on mobile) -->
+          <!-- 4 Standardized KPI Metrics Cards (Equal height grid) -->
           <div class="pf-grid-4">
             <!-- CPU Usage % Card -->
-            <div class="pf-card">
+            <div class="pf-card pf-kpi-card">
               <div>
-                <div class="metric-label">Uso de CPU</div>
+                <div class="metric-label">Uso de Processador (CPU)</div>
                 <div class="metric-value" id="dash-cpu-val" style="color:var(--pf-blue-light);">4.2%</div>
                 <div class="sparkline-box">
                   <svg class="sparkline-svg" id="sparkline-cpu" viewBox="0 0 100 30" preserveAspectRatio="none">
@@ -1031,13 +1058,13 @@
                   </svg>
                 </div>
               </div>
-              <div class="metric-subtext" style="margin-top:0.2rem;">
+              <div class="metric-subtext">
                 <span id="dash-cpu-sub">4x A53 @ 1.8 GHz</span>
               </div>
             </div>
 
             <!-- RAM Usage Card -->
-            <div class="pf-card">
+            <div class="pf-card pf-kpi-card">
               <div>
                 <div class="metric-label">Memória RAM</div>
                 <div class="metric-value" id="dash-mem-val" style="color:var(--pf-green-light);">484 MB</div>
@@ -1047,37 +1074,37 @@
                   </svg>
                 </div>
               </div>
-              <div class="metric-subtext" style="margin-top:0.2rem;">
+              <div class="metric-subtext">
                 <span id="dash-mem-sub">1.80 GB (73% Livre)</span>
               </div>
             </div>
 
             <!-- Network Throughput Card -->
-            <div class="pf-card">
+            <div class="pf-card pf-kpi-card">
               <div>
-                <div class="metric-label">Tráfego de Rede</div>
-                <div class="metric-value" id="dash-net-val" style="color:var(--pf-orange-warning); font-size:1.05rem;">RX: 0.4 KB/s</div>
+                <div class="metric-label">Tráfego de Rede (I/O)</div>
+                <div class="metric-value" id="dash-net-val" style="color:var(--pf-orange-warning);">RX: 0.4 KB/s</div>
                 <div class="sparkline-box">
                   <svg class="sparkline-svg" id="sparkline-net" viewBox="0 0 100 30" preserveAspectRatio="none">
                     <path d="M 0 30 L 100 30" fill="none" stroke="#F0AB00" stroke-width="2"/>
                   </svg>
                 </div>
               </div>
-              <div class="metric-subtext" style="margin-top:0.2rem;">
+              <div class="metric-subtext">
                 <span id="dash-net-sub">TX: 0.6 KB/s · eth0</span>
               </div>
             </div>
 
             <!-- Operating Mode / Uptime Card -->
-            <div class="pf-card">
+            <div class="pf-card pf-kpi-card">
               <div>
-                <div class="metric-label">Modo &amp; Uptime</div>
-                <div class="metric-value" id="dash-uptime" style="color:var(--pf-text-primary); font-size:1.05rem;">10h 45m 12s</div>
+                <div class="metric-label">Modo &amp; Tempo Ativo</div>
+                <div class="metric-value" id="dash-uptime" style="color:var(--pf-text-primary);">10h 45m 12s</div>
                 <div class="pf-progress-bar" style="margin-top:0.35rem;">
                   <div class="pf-progress-fill" id="dash-mem-bar" style="width: 27%;"></div>
                 </div>
               </div>
-              <div class="metric-subtext" style="margin-top:0.2rem;">
+              <div class="metric-subtext">
                 <span class="status-dot-sm" style="background:var(--pf-green-light);"></span>
                 <span id="dash-mode-sub">192.168.4.1</span>
               </div>
@@ -1085,22 +1112,22 @@
           </div>
 
           <div class="pf-grid-2">
-            <!-- Wi-Fi Quick Access -->
-            <div class="pf-card">
+            <!-- Wi-Fi Quick Access (Equal height) -->
+            <div class="pf-card" style="min-height:240px;">
               <div class="pf-card-header">
                 <span class="pf-card-title">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/></svg>
                   Redes Wi-Fi Próximas
                 </span>
-                <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="showTab('networking')">Ver Todas</button>
+                <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="showTab('networking')" aria-label="Ver todas as redes">Ver Todas</button>
               </div>
               <div id="dash-wifi-list">
                 <p style="color:var(--pf-text-muted); font-size:0.78rem; padding:0.35rem 0;">Procurando sinais de rádio...</p>
               </div>
             </div>
 
-            <!-- Hardware Information Box -->
-            <div class="pf-card">
+            <!-- Hardware Information Box (Equal height) -->
+            <div class="pf-card" style="min-height:240px;">
               <div class="pf-card-header">
                 <span class="pf-card-title">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
@@ -1126,7 +1153,7 @@
         <section class="tab-section" id="view-networking">
           <div class="pf-grid-2">
             <!-- Wi-Fi Scanner Card -->
-            <div class="pf-card">
+            <div class="pf-card" style="min-height:360px;">
               <div class="pf-card-header">
                 <span class="pf-card-title">Redes Wi-Fi Disponíveis</span>
                 <div class="wifi-header-actions">
@@ -1136,7 +1163,7 @@
               </div>
 
               <div style="margin-bottom:0.65rem;">
-                <input type="text" class="pf-input" id="wifi-filter-input" placeholder="Filtrar por nome de rede (SSID)...">
+                <input type="text" class="pf-input" id="wifi-filter-input" placeholder="Filtrar por nome de rede (SSID)..." aria-label="Filtrar redes Wi-Fi">
               </div>
 
               <div id="wifi-networks-container" style="max-height:440px; overflow-y:auto; padding-right:2px;">
@@ -1145,24 +1172,24 @@
             </div>
 
             <!-- Access Point Configuration Card -->
-            <div class="pf-card">
+            <div class="pf-card" style="min-height:360px;">
               <div class="pf-card-header">
                 <span class="pf-card-title">Configurar Ponto de Acesso (AP)</span>
               </div>
               <form id="form-ap-config">
                 <div class="pf-form-group">
-                  <label class="pf-label">Nome da Rede (SSID)</label>
+                  <label class="pf-label" for="ap-cfg-ssid">Nome da Rede (SSID)</label>
                   <input type="text" class="pf-input" id="ap-cfg-ssid" value="RTL8189FTV_AP" required>
                 </div>
 
                 <div class="pf-form-group">
-                  <label class="pf-label">Chave de Segurança (WPA2-PSK)</label>
+                  <label class="pf-label" for="ap-cfg-pass">Chave de Segurança (WPA2-PSK)</label>
                   <input type="password" class="pf-input" id="ap-cfg-pass" placeholder="Deixe em branco para rede aberta">
                 </div>
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.55rem;" class="modal-grid-2col">
                   <div class="pf-form-group">
-                    <label class="pf-label">Canal Wi-Fi (2.4 GHz)</label>
+                    <label class="pf-label" for="ap-cfg-channel">Canal Wi-Fi (2.4 GHz)</label>
                     <select class="pf-select" id="ap-cfg-channel">
                       <option value="1">Canal 1 (2412 MHz)</option>
                       <option value="6" selected>Canal 6 (2437 MHz)</option>
@@ -1248,8 +1275,8 @@
                 Gerenciador de Serviços do Sistema (systemd Units)
               </span>
               <div style="display:flex; gap:0.35rem; align-items:center;">
-                <input type="text" class="pf-input" id="services-search-input" placeholder="Filtrar serviços..." style="width:160px; height:28px; font-size:0.72rem;">
-                <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="loadServices()">↻ Atualizar</button>
+                <input type="text" class="pf-input" id="services-search-input" placeholder="Filtrar serviços..." style="width:160px; height:28px; font-size:0.72rem;" aria-label="Filtrar serviços systemd">
+                <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="loadServices()" aria-label="Atualizar lista de serviços">↻ Atualizar</button>
               </div>
             </div>
 
@@ -1282,7 +1309,7 @@
           <!-- Bottom Grid: Platform Specifications & Storage Partitioning -->
           <div class="pf-grid-2">
             <!-- Left: Platform, SoC & Kernel -->
-            <div class="pf-card">
+            <div class="pf-card" style="min-height:240px;">
               <div class="pf-card-header">
                 <span class="pf-card-title">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -1303,7 +1330,7 @@
             </div>
 
             <!-- Right: Storage Partitions & RAM Allocation -->
-            <div class="pf-card">
+            <div class="pf-card" style="min-height:240px;">
               <div class="pf-card-header">
                 <span class="pf-card-title">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
@@ -1360,7 +1387,7 @@
           </div>
         </section>
 
-        <!-- 5. FORGEHUB APPLICATION ARSENAL (COMPACT BLADES) -->
+        <!-- 5. FORGEHUB APPLICATION ARSENAL (STANDARDIZED BLADES) -->
         <section class="tab-section" id="view-modules">
           <div class="pf-grid-3" id="modules-container">
             <!-- Dynamic Application Store Blades loaded via /rest/modules -->
@@ -1376,8 +1403,8 @@
                 <span style="font-weight:600;">Logs do Kernel e Serviços (journalctl)</span>
               </div>
               <div style="display:flex; gap:0.35rem;">
-                <button class="pf-btn pf-btn-secondary pf-btn-sm" id="btn-copy-logs">Copiar Logs</button>
-                <button class="pf-btn pf-btn-secondary pf-btn-sm" id="btn-clear-logs">Limpar</button>
+                <button class="pf-btn pf-btn-secondary pf-btn-sm" id="btn-copy-logs" aria-label="Copiar logs">Copiar Logs</button>
+                <button class="pf-btn pf-btn-secondary pf-btn-sm" id="btn-clear-logs" aria-label="Limpar logs">Limpar</button>
               </div>
             </div>
             <div class="terminal-body" id="terminal-logs">01 [00:00:00] [KERNEL]   Boot complete on Amlogic S905X2 (meson-g12a-btv-e10-enterprise.dtb).
@@ -1397,7 +1424,7 @@
   <div class="pf-modal-dialog">
     <div class="pf-modal-header">
       <h3 style="font-size:0.95rem; font-weight:700; color:var(--pf-text-primary);" id="modal-network-title">Conectar à Rede Wi-Fi</h3>
-      <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="closeModal()">✕</button>
+      <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="closeModal()" aria-label="Fechar Modal">✕</button>
     </div>
     <form id="form-provision">
       <div class="pf-modal-body">
@@ -1411,7 +1438,7 @@
 
         <div id="fields-psk">
           <div class="pf-form-group">
-            <label class="pf-label">Senha do Wi-Fi</label>
+            <label class="pf-label" for="prov-psk-pass">Senha do Wi-Fi</label>
             <input type="password" class="pf-input" id="prov-psk-pass" placeholder="Digite a senha..." autofocus>
           </div>
         </div>
@@ -1419,7 +1446,7 @@
         <div id="fields-eap" style="display:none;">
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.55rem;" class="modal-grid-2col">
             <div class="pf-form-group">
-              <label class="pf-label">Método EAP</label>
+              <label class="pf-label" for="prov-eap-method">Método EAP</label>
               <select class="pf-select" id="prov-eap-method">
                 <option value="PEAP" selected>PEAP</option>
                 <option value="TTLS">TTLS</option>
@@ -1428,7 +1455,7 @@
               </select>
             </div>
             <div class="pf-form-group">
-              <label class="pf-label">Fase 2 (Autenticação)</label>
+              <label class="pf-label" for="prov-eap-phase2">Fase 2 (Autenticação)</label>
               <select class="pf-select" id="prov-eap-phase2">
                 <option value="MSCHAPV2" selected>MSCHAPV2</option>
                 <option value="PAP">PAP</option>
@@ -1439,28 +1466,28 @@
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.55rem;" class="modal-grid-2col">
             <div class="pf-form-group">
-              <label class="pf-label">Usuário Corporativo</label>
+              <label class="pf-label" for="prov-eap-user">Usuário Corporativo</label>
               <input type="text" class="pf-input" id="prov-eap-user" placeholder="usuario@unesp.br">
             </div>
             <div class="pf-form-group">
-              <label class="pf-label">Senha</label>
+              <label class="pf-label" for="prov-eap-pass">Senha</label>
               <input type="password" class="pf-input" id="prov-eap-pass" placeholder="Senha">
             </div>
           </div>
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.55rem;" class="modal-grid-2col">
             <div class="pf-form-group">
-              <label class="pf-label">Identidade Anônima</label>
+              <label class="pf-label" for="prov-eap-anon">Identidade Anônima</label>
               <input type="text" class="pf-input" id="prov-eap-anon" placeholder="anonymous@unesp.br">
             </div>
             <div class="pf-form-group">
-              <label class="pf-label">Domínio</label>
+              <label class="pf-label" for="prov-eap-domain">Domínio</label>
               <input type="text" class="pf-input" id="prov-eap-domain" placeholder="unesp.br">
             </div>
           </div>
         </div>
 
-        <div style="background:var(--pf-bg-inset); border:1px solid var(--pf-border-subtle); border-radius:var(--pf-radius-sm); padding:0.55rem 0.65rem; font-size:0.72rem; color:var(--pf-orange-warning); margin-top:0.35rem;">
+        <div style="background:var(--pf-bg-inset); border:1px solid var(--pf-border-subtle); border-radius:var(--pf-radius); padding:0.55rem 0.65rem; font-size:0.72rem; color:var(--pf-orange-warning); margin-top:0.35rem;">
           ⚠️ <strong>Aviso:</strong> O ponto de acesso será reiniciado para conectar à rede selecionada com watchdog de 75s.
         </div>
       </div>
@@ -1474,18 +1501,19 @@
 
 <script>
 /* ==========================================================================
-   COCKPIT PROJECT CLIENT SCRIPT
+   HIGH-PERFORMANCE CLIENT TELEMETRY & EVENT LOOP ENGINE
    ========================================================================== */
 let currentNetworks = [];
 let currentServices = [];
 let currentSvcFilter = 'all';
 let currentProvMode = 'psk';
+let isTickerBusy = false;
 
-// Rolling Sparkline History Data Buffers (20 samples)
+// Preallocated Sparkline Rolling Buffers
 const HISTORY_LENGTH = 20;
-const historyCpu = new Array(HISTORY_LENGTH).fill(4.0);
-const historyRam = new Array(HISTORY_LENGTH).fill(480);
-const historyNet = new Array(HISTORY_LENGTH).fill(1.0);
+const historyCpu = new Float32Array(HISTORY_LENGTH).fill(4.0);
+const historyRam = new Float32Array(HISTORY_LENGTH).fill(480);
+const historyNet = new Float32Array(HISTORY_LENGTH).fill(1.0);
 
 // Drawer & Backdrop Control
 const sidebarEl = document.getElementById('sidebar');
@@ -1501,8 +1529,8 @@ function closeSidebar() {
   backdropEl.classList.remove('active');
 }
 
-document.getElementById('sidebar-toggle').addEventListener('click', openSidebar);
-backdropEl.addEventListener('click', closeSidebar);
+document.getElementById('sidebar-toggle').addEventListener('click', openSidebar, { passive: true });
+backdropEl.addEventListener('click', closeSidebar, { passive: true });
 
 // Tab Navigation
 function showTab(tabId) {
@@ -1565,7 +1593,7 @@ document.querySelectorAll('.pf-nav-link').forEach(el => {
 window.addEventListener('hashchange', () => {
   const tab = location.hash.replace('#', '') || 'overview';
   showTab(tab);
-});
+}, { passive: true });
 
 // Theme Switcher (Cockpit Dark / Light)
 const themeToggle = document.getElementById('theme-toggle');
@@ -1684,7 +1712,7 @@ function renderWifiNetworks(networks) {
             </div>
           </div>
         </div>
-        <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">
+        <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')" aria-label="Conectar a ${escapeHtml(net.ssid)}">
           Conectar
         </button>
       </div>
@@ -1707,7 +1735,8 @@ function renderWifiNetworks(networks) {
 
 document.getElementById('wifi-filter-input').addEventListener('input', () => {
   renderWifiNetworks(currentNetworks);
-});
+}, { passive: true });
+
 document.getElementById('btn-refresh-scan').addEventListener('click', fetchScan);
 
 // Systemd Services Manager Logic
@@ -1763,7 +1792,7 @@ function renderServicesTable() {
         <td style="color:var(--pf-text-primary); font-size:0.78rem;">${escapeHtml(s.desc)}</td>
         <td>${statusPill}</td>
         <td style="text-align:right;">
-          <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="serviceAction('${s.unit}', 'restart')">
+          <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="serviceAction('${s.unit}', 'restart')" aria-label="Reiniciar ${s.unit}">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
             <span>Reiniciar</span>
           </button>
@@ -1773,7 +1802,7 @@ function renderServicesTable() {
   }).join('');
 }
 
-document.getElementById('services-search-input')?.addEventListener('input', renderServicesTable);
+document.getElementById('services-search-input')?.addEventListener('input', renderServicesTable, { passive: true });
 
 async function serviceAction(unit, action) {
   try {
@@ -1787,18 +1816,19 @@ async function serviceAction(unit, action) {
 }
 
 // Render SVG Sparkline Path
-function renderSvgSparkline(svgId, dataArray, maxVal, strokeColor, fillColor) {
+function renderSvgSparkline(svgId, dataArray, maxVal, strokeColor) {
   const svg = document.getElementById(svgId);
   if (!svg) return;
   const n = dataArray.length;
   if (n === 0) return;
 
-  const points = dataArray.map((val, idx) => {
-    const x = (idx / (n - 1)) * 100;
-    const norm = Math.max(0, Math.min(1, val / maxVal));
-    const y = 28 - (norm * 22);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
+  const points = [];
+  for (let i = 0; i < n; i++) {
+    const x = ((i / (n - 1)) * 100).toFixed(1);
+    const norm = Math.max(0, Math.min(1, dataArray[i] / maxVal));
+    const y = (26 - (norm * 22)).toFixed(1);
+    points.push(`${x},${y}`);
+  }
 
   const pathLine = 'M ' + points.join(' L ');
   const pathArea = `${pathLine} L 100,30 L 0,30 Z`;
@@ -1815,67 +1845,84 @@ function renderSvgSparkline(svgId, dataArray, maxVal, strokeColor, fillColor) {
   `;
 }
 
-// Real-time 1.0s Metrics Ticker (Cockpit Streaming Engine)
+// Real-time Metrics Ticker (Sequential with AbortController)
 async function tickRealtime(force) {
+  if (isTickerBusy && !force) return;
+  isTickerBusy = true;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 1200);
+
   try {
-    const res = await fetch('/rest/metrics');
-    if (!res.ok) return;
+    const res = await fetch('/rest/metrics', { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const m = await res.json();
 
-    // 1. Update CPU
-    const cpuPct = m.cpu_pct || 0;
-    document.getElementById('dash-cpu-val').textContent = cpuPct.toFixed(1) + '%';
-    historyCpu.shift();
-    historyCpu.push(cpuPct);
-    renderSvgSparkline('sparkline-cpu', historyCpu, 100, '#2B9AF3', 'rgba(43, 154, 243, 0.2)');
+    requestAnimationFrame(() => {
+      // 1. Update CPU
+      const cpuPct = m.cpu_pct || 0;
+      document.getElementById('dash-cpu-val').textContent = cpuPct.toFixed(1) + '%';
+      for (let i = 0; i < HISTORY_LENGTH - 1; i++) historyCpu[i] = historyCpu[i + 1];
+      historyCpu[HISTORY_LENGTH - 1] = cpuPct;
+      renderSvgSparkline('sparkline-cpu', historyCpu, 100, '#2B9AF3');
 
-    // 2. Update RAM
-    const ramUsed = m.ram_used_mb || 480;
-    const ramTotal = m.ram_total_mb || 1805;
-    const ramPct = m.ram_pct || Math.round((ramUsed / ramTotal) * 100);
-    document.getElementById('dash-mem-val').textContent = ramUsed + ' MB';
-    document.getElementById('dash-mem-bar').style.width = ramPct + '%';
-    document.getElementById('dash-mem-sub').textContent = `${(ramTotal/1024).toFixed(2)} GB (${100 - ramPct}% Livre)`;
-    historyRam.shift();
-    historyRam.push(ramUsed);
-    renderSvgSparkline('sparkline-ram', historyRam, ramTotal, '#3E8635', 'rgba(62, 134, 53, 0.2)');
+      // 2. Update RAM
+      const ramUsed = m.ram_used_mb || 480;
+      const ramTotal = m.ram_total_mb || 1805;
+      const ramPct = m.ram_pct || Math.round((ramUsed / ramTotal) * 100);
+      document.getElementById('dash-mem-val').textContent = ramUsed + ' MB';
+      document.getElementById('dash-mem-bar').style.width = ramPct + '%';
+      document.getElementById('dash-mem-sub').textContent = `${(ramTotal/1024).toFixed(2)} GB (${100 - ramPct}% Livre)`;
+      for (let i = 0; i < HISTORY_LENGTH - 1; i++) historyRam[i] = historyRam[i + 1];
+      historyRam[HISTORY_LENGTH - 1] = ramUsed;
+      renderSvgSparkline('sparkline-ram', historyRam, ramTotal, '#3E8635');
 
-    // Services tab RAM & Disk
-    document.getElementById('serv-ram-text').textContent = `${ramUsed} MB / ${(ramTotal/1024).toFixed(2)} GB`;
-    document.getElementById('serv-ram-pct').textContent = ramPct + '%';
-    document.getElementById('serv-ram-bar').style.width = ramPct + '%';
+      // Services tab RAM & Disk
+      const servRamText = document.getElementById('serv-ram-text');
+      const servRamPct = document.getElementById('serv-ram-pct');
+      const servRamBar = document.getElementById('serv-ram-bar');
+      if (servRamText) servRamText.textContent = `${ramUsed} MB / ${(ramTotal/1024).toFixed(2)} GB`;
+      if (servRamPct) servRamPct.textContent = `${ramPct}%`;
+      if (servRamBar) servRamBar.style.width = `${ramPct}%`;
 
-    if (m.disk_used_gb) {
-      const diskPct = Math.round((m.disk_used_gb / m.disk_total_gb) * 100);
-      document.getElementById('dash-disk-stat').textContent = `${m.disk_used_gb} GB / ${m.disk_total_gb} GB`;
-      document.getElementById('serv-disk-text').textContent = `${m.disk_used_gb} GB / ${m.disk_total_gb} GB`;
-      document.getElementById('serv-disk-pct').textContent = diskPct + '%';
-      document.getElementById('serv-disk-bar').style.width = diskPct + '%';
-    }
+      if (m.disk_used_gb) {
+        const diskPct = Math.round((m.disk_used_gb / m.disk_total_gb) * 100);
+        document.getElementById('dash-disk-stat').textContent = `${m.disk_used_gb} GB / ${m.disk_total_gb} GB`;
+        const servDiskText = document.getElementById('serv-disk-text');
+        const servDiskPct = document.getElementById('serv-disk-pct');
+        const servDiskBar = document.getElementById('serv-disk-bar');
+        if (servDiskText) servDiskText.textContent = `${m.disk_used_gb} GB / ${m.disk_total_gb} GB (Ext4)`;
+        if (servDiskPct) servDiskPct.textContent = `${diskPct}%`;
+        if (servDiskBar) servDiskBar.style.width = `${diskPct}%`;
+      }
 
-    // 3. Update Network Throughput
-    const rxKbs = m.rx_kbs || 0;
-    const txKbs = m.tx_kbs || 0;
-    const netVal = rxKbs >= 1024 ? (rxKbs/1024).toFixed(2) + ' MB/s' : rxKbs.toFixed(1) + ' KB/s';
-    const txVal = txKbs >= 1024 ? (txKbs/1024).toFixed(2) + ' MB/s' : txKbs.toFixed(1) + ' KB/s';
-    document.getElementById('dash-net-val').textContent = `RX: ${netVal}`;
-    document.getElementById('dash-net-sub').textContent = `TX: ${txVal} · eth0`;
-    document.getElementById('eth-traffic-rate').textContent = `RX: ${netVal} · TX: ${txVal}`;
+      // 3. Update Network Throughput
+      const rxKbs = m.rx_kbs || 0;
+      const txKbs = m.tx_kbs || 0;
+      const netVal = rxKbs >= 1024 ? (rxKbs/1024).toFixed(2) + ' MB/s' : rxKbs.toFixed(1) + ' KB/s';
+      const txVal = txKbs >= 1024 ? (txKbs/1024).toFixed(2) + ' MB/s' : txKbs.toFixed(1) + ' KB/s';
+      document.getElementById('dash-net-val').textContent = `RX: ${netVal}`;
+      document.getElementById('dash-net-sub').textContent = `TX: ${txVal} · eth0`;
+      document.getElementById('eth-traffic-rate').textContent = `RX: ${netVal} · TX: ${txVal}`;
 
-    historyNet.shift();
-    historyNet.push(rxKbs + txKbs);
-    const maxNet = Math.max(20, ...historyNet);
-    renderSvgSparkline('sparkline-net', historyNet, maxNet, '#F0AB00', 'rgba(240, 171, 0, 0.2)');
+      for (let i = 0; i < HISTORY_LENGTH - 1; i++) historyNet[i] = historyNet[i + 1];
+      historyNet[HISTORY_LENGTH - 1] = rxKbs + txKbs;
+      const maxNet = Math.max(20, ...historyNet);
+      renderSvgSparkline('sparkline-net', historyNet, maxNet, '#F0AB00');
 
-    // 4. Update Uptime
-    if (m.uptime) {
-      const hrs = Math.floor(m.uptime / 3600);
-      const mins = Math.floor((m.uptime % 3600) / 60);
-      const secs = m.uptime % 60;
-      document.getElementById('dash-uptime').textContent = `${hrs}h ${mins}m ${secs}s`;
-    }
+      // 4. Update Uptime
+      if (m.uptime) {
+        const hrs = Math.floor(m.uptime / 3600);
+        const mins = Math.floor((m.uptime % 3600) / 60);
+        const secs = m.uptime % 60;
+        document.getElementById('dash-uptime').textContent = `${hrs}h ${mins}m ${secs}s`;
+      }
+    });
   } catch (err) {
-    console.error('Realtime tick error:', err);
+    // Graceful error ignore on network jitter
+  } finally {
+    isTickerBusy = false;
   }
 }
 
@@ -1910,7 +1957,7 @@ async function updateStatus() {
       document.getElementById('masthead-host-text').textContent = 'armbian (' + eth.local_ip + ')';
     }
   } catch (err) {
-    console.error('Status poll error:', err);
+    // Network jitter fallback
   }
 }
 
@@ -2003,7 +2050,7 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// Module Hub Loader & Actions (Compact App Store Blades)
+// Module Hub Loader & Actions (Standardized App Store Blades)
 async function loadModulesHub() {
   const container = document.getElementById('modules-container');
   if (!container) return;
@@ -2035,16 +2082,16 @@ async function loadModulesHub() {
 
       let actionButtons = '';
       if (!isInstalled) {
-        actionButtons = `<button class="pf-btn pf-btn-primary" style="width:100%;" onclick="moduleAction('${m.id}', 'install')">Instalar Módulo</button>`;
+        actionButtons = `<button class="pf-btn pf-btn-primary" style="width:100%;" onclick="moduleAction('${m.id}', 'install')" aria-label="Instalar ${escapeHtml(m.name)}">Instalar Módulo</button>`;
       } else if (isRunning) {
         actionButtons = `
-          <button class="pf-btn pf-btn-secondary pf-btn-sm" style="flex:1;" onclick="moduleAction('${m.id}', 'stop')">Pausar</button>
-          <button class="pf-btn pf-btn-danger pf-btn-sm" onclick="moduleAction('${m.id}', 'uninstall')">Desinstalar</button>
+          <button class="pf-btn pf-btn-secondary pf-btn-sm" style="flex:1;" onclick="moduleAction('${m.id}', 'stop')" aria-label="Pausar ${escapeHtml(m.name)}">Pausar</button>
+          <button class="pf-btn pf-btn-danger pf-btn-sm" onclick="moduleAction('${m.id}', 'uninstall')" aria-label="Desinstalar ${escapeHtml(m.name)}">Desinstalar</button>
         `;
       } else {
         actionButtons = `
-          <button class="pf-btn pf-btn-primary pf-btn-sm" style="flex:1;" onclick="moduleAction('${m.id}', 'start')">Iniciar</button>
-          <button class="pf-btn pf-btn-danger pf-btn-sm" onclick="moduleAction('${m.id}', 'uninstall')">Desinstalar</button>
+          <button class="pf-btn pf-btn-primary pf-btn-sm" style="flex:1;" onclick="moduleAction('${m.id}', 'start')" aria-label="Iniciar ${escapeHtml(m.name)}">Iniciar</button>
+          <button class="pf-btn pf-btn-danger pf-btn-sm" onclick="moduleAction('${m.id}', 'uninstall')" aria-label="Desinstalar ${escapeHtml(m.name)}">Desinstalar</button>
         `;
       }
 
@@ -2109,7 +2156,7 @@ async function loadModulesHub() {
         </div>
 
         <div style="display:flex; gap:0.4rem; padding-top:0.55rem; border-top:1px solid var(--pf-border-subtle);">
-          <button class="pf-btn pf-btn-secondary" style="width:100%;" onclick="alert('Controlador de display HDMI ativo em /dev/fb0.')">Configurar Display</button>
+          <button class="pf-btn pf-btn-secondary" style="width:100%;" onclick="alert('Controlador de display HDMI ativo em /dev/fb0.')" aria-label="Configurar Display HDMI">Configurar Display</button>
         </div>
       </div>
     `;
@@ -2143,38 +2190,40 @@ async function loadHardwareInfo() {
     if (!res.ok) return;
     const hw = await res.json();
 
-    // Overview box
-    const dashModel = document.getElementById('dash-hw-model');
-    const dashSoc = document.getElementById('dash-hw-soc');
-    if (dashModel && hw.device_model) dashModel.textContent = hw.device_model;
-    if (dashSoc && hw.cpu_soc) dashSoc.textContent = `${hw.cpu_soc} (${hw.cpu_cores}x A53)`;
+    requestAnimationFrame(() => {
+      // Overview box
+      const dashModel = document.getElementById('dash-hw-model');
+      const dashSoc = document.getElementById('dash-hw-soc');
+      if (dashModel && hw.device_model) dashModel.textContent = hw.device_model;
+      if (dashSoc && hw.cpu_soc) dashSoc.textContent = `${hw.cpu_soc} (${hw.cpu_cores}x A53)`;
 
-    // Services tab
-    const servDistro = document.getElementById('serv-hw-distro');
-    const servKernel = document.getElementById('serv-hw-kernel');
-    const servSoc = document.getElementById('serv-hw-soc');
-    const servDtb = document.getElementById('serv-hw-dtb');
-    const servBootDisk = document.getElementById('serv-boot-disk');
-    const servBootPct = document.getElementById('serv-boot-pct');
-    const servBootBar = document.getElementById('serv-boot-bar');
+      // Services tab
+      const servDistro = document.getElementById('serv-hw-distro');
+      const servKernel = document.getElementById('serv-hw-kernel');
+      const servSoc = document.getElementById('serv-hw-soc');
+      const servDtb = document.getElementById('serv-hw-dtb');
+      const servBootDisk = document.getElementById('serv-boot-disk');
+      const servBootPct = document.getElementById('serv-boot-pct');
+      const servBootBar = document.getElementById('serv-boot-bar');
 
-    if (servDistro && hw.os_name) servDistro.textContent = hw.os_name;
-    if (servKernel && hw.kernel) servKernel.textContent = hw.kernel;
-    if (servSoc && hw.cpu_soc) servSoc.textContent = `${hw.cpu_soc} (${hw.cpu_cores}x Cortex-A53)`;
-    if (servDtb && hw.dtb) servDtb.textContent = hw.dtb;
+      if (servDistro && hw.os_name) servDistro.textContent = hw.os_name;
+      if (servKernel && hw.kernel) servKernel.textContent = hw.kernel;
+      if (servSoc && hw.cpu_soc) servSoc.textContent = `${hw.cpu_soc} (${hw.cpu_cores}x Cortex-A53)`;
+      if (servDtb && hw.dtb) servDtb.textContent = hw.dtb;
 
-    if (hw.boot_total_mb) {
-      const pct = Math.round((hw.boot_used_mb / hw.boot_total_mb) * 100);
-      if (servBootDisk) servBootDisk.textContent = `${hw.boot_used_mb} MB / ${hw.boot_total_mb} MB (FAT32)`;
-      if (servBootPct) servBootPct.textContent = `${pct}%`;
-      if (servBootBar) servBootBar.style.width = `${pct}%`;
-    }
+      if (hw.boot_total_mb) {
+        const pct = Math.round((hw.boot_used_mb / hw.boot_total_mb) * 100);
+        if (servBootDisk) servBootDisk.textContent = `${hw.boot_used_mb} MB / ${hw.boot_total_mb} MB (FAT32)`;
+        if (servBootPct) servBootPct.textContent = `${pct}%`;
+        if (servBootBar) servBootBar.style.width = `${pct}%`;
+      }
+    });
   } catch (err) {
-    console.error('Error fetching hardware info:', err);
+    // Ignore network jitter
   }
 }
 
-// Initial Run & Real-time Loop (1.0 second ticker)
+// Initial Run & Sequential Loop
 const initialTab = location.hash.replace('#', '') || 'overview';
 showTab(initialTab);
 fetchScan();
@@ -2182,7 +2231,7 @@ updateStatus();
 loadHardwareInfo();
 tickRealtime(true);
 
-setInterval(tickRealtime, 1000);  // High-frequency 1.0s live telemetry ticker
+setInterval(tickRealtime, 1000);  // High-performance 1.0s live telemetry ticker
 setInterval(updateStatus, 4000);  // Network & AP status loop
 </script>
 </body>
