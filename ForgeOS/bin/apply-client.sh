@@ -77,14 +77,16 @@ done
 if [ "$NET" -eq 1 ]; then
     log "CONECTADO: $SSID via $IP — internet ok"
     echo "{\"status\":\"connected\",\"ssid\":\"$SSID\",\"ip\":\"$IP\",\"internet\":true,\"ts\":$(date +%s)}" > "$STATE/result.json"
+    systemctl start forge-portal.service forge-display.service 2>/dev/null || true
 else
     if ping -c 1 -W 3 -I wlan0 "$IP" >/dev/null 2>&1 || ip route show default | grep -q wlan0; then
         log "conectado à LAN ($SSID via $IP) mas SEM internet — mantendo modo cliente"
         echo "{\"status\":\"connected\",\"ssid\":\"$SSID\",\"ip\":\"$IP\",\"internet\":false,\"ts\":$(date +%s)}" > "$STATE/result.json"
+        systemctl start forge-portal.service forge-display.service 2>/dev/null || true
     else
         log "falhou: sem rota válida"
         echo "{\"status\":\"failed\",\"ssid\":\"$SSID\",\"reason\":\"route\",\"ts\":$(date +%s)}" > "$STATE/result.json"
         bash "$BASE/bin/start-ap.sh"
-    systemctl start forge-portal.service forge-display.service 2>/dev/null || true
+        systemctl start forge-portal.service forge-display.service 2>/dev/null || true
     fi
 fi
