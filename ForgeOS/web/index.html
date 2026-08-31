@@ -1845,17 +1845,13 @@ function renderSvgSparkline(svgId, dataArray, maxVal, strokeColor) {
   `;
 }
 
-// Real-time Metrics Ticker (Sequential with AbortController)
+// Real-time Metrics Ticker (Sequential & Fluid)
 async function tickRealtime(force) {
   if (isTickerBusy && !force) return;
   isTickerBusy = true;
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 1200);
-
   try {
-    const res = await fetch('/rest/metrics', { signal: controller.signal });
-    clearTimeout(timeoutId);
+    const res = await fetch('/rest/metrics');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const m = await res.json();
 
