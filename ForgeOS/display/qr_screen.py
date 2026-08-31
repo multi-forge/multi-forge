@@ -421,7 +421,7 @@ def render(shift_x=0, shift_y=0):
         status_txt = f"Falha ao conectar em '{state_ssid}'. Modo Ponto de Acesso restaurado."
     else:
         dot_col = ACCENT_BLUE
-        status_txt = "● Modo Ponto de Acesso (AP) Ativo  •  Aguardando conexão do celular..."
+        status_txt = "Modo Ponto de Acesso (AP) Ativo  •  Aguardando conexão do celular..."
 
     d.ellipse([dot_x, dot_y - 8, dot_x + 16, dot_y + 8], fill=dot_col)
     d.ellipse([dot_x - 4, dot_y - 12, dot_x + 20, dot_y + 12], outline=dot_col, width=2)
