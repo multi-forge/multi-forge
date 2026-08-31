@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 WORK_DIR="/tmp/forgeos_distro_build"
 OUTPUT_DIR="${OUTPUT_DIR:-$REPO_ROOT/distro_output}"
-DISTRO_NAME="ForgeOS_BTV_E10_v1.0.0"
+DISTRO_NAME="ForgeOS_BTV_E10_v1.1.0"
 BASE_IMG_URL="https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_trixie_arm64_server_2026.08/Armbian_26.08.0_amlogic_s905x2_trixie_6.18.44_server_2026.08.15.img.gz"
 
 log() { echo -e "\033[1;34m[BUILDER]\033[0m $*"; }
@@ -121,9 +121,14 @@ cp /usr/bin/qemu-aarch64-static "$MOUNT_ROOT/usr/bin/" 2>/dev/null || true
 chroot "$MOUNT_ROOT" /bin/bash -c "
     export DEBIAN_FRONTEND=noninteractive
     
-    # Habilita os serviços do ForgeOS no boot
+    # Habilita os serviços do ForgeOS e SSH no boot
     systemctl daemon-reload 2>/dev/null || true
-    systemctl enable forge-ap.service forge-portal.service forge-display.service forge-watchdog.service forge-fbcon-disable.service 2>/dev/null || true
+    systemctl enable forge-ap.service forge-portal.service forge-display.service forge-watchdog.service forge-fbcon-disable.service ssh sshd 2>/dev/null || true
+    
+    # Configura SSH com PermitRootLogin ativo
+    mkdir -p /etc/ssh /etc/ssh/sshd_config.d
+    sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config 2>/dev/null || true
+    echo 'PermitRootLogin yes' > /etc/ssh/sshd_config.d/01-root-login.conf 2>/dev/null || true
     
     # Desativa serviços conflitantes de rede comercial
     systemctl disable NetworkManager wpa_supplicant hostapd 2>/dev/null || true
@@ -132,9 +137,9 @@ chroot "$MOUNT_ROOT" /bin/bash -c "
     echo 'forgeos-btv' > /etc/hostname
     sed -i 's/127.0.1.1.*/127.0.1.1\tforgeos-btv/' /etc/hosts 2>/dev/null || true
     
-    # Define senha padrão 'forgeos' para root e kali
-    echo 'root:forgeos' | chpasswd 2>/dev/null || true
-    echo 'kali:forgeos' | chpasswd 2>/dev/null || true
+    # Define senhas padrão 'kali' para root e kali
+    echo 'root:kali' | chpasswd 2>/dev/null || true
+    echo 'kali:kali' | chpasswd 2>/dev/null || true
     
     # Limpa caches de pacotes e logs
     apt-get clean 2>/dev/null || true

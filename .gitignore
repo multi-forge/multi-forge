@@ -43,6 +43,26 @@ node_modules/
 tmp/
 temp/
 
+## AI Assistants & Agent Tools
+.agents/
+.augment/
+.claude/
+.codebuddy/
+.codewhale/
+.continue/
+.cursor/
+.factory/
+.gemini/
+.github/prompts/
+.kilocode/
+.kiro/
+.opencode/
+.qoder/
+.roo/
+.trae/
+.warp/
+.windsurf/
+
 ## Images generated
 *.img
 *.iso
