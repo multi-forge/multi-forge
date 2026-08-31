@@ -1151,6 +1151,22 @@
 
         <!-- 2. NETWORKING & WI-FI -->
         <section class="tab-section" id="view-networking">
+          <!-- Active Wi-Fi Connection Banner -->
+          <div class="pf-card" id="wifi-active-conn-banner" style="margin-bottom:0.75rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+              <div style="display:flex; align-items:center; gap:0.6rem;">
+                <span class="status-dot-sm live-pulse" style="background:#3E8635; width:10px; height:10px;"></span>
+                <div>
+                  <div style="font-weight:700; font-size:0.9rem;" id="wifi-status-title">Conectado à Rede Wi-Fi</div>
+                  <div style="font-size:0.75rem; color:var(--pf-text-muted);" id="wifi-status-subtitle">SSID: eduroam · IP: 10.129.75.97 · Internet Ativa</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:0.35rem;">
+                <button class="pf-btn pf-btn-danger pf-btn-sm" id="btn-disconnect-wifi" onclick="disconnectWifi()">Restaurar Modo Ponto de Acesso</button>
+              </div>
+            </div>
+          </div>
+
           <div class="pf-grid-2">
             <!-- Wi-Fi Scanner Card -->
             <div class="pf-card" style="min-height:360px;">
@@ -1253,11 +1269,11 @@
                   <tr>
                     <td style="color:var(--pf-blue-light); font-weight:700;">wlan0</td>
                     <td>Realtek RTL8189FTV 802.11n</td>
-                    <td class="pf-table-mono" id="wlan-table-ip">192.168.4.1</td>
+                    <td class="pf-table-mono" id="wlan-table-ip">10.129.75.97</td>
                     <td class="pf-table-mono" id="wlan-table-mac">3C:7A:AA:39:F6:C2</td>
-                    <td style="color:var(--pf-orange-warning);">72.2 Mbps (MCS7)</td>
+                    <td style="color:var(--pf-green-light);">72.2 Mbps (MCS7)</td>
                     <td class="pf-table-mono" id="wlan-traffic-rate">RX: 0.1 KB/s · TX: 0.2 KB/s</td>
-                    <td style="text-align:right;"><span class="pf-pill warning">AP Ativo</span></td>
+                    <td style="text-align:right;" id="wlan-table-status"><span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>Conectado: eduroam</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -1679,6 +1695,7 @@ function renderWifiNetworks(networks) {
   }
 
   const html = filtered.map(net => {
+    const isConnected = currentClientSsid && (net.ssid === currentClientSsid || currentClientSsid.startsWith(net.ssid));
     const rssi = net.rssi;
     let signalClass = 'on';
     let barsActive = 4;
@@ -1692,8 +1709,20 @@ function renderWifiNetworks(networks) {
         ? '<span class="pf-pill success">Aberta</span>' 
         : '<span class="pf-pill">WPA/WPA2</span>');
 
+    const connBadge = isConnected 
+      ? '<span class="pf-pill success" style="font-weight:700;"><span class="status-dot-sm live-pulse"></span>CONECTADA</span>' 
+      : '';
+
+    const actionBtn = isConnected
+      ? `<button class="pf-btn pf-btn-danger pf-btn-sm" onclick="disconnectWifi()">Desconectar</button>`
+      : `<button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')" aria-label="Conectar a ${escapeHtml(net.ssid)}">Conectar</button>`;
+
+    const cardStyle = isConnected
+      ? 'border-color: rgba(62, 134, 53, 0.6); background: rgba(62, 134, 53, 0.1);'
+      : '';
+
     return `
-      <div class="wifi-item-row">
+      <div class="wifi-item-row" style="${cardStyle}">
         <div style="display:flex; align-items:center; gap:0.55rem; min-width:0; flex:1;">
           <div class="signal-bars" title="${rssi} dBm">
             <div class="signal-bar ${barsActive >= 1 ? signalClass : ''}"></div>
@@ -1702,8 +1731,9 @@ function renderWifiNetworks(networks) {
             <div class="signal-bar ${barsActive >= 4 ? signalClass : ''}"></div>
           </div>
           <div style="min-width:0; flex:1;">
-            <div style="font-weight:600; color:var(--pf-text-primary); font-size:0.82rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-              ${escapeHtml(net.ssid)}
+            <div style="font-weight:600; color:var(--pf-text-primary); font-size:0.82rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:0.4rem;">
+              <span>${escapeHtml(net.ssid)}</span>
+              ${connBadge}
             </div>
             <div class="wifi-meta-tag">
               ${encBadge}
@@ -1712,9 +1742,7 @@ function renderWifiNetworks(networks) {
             </div>
           </div>
         </div>
-        <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')" aria-label="Conectar a ${escapeHtml(net.ssid)}">
-          Conectar
-        </button>
+        ${actionBtn}
       </div>
     `;
   }).join('');
@@ -1722,15 +1750,26 @@ function renderWifiNetworks(networks) {
   container.innerHTML = html;
 
   // Top 3 in Dashboard
-  dashContainer.innerHTML = filtered.slice(0, 3).map(net => `
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:0.35rem 0; border-bottom:1px solid var(--pf-border-subtle); gap:0.4rem;">
-      <div style="min-width:0; flex:1;">
-        <div style="font-weight:600; font-size:0.8rem; color:var(--pf-text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(net.ssid)}</div>
-        <div style="font-size:0.68rem; color:var(--pf-text-muted);">${net.encryption.toUpperCase()} · ${net.rssi} dBm</div>
+  dashContainer.innerHTML = filtered.slice(0, 3).map(net => {
+    const isConnected = currentClientSsid && (net.ssid === currentClientSsid);
+    const badge = isConnected ? '<span class="pf-pill success">CONECTADO</span>' : '';
+    const btn = isConnected 
+      ? `<button class="pf-btn pf-btn-danger pf-btn-sm" onclick="disconnectWifi()">Desconectar</button>`
+      : `<button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">Conectar</button>`;
+
+    return `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:0.35rem 0; border-bottom:1px solid var(--pf-border-subtle); gap:0.4rem;">
+        <div style="min-width:0; flex:1;">
+          <div style="font-weight:600; font-size:0.8rem; color:var(--pf-text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:0.3rem;">
+            <span>${escapeHtml(net.ssid)}</span>
+            ${badge}
+          </div>
+          <div style="font-size:0.68rem; color:var(--pf-text-muted);">${net.encryption.toUpperCase()} · ${net.rssi} dBm</div>
+        </div>
+        ${btn}
       </div>
-      <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">Conectar</button>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 document.getElementById('wifi-filter-input').addEventListener('input', () => {
@@ -1922,6 +1961,9 @@ async function tickRealtime(force) {
   }
 }
 
+// Global active connection state
+let currentClientSsid = null;
+
 // System Status Polling (AP, Client IP & Connectivity)
 async function updateStatus() {
   try {
@@ -1930,19 +1972,46 @@ async function updateStatus() {
     
     const badgeText = document.getElementById('top-status-text');
     const badgeEl = document.getElementById('top-status-badge');
+    const wifiBanner = document.getElementById('wifi-active-conn-banner');
+    const wifiTitle = document.getElementById('wifi-status-title');
+    const wifiSubtitle = document.getElementById('wifi-status-subtitle');
+    const wlanIpEl = document.getElementById('wlan-table-ip');
+    const wlanStatusEl = document.getElementById('wlan-table-status');
     
     if (s.provisioning) {
-      badgeText.textContent = 'Conectando...';
+      badgeText.textContent = 'Conectando ao Wi-Fi...';
       badgeEl.className = 'status-badge warn';
     } else if (s.client_connected) {
-      badgeText.textContent = s.client_ssid;
+      currentClientSsid = s.client_ssid;
+      badgeText.textContent = `Wi-Fi: ${s.client_ssid} (${s.client_ip})`;
       badgeEl.className = 'status-badge';
+      
+      if (wifiBanner) {
+        wifiBanner.style.display = 'block';
+        if (wifiTitle) wifiTitle.innerHTML = `🟢 Conectado à Rede: <strong style="color:var(--pf-green-light);">${escapeHtml(s.client_ssid)}</strong>`;
+        if (wifiSubtitle) wifiSubtitle.textContent = `Endereço IP: ${s.client_ip} · Gateway: 10.129.75.2 · Rede Institucional (Internet Ativa)`;
+      }
+      
+      if (wlanIpEl) wlanIpEl.textContent = s.client_ip;
+      if (wlanStatusEl) wlanStatusEl.innerHTML = `<span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>Conectado: ${escapeHtml(s.client_ssid)}</span>`;
+      
+      document.getElementById('dash-mode-sub').textContent = `${s.client_ssid} (${s.client_ip})`;
     } else {
+      currentClientSsid = null;
       badgeText.textContent = 'AP: 192.168.4.1';
       badgeEl.className = 'status-badge';
+      
+      if (wifiBanner) {
+        wifiBanner.style.display = 'block';
+        if (wifiTitle) wifiTitle.innerHTML = `📡 Modo Ponto de Acesso: <strong style="color:var(--pf-blue-light);">RTL8189FTV_AP</strong>`;
+        if (wifiSubtitle) wifiSubtitle.textContent = `Endereço IP: 192.168.4.1 · Servidor DHCP dnsmasq Ativo · Portal Cativo`;
+      }
+      
+      if (wlanIpEl) wlanIpEl.textContent = '192.168.4.1';
+      if (wlanStatusEl) wlanStatusEl.innerHTML = `<span class="pf-pill warning">AP Ativo</span>`;
+      
+      document.getElementById('dash-mode-sub').textContent = s.ap_active ? (s.ssid + ' (192.168.4.1)') : 'Sem IP';
     }
-
-    document.getElementById('dash-mode-sub').textContent = s.ap_active ? (s.ssid + ' (192.168.4.1)') : (s.client_ip || 'Sem IP');
 
     // Ethernet
     const ethRes = await fetch('/rest/ethernetStatus');
@@ -1954,6 +2023,18 @@ async function updateStatus() {
     }
   } catch (err) {
     // Network jitter fallback
+  }
+}
+
+async function disconnectWifi() {
+  if (confirm('Deseja desconectar da rede Wi-Fi e restaurar o Ponto de Acesso (RTL8189FTV_AP)?')) {
+    try {
+      await fetch('/api/reset', { method: 'POST' });
+      alert('Ponto de Acesso restaurado! O dispositivo voltará para 192.168.4.1.');
+      setTimeout(updateStatus, 2000);
+    } catch (err) {
+      alert('Erro ao restaurar modo AP');
+    }
   }
 }
 
