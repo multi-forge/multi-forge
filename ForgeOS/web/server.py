@@ -82,32 +82,64 @@ def get_ap_config():
 
 
 def status_payload():
-    ap = ap_active()
+    # 1. Query real wlan0 IPv4 address dynamically
+    wlan_ips = []
+    try:
+        out = subprocess.run(
+            ["ip", "-4", "addr", "show", "wlan0"],
+            capture_output=True, text=True, timeout=2)
+        wlan_ips = re.findall(r'inet\s+([\d.]+)', out.stdout)
+    except Exception:
+        pass
+
+    # 2. Check if client wpa_supplicant is running
+    is_client_proc = False
+    try:
+        out = subprocess.run(
+            ["pgrep", "-f", "wpa_supplicant.*client.conf"],
+            capture_output=True, text=True)
+        is_client_proc = (out.returncode == 0)
+    except Exception:
+        pass
+
+    # 3. Check if AP wpa_supplicant is running
+    is_ap_proc = False
+    try:
+        out = subprocess.run(
+            ["pgrep", "-f", "wpa_supplicant.*wpa_ap.conf"],
+            capture_output=True, text=True)
+        is_ap_proc = (out.returncode == 0)
+    except Exception:
+        pass
+
     result = read_json(os.path.join(STATE, "result.json"))
     prov = read_json(os.path.join(STATE, "provision.json"))
-    ap_state = read_json(os.path.join(STATE, "ap_state.json")) or {}
     applying = os.path.exists(os.path.join(STATE, "applying"))
 
+    # Determine real state
+    # Client is active if client process is running and wlan0 has an assigned non-AP IP
     client_ip = None
+    for ip in wlan_ips:
+        if ip != "192.168.4.1":
+            client_ip = ip
+            break
+
+    client_connected = bool(is_client_proc and client_ip)
     client_ssid = None
-    client_connected = False
-    if not ap:
-        try:
-            out = subprocess.run(
-                ["ip", "-4", "addr", "show", "wlan0"],
-                capture_output=True, text=True, timeout=5)
-            m = re.search(r'inet\s+([\d.]+)', out.stdout)
-            if m and m.group(1) != "192.168.4.1":
-                client_ip = m.group(1)
-                client_connected = True
-        except Exception:
-            pass
-        if prov:
+    if client_connected:
+        if prov and prov.get("ssid"):
             client_ssid = prov.get("ssid")
+        elif result and result.get("ssid"):
+            client_ssid = result.get("ssid")
+        else:
+            client_ssid = "Wi-Fi Conectado"
+
+    # AP is truly active if AP process is running and NOT in client connected state
+    ap_active_state = bool(is_ap_proc and not client_connected and ("192.168.4.1" in wlan_ips))
 
     return {
-        "ap_active": ap,
-        "ssid": get_ap_config()["ssid"] if ap else None,
+        "ap_active": ap_active_state,
+        "ssid": get_ap_config()["ssid"] if ap_active_state else None,
         "provisioning": applying,
         "client_connected": client_connected,
         "client_ssid": client_ssid,
@@ -574,7 +606,7 @@ def get_modules_catalog():
                 "name": "Mina — Assistente Virtual Acadêmica",
                 "version": "1.0.0",
                 "category": "ai",
-                "icon": "🤖",
+                "icon": "ai",
                 "description": "Quiosque de voz inteligente com PyQt5, Picovoice Porcupine wake-word, STT/TTS e classificador MABI.",
                 "source_path": "ForgeModules/totem",
                 "tier": "stable",
@@ -589,7 +621,7 @@ def get_modules_catalog():
                 "name": "Coletor Acadêmico & RAG Agent",
                 "version": "1.0.0",
                 "category": "data",
-                "icon": "🕸️",
+                "icon": "data",
                 "description": "Pipeline assíncrono de coleta de dados universitários com FastAPI, LangChain RAG, PostgreSQL e Redis.",
                 "source_path": "ForgeModules/sub-modulos/web-scraping",
                 "tier": "beta",

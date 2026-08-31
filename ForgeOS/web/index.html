@@ -1536,8 +1536,9 @@
           </div>
         </div>
 
-        <div style="background:var(--pf-bg-inset); border:1px solid var(--pf-border-subtle); border-radius:var(--pf-radius); padding:0.55rem 0.65rem; font-size:0.72rem; color:var(--pf-orange-warning); margin-top:0.35rem;">
-          ⚠️ <strong>Aviso:</strong> O ponto de acesso será reiniciado para conectar à rede selecionada com watchdog de 75s.
+        <div style="background:var(--pf-bg-inset); border:1px solid var(--pf-border-subtle); border-radius:var(--pf-radius); padding:0.55rem 0.65rem; font-size:0.72rem; color:var(--pf-orange-warning); margin-top:0.35rem; display:flex; align-items:flex-start; gap:0.45rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span><strong>Aviso:</strong> O ponto de acesso será reiniciado para conectar à rede selecionada com watchdog de 75s.</span>
         </div>
       </div>
       <div class="pf-modal-footer">
@@ -2021,7 +2022,7 @@ async function updateStatus() {
       
       if (wifiBanner) {
         wifiBanner.style.display = 'block';
-        if (wifiTitle) wifiTitle.innerHTML = `🟢 Conectado à Rede: <strong style="color:var(--pf-green-light);">${escapeHtml(s.client_ssid)}</strong>`;
+        if (wifiTitle) wifiTitle.innerHTML = `<span class="status-dot-sm live-pulse" style="background:var(--pf-green-light); display:inline-block; margin-right:6px;"></span>Conectado à Rede: <strong style="color:var(--pf-green-light);">${escapeHtml(s.client_ssid)}</strong>`;
         if (wifiSubtitle) wifiSubtitle.textContent = `Endereço IP: ${s.client_ip} · Gateway: 10.129.75.2 · Rede Institucional (Internet Ativa)`;
       }
       
@@ -2036,7 +2037,7 @@ async function updateStatus() {
       
       if (wifiBanner) {
         wifiBanner.style.display = 'block';
-        if (wifiTitle) wifiTitle.innerHTML = `📡 Modo Ponto de Acesso: <strong style="color:var(--pf-blue-light);">RTL8189FTV_AP</strong>`;
+        if (wifiTitle) wifiTitle.innerHTML = `<span class="status-dot-sm live-pulse" style="background:var(--pf-blue-light); display:inline-block; margin-right:6px;"></span>Modo Ponto de Acesso: <strong style="color:var(--pf-blue-light);">${escapeHtml(s.ssid || 'RTL8189FTV_AP')}</strong>`;
         if (wifiSubtitle) wifiSubtitle.textContent = `Endereço IP: 192.168.4.1 · Servidor DHCP dnsmasq Ativo · Portal Cativo`;
       }
       
@@ -2160,6 +2161,21 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+function getModuleSvgIcon(category, id) {
+  const cat = (category || '').toLowerCase();
+  const modId = (id || '').toLowerCase();
+  if (cat === 'ai' || modId.includes('totem') || modId.includes('mina')) {
+    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>`;
+  }
+  if (cat === 'data' || modId.includes('scraping')) {
+    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`;
+  }
+  if (cat === 'display' || modId.includes('kiosk') || modId.includes('framebuffer')) {
+    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`;
+  }
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`;
+}
+
 // Module Hub Loader & Actions (Standardized App Store Blades)
 async function loadModulesHub() {
   const container = document.getElementById('modules-container');
@@ -2192,11 +2208,8 @@ async function loadModulesHub() {
 
       let actionButtons = '';
       if (!isInstalled) {
-        actionButtons = `<button class="pf-btn pf-btn-primary" style="width:100%;" onclick="moduleAction('${m.id}', 'install')" aria-label="Instalar ${escapeHtml(m.name)}">Instalar Módulo</button>`;
-      } else if (isRunning) {
         actionButtons = `
-          <button class="pf-btn pf-btn-secondary pf-btn-sm" style="flex:1;" onclick="moduleAction('${m.id}', 'stop')" aria-label="Pausar ${escapeHtml(m.name)}">Pausar</button>
-          <button class="pf-btn pf-btn-danger pf-btn-sm" onclick="moduleAction('${m.id}', 'uninstall')" aria-label="Desinstalar ${escapeHtml(m.name)}">Desinstalar</button>
+          <button class="pf-btn pf-btn-primary pf-btn-sm" style="flex:1;" onclick="moduleAction('${m.id}', 'install')" aria-label="Instalar ${escapeHtml(m.name)}">Instalar Módulo</button>
         `;
       } else {
         actionButtons = `
@@ -2209,7 +2222,7 @@ async function loadModulesHub() {
         <div class="app-store-card">
           <div>
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
-              <div class="app-icon-box">${m.icon || '📦'}</div>
+              <div class="app-icon-box">${getModuleSvgIcon(m.category, m.id)}</div>
               ${statusPill}
             </div>
 
@@ -2243,7 +2256,7 @@ async function loadModulesHub() {
       <div class="app-store-card">
         <div>
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
-            <div class="app-icon-box">📺</div>
+            <div class="app-icon-box">${getModuleSvgIcon('display', 'kiosk-display')}</div>
             <span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>Rodando</span>
           </div>
 
@@ -2271,7 +2284,7 @@ async function loadModulesHub() {
       </div>
     `;
   } catch (err) {
-    console.error('Error loading modules:', err);
+    console.error('Error loading modules hub:', err);
     container.innerHTML = '<div class="pf-card"><p style="color:var(--pf-red-light);">Falha ao consultar módulos.</p></div>';
   }
 }

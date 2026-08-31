@@ -15,10 +15,16 @@ unmanaged-devices=interface-name:wlan0
 EOF
 nmcli dev set wlan0 managed no >/dev/null 2>&1 || true
 
-# 1. Driver: reload with power saving disabled (SDIO stability)
+# 1. Driver: kill any client or AP instances, dhclient, and flush IP
 pkill -9 hostapd 2>/dev/null || true
+pkill -f 'wpa_supplicant.*client.conf' 2>/dev/null || true
 pkill -f 'wpa_supplicant.*wpa_ap.conf' 2>/dev/null || true
+pkill -f 'dhclient.*wlan0' 2>/dev/null || true
+pkill -f 'udhcpc.*wlan0' 2>/dev/null || true
 ip link set wlan0 down 2>/dev/null || true
+ip addr flush dev wlan0 2>/dev/null || true
+rm -f "$STATE/applying" "$STATE/result.json" 2>/dev/null || true
+
 if ! lsmod | grep -q '^8189fs '; then
     modprobe 8189fs rtw_power_mgnt=0 rtw_ips_mode=0 rtw_lps_level=0 2>/dev/null \
       || insmod /lib/modules/$(uname -r)/kernel/drivers/net/wireless/8189fs.ko \
@@ -26,12 +32,12 @@ if ! lsmod | grep -q '^8189fs '; then
 fi
 sleep 1
 ip link set wlan0 up
-ip addr replace 192.168.4.1/24 dev wlan0
+ip addr add 192.168.4.1/24 dev wlan0
 
 # 2. AP via wpa_supplicant mode=2 (hostapd is broken on this driver)
 wpa_supplicant -B -i wlan0 -c "$BASE/network/wpa_ap.conf" \
     -P /run/forge-ap.pid 2>/dev/null
-sleep 3
+sleep 2
 
 # 3. DHCP/DNS captive portal
 pkill -f 'dnsmasq -C /etc/dnsmasq_ap.conf' 2>/dev/null || true
