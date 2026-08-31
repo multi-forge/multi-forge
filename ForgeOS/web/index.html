@@ -443,7 +443,7 @@
       padding: var(--pf-card-padding);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
       position: relative;
       margin-bottom: 0.75rem;
       contain: layout style;
@@ -454,6 +454,7 @@
       min-height: 116px;
       height: 100%;
       padding: 0.75rem 0.85rem;
+      justify-content: space-between;
     }
 
     .pf-card-header {
@@ -1112,8 +1113,8 @@
           </div>
 
           <div class="pf-grid-2">
-            <!-- Wi-Fi Quick Access (Equal height) -->
-            <div class="pf-card" style="min-height:240px;">
+            <!-- Wi-Fi Quick Access -->
+            <div class="pf-card">
               <div class="pf-card-header">
                 <span class="pf-card-title">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/></svg>
@@ -1126,8 +1127,8 @@
               </div>
             </div>
 
-            <!-- Hardware Information Box (Equal height) -->
-            <div class="pf-card" style="min-height:240px;">
+            <!-- Hardware Information Box -->
+            <div class="pf-card">
               <div class="pf-card-header">
                 <span class="pf-card-title">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
@@ -1749,22 +1750,22 @@ function renderWifiNetworks(networks) {
 
   container.innerHTML = html;
 
-  // Top 3 in Dashboard
-  dashContainer.innerHTML = filtered.slice(0, 3).map(net => {
+  // Top 4 in Dashboard
+  dashContainer.innerHTML = filtered.slice(0, 4).map(net => {
     const isConnected = currentClientSsid && (net.ssid === currentClientSsid);
-    const badge = isConnected ? '<span class="pf-pill success">CONECTADO</span>' : '';
+    const badge = isConnected ? '<span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>CONECTADO</span>' : '';
     const btn = isConnected 
       ? `<button class="pf-btn pf-btn-danger pf-btn-sm" onclick="disconnectWifi()">Desconectar</button>`
       : `<button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="openConnectModal('${escapeHtml(net.ssid)}', '${net.encryption}')">Conectar</button>`;
 
     return `
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:0.35rem 0; border-bottom:1px solid var(--pf-border-subtle); gap:0.4rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:0.45rem 0; border-bottom:1px solid var(--pf-border-subtle); gap:0.4rem;">
         <div style="min-width:0; flex:1;">
-          <div style="font-weight:600; font-size:0.8rem; color:var(--pf-text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:0.3rem;">
+          <div style="font-weight:600; font-size:0.82rem; color:var(--pf-text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:0.35rem;">
             <span>${escapeHtml(net.ssid)}</span>
             ${badge}
           </div>
-          <div style="font-size:0.68rem; color:var(--pf-text-muted);">${net.encryption.toUpperCase()} · ${net.rssi} dBm</div>
+          <div style="font-size:0.7rem; color:var(--pf-text-muted); margin-top:2px;">${net.encryption.toUpperCase()} · <span style="color:var(--pf-green-light); font-weight:600;">${net.rssi} dBm</span> · Ch ${net.channel || 6}</div>
         </div>
         ${btn}
       </div>
