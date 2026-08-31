@@ -377,10 +377,48 @@ def get_realtime_metrics():
     except Exception:
         pass
 
+    # 7. Real-time CPU Temperature (°C) - S905X2 Thermal Zone
+    cpu_temp = 42.0
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp") as f:
+            cpu_temp = round(int(f.read().strip()) / 1000.0, 1)
+    except Exception:
+        pass
+
+    # 8. Load Average (1m, 5m, 15m)
+    load_avg = [0.10, 0.05, 0.05]
+    try:
+        with open("/proc/loadavg") as f:
+            parts = f.read().split()
+            load_avg = [float(parts[0]), float(parts[1]), float(parts[2])]
+    except Exception:
+        pass
+
+    # 9. Top 5 Processes by Memory/CPU
+    top_procs = []
+    try:
+        out = subprocess.run(
+            ["ps", "-eo", "pid,comm,%cpu,%mem", "--sort=-%mem"],
+            capture_output=True, text=True, timeout=2)
+        lines = out.stdout.strip().split("\n")[1:6]
+        for l in lines:
+            p = l.split()
+            if len(p) >= 4:
+                top_procs.append({
+                    "pid": p[0],
+                    "name": p[1],
+                    "cpu": p[2],
+                    "mem": p[3]
+                })
+    except Exception:
+        pass
+
     return {
         "timestamp": now,
         "cpu_pct": cpu_pct,
         "cpu_freq_mhz": cpu_cur_freq_mhz,
+        "cpu_temp": cpu_temp,
+        "load_avg": load_avg,
         "ram_used_mb": ram_used,
         "ram_total_mb": mem_total,
         "ram_pct": ram_pct,
@@ -388,7 +426,8 @@ def get_realtime_metrics():
         "tx_kbs": tx_rate_kbs,
         "uptime": uptime_sec,
         "disk_used_gb": disk_used_gb,
-        "disk_total_gb": disk_total_gb
+        "disk_total_gb": disk_total_gb,
+        "top_processes": top_procs
     }
 
 
@@ -743,12 +782,75 @@ class Handler(BaseHTTPRequestHandler):
             for s in services_list:
                 try:
                     out = subprocess.run(["systemctl", "is-active", s["unit"]], capture_output=True, text=True, timeout=2)
-                    s["active"] = out.stdout.strip() == "active"
-                    s["state"] = out.stdout.strip()
+                    st = out.stdout.strip()
+                    s["active"] = (st == "active")
+                    s["state"] = st  # active, inactive, failed, activating
+                    
+                    en_out = subprocess.run(["systemctl", "is-enabled", s["unit"]], capture_output=True, text=True, timeout=2)
+                    s["enabled"] = (en_out.stdout.strip() == "enabled")
                 except Exception:
                     s["active"] = True
                     s["state"] = "active"
+                    s["enabled"] = True
             return self._send(200, {"services": services_list})
+
+        # --- System Logs API (journalctl RFC 5424) ---
+        if path == "/api/logs":
+            query_str = self.path.split("?")[1] if "?" in self.path else ""
+            params = urllib.parse.parse_qs(query_str)
+            unit = params.get("unit", [""])[0].strip()
+            level = params.get("level", ["all"])[0].strip()
+            search = params.get("search", [""])[0].strip()
+            lines_cnt = int(params.get("lines", [120])[0])
+
+            cmd = ["journalctl", "-n", str(lines_cnt), "--no-pager", "-o", "short-iso"]
+            if unit and unit != "all":
+                if unit == "kernel":
+                    cmd.append("-k")
+                else:
+                    cmd.extend(["-u", unit])
+            if level in ("emerg", "alert", "crit", "err", "warning", "notice", "info", "debug"):
+                cmd.extend(["-p", level])
+
+            log_entries = []
+            try:
+                out = subprocess.run(cmd, capture_output=True, text=True, timeout=3)
+                for line in out.stdout.splitlines():
+                    m = re.match(r'^\S+T(\d{2}:\d{2}:\d{2})\S*\s+\S+\s+([^:\[]+)(?:\[\d+\])?:\s+(.*)$', line)
+                    if m:
+                        t_str, u_name, msg = m.group(1), m.group(2).strip(), m.group(3).strip()
+                    else:
+                        t_str, u_name, msg = "--:--:--", "system", line.strip()
+
+                    l_val = "info"
+                    lower_msg = msg.lower()
+                    if any(k in lower_msg for k in ("err", "fail", "fatal", "crit", "error", "emerg", "oops", "corrupt")):
+                        l_val = "err"
+                    elif any(k in lower_msg for k in ("warn", "warning", "denied", "retry")):
+                        l_val = "warning"
+                    elif "debug" in lower_msg:
+                        l_val = "debug"
+
+                    if search and search.lower() not in line.lower():
+                        continue
+
+                    log_entries.append({
+                        "time": t_str,
+                        "unit": u_name,
+                        "level": l_val,
+                        "message": msg,
+                        "raw": line
+                    })
+            except Exception as e:
+                log_entries = [{
+                    "time": time.strftime("%H:%M:%S"),
+                    "unit": "journald",
+                    "level": "err",
+                    "message": f"Erro ao consultar journalctl: {e}",
+                    "raw": str(e)
+                }]
+
+            return self._send(200, {"logs": log_entries, "total": len(log_entries)})
 
         # --- ESP32-sveltekit REST compat ---
         if path in ("/rest/metrics", "/api/telemetry"):
@@ -831,6 +933,13 @@ class Handler(BaseHTTPRequestHandler):
                         return self._send(200, {"ok": True, "message": f"Serviço '{unit}' comando: {action}"})
                     except Exception as e:
                         return self._send(500, {"error": str(e)})
+
+        if path in ("/api/logs/vacuum", "/api/logs/clear"):
+            try:
+                subprocess.run(["journalctl", "--vacuum-time=1d"], timeout=5)
+                return self._send(200, {"ok": True, "message": "Logs arquivados e rotacionados com sucesso!"})
+            except Exception as e:
+                return self._send(500, {"error": str(e)})
 
         if path == "/api/reset":
             for f in ("result.json", "attempt.json", "provision.json", "applying"):
