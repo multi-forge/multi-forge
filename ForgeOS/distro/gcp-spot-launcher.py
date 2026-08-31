@@ -17,8 +17,16 @@ import argparse
 INSTANCE_NAME = "forgeos-builder-spot-32"
 ZONE = "us-central1-a"
 PROJECT = "stt-465818"
-MACHINE_TYPES = ["e2-standard-8", "c2-standard-8", "n2-standard-8", "e2-standard-4"]
 BOOT_DISK_SIZE = "50GB"
+MACHINE_TYPES = [
+    "c2-standard-30",  # 30 vCPUs (Compute-Optimized 3.8GHz Turbo)
+    "c2-standard-16",  # 16 vCPUs (Compute-Optimized 3.8GHz Turbo)
+    "n2-standard-16",  # 16 vCPUs (Intel Xeon Ice Lake)
+    "e2-standard-16",  # 16 vCPUs (Cost-Optimized)
+    "c2-standard-8",   # 8 vCPUs (Fallback Alta Performance)
+    "n2-standard-8",   # 8 vCPUs (Fallback)
+    "e2-standard-8"    # 8 vCPUs (Fallback Garantido)
+]
 IMAGE_FAMILY = "ubuntu-2404-lts-amd64"
 IMAGE_PROJECT = "ubuntu-os-cloud"
 
