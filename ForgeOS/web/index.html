@@ -132,7 +132,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 0.85rem 0 0;
+      padding: 0 0.85rem;
       flex-shrink: 0;
       z-index: 100;
       border-bottom: 1px solid #2B2D30;
@@ -143,6 +143,7 @@
       display: flex;
       align-items: center;
       height: 100%;
+      gap: 0.6rem;
       min-width: 0;
     }
 
@@ -167,12 +168,15 @@
       min-width: 0;
     }
     .masthead-logo-img {
-      height: 100%;
-      width: 230px;
-      object-fit: cover;
-      object-position: center;
+      height: 32px;
+      width: 96px;
+      max-height: 32px;
+      max-width: 96px;
+      object-fit: contain;
+      border-radius: 4px;
       display: block;
-      border-right: 1px solid #2B2D30;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
     }
     .cockpit-icon-badge {
       width: 24px;
@@ -885,10 +889,24 @@
     }
 
     @media (max-width: 768px) {
-      .cockpit-masthead { padding: 0 0.65rem 0 0.65rem; }
-      .masthead-brand { gap: 0.5rem; }
+      .cockpit-masthead { padding: 0 0.55rem; }
+      .masthead-brand { gap: 0.45rem; }
       .masthead-toggle-btn { display: flex; }
-      .masthead-logo-img { width: 140px; height: 100%; object-fit: cover; border-right: none; }
+      .masthead-logo-img {
+        height: 28px;
+        width: 84px;
+        max-height: 28px;
+        max-width: 84px;
+        border-radius: 3px;
+      }
+      .status-badge {
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.68rem;
+        padding: 0.15rem 0.4rem;
+      }
       .cockpit-sidebar {
         position: fixed;
         left: 0; top: var(--pf-header-height); bottom: 0;
