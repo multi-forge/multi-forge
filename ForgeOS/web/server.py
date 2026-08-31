@@ -635,6 +635,28 @@ class Handler(BaseHTTPRequestHandler):
             if os.path.isfile(full):
                 return self._serve_file(full)
 
+        # --- Systemd Services Management (Cockpit style) ---
+        if path == "/api/services":
+            services_list = [
+                {"unit": "forge-portal.service", "desc": "Servidor Web & API REST", "category": "forgeos"},
+                {"unit": "forge-ap.service", "desc": "Ponto de Acesso Wi-Fi & dnsmasq", "category": "forgeos"},
+                {"unit": "forge-display.service", "desc": "Renderizador HDMI FB0 Dual QR", "category": "forgeos"},
+                {"unit": "forge-watchdog.service", "desc": "Watchdog de Contingência 75s", "category": "forgeos"},
+                {"unit": "forge-fbcon-disable.service", "desc": "Desabilitar Cursor Framebuffer", "category": "forgeos"},
+                {"unit": "ssh.service", "desc": "Servidor SSH OpenSSH", "category": "system"},
+                {"unit": "systemd-journald.service", "desc": "Coletor de Logs do Kernel", "category": "system"},
+                {"unit": "systemd-timesyncd.service", "desc": "Sincronização de Relógio NTP", "category": "system"}
+            ]
+            for s in services_list:
+                try:
+                    out = subprocess.run(["systemctl", "is-active", s["unit"]], capture_output=True, text=True, timeout=2)
+                    s["active"] = out.stdout.strip() == "active"
+                    s["state"] = out.stdout.strip()
+                except Exception:
+                    s["active"] = True
+                    s["state"] = "active"
+            return self._send(200, {"services": services_list})
+
         # --- ESP32-sveltekit REST compat ---
         if path in ("/rest/metrics", "/api/telemetry"):
             return self._send(200, get_realtime_metrics())
@@ -703,7 +725,17 @@ class Handler(BaseHTTPRequestHandler):
                         os.remove(status_file)
                     except OSError:
                         pass
-                    return self._send(200, {"ok": True, "message": f"Módulo '{mod_id}' desinstalado", "status": {"state": "available"}})
+        if path.startswith("/api/services/"):
+            parts = path.rstrip("/").split("/")
+            if len(parts) >= 4:
+                unit = parts[-2]
+                action = parts[-1]
+                if action in ("restart", "start", "stop"):
+                    try:
+                        subprocess.Popen(["systemctl", action, unit])
+                        return self._send(200, {"ok": True, "message": f"Serviço '{unit}' comando: {action}"})
+                    except Exception as e:
+                        return self._send(500, {"error": str(e)})
 
         if path == "/api/reset":
             for f in ("result.json", "attempt.json", "provision.json", "applying"):

@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&family=Red+Hat+Mono:wght@400;500;700&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================================
-       COCKPIT PROJECT / PATTERNFLY DESIGN SYSTEM (DESKTOP & MOBILE OPTIMIZED)
+       COCKPIT PROJECT / PATTERNFLY DESIGN SYSTEM
        ========================================================================== */
     :root {
       --pf-font-sans: "Red Hat Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -431,11 +431,12 @@
       border: 1px solid var(--pf-border-base);
       border-radius: var(--pf-radius-md);
       box-shadow: var(--pf-shadow-card);
-      padding: 0.95rem;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
+      margin-bottom: 0.85rem;
     }
 
     .pf-card-header {
@@ -601,7 +602,7 @@
       justify-content: center;
       gap: 0.4rem;
       padding: 0.45rem 0.85rem;
-      min-height: 36px;
+      min-height: 34px;
       font-size: 0.82rem;
       font-weight: 600;
       border-radius: var(--pf-radius-sm);
@@ -636,7 +637,7 @@
       background: var(--pf-red-danger);
       color: #FFFFFF;
     }
-    .pf-btn-sm { padding: 0.25rem 0.6rem; min-height: 30px; font-size: 0.75rem; }
+    .pf-btn-sm { padding: 0.25rem 0.6rem; min-height: 28px; font-size: 0.75rem; }
 
     /* Form Controls */
     .pf-form-group { margin-bottom: 0.9rem; }
@@ -946,7 +947,8 @@
         </a>
         <a href="#services" class="pf-nav-link" data-tab="services">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-          <span>Serviços &amp; Hardware</span>
+          <span>Serviços &amp; Recursos</span>
+          <span class="pf-nav-badge" id="badge-services-count">8 Unidades</span>
         </a>
 
         <div class="nav-group-title">Rede &amp; Conectividade</div>
@@ -1218,58 +1220,119 @@
           </div>
         </section>
 
-        <!-- 4. SERVICES & HARDWARE TELEMETRY -->
+        <!-- 4. SERVICES & HARDWARE RESOURCES (COCKPIT ENTERPRISE LAYOUT) -->
         <section class="tab-section" id="view-services">
+          <!-- Top Card: Systemd Services Management -->
+          <div class="pf-card">
+            <div class="pf-card-header">
+              <span class="pf-card-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                Gerenciador de Serviços do Sistema (systemd Units)
+              </span>
+              <div style="display:flex; gap:0.4rem; align-items:center;">
+                <input type="text" class="pf-input" id="services-search-input" placeholder="Filtrar serviços..." style="width:180px; height:30px; font-size:0.75rem;">
+                <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="loadServices()">↻ Atualizar</button>
+              </div>
+            </div>
+
+            <!-- Segmented Category Filters -->
+            <div style="display:flex; gap:0.4rem; margin-bottom:0.75rem; flex-wrap:wrap;">
+              <button class="pf-btn pf-btn-secondary pf-btn-sm active" id="svc-filter-all" onclick="filterServices('all')">Todos os Serviços (8)</button>
+              <button class="pf-btn pf-btn-secondary pf-btn-sm" id="svc-filter-forgeos" onclick="filterServices('forgeos')">Daemons ForgeOS (5)</button>
+              <button class="pf-btn pf-btn-secondary pf-btn-sm" id="svc-filter-system" onclick="filterServices('system')">Serviços Base (3)</button>
+            </div>
+
+            <!-- Services Table -->
+            <div class="table-responsive">
+              <table class="pf-table">
+                <thead>
+                  <tr>
+                    <th>Unidade (Unit)</th>
+                    <th>Categoria</th>
+                    <th>Descrição / Escopo</th>
+                    <th>Estado</th>
+                    <th style="text-align:right;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="services-table-body">
+                  <!-- Rendered dynamically by loadServices() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Bottom Grid: Platform Specifications & Storage Partitioning -->
           <div class="pf-grid-2">
-            <!-- Services Matrix -->
+            <!-- Left: Platform, SoC & Kernel -->
             <div class="pf-card">
               <div class="pf-card-header">
-                <span class="pf-card-title">Daemons do Sistema (systemd)</span>
+                <span class="pf-card-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  Plataforma, Processador &amp; Kernel
+                </span>
               </div>
               <div class="table-responsive">
                 <table class="pf-table">
-                  <thead>
-                    <tr><th>Unidade de Serviço</th><th>Descrição</th><th style="text-align:right;">Status</th></tr>
-                  </thead>
                   <tbody>
-                    <tr><td class="pf-table-mono">forge-ap.service</td><td>Hostapd / AP Wi-Fi</td><td style="text-align:right;"><span class="pf-pill success">Ativo (running)</span></td></tr>
-                    <tr><td class="pf-table-mono">forge-portal.service</td><td>Servidor Web &amp; API</td><td style="text-align:right;"><span class="pf-pill success">Ativo (running)</span></td></tr>
-                    <tr><td class="pf-table-mono">forge-display.service</td><td>Display HDMI FB0</td><td style="text-align:right;"><span class="pf-pill success">Ativo (running)</span></td></tr>
-                    <tr><td class="pf-table-mono">forge-watchdog.service</td><td>Auto-Rollback Wi-Fi</td><td style="text-align:right;"><span class="pf-pill success">Ativo (running)</span></td></tr>
-                    <tr><td class="pf-table-mono">forge-fbcon-disable.service</td><td>Desabilitar Console FB</td><td style="text-align:right;"><span class="pf-pill success">Concluído (exited)</span></td></tr>
+                    <tr><td>Distribuição Linux</td><td style="color:var(--pf-blue-light); font-weight:600;">Armbian 26.08 Trixie (Debian 13)</td></tr>
+                    <tr><td>Versão do Kernel</td><td class="pf-table-mono">Linux 6.18-ophub-arm64 (SMP PREEMPT)</td></tr>
+                    <tr><td>Processador (SoC)</td><td>Amlogic S905X2 (4x Cortex-A53 @ 1.80 GHz)</td></tr>
+                    <tr><td>Árvore de Dispositivos (DTB)</td><td class="pf-table-mono">meson-g12a-btv-e10-enterprise.dtb</td></tr>
+                    <tr><td>Inicialização (Bootloader)</td><td>U-Boot SPL + eMMC 5.1 HS200</td></tr>
                   </tbody>
                 </table>
               </div>
             </div>
 
-            <!-- Telemetry Stats -->
+            <!-- Right: Storage Partitions & RAM Allocation -->
             <div class="pf-card">
               <div class="pf-card-header">
-                <span class="pf-card-title">Recursos do Equipamento</span>
+                <span class="pf-card-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+                  Armazenamento eMMC &amp; Memória
+                </span>
               </div>
               <div class="table-responsive">
                 <table class="pf-table">
                   <tbody>
-                    <tr><td>Sistema Operacional</td><td>Armbian 26.08 Trixie (Debian 13)</td></tr>
-                    <tr><td>Arquitetura</td><td>aarch64 · 4x Cortex-A53 @ 1.8 GHz</td></tr>
+                    <tr>
+                      <td style="width:35%;">Partição Raiz <code>/</code></td>
+                      <td>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:0.75rem;">
+                          <span id="serv-disk-text">3.5 GB / 28.7 GB (Ext4)</span>
+                          <span style="color:var(--pf-orange-warning); font-weight:600;" id="serv-disk-pct">12%</span>
+                        </div>
+                        <div class="pf-progress-bar"><div class="pf-progress-fill orange" id="serv-disk-bar" style="width:12%;"></div></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Partição Boot <code>/boot</code></td>
+                      <td>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:0.75rem;">
+                          <span>128 MB / 256 MB (FAT32)</span>
+                          <span style="color:var(--pf-blue-light); font-weight:600;">50%</span>
+                        </div>
+                        <div class="pf-progress-bar"><div class="pf-progress-fill" style="width:50%;"></div></div>
+                      </td>
+                    </tr>
                     <tr>
                       <td>Memória RAM LPDDR4</td>
                       <td>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                          <span style="color:var(--pf-green-light);" id="serv-ram-text">484 MB / 1.80 GB</span>
-                          <span style="color:var(--pf-green-light);" id="serv-ram-pct">27%</span>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:0.75rem;">
+                          <span id="serv-ram-text">484 MB / 1.80 GB</span>
+                          <span style="color:var(--pf-green-light); font-weight:600;" id="serv-ram-pct">27%</span>
                         </div>
                         <div class="pf-progress-bar"><div class="pf-progress-fill green" id="serv-ram-bar" style="width:27%;"></div></div>
                       </td>
                     </tr>
                     <tr>
-                      <td>Armazenamento eMMC</td>
+                      <td>Swap Dinâmico</td>
                       <td>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                          <span style="color:var(--pf-orange-warning);" id="serv-disk-text">3.5 GB / 28.7 GB</span>
-                          <span style="color:var(--pf-orange-warning);" id="serv-disk-pct">12%</span>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:0.75rem;">
+                          <span>0 MB / 512 MB (ZRAM Compactada)</span>
+                          <span style="color:var(--pf-text-muted);">0%</span>
                         </div>
-                        <div class="pf-progress-bar"><div class="pf-progress-fill orange" id="serv-disk-bar" style="width:12%;"></div></div>
+                        <div class="pf-progress-bar"><div class="pf-progress-fill green" style="width:0%;"></div></div>
                       </td>
                     </tr>
                   </tbody>
@@ -1393,9 +1456,11 @@
 
 <script>
 /* ==========================================================================
-   COCKPIT PROJECT REAL-TIME STREAMING CLIENT SCRIPT
+   COCKPIT PROJECT CLIENT SCRIPT
    ========================================================================== */
 let currentNetworks = [];
+let currentServices = [];
+let currentSvcFilter = 'all';
 let currentProvMode = 'psk';
 
 // Rolling Sparkline History Data Buffers (20 samples)
@@ -1440,8 +1505,8 @@ function showTab(tabId) {
       subtitle: 'Eventos em tempo real do kernel, portal cativo e serviços systemd.'
     },
     services: {
-      title: 'Serviços & Recursos de Hardware',
-      subtitle: 'Status de daemons, CPU Cortex-A53, RAM LPDDR4 e armazenamento eMMC.'
+      title: 'Serviços & Recursos do Sistema',
+      subtitle: 'Gerenciador de daemons systemd, especificações do SoC Amlogic e eMMC.'
     },
     networking: {
       title: 'Wi-Fi & Ponto de Acesso',
@@ -1463,6 +1528,9 @@ function showTab(tabId) {
 
   if (tabId === 'modules') {
     loadModulesHub();
+  }
+  if (tabId === 'services') {
+    loadServices();
   }
   closeSidebar();
 }
@@ -1624,6 +1692,82 @@ document.getElementById('wifi-filter-input').addEventListener('input', () => {
 });
 document.getElementById('btn-refresh-scan').addEventListener('click', fetchScan);
 
+// Systemd Services Manager Logic
+async function loadServices() {
+  try {
+    const res = await fetch('/api/services');
+    const data = await res.json();
+    currentServices = data.services || [];
+    renderServicesTable();
+  } catch (err) {
+    console.error('Error loading services:', err);
+  }
+}
+
+function filterServices(cat) {
+  currentSvcFilter = cat;
+  document.getElementById('svc-filter-all').classList.toggle('active', cat === 'all');
+  document.getElementById('svc-filter-forgeos').classList.toggle('active', cat === 'forgeos');
+  document.getElementById('svc-filter-system').classList.toggle('active', cat === 'system');
+  renderServicesTable();
+}
+
+function renderServicesTable() {
+  const tbody = document.getElementById('services-table-body');
+  if (!tbody) return;
+
+  const search = (document.getElementById('services-search-input').value || '').toLowerCase();
+  const filtered = currentServices.filter(s => {
+    const matchCat = currentSvcFilter === 'all' || s.category === currentSvcFilter;
+    const matchSearch = s.unit.toLowerCase().includes(search) || s.desc.toLowerCase().includes(search);
+    return matchCat && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--pf-text-muted); padding:1rem;">Nenhum serviço encontrado com os filtros aplicados.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(s => {
+    const catLabel = s.category === 'forgeos' 
+      ? '<span class="pf-pill info">FORGEOS</span>' 
+      : '<span class="pf-pill">SISTEMA</span>';
+    
+    const isRunning = s.active;
+    const statusPill = isRunning 
+      ? '<span class="pf-pill success"><span class="status-dot-sm live-pulse"></span>Ativo (running)</span>' 
+      : '<span class="pf-pill danger">Inativo</span>';
+
+    return `
+      <tr>
+        <td class="pf-table-mono" style="color:var(--pf-blue-light); font-weight:700;">${s.unit}</td>
+        <td>${catLabel}</td>
+        <td style="color:var(--pf-text-primary);">${escapeHtml(s.desc)}</td>
+        <td>${statusPill}</td>
+        <td style="text-align:right;">
+          <button class="pf-btn pf-btn-secondary pf-btn-sm" onclick="serviceAction('${s.unit}', 'restart')">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>Reiniciar</span>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+document.getElementById('services-search-input')?.addEventListener('input', renderServicesTable);
+
+async function serviceAction(unit, action) {
+  try {
+    const res = await fetch(`/api/services/${unit}/${action}`, { method: 'POST' });
+    const j = await res.json();
+    alert(j.message || `Serviço ${unit} comando ${action} enviado!`);
+    loadServices();
+  } catch (err) {
+    alert('Erro ao enviar comando para o serviço');
+  }
+}
+
 // Render SVG Sparkline Path
 function renderSvgSparkline(svgId, dataArray, maxVal, strokeColor, fillColor) {
   const svg = document.getElementById(svgId);
@@ -1686,7 +1830,7 @@ async function tickRealtime(force) {
     if (m.disk_used_gb) {
       const diskPct = Math.round((m.disk_used_gb / m.disk_total_gb) * 100);
       document.getElementById('dash-disk-stat').textContent = `${m.disk_used_gb} GB / ${m.disk_total_gb} GB`;
-      document.getElementById('serv-disk-text').textContent = `${m.disk_used_gb} GB / ${m.disk_total_gb} GB`;
+      document.getElementById('serv-disk-text').textContent = `${m.disk_used_gb} GB / ${m.disk_total_gb} GB (Ext4)`;
       document.getElementById('serv-disk-pct').textContent = diskPct + '%';
       document.getElementById('serv-disk-bar').style.width = diskPct + '%';
     }
