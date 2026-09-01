@@ -86,10 +86,11 @@
 }
 
 .logo-symbol {
-  height: 48px;
+  height: 44px;
   width: auto;
   display: block;
   object-fit: contain;
+  margin-top: 2px;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
