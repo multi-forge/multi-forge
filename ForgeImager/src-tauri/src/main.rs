@@ -12,6 +12,7 @@ mod decompress;
 mod devices;
 mod download;
 mod flash;
+mod forgedb;
 mod images;
 mod logging;
 mod paste;
@@ -148,6 +149,8 @@ fn main() {
             commands::board_queries::get_images_for_board,
             commands::board_queries::get_vendors,
             commands::board_queries::get_block_devices,
+            commands::forgedb::detect_board_for_device,
+            commands::forgedb::get_forgedb_status,
             commands::scraping::get_cached_board_image,
             commands::scraping::get_cached_vendor_logo,
             commands::operations::request_write_authorization,

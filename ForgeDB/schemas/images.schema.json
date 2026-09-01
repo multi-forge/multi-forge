@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://multi-forge.dev/schemas/images.schema.json",
+  "title": "ForgeDB Images Descriptor",
+  "description": "JSON Schema for ForgeDB images.yaml files — describes available operating system images and builds.",
+  "type": "object",
+  "required": ["images"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "pattern": "^forgedb(-images)?/v[0-9]+$"
+    },
+    "device_id": {
+      "type": "string"
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "distribution", "version"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9._-]+$"
+          },
+          "device_id": {
+            "type": "string"
+          },
+          "distribution": {
+            "type": "string"
+          },
+          "variant": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "kernel": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "null" },
+              {
+                "type": "object",
+                "properties": {
+                  "branch": { "type": "string" },
+                  "version": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "sha256_url": {
+            "type": ["string", "null"],
+            "format": "uri"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "format": {
+            "type": "string"
+          },
+          "stability": {
+            "type": "string",
+            "enum": ["stable", "testing", "beta", "alpha", "nightly", "deprecated"]
+          },
+          "recommended": {
+            "type": "boolean"
+          },
+          "flash_target": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "download": {
+            "type": "object",
+            "properties": {
+              "url": { "type": "string", "format": "uri" },
+              "sha256_url": { "type": ["string", "null"], "format": "uri" },
+              "size_bytes": { "type": "integer", "minimum": 0 },
+              "format": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

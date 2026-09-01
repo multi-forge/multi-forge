@@ -2,6 +2,7 @@
 
 pub mod board_queries;
 pub mod custom_image;
+pub mod forgedb;
 pub mod operations;
 pub mod progress;
 pub mod qdl_operations;

@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://multi-forge.dev/schemas/catalog.schema.json",
+  "title": "ForgeDB Compiled Catalog",
+  "description": "JSON Schema for the compiled catalog output (dist/catalog.json) consumed by Forge Imager, CLI, and Web Catalog.",
+  "type": "object",
+  "required": [
+    "version",
+    "generated_at",
+    "commit_sha",
+    "board_count",
+    "image_count",
+    "boards",
+    "images",
+    "vendors",
+    "fingerprints"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Catalog schema/generation version."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of catalog build."
+    },
+    "commit_sha": {
+      "type": "string",
+      "description": "Git commit SHA used to compile the catalog."
+    },
+    "board_count": {
+      "type": "integer",
+      "description": "Total number of compiled boards.",
+      "minimum": 0
+    },
+    "image_count": {
+      "type": "integer",
+      "description": "Total number of indexed OS images.",
+      "minimum": 0
+    },
+    "boards": {
+      "type": "array",
+      "description": "List of compiled board summary entries.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "manufacturer",
+          "category",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique device identifier."
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL slug."
+          },
+          "name": {
+            "type": "string",
+            "description": "Device name."
+          },
+          "manufacturer": {
+            "type": "string",
+            "description": "Manufacturer slug or name."
+          },
+          "category": {
+            "type": "string",
+            "enum": ["tv-box", "sbc", "router", "nas", "mini-pc", "other"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["supported", "experimental", "community", "eol"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "hardware": {
+            "type": "object",
+            "properties": {
+              "soc": { "type": "object" },
+              "memory": { "type": "object" },
+              "ports": { "type": "object" }
+            }
+          },
+          "boot": {
+            "type": "object",
+            "properties": {
+              "boot_media": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          },
+          "image_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "has_desktop": {
+            "type": "boolean"
+          },
+          "photo_url": {
+            "oneOf": [
+              { "type": "string", "format": "uri" },
+              { "type": "null" }
+            ]
+          }
+        }
+      }
+    },
+    "images": {
+      "type": "array",
+      "description": "Flattened list of all OS images across all devices.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "device_id",
+          "distribution",
+          "variant",
+          "version",
+          "stability",
+          "download"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "device_id": {
+            "type": "string"
+          },
+          "distribution": {
+            "type": "string"
+          },
+          "variant": {
+            "type": "string",
+            "enum": ["desktop", "server", "minimal", "iot"]
+          },
+          "version": {
+            "type": "string"
+          },
+          "kernel": {
+            "type": "object"
+          },
+          "stability": {
+            "type": "string",
+            "enum": ["stable", "testing", "nightly"]
+          },
+          "recommended": {
+            "type": "boolean"
+          },
+          "download": {
+            "type": "object",
+            "required": ["url", "format"],
+            "properties": {
+              "url": { "type": "string", "format": "uri" },
+              "sha256_url": {
+                "oneOf": [
+                  { "type": "string", "format": "uri" },
+                  { "type": "null" }
+                ]
+              },
+              "size_bytes": { "type": "integer", "minimum": 0 },
+              "format": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "vendors": {
+      "type": "array",
+      "description": "List of hardware vendors/manufacturers.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "id": { "type": "string" },
+          "slug": { "type": "string" },
+          "name": { "type": "string" },
+          "logo_url": {
+            "oneOf": [
+              { "type": "string", "format": "uri" },
+              { "type": "null" }
+            ]
+          },
+          "website": {
+            "oneOf": [
+              { "type": "string", "format": "uri" },
+              { "type": "null" }
+            ]
+          },
+          "description": { "type": "string" },
+          "country": { "type": "string" },
+          "board_count": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "fingerprints": {
+      "type": "array",
+      "description": "Aggregated fingerprint index for device detection engines.",
+      "items": {
+        "type": "object",
+        "required": ["device_id"],
+        "properties": {
+          "device_id": { "type": "string" },
+          "cpuinfo": { "type": "object" },
+          "device_tree": { "type": "object" },
+          "usb": { "type": "array" },
+          "storage_model": { "type": "object" },
+          "pcb_markings": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

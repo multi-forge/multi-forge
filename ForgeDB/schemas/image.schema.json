@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://multi-forge.dev/schemas/image.schema.json",
+  "title": "ForgeDB Image Manifest",
+  "description": "JSON Schema for ForgeDB images.yaml manifest files — describes OS distributions, download URLs, hashes, and kernel versions per device.",
+  "type": "object",
+  "required": ["schema", "device_id", "images"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "description": "Image manifest schema version identifier.",
+      "pattern": "^forgedb-images/v[0-9]+$",
+      "examples": ["forgedb-images/v1"]
+    },
+    "device_id": {
+      "type": "string",
+      "description": "Identifier of the device this manifest belongs to.",
+      "pattern": "^[a-z0-9_-]+$"
+    },
+    "images": {
+      "type": "array",
+      "description": "List of available OS images for this device.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "distribution",
+          "variant",
+          "version",
+          "stability",
+          "download"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique image identifier slug.",
+            "pattern": "^[a-z0-9._-]+$"
+          },
+          "distribution": {
+            "type": "string",
+            "description": "Operating system distribution name (e.g. ForgeOS, Armbian, Debian)."
+          },
+          "variant": {
+            "type": "string",
+            "description": "Image flavor/variant.",
+            "enum": ["desktop", "server", "minimal", "iot"]
+          },
+          "version": {
+            "type": "string",
+            "description": "Release version string."
+          },
+          "kernel": {
+            "type": "object",
+            "description": "Linux kernel details.",
+            "properties": {
+              "branch": {
+                "type": "string",
+                "description": "Kernel development branch.",
+                "enum": ["current", "edge", "legacy"]
+              },
+              "version": {
+                "type": "string",
+                "description": "Kernel release version (e.g. 6.1.y)."
+              }
+            }
+          },
+          "stability": {
+            "type": "string",
+            "description": "Release channel stability level.",
+            "enum": ["stable", "testing", "nightly"]
+          },
+          "recommended": {
+            "type": "boolean",
+            "description": "Whether this image is the default recommendation for the board.",
+            "default": false
+          },
+          "download": {
+            "type": "object",
+            "description": "Download location and archive metadata.",
+            "required": ["url", "format"],
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "Direct download URL for the OS image.",
+                "format": "uri"
+              },
+              "sha256_url": {
+                "description": "URL to SHA-256 checksum file or null.",
+                "oneOf": [
+                  { "type": "string", "format": "uri" },
+                  { "type": "null" }
+                ]
+              },
+              "size_bytes": {
+                "type": "integer",
+                "description": "Compressed file size in bytes.",
+                "minimum": 0
+              },
+              "format": {
+                "type": "string",
+                "description": "Archive/image compression format.",
+                "enum": ["img.xz", "img.gz", "img.zst", "img.bz2", "img", "iso", "qdl.zip"]
+              }
+            }
+          },
+          "flash_target": {
+            "type": "array",
+            "description": "Target storage media supported for direct flashing.",
+            "items": {
+              "type": "string",
+              "enum": ["sd", "emmc", "usb", "nand", "ufs"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

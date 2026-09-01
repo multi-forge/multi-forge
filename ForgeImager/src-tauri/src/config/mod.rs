@@ -26,9 +26,9 @@ pub mod urls {
         std::env::var("FORGE_API_BASE").unwrap_or_else(|_| format!("https://api.github.com/repos/{}", github_repo()))
     }
 
-    /// Connectivity probe: GitHub API root — always reachable, no auth, no server needed.
+    /// Connectivity probe: fast, reliable, no auth, no rate limits.
     pub fn health() -> String {
-        "https://api.github.com".to_string()
+        "https://cdn.jsdelivr.net".to_string()
     }
 
     /// GitHub releases API endpoint.

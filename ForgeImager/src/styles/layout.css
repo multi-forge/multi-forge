@@ -86,7 +86,7 @@
 }
 
 .logo-symbol {
-  height: 36px;
+  height: 56px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -94,7 +94,7 @@
 }
 
 .logo-text {
-  height: 27px;
+  height: 38px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -360,7 +360,7 @@
 }
 
 .welcome__brand-logo {
-  height: clamp(110px, 16vw, 160px);
+  height: clamp(140px, 22vw, 220px);
   width: auto;
   object-fit: contain;
   filter: drop-shadow(0 20px 40px rgba(var(--accent-rgb), 0.42)) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.6));

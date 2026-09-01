@@ -104,7 +104,7 @@ export function OsPanel({ board, onSelect }: OsPanelProps) {
     [board.slug]
   );
 
-  const ready = !!(allImages && allImages.length > 0);
+  const ready = !loading && allImages !== undefined;
   const { showSkeleton } = useSkeletonLoading(loading, ready);
 
   // Locally cached images, keyed by parsed identity so a remote image can be flagged as already downloaded.

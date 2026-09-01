@@ -1,0 +1,29 @@
+[
+  {
+    "id": "btv-e10",
+    "slug": "btv-e10",
+    "name": "BTV Express E10",
+    "manufacturer": "btv",
+    "category": "tv-box",
+    "status": "supported",
+    "description": "TV Box ARM64 com Amlogic S905X2, 2GB LPDDR4, 8GB eMMC, Wi-Fi RTL8189FTV SDIO",
+    "soc": {
+      "vendor": "Amlogic",
+      "model": "S905X2",
+      "family": "meson-g12a",
+      "architecture": "arm64"
+    },
+    "memory": {
+      "ram": "2GB",
+      "storage": "8GB",
+      "storage_type": "emmc"
+    },
+    "boot_media": [
+      "sd",
+      "emmc"
+    ],
+    "image_count": 2,
+    "has_desktop": true,
+    "photo_url": "https://cdn.jsdelivr.net/gh/multi-forge/multi-forge@main/ForgeDB/devices/btv/e10/photo.png"
+  }
+]

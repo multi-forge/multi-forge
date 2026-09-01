@@ -1,0 +1,32 @@
+[
+  {
+    "device_id": "btv-e10",
+    "cpuinfo": {
+      "hardware": "Amlogic",
+      "cpu_family": "g12a",
+      "serial_prefix": null
+    },
+    "device_tree": {
+      "compatible": [
+        "btv,e10",
+        "seirobotics,sei510",
+        "amlogic,g12a"
+      ],
+      "model": "BTV Express E10*"
+    },
+    "usb": [
+      {
+        "vid": "1b8e",
+        "pid": "c003",
+        "description": "GX-CHIP*"
+      }
+    ],
+    "storage_model": {
+      "patterns": [
+        "*S905X2*",
+        "*BTV*E10*",
+        "*SEI510*"
+      ]
+    }
+  }
+]

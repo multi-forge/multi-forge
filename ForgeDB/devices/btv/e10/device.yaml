@@ -1,48 +1,74 @@
-schema: forgedb/v1
-id: btve10
+schema: forgedb/v2
+
+id: btv-e10
 slug: btv-e10
-name: BTV E10
-manufacturer: BTV
-category: TV Box
+name: "BTV Express E10"
+manufacturer: btv
+category: tv-box
 status: supported
-description: "BTV E10 com SoC Amlogic S905X2, 2GB LPDDR4 e 8GB eMMC."
+description: "TV Box ARM64 com Amlogic S905X2, 2GB LPDDR4, 8GB eMMC, Wi-Fi RTL8189FTV SDIO"
 
 hardware:
   soc:
     vendor: Amlogic
     model: S905X2
-    architecture: ARM64
+    family: meson-g12a
+    architecture: arm64
+    cores: 4
+    cpu: Cortex-A53
+    max_freq_mhz: 1800
   memory:
     ram: 2GB
     storage: 8GB
+    storage_type: emmc
   wireless:
-    wifi: RTL8189FTV # Essencial para o Forge Agent validar clones de lote comercial
+    wifi: RTL8189FTV
+    wifi_bus: sdio
+    bluetooth: null
+  ports:
+    usb2: 1
+    usb3: 1
+    hdmi: 1
+    ethernet: 1
+    sd_card: false
+    av: true
+
+fingerprints:
+  cpuinfo:
+    hardware: "Amlogic"
+    cpu_family: "g12a"
+    serial_prefix: null
+  device_tree:
+    compatible:
+      - "btv,e10"
+      - "seirobotics,sei510"
+      - "amlogic,g12a"
+    model: "BTV Express E10*"
+  usb:
+    - vid: "1b8e"
+      pid: "c003"
+      description: "GX-CHIP*"
+  storage_model:
+    patterns:
+      - "*S905X2*"
+      - "*BTV*E10*"
+      - "*SEI510*"
+  pcb_markings:
+    - "BTVE E10-LPDDR4 V.10 201-03-08"
+    - "BTVE E10-LPDDR4 V.11"
 
 boot:
-  dtb: meson-g12a-sei510.dtb
+  dtb: meson-g12a-btv-e10-enterprise.dtb
+  dtb_fallback: meson-g12a-sei510.dtb
   aml_autoscript: true
-  preferred_tool: "/root/install-aml.sh"
-  dtb_url: "https://raw.githubusercontent.com/multi-forge/multi-forge/main/ForgeDB/devices/btv/e10/dtb/meson-g12a-sei510.dtb"
-
-images:
-  - id: forgeos-btv-e10-desktop
-    distribution: ForgeOS Desktop
-    version: v1.0.0-test (Kernel 6.1.y)
-    url: "https://github.com/multi-forge/multi-forge/releases/download/v1.0.0-test/forgeos-btv-e10.img.xz"
-    recommended: true
-  - id: forgeos-server
-    distribution: ForgeOS Server
-    version: Bullseye ARM64
-    url: "https://github.com/multi-forge/multi-forge/releases/download/v1.0.0-test/forgeos-server-arm64.img.xz"
-    recommended: false
-  - id: forgeos-iot
-    distribution: ForgeOS IoT Gateway
-    version: Alpine ARM64
-    url: "https://github.com/multi-forge/multi-forge/releases/download/v1.0.0-test/forgeos-iot-arm64.img.xz"
-    recommended: false
+  preferred_flash_tool: install-aml.sh
+  recovery_method: maskrom-usb
+  boot_media:
+    - sd
+    - emmc
 
 known_issues:
-  - title: Incompatibilidade armbian-install
-    description: "Processadores Amlogic exigem script dedicado para fixação na eMMC interna."
-    workaround: "Rode '/root/install-aml.sh' via terminal para transferir o sistema do pendrive para a memória interna."
-    severity: high
+  - title: "armbian-install incompativel"
+    severity: medium
+    description: "O script armbian-install padrao nao funciona neste hardware"
+    workaround: "Usar install-aml.sh do ForgeOS"

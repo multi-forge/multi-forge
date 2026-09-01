@@ -4,7 +4,7 @@
   "title": "ForgeDB Module Manifest",
   "description": "JSON Schema for module.yaml files — describes a ForgeOS module's metadata, dependencies, lifecycle, and deployment variants.",
   "type": "object",
-  "required": ["id", "name", "version", "description", "category", "source", "lifecycle"],
+  "required": ["id", "name", "version", "description", "category", "source"],
   "properties": {
     "id": {
       "type": "string",

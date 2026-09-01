@@ -2,15 +2,24 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://multi-forge.dev/schemas/device.schema.json",
   "title": "ForgeDB Device Descriptor",
-  "description": "JSON Schema for ForgeDB device.yaml files — describes hardware compatibility, boot configuration, images, and known issues.",
+  "description": "JSON Schema for ForgeDB device.yaml files (v2) — describes hardware specifications, hardware fingerprints, boot configuration, and known issues.",
   "type": "object",
-  "required": ["schema", "id", "slug", "name", "manufacturer", "category", "status", "hardware", "boot"],
+  "required": [
+    "schema",
+    "id",
+    "slug",
+    "name",
+    "manufacturer",
+    "category",
+    "status",
+    "hardware"
+  ],
   "properties": {
     "schema": {
       "type": "string",
       "description": "Schema version identifier.",
       "pattern": "^forgedb/v[0-9]+$",
-      "examples": ["forgedb/v1"]
+      "examples": ["forgedb/v2"]
     },
     "id": {
       "type": "string",
@@ -28,17 +37,17 @@
     },
     "manufacturer": {
       "type": "string",
-      "description": "Device manufacturer."
+      "description": "Device manufacturer identifier or slug."
     },
     "category": {
       "type": "string",
       "description": "Device category.",
-      "enum": ["TV Box", "SBC", "Router", "NAS", "Mini PC", "Other"]
+      "enum": ["tv-box", "sbc", "router", "nas", "mini-pc", "other"]
     },
     "status": {
       "type": "string",
-      "description": "Support status.",
-      "enum": ["supported", "experimental", "deprecated", "unsupported"]
+      "description": "Device support lifecycle status.",
+      "enum": ["supported", "experimental", "community", "eol"]
     },
     "description": {
       "type": "string",
@@ -51,139 +60,262 @@
       "properties": {
         "soc": {
           "type": "object",
+          "description": "System on Chip details.",
           "required": ["vendor", "model", "architecture"],
           "properties": {
-            "vendor": { "type": "string" },
-            "model": { "type": "string" },
+            "vendor": {
+              "type": "string",
+              "description": "SoC vendor name (e.g. Amlogic, Rockchip, Allwinner, Raspberry Pi)."
+            },
+            "model": {
+              "type": "string",
+              "description": "SoC model identifier (e.g. S905X2, RK3588, H616)."
+            },
+            "family": {
+              "type": "string",
+              "description": "SoC family designation (e.g. meson-g12a, rk356x)."
+            },
             "architecture": {
               "type": "string",
-              "enum": ["ARM64", "ARMv7", "x86_64", "RISC-V"]
+              "description": "CPU architecture.",
+              "enum": ["arm64", "armv7", "x86_64", "riscv64"]
+            },
+            "cores": {
+              "type": "integer",
+              "description": "Number of CPU cores.",
+              "minimum": 1
+            },
+            "cpu": {
+              "type": "string",
+              "description": "CPU core model / microarchitecture (e.g. Cortex-A53)."
+            },
+            "max_freq_mhz": {
+              "type": "integer",
+              "description": "Maximum CPU frequency in MHz.",
+              "minimum": 1
             }
-          },
-          "additionalProperties": false
+          }
         },
         "memory": {
           "type": "object",
+          "description": "RAM and onboard storage details.",
           "required": ["ram", "storage"],
           "properties": {
             "ram": {
               "type": "string",
-              "description": "RAM size (e.g. '2GB').",
+              "description": "RAM capacity (e.g. 2GB, 4GB, 512MB).",
               "pattern": "^[0-9]+(MB|GB)$"
             },
             "storage": {
               "type": "string",
-              "description": "Internal storage size (e.g. '8GB').",
+              "description": "Internal storage capacity (e.g. 8GB, 16GB, 1TB).",
               "pattern": "^[0-9]+(MB|GB|TB)$"
+            },
+            "storage_type": {
+              "type": "string",
+              "description": "Primary onboard storage interface.",
+              "enum": ["emmc", "sd", "nand", "ufs", "sata", "nvme"]
             }
-          },
-          "additionalProperties": false
+          }
         },
         "wireless": {
           "type": "object",
-          "description": "Wireless chipset information.",
+          "description": "Wireless connectivity specifications.",
           "properties": {
             "wifi": {
               "type": "string",
-              "description": "Wi-Fi chipset model."
+              "description": "Wi-Fi chipset identifier (e.g. RTL8189FTV, AP6255)."
+            },
+            "wifi_bus": {
+              "type": "string",
+              "description": "Wi-Fi hardware bus interface.",
+              "enum": ["sdio", "usb", "pcie"]
             },
             "bluetooth": {
-              "type": "string",
-              "description": "Bluetooth chipset model."
+              "type": ["string", "null"],
+              "description": "Bluetooth chipset identifier or null if unsupported."
             }
-          },
-          "additionalProperties": false
+          }
+        },
+        "ports": {
+          "type": "object",
+          "description": "Physical I/O ports count and availability.",
+          "properties": {
+            "usb2": {
+              "type": "integer",
+              "description": "Number of USB 2.0 ports.",
+              "minimum": 0
+            },
+            "usb3": {
+              "type": "integer",
+              "description": "Number of USB 3.0+ ports.",
+              "minimum": 0
+            },
+            "hdmi": {
+              "type": "integer",
+              "description": "Number of HDMI outputs.",
+              "minimum": 0
+            },
+            "ethernet": {
+              "type": "integer",
+              "description": "Number of Ethernet RJ45 ports.",
+              "minimum": 0
+            },
+            "sd_card": {
+              "type": "boolean",
+              "description": "Whether an SD/microSD slot is present."
+            },
+            "av": {
+              "type": "boolean",
+              "description": "Whether an analog AV/jack output is present."
+            }
+          }
         }
-      },
-      "additionalProperties": false
+      }
+    },
+    "fingerprints": {
+      "type": "object",
+      "description": "Hardware fingerprints used by Forge Agent and Forge Imager for automatic board identification.",
+      "properties": {
+        "cpuinfo": {
+          "type": "object",
+          "description": "Signatures from /proc/cpuinfo.",
+          "properties": {
+            "hardware": {
+              "type": "string",
+              "description": "Hardware field in /proc/cpuinfo."
+            },
+            "cpu_family": {
+              "type": "string",
+              "description": "CPU family string or architecture identifier."
+            },
+            "serial_prefix": {
+              "type": ["string", "null"],
+              "description": "Known SoC serial prefix, or null."
+            }
+          }
+        },
+        "device_tree": {
+          "type": "object",
+          "description": "Device tree compatibility strings and model patterns.",
+          "properties": {
+            "compatible": {
+              "type": "array",
+              "description": "List of compatible strings found in /proc/device-tree/compatible.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "model": {
+              "type": "string",
+              "description": "Glob pattern for matching /proc/device-tree/model."
+            }
+          }
+        },
+        "usb": {
+          "type": "array",
+          "description": "USB vendor/product IDs exposed during boot or recovery modes.",
+          "items": {
+            "type": "object",
+            "required": ["vid", "pid"],
+            "properties": {
+              "vid": {
+                "type": "string",
+                "description": "USB Vendor ID (hex string, e.g. '1b8e')."
+              },
+              "pid": {
+                "type": "string",
+                "description": "USB Product ID (hex string, e.g. 'c003')."
+              },
+              "description": {
+                "type": ["string", "null"],
+                "description": "USB device descriptor or glob match."
+              }
+            }
+          }
+        },
+        "storage_model": {
+          "type": "object",
+          "description": "Storage model identification patterns.",
+          "properties": {
+            "patterns": {
+              "type": "array",
+              "description": "Glob patterns matching storage disk model/names.",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "pcb_markings": {
+          "type": "array",
+          "description": "Silkscreen PCB board markings / revisions.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     },
     "boot": {
       "type": "object",
-      "description": "Boot configuration for flashing and installation.",
-      "required": ["dtb"],
+      "description": "Boot configuration and flashing details.",
       "properties": {
         "dtb": {
           "type": "string",
-          "description": "Device Tree Blob filename."
+          "description": "Primary Device Tree Blob filename."
+        },
+        "dtb_fallback": {
+          "type": "string",
+          "description": "Fallback DTB filename if primary fails."
         },
         "aml_autoscript": {
           "type": "boolean",
-          "description": "Whether the device supports Amlogic autoscript boot."
+          "description": "Whether Amlogic aml_autoscript bootloader mechanism is supported."
         },
-        "preferred_tool": {
+        "preferred_flash_tool": {
           "type": "string",
-          "description": "Path to preferred installation script."
+          "description": "Recommended installation or flashing script/tool."
         },
-        "dtb_url": {
+        "recovery_method": {
           "type": "string",
-          "format": "uri",
-          "description": "URL to download the DTB file."
-        }
-      },
-      "additionalProperties": false
-    },
-    "images": {
-      "type": "array",
-      "description": "Available OS images for this device.",
-      "items": {
-        "type": "object",
-        "required": ["id", "distribution", "version", "url"],
-        "properties": {
-          "id": {
+          "description": "Method for unbricking or entering recovery mode.",
+          "enum": ["maskrom-usb", "edl", "jtag", "uart", "sd-boot", "none"]
+        },
+        "boot_media": {
+          "type": "array",
+          "description": "Supported media targets for booting.",
+          "items": {
             "type": "string",
-            "description": "Unique image identifier."
-          },
-          "distribution": {
-            "type": "string",
-            "description": "OS distribution name."
-          },
-          "version": {
-            "type": "string",
-            "description": "OS version string."
-          },
-          "kernel": {
-            "type": ["string", "null"],
-            "description": "Kernel version (null if unspecified)."
-          },
-          "url": {
-            "type": "string",
-            "format": "uri",
-            "description": "Download URL for the image."
-          },
-          "recommended": {
-            "type": "boolean",
-            "description": "Whether this is the recommended image.",
-            "default": false
+            "enum": ["sd", "emmc", "usb", "nand", "ufs"]
           }
-        },
-        "additionalProperties": false
+        }
       }
     },
     "known_issues": {
       "type": "array",
-      "description": "List of known issues and workarounds.",
+      "description": "Known hardware or driver issues with workarounds.",
       "items": {
         "type": "object",
-        "required": ["title", "description", "severity"],
+        "required": ["title", "severity", "description"],
         "properties": {
           "title": {
             "type": "string",
-            "description": "Issue title."
-          },
-          "description": {
-            "type": "string",
-            "description": "Detailed issue description."
-          },
-          "workaround": {
-            "type": "string",
-            "description": "Known workaround."
+            "description": "Brief summary of the issue."
           },
           "severity": {
             "type": "string",
+            "description": "Severity level of the issue.",
             "enum": ["low", "medium", "high", "critical"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed explanation of the issue."
+          },
+          "workaround": {
+            "type": "string",
+            "description": "Recommended workaround or fix."
           }
-        },
-        "additionalProperties": false
+        }
       }
     }
   },

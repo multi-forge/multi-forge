@@ -1,0 +1,36 @@
+name: ForgeDB Validation
+
+on:
+  pull_request:
+    paths:
+      - 'ForgeDB/**'
+      - '.github/workflows/validate.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate ForgeDB Manifests & Schemas
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ForgeDB
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'ForgeDB/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate YAML manifests against JSON Schemas
+        run: npm run validate
+
+      - name: Test Catalog Compilation
+        run: npm run build

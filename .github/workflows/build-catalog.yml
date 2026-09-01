@@ -1,0 +1,65 @@
+name: ForgeDB Build Catalog
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ForgeDB/**'
+      - '.github/workflows/build-catalog.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    name: Build Catalog & Deploy Distribution
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'ForgeDB/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ForgeDB
+        run: npm ci
+
+      - name: Validate YAML manifests
+        working-directory: ForgeDB
+        run: npm run validate
+
+      - name: Compile Unified Catalog
+        working-directory: ForgeDB
+        run: npm run build
+
+      - name: Commit and push compiled catalog distribution
+        id: auto_commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore(forgedb): build and publish catalog distribution [skip ci]'
+          file_pattern: 'ForgeDB/dist/*'
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_author: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
+
+      - name: Purge jsDelivr CDN Cache
+        if: steps.auto_commit.outputs.changes_detected == 'true' || github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Purging jsDelivr cache for catalog distribution files..."
+          curl -s -X POST "https://purge.jsdelivr.net/gh/multi-forge/multi-forge@main/ForgeDB/dist/catalog.json" || true
+          curl -s -X POST "https://purge.jsdelivr.net/gh/multi-forge/multi-forge@main/ForgeDB/dist/catalog.min.json" || true
+          curl -s -X POST "https://purge.jsdelivr.net/gh/multi-forge/multi-forge@main/ForgeDB/dist/boards.json" || true
+          curl -s -X POST "https://purge.jsdelivr.net/gh/multi-forge/multi-forge@main/ForgeDB/dist/images.json" || true
+          curl -s -X POST "https://purge.jsdelivr.net/gh/multi-forge/multi-forge@main/ForgeDB/dist/vendors.json" || true
+          curl -s -X POST "https://purge.jsdelivr.net/gh/multi-forge/multi-forge@main/ForgeDB/dist/fingerprints.json" || true
+          curl -s -X POST "https://purge.jsdelivr.net/gh/multi-forge/multi-forge@main/ForgeDB/dist/version.json" || true

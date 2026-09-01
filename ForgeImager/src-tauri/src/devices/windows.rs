@@ -1,5 +1,6 @@
 //! Windows device detection using native Win32 APIs
 
+use std::collections::HashMap;
 use std::ffi::c_void;
 use std::mem;
 
@@ -281,17 +282,16 @@ fn query_device_properties(disk_number: i32) -> Result<(String, bool, Option<Str
     Ok((model, is_removable, bus_type))
 }
 
-/// Retrieves drive letters mounted on a specific physical disk
-fn get_drive_letters_for_disk(disk_number: i32) -> Option<Vec<String>> {
+/// Retrieves drive letters mounted on all physical disks in a single fast pass
+fn get_all_drive_letters_map() -> HashMap<i32, Vec<String>> {
+    let mut map: HashMap<i32, Vec<String>> = HashMap::new();
     let drives_mask = unsafe { GetLogicalDrives() };
     if drives_mask == 0 {
         log_error!("devices", "GetLogicalDrives failed: {}", unsafe {
             GetLastError()
         });
-        return None;
+        return map;
     }
-
-    let mut drive_letters = Vec::new();
 
     for i in 0..26 {
         if (drives_mask & (1 << i)) == 0 {
@@ -326,8 +326,6 @@ fn get_drive_letters_for_disk(disk_number: i32) -> Option<Vec<String>> {
         unsafe { CloseHandle(handle) };
 
         if result != 0 {
-            // Parse extents by offset, count clamped to the buffer, to avoid the
-            // out-of-bounds panic on multi-extent volumes (#136).
             const HEADER: usize = 8; // u32 count + 4 padding
             const EXTENT: usize = 24; // DISK_EXTENT: u32 + pad + u64 + u64
 
@@ -348,30 +346,26 @@ fn get_drive_letters_for_disk(disk_number: i32) -> Option<Vec<String>> {
                     extents_bytes[base + 2],
                     extents_bytes[base + 3],
                 ]);
-                if disk_no as i32 == disk_number {
-                    drive_letters.push(format!("{}:", letter_char));
-                    break;
-                }
+                map.entry(disk_no as i32)
+                    .or_default()
+                    .push(format!("{}:", letter_char));
             }
         }
     }
 
-    if drive_letters.is_empty() {
-        None
-    } else {
-        Some(drive_letters)
-    }
+    map
 }
 
 /// Enumerates all block devices on Windows using native Win32 APIs
 pub fn get_block_devices() -> Result<Vec<BlockDevice>, String> {
     #[cfg(target_os = "windows")]
     {
+        let drive_letter_map = get_all_drive_letters_map();
         let mut devices = Vec::new();
         let mut consecutive_errors = 0;
-        const MAX_CONSECUTIVE_ERRORS: usize = 4;
+        const MAX_CONSECUTIVE_ERRORS: usize = 2;
 
-        for disk_number in 0..32 {
+        for disk_number in 0..16 {
             let device_path = format!("\\\\.\\PhysicalDrive{}", disk_number);
             let device_path_utf16 = to_utf16(&device_path);
 
@@ -390,6 +384,9 @@ pub fn get_block_devices() -> Result<Vec<BlockDevice>, String> {
                 Err(err) => {
                     log_error!("devices", "Failed to open {}: error {}", device_path, err);
                     consecutive_errors += 1;
+                    if consecutive_errors >= MAX_CONSECUTIVE_ERRORS {
+                        break;
+                    }
                     continue;
                 }
                 _ => continue,
@@ -414,7 +411,6 @@ pub fn get_block_devices() -> Result<Vec<BlockDevice>, String> {
             if result == 0 {
                 let err = unsafe { GetLastError() };
                 unsafe { CloseHandle(handle) };
-                // 1/2/5/21 are normal for absent or locked drives; skip quietly.
                 if err == 1 || err == 2 || err == 5 || err == 21 {
                     continue;
                 }
@@ -430,9 +426,7 @@ pub fn get_block_devices() -> Result<Vec<BlockDevice>, String> {
             let geometry = unsafe { &*(geometry_bytes.as_ptr() as *const DiskGeometryEx) };
             let size = geometry.disk_size;
 
-            // Must query before closing the handle.
             let is_read_only = is_disk_read_only(handle);
-
             unsafe { CloseHandle(handle) };
 
             if size == 0 {
@@ -440,7 +434,7 @@ pub fn get_block_devices() -> Result<Vec<BlockDevice>, String> {
             }
 
             let (model, is_removable, bus_type) = query_device_properties(disk_number)?;
-            let drive_letters = get_drive_letters_for_disk(disk_number);
+            let drive_letters = drive_letter_map.get(&disk_number).cloned();
 
             let has_c_drive = drive_letters
                 .as_ref()

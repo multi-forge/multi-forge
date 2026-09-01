@@ -12,9 +12,9 @@ Plataforma open-source para identificacao, compatibilizacao, gravacao, provision
 
 | Componente | Stack | Entradas Principais | Status | Testes / Cobertura |
 |------------|-------|---------------------|--------|-------------------|
-| **[ForgeImager](ForgeImager/)** | Tauri v2, React 19, Rust | `src-tauri/src/main.rs`, `App.tsx`, `crates/forge-write-conf` | Producao (98%) | CI Matrix (x64/ARM64 Linux, Windows, macOS) |
+| **[ForgeImager](ForgeImager/)** | Tauri v2, React 19, Rust | `src-tauri/src/main.rs`, `src-tauri/src/forgedb/`, `App.tsx`, `crates/forge-write-conf` | Producao (98%) | 46 testes unitarios Rust, CI Matrix (x64/ARM64 Linux, Windows, macOS) |
 | **[ForgeOS](ForgeOS/)** | Linux 6.18, Python 3, Bash, systemd | `bin/start-ap.sh`, `web/server.py`, `display/display_manager.py`, `bin/watchdog.sh` | Homologado (95%) | 34/34 testes de integracao e E2E |
-| **[ForgeDB](ForgeDB/)** | YAML, JSON Schema (Draft 2020-12) | `devices/btv/e10/device.yaml`, `modules/catalog.yaml`, `schemas/*.schema.json` | Estruturado (50%) | Validacao formal JSON Schema |
+| **[ForgeDB](ForgeDB/)** | YAML, JSON Schema (Draft 2020-12), Node.js CI | `devices/btv/e10/device.yaml`, `schemas/*.schema.json`, `dist/catalog.json` | Operacional (100%) | Validacao automatizada via Ajv e GitHub Actions |
 | **[ForgeModules](ForgeModules/)** | Python (PyQt5, FastAPI, LangChain) | `totem/main_cli.py`, `totem/main_gui.py`, `sub-modulos/web-scraping/api/main.py` | Funcional (45%) | Execucao local e em container |
 
 > **Hardware Piloto Validado:** BTV Express E10 (Amlogic S905X2 / Meson G12A, 4x Cortex-A53 @ 1.8GHz, 2GB LPDDR4, 8GB eMMC, Realtek RTL8189FTV Wi-Fi SDIO, Armbian Linux 26.08 Trixie, kernel 6.18.44-ophub).
@@ -23,38 +23,41 @@ Plataforma open-source para identificacao, compatibilizacao, gravacao, provision
 
 ## Arquitetura do Sistema
 
-O projeto e dividido em 4 componentes interdependentes:
+O projeto e estruturado em 4 componentes interdependentes:
 
 ```text
 multi-forge/
+|-- ForgeDB/            # Base de dados declarativa de hardware, imagens e fingerprints
+|   |-- devices/        # Metadados de placas (SoCs, DTBs, pinouts, fingerprints de deteccao)
+|   |-- vendors/        # Metadados de fabricantes
+|   |-- schemas/        # Schemas JSON formais (Draft 2020-12)
+|   |-- scripts/        # Compilador do catalogo unificado (YAML -> dist/catalog.json)
+|   `-- dist/           # Catalogo compilado distribuido globalmente via jsDelivr CDN
 |-- ForgeImager/        # Gravador desktop (Tauri v2 + React 19 + Rust)
-|   |-- src-tauri/      # Comandos IPC em Rust, streaming I/O, EDL/QDL Sahara
+|   |-- src-tauri/      # Comandos IPC em Rust, streaming I/O, EDL/QDL Sahara, modulo ForgeDB
 |   |-- crates/         # forge-write-conf (injecao ext4 em userspace sem root)
-|   `-- src/            # Interface gráfica, catalogo dinâmico, seletor de imagens
+|   `-- src/            # Interface grafica, catalogo dinamico, seletor de imagens
 |-- ForgeOS/            # Distribuicao Linux e stack de provisionamento on-device
 |   |-- bin/            # Scripts de controle de rede (start-ap.sh, apply-sta.sh, watchdog.sh)
 |   |-- web/            # Portal HTTP offline, REST API e interface de configuracao
 |   |-- display/        # Kiosk HDMI direto em framebuffer (/dev/fb0)
 |   |-- dtb/            # Device Tree Sources (.dts) e Blobs compilados (.dtb)
-|   |-- distro/         # Pipeline de build de imagens em nuvem (GCP Spot) e local
+|   |-- distro/         # Pipeline de build de imagens em nuvem e local
 |   `-- tests/          # Suite de testes unitarios e de integracao
-|-- ForgeDB/            # Base de dados declarativa de hardware e modulos
-|   |-- devices/        # Metadados de placas (SoCs, DTBs, pinouts, metodos de flash)
-|   |-- modules/        # Catalogo central (catalog.yaml) e manifestos (module.yaml)
-|   `-- schemas/        # Schemas JSON formais para validacao automatizada
 `-- ForgeModules/       # Modulos operacionais para aplicacoes de borda
-    |-- totem/          # Mina - Assistente Virtual Acadêmica (PyQt5 + ONNX)
-    `-- sub-modulos/    # Coletor Acadêmico & RAG Agent (FastAPI + LangChain)
+    |-- totem/          # Mina - Assistente Virtual Academica (PyQt5 + ONNX)
+    `-- sub-modulos/    # Coletor Academico & RAG Agent (FastAPI + LangChain)
 ```
 
 ```mermaid
 flowchart TD
     subgraph Preparacao ["1. Preparacao e Gravacao"]
-        FDB["ForgeDB (Metadados e Schemas)"] --> FI["ForgeImager (Desktop Flasher)"]
+        FDB["ForgeDB (Metadados e Schemas)"] -->|"dist/catalog.json via jsDelivr"| FI["ForgeImager (Desktop Flasher)"]
+        HW["Hardware Conectado (USB/SD)"] -->|"Autodeteccao via Fingerprints"| FI
     end
 
     subgraph Boot ["2. Inicializacao e Provisionamento (ForgeOS)"]
-        FI -->|"Gravacao SD/eMMC"| AP["forge-ap (192.168.4.1)"]
+        FI -->|"Gravacao SD/eMMC + Injecao Ext4"| AP["forge-ap (192.168.4.1)"]
         AP --> PORTAL["forge-portal (:8080)"]
         AP --> HDMI["forge-display (/dev/fb0)"]
         PORTAL -->|"Configuracao Wi-Fi"| APPLY["apply-sta.sh"]
@@ -79,19 +82,44 @@ flowchart TD
 cd ForgeImager
 
 # Instalacao de dependencias e execucao em desenvolvimento:
-pnpm install
-pnpm tauri dev
+npm install
+npm run tauri:dev
 
-# Compilacao de instaladores (.exe, .deb, .AppImage, .dmg):
-pnpm tauri build
+# Compilacao rapida de depuracao:
+npm run tauri:build:dev
+
+# Compilacao de instaladores finais de producao (.exe, .msi, .deb, .AppImage, .dmg):
+npm run tauri:build
 ```
 
 Recursos implementados:
-- Descompressao multithread em tempo real (`.xz`, `.gz`, `.zst`, `.bz2`) com verificacao SHA-256 bloco a bloco.
-- Injecao de configuracoes de primeiro boot diretamente em particoes ext4 via `forge-write-conf` sem necessidade de montagem de sistema de arquivos.
-- Suporte a modo EDL/Sahara para recuperacao de placas Qualcomm.
+- **Autodeteccao de hardware:** Identificacao automatica de modelos de TV Box via casamento de assinaturas (fingerprints) de USB VID/PID, strings de modelos de eMMC e Device Tree.
+- **Catalogo Dinamico via CDN:** Consumo transparente de `dist/catalog.json` via jsDelivr CDN com fallback para cache local e snapshot embutido.
+- **Descompressao multithread:** Suporte em tempo real a `.xz`, `.gz`, `.zst`, `.bz2` com verificacao SHA-256 bloco a bloco.
+- **Injecao Userspace em Ext4:** Gravacao de parametros de primeiro boot diretamente em particoes ext4 via `forge-write-conf` sem necessidade de montagem no host.
+- **Recuperacao Qualcomm EDL:** Suporte a modo Sahara/Firehose para gravacao de placas Qualcomm em baixo nivel.
 
-### 2. ForgeOS (Sistema Embarcado)
+### 2. ForgeDB (Banco de Hardware e Compilador de Catalogo)
+
+```bash
+cd ForgeDB
+
+# Instalacao de dependencias do validador:
+npm install
+
+# Validar todos os descritores contra os schemas JSON (Draft 2020-12):
+npm run validate
+
+# Compilar o catalogo unificado para distribuicao:
+npm run build
+```
+
+Recursos implementados:
+- **Schemas Formais v2:** Validadores JSON Schema Draft 2020-12 para dispositivos, imagens, fabricantes e catalogo compilado.
+- **Assinaturas de Fingerprint:** Campos declarativos para autodeteccao por `cpuinfo`, `device_tree`, `usb` e `storage_model`.
+- **Integracao Continua:** Workflows de GitHub Actions que validam pull requests e compilam automaticamente novos lancamentos para distribuicao global gratuita via jsDelivr.
+
+### 3. ForgeOS (Sistema Embarcado)
 
 ```bash
 cd ForgeOS
@@ -108,18 +136,6 @@ Recursos implementados:
 - Watchdog de rede com rollback automatico para modo AP em caso de credenciais incorretas ou perda de conexao.
 - Kiosk grafico HDMI 1080p desenhado diretamente no `/dev/fb0` com exibicao de QR Codes para conexao rapida.
 - Device Tree Enterprise com clock SDIO travado em 25 MHz, CMA reduzido para 64 MB (+192 MB de RAM disponivel) e watchdog de hardware ativo.
-
-### 3. ForgeDB (Banco de Hardware e Modulos)
-
-```bash
-cd ForgeDB
-
-# Validacao do device.yaml contra o schema formal:
-python -c "import yaml, json, jsonschema; jsonschema.validate(yaml.safe_load(open('devices/btv/e10/device.yaml')), json.load(open('schemas/device.schema.json'))); print('Device schema validado.')"
-
-# Validacao do manifesto de modulos:
-python -c "import yaml, json, jsonschema; jsonschema.validate(yaml.safe_load(open('modules/totem/module.yaml')), json.load(open('schemas/module.schema.json'))); print('Module schema validado.')"
-```
 
 ### 4. ForgeModules (Aplicacoes)
 
@@ -138,15 +154,14 @@ docker compose up -d
 
 ## Documentacao Adicional
 
-- [Arquitetura Geral](docs/architecture.md)
+- [Manual do ForgeImager](ForgeImager/README.md)
+- [Guia de Desenvolvimento do ForgeImager](ForgeImager/DEVELOPMENT.md)
+- [Manual do ForgeDB](ForgeDB/README.md)
+- [Guia de Contribuicao de Novos Dispositivos](ForgeDB/CONTRIBUTING.md)
 - [Documentacao Tecnica do ForgeOS](ForgeOS/README.md)
 - [Manual de Tweaks e Patches](ForgeOS/docs/tweaks-and-patches.md)
 - [Device Tree Sources e Compilacao](ForgeOS/dtb/README.md)
-- [Pipeline de Build de Distro](ForgeOS/distro/README.md)
-- [Manual do ForgeImager](ForgeImager/README.md)
-- [Manual do ForgeDB](ForgeDB/README.md)
 - [Especificacoes Tecnicas BTV E10](docs/btv-e10.md)
-- [Roadmap do Projeto](docs/roadmap.md)
 
 ---
 

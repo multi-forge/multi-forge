@@ -46,6 +46,10 @@ static API_CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
         .expect("Failed to create API HTTP client")
 });
 
+/// In-memory cache for the merged catalog (prevents multiple fetches on startup)
+static CACHED_API_CATALOG: Lazy<tokio::sync::Mutex<Option<(Vec<ApiBoardSummary>, Vec<ApiImage>, Vec<ApiVendor>)>>> =
+    Lazy::new(|| tokio::sync::Mutex::new(None));
+
 /// Helper to build a GET request with optional GitHub token authorization
 fn build_get_request(url: &str) -> reqwest::RequestBuilder {
     let mut req = API_CLIENT.get(url);
@@ -360,8 +364,97 @@ fn get_builtin_catalog() -> (Vec<ApiBoardSummary>, Vec<ApiImage>, Vec<ApiVendor>
     (boards, images, vendors)
 }
 
-/// Fetch all catalog data from GitHub Releases and/or remote manifest
+/// Convert a ForgeDB catalog into the API structs expected by the UI
+fn populate_from_forgedb(
+    catalog: &crate::forgedb::models::ForgeDbCatalog,
+    board_map: &mut HashMap<String, ApiBoardSummary>,
+    vendor_map: &mut HashMap<String, ApiVendor>,
+    image_list: &mut Vec<ApiImage>,
+) {
+    for b in &catalog.boards {
+        let entry = board_map.entry(b.slug.clone()).or_insert_with(|| ApiBoardSummary {
+            slug: b.slug.clone(),
+            name: b.name.clone(),
+            vendor_slug: b.manufacturer.clone(),
+            vendor_name: b.manufacturer.to_uppercase(),
+            support_tier: b.status.clone(),
+            image_count: b.image_count,
+            has_desktop: b.has_desktop,
+            promoted: b.status == "supported",
+            image_url: b.photo_url.clone(),
+            soc: Some(format!("{} {}", b.soc.vendor, b.soc.model)),
+            architecture: Some(b.soc.architecture.clone()),
+            summary: b.description.clone(),
+            qdl: None,
+        });
+        entry.image_count = b.image_count;
+        entry.has_desktop = b.has_desktop;
+    }
+
+    for img in &catalog.images {
+        image_list.push(ApiImage {
+            id: img.id.clone(),
+            board_slug: img.device_id.clone(),
+            variant: img.variant.clone(),
+            distribution: img.distribution.clone(),
+            release: img.version.clone(),
+            kernel_branch: img.kernel.as_ref().map(|k| k.branch.clone()).unwrap_or_else(|| "current".to_string()),
+            kernel_version: img.kernel.as_ref().map(|k| k.version.clone()).unwrap_or_else(|| "6.1.y".to_string()),
+            application: None,
+            promoted: img.recommended,
+            stability: img.stability.clone(),
+            format: img.download.format.clone(),
+            storage: None,
+            companions: vec![],
+            display_variants: vec![],
+            download: ApiDownloadInfo {
+                file_url: img.download.url.clone(),
+                direct_url: img.download.url.clone(),
+                sha_url: img.download.sha256_url.clone(),
+                asc_url: None,
+                torrent_url: None,
+                size_bytes: img.download.size_bytes.unwrap_or(0),
+                updated_at: None,
+            },
+        });
+    }
+
+    for v in &catalog.vendors {
+        vendor_map.entry(v.slug.clone()).or_insert_with(|| ApiVendor {
+            slug: v.slug.clone(),
+            name: v.name.clone(),
+            logo_url: v.logo_url.clone(),
+            website: v.website.clone(),
+            description: v.description.clone(),
+            board_count: v.board_count.unwrap_or(1),
+            partner_tier: Some("platinum".to_string()),
+        });
+    }
+}
+
+/// Fetch all catalog data from ForgeDB CDN, GitHub Releases, and/or remote manifest
 async fn fetch_catalog_from_github() -> Result<(Vec<ApiBoardSummary>, Vec<ApiImage>, Vec<ApiVendor>), String> {
+    let mut cache_guard = CACHED_API_CATALOG.lock().await;
+    if let Some(ref cached) = *cache_guard {
+        return Ok(cached.clone());
+    }
+
+    let mut board_map: HashMap<String, ApiBoardSummary> = HashMap::new();
+    let mut vendor_map: HashMap<String, ApiVendor> = HashMap::new();
+    let mut image_list: Vec<ApiImage> = Vec::new();
+
+    // 1. Primary Source: Load from ForgeDB (jsDelivr CDN -> Pages -> Raw -> Cache -> Embedded)
+    if let Ok(forgedb_catalog) = crate::forgedb::catalog::fetch_forgedb_catalog(&API_CLIENT, &assets_dir()).await {
+        log_info!(
+            "images",
+            "Loaded ForgeDB catalog ({} boards, {} images)",
+            forgedb_catalog.boards.len(),
+            forgedb_catalog.images.len()
+        );
+        populate_from_forgedb(&forgedb_catalog, &mut board_map, &mut vendor_map, &mut image_list);
+    }
+
+    // 2. Supplementary: Try GitHub releases API (ignoring rate-limits gracefully)
     let releases_url = if let Ok(tag) = std::env::var("FORGE_RELEASE_TAG") {
         if !tag.is_empty() {
             config::urls::release_by_tag(&tag)
@@ -372,13 +465,6 @@ async fn fetch_catalog_from_github() -> Result<(Vec<ApiBoardSummary>, Vec<ApiIma
         config::urls::releases()
     };
 
-    log_info!("images", "Fetching releases from {}", releases_url);
-
-    let mut board_map: HashMap<String, ApiBoardSummary> = HashMap::new();
-    let mut vendor_map: HashMap<String, ApiVendor> = HashMap::new();
-    let mut image_list: Vec<ApiImage> = Vec::new();
-
-    // 1. Try to fetch GitHub releases
     let releases_resp = build_get_request(&releases_url).send().await;
 
     match releases_resp {
@@ -506,12 +592,18 @@ async fn fetch_catalog_from_github() -> Result<(Vec<ApiBoardSummary>, Vec<ApiIma
                         });
                     }
                 }
-            } else {
+            } else if board_map.is_empty() {
                 log_warn!("images", "GitHub releases API returned status {}", resp.status());
+            } else {
+                log_debug!("images", "GitHub releases API returned status {} (using ForgeDB catalog)", resp.status());
             }
         }
         Err(e) => {
-            log_warn!("images", "Failed to query GitHub releases API: {}", e);
+            if board_map.is_empty() {
+                log_warn!("images", "Failed to query GitHub releases API: {}", e);
+            } else {
+                log_debug!("images", "GitHub releases API skipped: {} (using ForgeDB catalog)", e);
+            }
         }
     }
 
@@ -556,6 +648,7 @@ async fn fetch_catalog_from_github() -> Result<(Vec<ApiBoardSummary>, Vec<ApiIma
             image_list.len(),
             vendors.len()
         );
+        *cache_guard = Some((boards.clone(), image_list.clone(), vendors.clone()));
         return Ok((boards, image_list, vendors));
     }
 
@@ -571,13 +664,16 @@ async fn fetch_catalog_from_github() -> Result<(Vec<ApiBoardSummary>, Vec<ApiIma
             serde_json::from_str::<Vec<ApiVendor>>(&v_data),
         ) {
             log_info!("images", "Loaded catalog from local cache");
+            *cache_guard = Some((boards.clone(), images.clone(), vendors.clone()));
             return Ok((boards, images, vendors));
         }
     }
 
     // 4. Default built-in catalog fallback
     log_info!("images", "Using built-in default catalog");
-    Ok(get_builtin_catalog())
+    let builtin = get_builtin_catalog();
+    *cache_guard = Some(builtin.clone());
+    Ok(builtin)
 }
 
 /// Fetch all boards from GitHub Releases / cache

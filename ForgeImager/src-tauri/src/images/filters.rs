@@ -28,11 +28,15 @@ pub fn map_board(api: &ApiBoardSummary) -> BoardInfo {
     }
 }
 
-/// Formats the imager can actually write: raw block images (`sd`/`block`) and
+/// Formats the imager can actually write: raw block images (`sd`/`block`/`img`/`img.xz`) and
 /// Qualcomm EDL (`qdl`). VM disk images (`qemu`/`hyperv`) and rootfs tarballs are
 /// not flashable to a device, so they are dropped from the listing.
 fn is_flashable_format(format: &str) -> bool {
-    matches!(format, "sd" | "block" | "qdl")
+    let lower = format.to_lowercase();
+    !matches!(
+        lower.as_str(),
+        "qemu" | "hyperv" | "rootfs" | "tar" | "tar.gz" | "tar.xz" | "tar.zst"
+    )
 }
 
 /// Map a list of API images to frontend-facing ImageInfo, sorted by promoted first then release

@@ -229,18 +229,24 @@ forge-imager/
 │   │   ├── decompress.rs            # Descompressão XZ (multithreaded), GZ, BZ2, ZST
 │   │   ├── cache.rs                 # Cache LRU com limite configurável de tamanho
 │   │   │
-│   │   ├── commands/                # Comandos Tauri IPC (54 no total)
+│   │   ├── commands/                # Comandos Tauri IPC (56 no total)
+│   │   │   ├── forgedb.rs           # detect_board_for_device, get_forgedb_status
 │   │   │   ├── board_queries.rs     # get_boards, get_images_for_board, get_block_devices
 │   │   │   ├── operations.rs        # download_image, flash_image, delete, cleanup
 │   │   │   ├── progress.rs          # get_download/flash_progress, cancel_operation
-│   │   │   ├── custom_image.rs      # select, decompress, detecção de placa pelo nome do arquivo
+│   │   │   ├── custom_image.rs      # select, decompress, deteccao de placa pelo nome do arquivo
 │   │   │   ├── scraping.rs          # get_cached_board_image, get_cached_vendor_logo
-│   │   │   ├── settings.rs          # Comandos get/set de configurações (25+ comandos)
-│   │   │   ├── system.rs            # open_url, locale, logs de frontend, detecção de Forge
+│   │   │   ├── settings.rs          # Comandos get/set de configuracoes (25+ comandos)
+│   │   │   ├── system.rs            # open_url, locale, logs de frontend, deteccao de Forge
 │   │   │   ├── update.rs            # get_github_release, is_app_in_applications
-│   │   │   └── state.rs             # AppState (JSON cacheado, estados de download/gravação)
+│   │   │   └── state.rs             # AppState (catalogo ForgeDB, estados de download/gravacao)
 │   │   │
-│   │   ├── devices/                 # Detecção de dispositivos por plataforma
+│   │   ├── forgedb/                 # Modulo de integracao com ForgeDB
+│   │   │   ├── catalog.rs           # Cascata de busca (jsDelivr, Pages, Raw, Cache, Embutido)
+│   │   │   ├── fingerprint.rs       # Algoritmo de matching por fingerprints
+│   │   │   └── models.rs            # Estruturas de dados do catalogo compilado
+│   │   │
+│   │   ├── devices/                 # Deteccao de dispositivos por plataforma
 │   │   │   ├── types.rs             # Estrutura BlockDevice, normalize_bus_type, detect_sd
 │   │   │   ├── linux.rs             # Leitura do lsblk JSON + checagem de sysfs
 │   │   │   ├── macos.rs             # Framework DiskArbitration nativo (~50ms, filtros APFS)

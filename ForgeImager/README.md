@@ -1,58 +1,136 @@
 # ForgeImager
 
-Ferramenta desktop oficial do ecossistema MultiForge para download, parametrização e gravação de sistemas operacionais em computadores de placa única (SBCs) e TV Boxes (Amlogic, Rockchip, Allwinner).
+Ferramenta desktop oficial do ecossistema MultiForge para identificacao automatica de hardware, download, customizacao e gravacao de sistemas operacionais em computadores de placa unica (SBCs) e TV Boxes (Amlogic, Qualcomm, Rockchip, Allwinner).
 
-Desenvolvido em **Tauri v2, React 19 e Rust**, combinando backend nativo de alta performance com interface gráfica responsiva.
-
----
-
-## Recursos Implementados
-
-- **Injeção Userspace em Ext4 (`crates/forge-write-conf`):** Injeta credenciais de Wi-Fi, usuários e parâmetros de primeiro boot diretamente na partição ext4 do dispositivo de destino sem necessidade de montagem (`mount`) ou privilégios de root no host.
-- **Catálogo Dinâmico via GitHub Releases:** Integração com manifestos remotos (`release_assets/forge-images.json`) para download de imagens oficiais com validação de hash SHA-256.
-- **Gravação Segura e Streaming:** Suporte a descompressão multithread (`.xz`, `.gz`, `.zst`, `.bz2`) com verificação de integridade bloco a bloco.
-- **Recuperação de Emergência Qualcomm EDL / QDL:** Protocolo Sahara/Firehose integrado (`VID 0x05C6`) para gravação em modo MaskROM.
-- **Compilações Nativas Multiplataforma:** Suporte a Linux, Windows e macOS (x86_64 e ARM64).
-- **Internacionalização:** Suporte a 18 idiomas com detecção automática do sistema operacional.
+Desenvolvido em **Tauri v2, React 19 e Rust**, combinando backend nativo de alta performance com interface grafica modular.
 
 ---
 
-## Compatibilidade de Plataformas
+## Como o Sistema Funciona
 
-| Plataforma | Arquitetura | Detalhes |
-|------------|-------------|----------|
-| Windows | x86_64 / ARM64 | Executável `.exe` e instalador `.msi` (requer privilégios de Administrador) |
-| Linux | x86_64 / ARM64 | Pacotes `.deb` e binários independentes `.AppImage` (integração com UDisks2/Polkit) |
-| macOS | Intel / Apple Silicon | Pacotes `.dmg` e `.app` com suporte a autenticação biométrica |
+O ForgeImager opera atraves de quatro subsistemas integrados:
+
+```text
++-------------------------------------------------------------------------+
+|                              ForgeImager                                |
+|                                                                         |
+|  [ Interface React 19 ] <--- IPC (Tauri v2) ---> [ Backend Rust Nativo ]|
+|          |                                                |             |
+|          v                                                v             |
+|   Selecao Manual /                                 Autodeteccao         |
+|   Deteccao Visual                                  via Fingerprints     |
+|          |                                                |             |
++----------|------------------------------------------------|-------------+
+           |                                                |
+           v                                                v
+   [ ForgeDB (CDN jsDelivr) ]                    [ Win32 IOCTL / UDisks2 ]
+   - Catalogo compilado                          - Leitura de PhysicalDrive
+   - Fingerprints de hardware                    - Capacidade e barramento
+   - Metadados de SO e imagens                   - Vendor ID / Product ID
+```
+
+### 1. Integracao com ForgeDB e Catalogo Dinamico
+
+O aplicativo nao possui placas ou imagens fixadas no codigo-fonte. Em vez disso, ele consulta o ForgeDB de forma dinamica atraves de uma cascata de fontes:
+
+1. **CDN Global jsDelivr:** Carrega `catalog.min.json` diretamente do branch principal do repositorio, sem custo e sem limite de requisicoes.
+2. **GitHub Pages:** Segundo nivel de contingencia para o catalogo compilado.
+3. **GitHub Raw:** Terceiro nivel de contingencia.
+4. **Cache Local em Disco:** Armazena localmente a ultima versao valida do catalogo para permitir uso offline.
+5. **Catalogo Embutido (Fallback):** Snapshot estatico compilado diretamente dentro do binario Rust para garantir funcionamento em primeiro boot sem internet.
+
+### 2. Autodeteccao de Dispositivos por Fingerprints
+
+Ao conectar uma TV Box, cartao SD ou pendrive, o backend nativo analisa os identificadores de baixo nivel do hardware e compara com as assinaturas cadastradas no ForgeDB:
+
+- **Assinatura de Armazenamento (Storage Model):** Casamento por padroes glob sobre o nome do modelo retornado pelas chamadas de IOCTL (ex: `*S905X2*`, `*BTV*E10*`, `*SEI510*`).
+- **Identificadores USB (VID/PID):** Deteccao de chips em modo de recuperacao (MaskROM / EDL / Sahara).
+- **Faixa de Capacidade:** Validacao heuristica do tamanho de memoria flash declarada para o modelo.
+- **Assinatura Device Tree (Linux):** Leitura de `/proc/device-tree/compatible` para placas rodando sob ambiente Linux.
+
+Quando uma correspondencia atinge a pontuacao minima de confianca, o ForgeImager pre-seleciona a fabricante, a placa e a imagem recomendada, exibindo o status de autodeteccao na interface.
+
+### 3. Pipeline de Gravacao e Descompressao
+
+- **Streaming com Descompressao em Tempo Real:** Suporte a arquivos `.xz` (multi-thread via `lzma-rust2`), `.gz`, `.zst` e `.bz2`.
+- **Verificacao Criptografica SHA-256:** Validacao do fluxo de dados com deteccao antecipada de corrupcao.
+- **Injecao Userspace Ext4 (`crates/forge-write-conf`):** Gravacao direta de arquivos de autoconfiguracao (credenciais Wi-Fi, usuario, layout de teclado) dentro da particao ext4 de destino sem exigir montagem de sistema de arquivos no sistema operacional hospedeiro.
+- **Gravacao Qualcomm EDL (Modo Sahara):** Comunicacao nativa com dispositivos Qualcomm via protocolo Firehose (`VID 0x05C6`, `PID 0x9008`).
 
 ---
 
-## Desenvolvimento e Compilação
+## Estrutura do Codigo
 
-### Dependências
-- Node.js >= 18 e pnpm >= 9
-- Rust Toolchain (cargo, rustc >= 1.77)
-- Build Essentials (no Linux: `libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`)
-
-### Comandos de Compilação
-
-```bash
-cd ForgeImager
-
-# Instalação de dependências:
-pnpm install
-
-# Execução em modo de desenvolvimento (com hot-reload):
-pnpm tauri dev
-
-# Geração de pacotes de produção:
-pnpm tauri build
+```text
+ForgeImager/
+|-- src/                              # Frontend React 19 + TypeScript
+|   |-- App.tsx                       # Fluxo principal e maquina de estados
+|   |-- components/                   # Modais, selecao de placas, barra de progresso
+|   |-- hooks/                        # Hooks IPC para comunicacao com o Tauri
+|   `-- locales/                      # Arquivos de internacionalizacao (18 idiomas)
+|-- src-tauri/                        # Backend Rust
+|   |-- src/
+|   |   |-- main.rs                  # Ponto de entrada e registro de comandos IPC
+|   |   |-- forgedb/                 # Modulo de integracao com ForgeDB
+|   |   |   |-- catalog.rs           # Cascata de busca (jsDelivr, Pages, Cache)
+|   |   |   |-- fingerprint.rs       # Algoritmo de matching e autodeteccao
+|   |   |   `-- models.rs            # Estruturas de dados do catalogo
+|   |   |-- commands/                # 56 comandos IPC expostos ao React
+|   |   |   |-- forgedb.rs           # Comandos de autodeteccao e status
+|   |   |   |-- board_queries.rs     # Consulta de fabricantes e placas
+|   |   |   |-- operations.rs        # Download, descompressao e gravacao
+|   |   |   `-- state.rs             # Estado global da aplicacao em memoria
+|   |   |-- devices/                 # Enumeracao de discos por plataforma
+|   |   |   |-- windows.rs           # Win32 IOCTLs (PhysicalDrive0-31)
+|   |   |   |-- linux.rs             # lsblk + sysfs
+|   |   |   `-- macos.rs             # DiskArbitration framework
+|   |   `-- qdl/                     # Modulo Qualcomm EDL / Sahara
+|   |-- forgedb_builtin.json         # Snapshot do catalogo embutido no binario
+|   `-- Cargo.toml                   # Dependencias Rust
+`-- crates/
+    `-- forge-write-conf/            # Injetor ext4 sem montagem de disco
 ```
 
 ---
 
-## Créditos e Licença
+## Compatibilidade por Plataforma
 
-- Baseado na arquitetura do Armbian Imager
-- Framework Tauri (v2)
-- Licença MIT (consulte o arquivo LICENSE na raiz do repositório)
+| Plataforma | Metodo de Enumeracao | Metodo de Gravacao | Privilegios |
+|------------|----------------------|--------------------|-------------|
+| Windows | Win32 IOCTL (`\\.\PhysicalDrive`) | `CreateFileW` com `FILE_FLAG_WRITE_THROUGH` | Exige Administrador |
+| Linux | `lsblk` JSON + sysfs | UDisks2 file descriptor / direct I/O | Polkit transparente |
+| macOS | DiskArbitration FFI | `authopen` direto em `/dev/rdisk*` | Touch ID / Security.framework |
+
+---
+
+## Como Executar e Compilar
+
+### Pre-requisitos
+- Node.js >= 20.19.0 e npm >= 10
+- Rust Toolchain (rustc >= 1.85.0)
+- Visual Studio Build Tools 2022 (Windows) ou ferramentas nativas C (Linux/macOS)
+- WebView2 Runtime (Windows)
+
+### Comandos de Desenvolvimento
+
+```bash
+cd ForgeImager
+
+# Instalar dependencias do frontend:
+npm install
+
+# Iniciar servidor de desenvolvimento (React + Rust com hot-reload):
+npm run tauri:dev
+
+# Compilar versao de depuracao rapida:
+npm run tauri:build:dev
+
+# Compilar pacote final de producao (NSIS .exe e .msi com LTO):
+npm run tauri:build
+```
+
+---
+
+## Licenca
+
+Distribuido sob licenca MIT. Consulte o arquivo [LICENSE](../LICENSE) na raiz do projeto.
