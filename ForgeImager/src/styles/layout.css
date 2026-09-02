@@ -86,16 +86,15 @@
 }
 
 .logo-symbol {
-  height: 44px;
+  height: 46px;
   width: auto;
   display: block;
   object-fit: contain;
-  margin-top: -5px;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .logo-text {
-  height: 36px;
+  height: 38px;
   width: auto;
   display: block;
   object-fit: contain;
