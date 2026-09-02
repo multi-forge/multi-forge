@@ -90,6 +90,7 @@
   width: auto;
   display: block;
   object-fit: contain;
+  margin-top: -2.5px;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
