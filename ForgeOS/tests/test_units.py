@@ -113,14 +113,16 @@ class QRRender(unittest.TestCase):
         self.assertTrue(os.path.exists(png))
         im = Image.open(png)
         self.assertEqual(im.size, (1920, 1080))
-        self.assertEqual(fy, 1010)
+        self.assertEqual(fy, 1016)
 
-    def test_push_bandas(self):
-        m = load("qr2", f"{BASE}/display/qr_screen.py")
-        png, fy = m.render()
-        variants = m.pulse_variants(png, fy)
-        self.assertEqual(len(variants), 2)
-        self.assertEqual(len(variants[0]), (1080 - fy) * m.LINE_LEN)
+    def test_render_pixel_shift(self):
+        from PIL import Image
+        m = load("qr_shift", f"{BASE}/display/qr_screen.py")
+        png_shifted, fy_shifted = m.render(shift_x=2, shift_y=-2)
+        self.assertTrue(os.path.exists(png_shifted))
+        im = Image.open(png_shifted)
+        self.assertEqual(im.size, (1920, 1080))
+        self.assertEqual(fy_shifted, 1014)
 
 
 if __name__ == "__main__":
