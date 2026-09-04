@@ -43,7 +43,7 @@ node_modules/
 tmp/
 temp/
 
-## AI Assistants & Agent Tools
+## AI Assistants & Agent Tools (local-only, never commit to remote)
 .agents/
 .augment/
 .claude/
@@ -62,12 +62,31 @@ temp/
 .trae/
 .warp/
 .windsurf/
+.aider*
+.codex/
+.cody/
+.copilot/
+.amazonq/
+
+## Agent instruction files (keep local, out of remote)
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.cursorrules
+opencode.json
+opencode.jsonc
+
+## Local AI reference snapshots (pre-cleanup archive convention)
+_ai_reference/
+
+## AI planning docs (working notes, not product docs)
+multiforge_audit_plan.md
+*_audit_plan.md
 
 ## Images generated
 *.img
 *.iso
 *.xz
 
-## Graphify
-graphify-out/cache/
-graphify-out/cost.json
+## Graphify (generated knowledge graph, regenerable via `graphify update .`)
+graphify-out/
