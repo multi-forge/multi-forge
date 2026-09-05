@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ForgeOS — Instalador Wi-Fi</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<style>
+:root{
+  --bg:#f1f5f9; --card:#ffffff; --border:#e2e8f0; --inset:#f8fafc;
+  --field-bd:#cbd5e1;
+  --tx:#0f172a; --mut:#64748b; --lab:#475569;
+  --blue:#2563eb; --blue-d:#1d4ed8; --blue-t:#dbeafe;
+  --green:#16a34a; --green-t:#dcfce7; --green-d:#166534;
+  --red:#dc2626;
+  --amber:#d97706; --amber-t:#fef3c7; --amber-d:#92400e;
+  --toast-bg:#0f172a; --toast-tx:#ffffff;
+  --shade:rgba(15,23,42,.45);
+  --ring:rgba(37,99,235,.15);
+  --bar-off:#cbd5e1;
+}
+html[data-theme="dark"]{
+  --bg:#0f172a; --card:#1e293b; --border:#334155; --inset:#0f172a;
+  --field-bd:#475569;
+  --tx:#f1f5f9; --mut:#94a3b8; --lab:#cbd5e1;
+  --blue:#60a5fa; --blue-d:#93c5fd; --blue-t:rgba(59,130,246,.18);
+  --green:#4ade80; --green-t:rgba(34,197,94,.16); --green-d:#86efac;
+  --red:#f87171;
+  --amber:#fbbf24; --amber-t:rgba(245,158,11,.16); --amber-d:#fcd34d;
+  --toast-bg:#e2e8f0; --toast-tx:#0f172a;
+  --shade:rgba(0,0,0,.62);
+  --ring:rgba(96,165,250,.22);
+  --bar-off:#475569;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{overflow-x:hidden;}
+html{-webkit-text-size-adjust:100%;}
+body{background:var(--bg); color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;
+  max-width:560px; margin:0 auto; padding:16px 16px 32px;
+  -webkit-tap-highlight-color:transparent;}
+button{touch-action:manipulation;}
+header{display:flex; align-items:center; gap:10px; margin:4px 2px 16px;}
+header img{display:block; border-radius:8px;}
+header h1{font-size:1.25rem; font-weight:800; color:var(--tx); flex:1;}
+.badge{font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  border-radius:999px; padding:4px 12px; background:var(--blue-t); color:var(--blue-d);}
+.badge.ok{background:var(--green-t); color:var(--green-d);}
+.badge.warn{background:var(--amber-t); color:var(--amber-d);}
+#btn-theme{background:var(--card); border:1px solid var(--border); border-radius:10px;
+  width:42px; height:42px; display:flex; align-items:center; justify-content:center;
+  color:var(--lab);}
+#btn-theme svg{width:20px; height:20px;}
+.card{background:var(--card); border:1px solid var(--border); border-radius:14px;
+  padding:16px; margin-bottom:16px; box-shadow:0 1px 2px rgba(15,23,42,.06);}
+.card h2{font-size:.95rem; font-weight:700; margin-bottom:8px;}
+.mut{color:var(--mut); font-size:.82rem;}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:var(--tx);}
+.net{display:flex; align-items:center; gap:10px; padding:12px 2px; border-bottom:1px solid var(--border);}
+.net:last-child{border-bottom:none;}
+.skel{border-radius:10px; margin:8px 2px; height:58px; background:var(--inset);
+  border:1px solid var(--border); position:relative; overflow:hidden;}
+.skel::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent 25%,var(--border) 50%,transparent 75%);
+  background-size:200% 100%; animation:sh 1.1s linear infinite;}
+@keyframes sh{to{background-position:-200% 0;}}
+.net>div{min-width:0; flex:1;}
+.net b{font-size:.9rem; display:block; overflow-wrap:anywhere; color:var(--tx);}
+.net small{color:var(--mut); font-size:.72rem; display:flex; align-items:center; gap:6px; margin-top:3px;}
+.pill{font-size:.66rem; font-weight:700; border-radius:999px; padding:2px 8px; white-space:nowrap;
+  background:var(--inset); color:var(--lab); border:1px solid var(--border);}
+.pill.eap{background:var(--amber-t); color:var(--amber-d); border-color:transparent;}
+.pill.open{background:var(--green-t); color:var(--green-d); border-color:transparent;}
+.sig{display:inline-flex; align-items:flex-end; gap:2px; height:14px;}
+.sig i{width:3px; border-radius:1px; background:var(--bar-off);}
+.sig i:nth-child(1){height:5px}.sig i:nth-child(2){height:8px}
+.sig i:nth-child(3){height:11px}.sig i:nth-child(4){height:14px}
+.sig i.on{background:var(--mut);}
+.lock{width:13px; height:13px; color:var(--mut); flex:none;}
+.check{width:22px; height:22px; color:var(--green); flex:none;}
+.connbtn{background:none; border:none; color:var(--blue); font-weight:700; font-size:.85rem;
+  padding:12px 4px 12px 10px; white-space:nowrap; min-height:44px;}
+.btnrow{display:flex; gap:8px; margin-top:12px;}
+.btnsec{flex:1; background:var(--card); border:1px solid var(--field-bd); color:var(--tx);
+  border-radius:12px; padding:12px; font-size:.84rem; font-weight:600; min-height:48px;}
+.btnsec.danger{color:var(--red); border-color:var(--red);}
+input,select{width:100%; font:inherit; font-size:16px; color:var(--tx);
+  background:var(--card); border:1.5px solid var(--field-bd); border-radius:12px;
+  padding:0 12px; margin-top:6px;}
+input{min-height:48px;}
+select{min-height:48px;}
+input:focus,select:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px var(--ring);}
+label{display:block; font-size:.78rem; font-weight:600; color:var(--lab); margin:14px 0 0;}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+#status-line{overflow-wrap:anywhere; font-size:.84rem; color:var(--lab); margin-top:2px;}
+#modal{display:none; position:fixed; inset:0; z-index:50; background:var(--shade);}
+#modal.open{display:block;}
+.sheet{position:absolute; left:0; right:0; bottom:0; max-width:560px; margin:0 auto;
+  background:var(--card); border-radius:20px 20px 0 0; padding:10px 18px calc(20px + env(safe-area-inset-bottom, 0px));
+  max-height:92vh; overflow-y:auto; animation:up .28s cubic-bezier(.2,.9,.3,1);}
+@keyframes up{from{transform:translateY(40px); opacity:.5;}}
+.grab{width:44px; height:5px; background:var(--border); border-radius:99px; margin:2px auto 12px;}
+.sheet h3{font-size:1.05rem; color:var(--tx);}
+.sheetbtns{display:flex; gap:10px; margin-top:16px;}
+#btn-go{flex:1.4; background:var(--blue); color:#fff; border:none; border-radius:12px;
+  padding:14px; font-size:.9rem; font-weight:700; min-height:52px;}
+html[data-theme="dark"] #btn-go{background:#2563eb;}
+#btn-go:disabled{opacity:.6;}
+#btn-cancel{flex:1; background:transparent; border:none; color:var(--lab);
+  font-size:.9rem; font-weight:600; min-height:52px;}
+.pwrow{display:flex; gap:8px; align-items:center;}
+.pwrow input{flex:1; min-width:0;}
+#btn-eye{background:none; border:none; font-size:1.2rem; padding:12px 8px; color:var(--mut); min-width:48px; min-height:48px;}
+#toast{display:none; position:fixed; left:14px; right:14px; bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  margin:0 auto; max-width:520px; background:var(--toast-bg); color:var(--toast-tx);
+  border-radius:12px; padding:12px 16px; font-size:.84rem;
+  box-shadow:0 10px 25px -5px rgba(0,0,0,.35);}
+#toast.err{background:var(--red); color:#fff;}
+#toast.show{display:block;}
+.banner{border-radius:12px; padding:12px 14px; font-size:.84rem; margin-bottom:16px;
+  display:none; background:var(--blue-t); color:var(--tx);}
+.banner.show{display:block;}
+.banner.warn{background:var(--amber-t);}
+.banner b{font-weight:700;}
+.hidden{display:none !important;}
+.foot{text-align:center; color:var(--mut); opacity:.8; font-size:.72rem; margin-top:16px;
+  padding-bottom:env(safe-area-inset-bottom, 0px);}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="/logo-sm.png" width="34" height="34" alt="ForgeOS">
+  <h1>ForgeOS</h1>
+  <span class="badge" id="mode-badge">AP</span>
+  <button id="btn-theme" aria-label="Alternar tema claro/escuro">
+    <svg id="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg id="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+  </button>
+</header>
+
+<div class="banner" id="conn-banner"></div>
+
+<section class="card">
+  <h2>Status</h2>
+  <div id="status-line">Verificando...</div>
+  <div class="btnrow">
+    <button id="btn-rescan" class="btnsec">Escanear redes</button>
+    <button id="btn-disconnect" class="btnsec danger hidden">Restaurar AP</button>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Redes Wi-Fi <span class="mut" id="net-count"></span></h2>
+  <div id="nets"><p class="mut">Escaneando...</p></div>
+  <div class="btnrow">
+    <button id="btn-hidden" class="btnsec">Rede oculta / manual</button>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Ponto de acesso</h2>
+  <div class="mut mono" id="ap-line">192.168.4.1</div>
+</section>
+
+<div class="foot">ForgeOS Provisionador &middot; sem internet no AP &eacute; normal</div>
+
+<div id="modal"><div class="sheet">
+  <div class="grab"></div>
+  <h3 id="m-title">Conectar</h3>
+  <p class="mut" id="m-sub"></p>
+  <form id="f">
+    <label>Nome da rede (SSID)<input id="in-ssid" required maxlength="32"></label>
+    <label>Seguran&ccedil;a
+      <select id="in-sec">
+        <option value="psk">WPA / WPA2 Pessoal (PSK)</option>
+        <option value="open">Aberta (sem senha)</option>
+        <option value="eap">WPA Empresarial (EAP)</option>
+      </select>
+    </label>
+    <div id="g-psk">
+      <label>Senha (8&ndash;63 caracteres)</label>
+      <div class="pwrow">
+        <input id="in-pass" type="password" minlength="8" maxlength="63" placeholder="Senha da rede">
+        <button type="button" id="btn-eye" aria-label="Mostrar senha">&#128065;</button>
+      </div>
+    </div>
+    <div id="g-eap" class="hidden">
+      <label>M&eacute;todo EAP
+        <select id="in-method">
+          <option>PEAP</option><option>TTLS</option><option>PWD</option><option>TLS</option>
+        </select>
+      </label>
+      <label>Autentica&ccedil;&atilde;o interna (phase2)
+        <select id="in-phase2">
+          <option>MSCHAPV2</option><option>PAP</option><option>GTC</option>
+        </select>
+      </label>
+      <label>Identidade (usu&aacute;rio / RA)<input id="in-ident" placeholder="usuario@instituicao.br"></label>
+      <label>Senha<input id="in-epass" type="password" placeholder="Senha institucional"></label>
+      <label>Identidade an&ocirc;nima (opcional)<input id="in-anon" placeholder="anonymous@instituicao.br"></label>
+      <label>Dom&iacute;nio (opcional)<input id="in-domain" placeholder="instituicao.br"></label>
+    </div>
+    <div class="sheetbtns">
+      <button type="button" id="btn-cancel">Cancelar</button>
+      <button type="submit" id="btn-go">Conectar</button>
+    </div>
+  </form>
+</div></div>
+
+<div id="toast"></div>
+
+<script>
+function initTheme(){
+  var root = document.documentElement;
+  var saved = null;
+  try{ saved = localStorage.getItem("forge_theme"); }catch(e){}
+  var dark = saved ? saved === "dark"
+    : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  root.setAttribute("data-theme", dark ? "dark" : "light");
+  syncThemeIcon(dark);
+}
+function syncThemeIcon(dark){
+  document.getElementById("ic-moon").style.display = dark ? "none" : "block";
+  document.getElementById("ic-sun").style.display = dark ? "block" : "none";
+}
+function toggleTheme(){
+  var root = document.documentElement;
+  var dark = root.getAttribute("data-theme") !== "dark";
+  root.setAttribute("data-theme", dark ? "dark" : "light");
+  try{ localStorage.setItem("forge_theme", dark ? "dark" : "light"); }catch(e){}
+  syncThemeIcon(dark);
+}
+document.getElementById("btn-theme").addEventListener("click", toggleTheme);
+
+var toastT = null;
+function toast(msg, err){
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = err ? "err show" : "show";
+  clearTimeout(toastT);
+  toastT = setTimeout(function(){ t.className = ""; }, 4500);
+}
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+  });
+}
+function secOf(n){
+  var f = (n.flags || "").toUpperCase();
+  if (f.indexOf("EAP") >= 0 || f.indexOf("802.1X") >= 0 || n.encryption === "eap") return "eap";
+  if (n.encryption === "open") return "open";
+  return "psk";
+}
+function sigLevel(rssi){
+  rssi = parseInt(rssi, 10);
+  if (rssi >= -55) return 4;
+  if (rssi >= -67) return 3;
+  if (rssi >= -77) return 2;
+  return 1;
+}
+function bars(n){
+  var h = '<span class="sig">';
+  for (var i = 0; i < 4; i++) h += '<i class="' + (i < n ? "on" : "") + '"></i>';
+  return h + "</span>";
+}
+var LOCK = '<svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+var CHECK = '<svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>';
+function pillFor(s){
+  if (s === "eap") return '<span class="pill eap">EAP</span>';
+  if (s === "open") return '<span class="pill open">Aberta</span>';
+  return '<span class="pill">WPA/WPA2</span>';
+}
+var currentSsid = null;
+
+async function status(){
+  try{
+    var r = await fetch("/api/status");
+    var s = await r.json();
+    var b = document.getElementById("mode-badge");
+    var line = document.getElementById("status-line");
+    var banner = document.getElementById("conn-banner");
+    var dis = document.getElementById("btn-disconnect");
+    banner.className = "banner";
+    dis.classList.add("hidden");
+    currentSsid = s.client_connected ? s.client_ssid : null;
+    if (s.provisioning){
+      b.textContent = "CONECTANDO"; b.className = "badge warn";
+      var ph = (s.progress && s.progress.phase) || "";
+      var phtxt = ph === "dhcp" ? "Obtendo endereco IP..."
+        : ph === "gateway" ? "Verificando internet..."
+        : "Associando a rede Wi-Fi...";
+      line.textContent = phtxt + " A TV mostra o passo a passo.";
+      banner.textContent = "Conectando... aguarde sem fechar esta pagina.";
+      banner.classList.add("show", "warn");
+    } else if (s.client_connected){
+      b.textContent = "CONECTADO"; b.className = "badge ok";
+      line.innerHTML = "Rede: <b>" + esc(s.client_ssid) + "</b> &middot; IP: <span class='mono'>" + esc(s.client_ip) + "</span>";
+      banner.innerHTML = "Conectado a <b>" + esc(s.client_ssid) + "</b> (" + esc(s.client_ip) + "). Voce ja pode fechar esta pagina.";
+      banner.classList.add("show");
+      dis.classList.remove("hidden");
+    } else {
+      b.textContent = "AP"; b.className = "badge";
+      line.innerHTML = "Ponto de acesso ativo" + (s.ssid ? ": <b>" + esc(s.ssid) + "</b>" : "") + " &middot; escolha uma rede abaixo.";
+      if (s.last_failed) line.innerHTML += "<br>Ultima tentativa falhou — confira a senha.";
+    }
+    if (window._netsReady) paintNets();
+  } catch(e){}
+}
+
+var _nets = [];
+function paintNets(){
+  var box = document.getElementById("nets");
+  var html = "";
+  var shown = 0;
+  for (var k = 0; k < _nets.length; k++){
+    var n = _nets[k];
+    shown++;
+    var s = secOf(n);
+    var isConn = currentSsid && n.ssid === currentSsid;
+    var right = isConn ? CHECK :
+      "<button class='connbtn' data-ssid=\"" + esc(n.ssid) + "\" data-sec=\"" + s + "\">Conectar</button>";
+    html += "<div class='net'><div><b>" + esc(n.ssid) + "</b>" +
+      "<small>" + n.rssi + " dBm &middot; canal " + n.channel + " " +
+      bars(sigLevel(n.rssi)) + " " + pillFor(s) + " " +
+      (s !== "open" ? LOCK : "") + "</small></div>" + right + "</div>";
+  }
+  box.innerHTML = html || "<p class='mut'>Nenhuma rede encontrada.</p>";
+  document.getElementById("net-count").textContent = "(" + shown + ")";
+  var btns = box.querySelectorAll("button[data-ssid]");
+  for (var i = 0; i < btns.length; i++){
+    btns[i].addEventListener("click", function(){
+      openModal(this.getAttribute("data-ssid"), this.getAttribute("data-sec"));
+    });
+  }
+}
+
+async function scan(){
+  var box = document.getElementById("nets");
+  box.innerHTML = "<div class='skel'></div><div class='skel'></div><div class='skel'></div>";
+  try{
+    var r = await fetch("/api/scan");
+    var d = await r.json();
+    _nets = (d.networks || []).slice().sort(function(a,b){ return b.rssi - a.rssi; });
+    window._netsReady = true;  // flag separada: window._nets colidiria com var _nets
+    paintNets();
+  } catch(e){
+    box.innerHTML = "<p class='mut'>Falha no escaneamento. Toque em Escanear redes.</p>";
+  }
+}
+
+function openModal(ssid, sec){
+  document.getElementById("m-title").textContent = ssid ? "Conectar: " + ssid : "Rede oculta";
+  document.getElementById("m-sub").textContent = ssid ? "Confira a seguranca e digite a credencial." : "Digite SSID e credencial manualmente.";
+  document.getElementById("in-ssid").value = ssid || "";
+  document.getElementById("in-ssid").readOnly = !!ssid;
+  document.getElementById("in-sec").value = sec || "psk";
+  syncSec();
+  document.getElementById("modal").classList.add("open");
+}
+function closeModal(){ document.getElementById("modal").classList.remove("open"); }
+function syncSec(){
+  var v = document.getElementById("in-sec").value;
+  document.getElementById("g-psk").classList.toggle("hidden", v !== "psk");
+  document.getElementById("g-eap").classList.toggle("hidden", v !== "eap");
+  document.getElementById("in-pass").required = (v === "psk");
+}
+
+document.getElementById("in-sec").addEventListener("change", syncSec);
+document.getElementById("btn-cancel").addEventListener("click", closeModal);
+document.getElementById("modal").addEventListener("click", function(e){
+  if (e.target === this) closeModal();
+});
+document.getElementById("btn-rescan").addEventListener("click", scan);
+document.getElementById("btn-hidden").addEventListener("click", function(){ openModal("", "psk"); });
+document.getElementById("btn-eye").addEventListener("click", function(){
+  var i = document.getElementById("in-pass");
+  i.type = (i.type === "password") ? "text" : "password";
+});
+document.getElementById("btn-disconnect").addEventListener("click", async function(){
+  if (!confirm("Voltar ao modo ponto de acesso?")) return;
+  await fetch("/api/reset", {method:"POST"});
+  setTimeout(status, 2000);
+});
+document.getElementById("f").addEventListener("submit", async function(e){
+  e.preventDefault();
+  var btn = document.getElementById("btn-go");
+  btn.disabled = true; btn.textContent = "Enviando...";
+  var sec = document.getElementById("in-sec").value;
+  var body = { ssid: document.getElementById("in-ssid").value.trim(), mode: sec === "open" ? "psk" : sec, password: "" };
+  if (sec === "psk") body.password = document.getElementById("in-pass").value;
+  if (sec === "eap"){
+    body.method = document.getElementById("in-method").value;
+    body.phase2 = document.getElementById("in-phase2").value;
+    body.identity = document.getElementById("in-ident").value.trim();
+    body.password = document.getElementById("in-epass").value;
+    body.anonymous_identity = document.getElementById("in-anon").value.trim();
+    body.domain = document.getElementById("in-domain").value.trim();
+  }
+  try{
+    var r = await fetch("/api/provision", {method:"POST",
+      headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)});
+    var d = await r.json();
+    if (r.ok){ toast("Tentativa enviada. Aguarde sem fechar."); closeModal(); }
+    else toast(d.error || "Falha ao iniciar.", true);
+  } catch(e){ toast("Erro de comunicacao.", true); }
+  btn.disabled = false; btn.textContent = "Conectar";
+  setTimeout(status, 2500);
+});
+
+initTheme();
+status(); scan();
+setInterval(status, 2000);
+</script>
+</body>
+</html>

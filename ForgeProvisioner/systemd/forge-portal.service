@@ -1,14 +1,16 @@
 [Unit]
-Description=ForgeOS Captive Portal Web UI
+Description=ForgeOS Portal & Telemetry Engine (Go + Chi Native)
 After=forge-ap.service
 Wants=forge-ap.service
 
 [Service]
 Type=simple
 KillMode=process
-ExecStart=/usr/bin/python3 /opt/forgeos/web/server.py
+Environment=PORT=8080
+Environment=FORGEOS_BASE=/opt/forgeos
+ExecStart=/usr/local/bin/forge-portal
 Restart=always
-RestartSec=5
+RestartSec=3
 StandardOutput=append:/var/log/forge-portal.log
 StandardError=inherit
 
