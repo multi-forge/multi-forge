@@ -11,8 +11,10 @@
 *.yml text eol=lf
 *.md text eol=lf
 *.sh text eol=lf
-*.yml text eol=lf
-ForgeOS/branding/* text eol=lf
+ForgeProvisioner/branding/* text eol=lf
+ForgeProvisioner/bin/*.sh text eol=lf
+ForgeProvisioner/install.sh text eol=lf
+ForgeCore/builder/*.sh text eol=lf
 
 # Denote binary files (do not normalize)
 *.png binary

@@ -32,9 +32,18 @@ IMAGE_PROJECT = "ubuntu-os-cloud"
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DOWNLOADS_DIR = os.path.join(os.environ.get("USERPROFILE", r"C:\Users\Aluno"), "Downloads")
-GCLOUD_CMD = os.path.join(os.environ.get("USERPROFILE", r"C:\Users\Aluno"), "google-cloud-sdk", "bin", "gcloud.cmd")
-if not os.path.exists(GCLOUD_CMD):
-    GCLOUD_CMD = "gcloud"
+GCLOUD_CANDIDATES = [
+    r"C:\Users\Aluno\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd",
+    os.path.join(os.environ.get("LOCALAPPDATA", r"C:\Users\Aluno\AppData\Local"), "Google", "Cloud SDK", "google-cloud-sdk", "bin", "gcloud.cmd"),
+    os.path.join(os.environ.get("USERPROFILE", r"C:\Users\Aluno"), "google-cloud-sdk", "bin", "gcloud.cmd"),
+    "gcloud.cmd",
+    "gcloud"
+]
+GCLOUD_CMD = "gcloud"
+for c in GCLOUD_CANDIDATES:
+    if os.path.exists(c):
+        GCLOUD_CMD = c
+        break
 
 
 def log(msg):
@@ -51,7 +60,7 @@ def err(msg):
 
 def run_gcloud(args, check=True):
     env = os.environ.copy()
-    env["CLOUDSDK_PYTHON"] = r"C:\Users\Aluno\AppData\Local\Programs\Python\Python312\python.exe"
+    env["CLOUDSDK_PYTHON"] = sys.executable
     cmd = [GCLOUD_CMD] + args + [f"--project={PROJECT}"]
     log(f"Executando: {' '.join(cmd)}")
     res = subprocess.run(cmd, text=True, capture_output=True, env=env)
@@ -91,7 +100,7 @@ def create_spot_vm():
 def wait_for_ssh():
     log("2. Aguardando inicialização do SSH na VM (até 90s)...")
     env = os.environ.copy()
-    env["CLOUDSDK_PYTHON"] = r"C:\Users\Aluno\AppData\Local\Programs\Python\Python312\python.exe"
+    env["CLOUDSDK_PYTHON"] = sys.executable
     
     for i in range(18):
         time.sleep(5)
@@ -130,13 +139,13 @@ def build_and_download():
         "sudo bash -c '"
         "mkdir -p /root && "
         "tar -xzf /tmp/multiforge.tar.gz -C /root/ && "
-        "chmod +x /root/multi-forge/ForgeOS/distro/build-image.sh && "
-        "OUTPUT_DIR=/root/distro_output /root/multi-forge/ForgeOS/distro/build-image.sh"
+        "chmod +x /root/multi-forge/ForgeCore/builder/*.sh && "
+        "OUTPUT_DIR=/root/distro_output /root/multi-forge/ForgeCore/builder/build-image.sh"
         "'"
     )
     
     env = os.environ.copy()
-    env["CLOUDSDK_PYTHON"] = r"C:\Users\Aluno\AppData\Local\Programs\Python\Python312\python.exe"
+    env["CLOUDSDK_PYTHON"] = sys.executable
     
     res = subprocess.run(
         [GCLOUD_CMD, "compute", "ssh", INSTANCE_NAME, f"--zone={ZONE}", f"--project={PROJECT}", f"--command={remote_script}", "--quiet"],
@@ -161,7 +170,7 @@ def build_and_download():
 def delete_spot_vm():
     log(f"6. DESTRUINDO INSTÂNCIA SPOT {INSTANCE_NAME} (Economia 100%)...")
     env = os.environ.copy()
-    env["CLOUDSDK_PYTHON"] = r"C:\Users\Aluno\AppData\Local\Programs\Python\Python312\python.exe"
+    env["CLOUDSDK_PYTHON"] = sys.executable
     subprocess.run(
         [GCLOUD_CMD, "compute", "instances", "delete", INSTANCE_NAME, f"--zone={ZONE}", f"--project={PROJECT}", "--quiet"],
         capture_output=True, text=True, env=env

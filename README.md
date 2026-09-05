@@ -13,7 +13,8 @@ Plataforma open-source para identificacao, compatibilizacao, gravacao, provision
 | Componente | Stack | Entradas Principais | Status | Testes / Cobertura |
 |------------|-------|---------------------|--------|-------------------|
 | **[ForgeImager](ForgeImager/)** | Tauri v2, React 19, Rust | `src-tauri/src/main.rs`, `src-tauri/src/forgedb/`, `App.tsx`, `crates/forge-write-conf` | Producao (98%) | 46 testes unitarios Rust, CI Matrix (x64/ARM64 Linux, Windows, macOS) |
-| **[ForgeOS](ForgeOS/)** | Linux 6.18, Python 3, Bash, systemd | `bin/start-ap.sh`, `web/server.py`, `display/display_manager.py`, `bin/watchdog.sh` | Homologado (95%) | 34/34 testes de integracao e E2E |
+| **[ForgeCore](ForgeCore/)** | Linux 6.18, DTB Enterprise, QEMU, GCP Spot | `builder/build-image.sh`, `builder/gcp-spot-launcher.py`, `builder/qemu-verify-boot.sh`, `dtb/` | Producao (100%) | Teste virtual QEMU ARM64, 0 erros no kernel/rootfs |
+| **[ForgeProvisioner](ForgeProvisioner/)** | Python 3, Framebuffer, Bash, systemd | `bin/start-ap.sh`, `web/server.py`, `display/forge_kiosk.py`, `bin/watchdog.sh`, `branding/` | Homologado (98%) | 34/34 testes de integracao e E2E, MOTD dinâmico |
 | **[ForgeDB](ForgeDB/)** | YAML, JSON Schema (Draft 2020-12), Node.js CI | `devices/btv/e10/device.yaml`, `schemas/*.schema.json`, `dist/catalog.json` | Operacional (100%) | Validacao automatizada via Ajv e GitHub Actions |
 | **[ForgeModules](ForgeModules/)** | Python (PyQt5, FastAPI, LangChain) | `totem/main_cli.py`, `totem/main_gui.py`, `sub-modulos/web-scraping/api/main.py` | Funcional (45%) | Execucao local e em container |
 
@@ -23,7 +24,7 @@ Plataforma open-source para identificacao, compatibilizacao, gravacao, provision
 
 ## Arquitetura do Sistema
 
-O projeto e estruturado em 4 componentes interdependentes:
+O projeto e estruturado em 5 componentes interdependentes:
 
 ```text
 multi-forge/
@@ -37,13 +38,18 @@ multi-forge/
 |   |-- src-tauri/      # Comandos IPC em Rust, streaming I/O, EDL/QDL Sahara, modulo ForgeDB
 |   |-- crates/         # forge-write-conf (injecao ext4 em userspace sem root)
 |   `-- src/            # Interface grafica, catalogo dinamico, seletor de imagens
-|-- ForgeOS/            # Distribuicao Linux e stack de provisionamento on-device
-|   |-- bin/            # Scripts de controle de rede (start-ap.sh, apply-sta.sh, watchdog.sh)
-|   |-- web/            # Portal HTTP offline, REST API e interface de configuracao
-|   |-- display/        # Kiosk HDMI direto em framebuffer (/dev/fb0)
+|-- ForgeCore/          # Núcleo do SO, Kernel, DTBs, Distro Builder e Verificação Virtual QEMU
+|   |-- builder/        # Pipeline de compilação da imagem (.img.xz), Spot VM e teste QEMU
 |   |-- dtb/            # Device Tree Sources (.dts) e Blobs compilados (.dtb)
-|   |-- distro/         # Pipeline de build de imagens em nuvem e local
-|   `-- tests/          # Suite de testes unitarios e de integracao
+|   `-- docs/           # Documentação de kernel, patches e arquitetura
+|-- ForgeProvisioner/   # Stack de provisionamento on-device, interface cativa e kiosk
+|   |-- bin/            # Scripts de controle de rede (start-ap.sh, apply-client.sh, watchdog.sh)
+|   |-- branding/       # Identidade visual, banner Neofetch e release metadata
+|   |-- display/        # Kiosk HDMI v3.0 direto em framebuffer (/dev/fb0)
+|   |-- network/        # Gestor de Wi-Fi cliente e AP autônomo
+|   |-- systemd/        # Unidades de serviço systemd do provisionador
+|   |-- web/            # Portal HTTP offline, REST API e interface de configuração SPA
+|   `-- install.sh      # Instalador da stack on-device (-> /opt/forgeos)
 `-- ForgeModules/       # Modulos operacionais para aplicacoes de borda
     |-- totem/          # Mina - Assistente Virtual Academica (PyQt5 + ONNX)
     `-- sub-modulos/    # Coletor Academico & RAG Agent (FastAPI + LangChain)
@@ -158,9 +164,10 @@ docker compose up -d
 - [Guia de Desenvolvimento do ForgeImager](ForgeImager/DEVELOPMENT.md)
 - [Manual do ForgeDB](ForgeDB/README.md)
 - [Guia de Contribuicao de Novos Dispositivos](ForgeDB/CONTRIBUTING.md)
-- [Documentacao Tecnica do ForgeOS](ForgeOS/README.md)
-- [Manual de Tweaks e Patches](ForgeOS/docs/tweaks-and-patches.md)
-- [Device Tree Sources e Compilacao](ForgeOS/dtb/README.md)
+- [Documentacao Tecnica do ForgeCore](ForgeCore/README.md)
+- [Guia do ForgeProvisioner](ForgeProvisioner/README.md)
+- [Manual de Tweaks e Patches](ForgeCore/docs/tweaks-and-patches.md)
+- [Device Tree Sources e Compilacao](ForgeCore/dtb/README.md)
 - [Especificacoes Tecnicas BTV E10](docs/btv-e10.md)
 
 ---
