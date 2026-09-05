@@ -1,9 +1,9 @@
 # ForgeOS identity (lido pelo banner, portal e scripts). Instalado em /etc/forgeos-release.
 NAME=ForgeOS
-PRETTY_NAME="ForgeOS 1.1.0 (BTV Express E10)"
+PRETTY_NAME="ForgeOS 1.2.0 (BTV Express E10)"
 ID=forgeos
-VERSION=1.1.0
-VERSION_ID=1.1.0
+VERSION=1.2.0
+VERSION_ID=1.2.0
 VARIANT="BTV Express E10"
 BASE_ID=armbian
 BASE_PRETTY="Armbian GNU/Linux 13 (trixie)"

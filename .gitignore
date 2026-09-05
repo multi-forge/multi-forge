@@ -39,6 +39,11 @@ node_modules/
 ## Logs
 *.log
 
+## Distro Builds
+distro_output/
+*.img
+*.img.xz
+
 ## Temporary
 tmp/
 temp/

@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 WORK_DIR="/tmp/forgeos_distro_build"
 OUTPUT_DIR="${OUTPUT_DIR:-$REPO_ROOT/distro_output}"
-DISTRO_NAME="ForgeOS_BTV_E10_v1.1.0"
+DISTRO_NAME="ForgeOS_BTV_E10_v1.2.0"
 BASE_IMG_URL="https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_trixie_arm64_server_2026.08/Armbian_26.08.0_amlogic_s905x2_trixie_6.18.44_server_2026.08.15.img.gz"
 
 log() { echo -e "\033[1;34m[BUILDER]\033[0m $*"; }

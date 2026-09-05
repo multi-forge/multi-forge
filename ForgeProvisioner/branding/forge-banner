@@ -78,7 +78,7 @@ else
 fi
 
 # --- 1. Identidade ForgeOS ---------------------------------------------------
-FORGE_VER="1.1.0"
+FORGE_VER="1.2.0"
 FORGE_VARIANT="BTV Express E10"
 if [ -r "$RELEASE_FILE" ]; then
     v=$(sed -n 's/^VERSION=//p' "$RELEASE_FILE" 2>/dev/null | head -n1 | tr -d '"')
