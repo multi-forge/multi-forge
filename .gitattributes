@@ -12,6 +12,7 @@
 *.md text eol=lf
 *.sh text eol=lf
 *.yml text eol=lf
+ForgeOS/branding/* text eol=lf
 
 # Denote binary files (do not normalize)
 *.png binary

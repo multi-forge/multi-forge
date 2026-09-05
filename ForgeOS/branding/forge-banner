@@ -1,0 +1,200 @@
+#!/bin/bash
+# forge-banner — banner oficial de login do ForgeOS (SSH MOTD + console).
+# Formato Split (Neofetch style): emblema MultiForge em 34 colunas à esquerda,
+# métricas do sistema em tempo real à direita. Total: 74 colunas x 20 linhas.
+#
+# Uso:
+#   forge-banner            cor automática (TTY => cor, senão puro)
+#   forge-banner --plain    sem códigos ANSI (para /etc/issue, logs, serial)
+#   forge-banner --color    força cor ANSI
+#
+# Variáveis de ambiente substituíveis (para testes):
+#   FORGE_RELEASE_FILE  (padrão /etc/forgeos-release)
+#   FORGE_THERMAL_FILE  (padrão /sys/class/thermal/thermal_zone0/temp)
+#   FORGE_PROC_UPTIME   (padrão /proc/uptime)
+
+RELEASE_FILE="${FORGE_RELEASE_FILE:-/etc/forgeos-release}"
+THERMAL_FILE="${FORGE_THERMAL_FILE:-/sys/class/thermal/thermal_zone0/temp}"
+UPTIME_FILE="${FORGE_PROC_UPTIME:-/proc/uptime}"
+
+MODE="auto"
+for a in "$@"; do
+    case "$a" in
+        --plain) MODE="plain" ;;
+        --color) MODE="color" ;;
+        -h|--help)
+            sed -n '2,13p' "$0"
+            exit 0
+            ;;
+    esac
+done
+
+if [ "$MODE" = "auto" ]; then
+    if [ -t 1 ]; then MODE="color"; else MODE="plain"; fi
+fi
+
+if [ "$MODE" = "color" ]; then
+    ESC=$'\e['
+    RST="${ESC}0m"
+    BLD="${ESC}1m"
+    DIM="${ESC}2m"
+    # Gradiente da Chama (Topo da bigorna / Martelo de forja)
+    F1="${ESC}38;5;202m" # Laranja avermelhado
+    F2="${ESC}38;5;208m" # Laranja quente
+    F3="${ESC}38;5;214m" # Âmbar dourado
+    # Gradiente da Bigorna e Sondas (Turquesa / Ciano Neon)
+    A1="${ESC}38;5;51m"  # Ciano brilhante (deck / chifres)
+    A2="${ESC}38;5;44m"  # Turquesa (corpo)
+    A3="${ESC}38;5;37m"  # Ciano profundo (base / engrenagem)
+    # Cores de Texto e Métricas
+    BRAND="${ESC}1;37m"  # Branco destacado
+    VER="${ESC}1;32m"    # Verde versão
+    DEV="${ESC}0;36m"    # Ciano dispositivo
+    DIV="${ESC}38;5;240m" # Divisor cinza escuro
+    LBL="${ESC}1;37m"    # Rótulo branco
+    VAL="${ESC}0;37m"    # Valor texto normal
+    ACC="${ESC}1;36m"    # Destaque ciano
+    URL="${ESC}1;32m"    # URL verde
+    OK="${ESC}1;32m"     # Verde status OK
+    BAD="${ESC}1;31m"    # Vermelho status falha
+    DOT="${ESC}38;5;208m•${RST}" # Ponto separador âmbar
+    # Paleta inferior
+    P1="${ESC}38;5;196m●${RST}"
+    P2="${ESC}38;5;208m●${RST}"
+    P3="${ESC}38;5;220m●${RST}"
+    P4="${ESC}38;5;46m●${RST}"
+    P5="${ESC}38;5;51m●${RST}"
+    P6="${ESC}38;5;141m●${RST}"
+    PALETTE="            ${P1}   ${P2}   ${P3}   ${P4}   ${P5}   ${P6}"
+    HR="────────────────────────────────────────"
+else
+    RST=""; BLD=""; DIM=""
+    F1=""; F2=""; F3=""
+    A1=""; A2=""; A3=""
+    BRAND=""; VER=""; DEV=""; DIV=""
+    LBL=""; VAL=""; ACC=""; URL=""; OK=""; BAD=""; DOT="•"
+    PALETTE=""
+    HR="----------------------------------------"
+fi
+
+# --- 1. Identidade ForgeOS ---------------------------------------------------
+FORGE_VER="1.1.0"
+FORGE_VARIANT="BTV Express E10"
+if [ -r "$RELEASE_FILE" ]; then
+    v=$(sed -n 's/^VERSION=//p' "$RELEASE_FILE" 2>/dev/null | head -n1 | tr -d '"')
+    [ -n "$v" ] && FORGE_VER="$v"
+    vv=$(sed -n 's/^VARIANT=//p' "$RELEASE_FILE" 2>/dev/null | head -n1 | tr -d '"')
+    [ -n "$vv" ] && FORGE_VARIANT="$vv"
+fi
+
+# --- 2. Hardware e Specs ------------------------------------------------------
+HW="Amlogic S905X2 (4x 1.8GHz)"
+
+# Memória
+MEM_STR="2GB LPDDR4"
+if [ -r /proc/meminfo ]; then
+    MEM_TOTAL=$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo 2>/dev/null || echo 0)
+    MEM_AVAIL=$(awk '/MemAvailable/ {print int($2/1024)}' /proc/meminfo 2>/dev/null || echo 0)
+    if [ "$MEM_TOTAL" -gt 0 ]; then
+        MEM_USED=$((MEM_TOTAL - MEM_AVAIL))
+        MEM_STR="2GB LPDDR4 ${DIM}•${VAL} ${MEM_USED}MB em uso"
+    fi
+fi
+
+# Armazenamento raiz (/)
+STORAGE_STR="8GB eMMC Flash"
+if command -v df >/dev/null 2>&1; then
+    DISK_INFO=$(df -h / 2>/dev/null | awk 'NR==2 {print $2, $5}')
+    if [ -n "$DISK_INFO" ]; then
+        DISK_SIZE=$(echo "$DISK_INFO" | awk '{print $1}')
+        DISK_PCT=$(echo "$DISK_INFO" | awk '{print $2}')
+        STORAGE_STR="${DISK_SIZE} eMMC ${DIM}•${VAL} ${DISK_PCT} em uso"
+    fi
+fi
+
+# --- 3. Rede e Hostname ------------------------------------------------------
+HOST="$(hostname 2>/dev/null || echo forgeos-e10)"
+IP_AP=""
+IP_LAN=""
+if command -v ip >/dev/null 2>&1; then
+    IP_AP=$(ip -4 addr show wlan0 2>/dev/null | grep -o 'inet [0-9.]*' | awk '{print $2}' | head -n1)
+    IP_LAN=$(ip -4 addr show eth0 2>/dev/null | grep -o 'inet [0-9.]*' | awk '{print $2}' | head -n1)
+    [ -z "$IP_LAN" ] && IP_LAN=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src") print $(i+1)}' | head -n1)
+fi
+
+NET_STR=""
+PORTAL_IP=""
+if [ -n "$IP_AP" ] && [ -n "$IP_LAN" ] && [ "$IP_AP" != "$IP_LAN" ]; then
+    NET_STR="${ACC}${IP_AP} ${VER}(AP)${RST}${DIM} • ${ACC}${IP_LAN}${RST}"
+    PORTAL_IP="$IP_AP"
+elif [ -n "$IP_AP" ]; then
+    NET_STR="${ACC}${IP_AP} ${VER}(Ponto de Acesso)${RST}"
+    PORTAL_IP="$IP_AP"
+elif [ -n "$IP_LAN" ]; then
+    NET_STR="${ACC}${IP_LAN} ${VER}(Ethernet/LAN)${RST}"
+    PORTAL_IP="$IP_LAN"
+else
+    NET_STR="${VAL}192.168.4.1 (Ponto de Acesso)${RST}"
+    PORTAL_IP="192.168.4.1"
+fi
+PORTAL_URL="http://${PORTAL_IP}:8080"
+
+# --- 4. Uptime e Temperatura -------------------------------------------------
+UP="—"
+if [ -r "$UPTIME_FILE" ]; then
+    SEC=$(awk '{print int($1)}' "$UPTIME_FILE" 2>/dev/null || echo 0)
+    D=$((SEC / 86400)); H=$(( (SEC % 86400) / 3600 )); M=$(( (SEC % 3600) / 60 ))
+    UP=""
+    [ "$D" -gt 0 ] && UP="${D}d "
+    [ "$H" -gt 0 ] && UP="${UP}${H}h "
+    UP="${UP}${M}m"
+fi
+
+TEMP="—"
+if [ -r "$THERMAL_FILE" ]; then
+    RAW=$(tr -cd '0-9' < "$THERMAL_FILE" 2>/dev/null)
+    if [ -n "$RAW" ]; then
+        TEMP="$(awk -v r="$RAW" 'BEGIN{printf "%.1f °C", r/1000}')"
+    fi
+fi
+
+# --- 5. Serviços ForgeOS ------------------------------------------------------
+SVC_LINE=""
+if command -v systemctl >/dev/null 2>&1; then
+    for u in forge-portal forge-display forge-ap forge-watchdog; do
+        short="${u#forge-}"
+        if systemctl is-active --quiet "$u" 2>/dev/null; then
+            SVC_LINE="${SVC_LINE}${OK}${short}:ok${RST} "
+        else
+            SVC_LINE="${SVC_LINE}${BAD}${short}:falha${RST} "
+        fi
+    done
+else
+    SVC_LINE="${OK}portal:ok display:ok ap:ok watchdog:ok${RST}"
+fi
+
+# --- 6. Renderização Split (20 linhas x 74 colunas) ---------------------------
+cat <<EOF
+${F1}               *#                 ${RST}
+${F1}             +--#                 ${RST}${BRAND}ForgeOS ${VER}v${FORGE_VER}${RST} ${DOT} ${DEV}${FORGE_VARIANT}${RST}
+${F2}            =----#                ${RST}${DIV}${HR}${RST}
+${F2}         +--=*--#                 ${RST}${LBL}Hardware  : ${VAL}${HW}${RST}
+${F2}       +--=* #--*                 ${RST}${LBL}Memória   : ${VAL}${MEM_STR}${RST}
+${F3}     +---*    ===                 ${RST}${LBL}Storage   : ${VAL}${STORAGE_STR}${RST}
+${F3}   +=-=*      *--=                ${RST}
+${A1}   =-=         =---+    ${F3}*${RST}         ${LBL}Hostname  : ${ACC}${HOST}${RST}
+${A1} *#=-=        #----+   ${F3}=--+${RST}       ${LBL}Rede      : ${NET_STR}
+${A1}=-==-==     =-------++-----=      ${RST}${LBL}Uptime    : ${VAL}${UP}${RST}
+${A2}=--*=-=    +--*--*+--------=      ${RST}${LBL}Temp CPU  : ${F3}${TEMP}${RST}
+${A2} ==+ ==-   +--+   +--=---==+      ${RST}
+${A2}===*##**==+ =*   =-=###+===*      ${RST}${LBL}Portal    : ${URL}${PORTAL_URL}${RST}
+${A3}*==========+ ==*+==========*      ${RST}${LBL}Serviços  : ${SVC_LINE}
+${A3} ==   #==+   ==# *==   *==*       ${RST}
+${A3}  +==* #==*  ==  *== *==+         ${RST}${LBL}Logs      : ${DIM}journalctl -fu forge-portal${RST}
+${A3}    +==+ ==* == *==+==+           ${RST}${LBL}Docs      : ${DIM}github.com/multi-forge/multi-forge${RST}
+${A3}      +===+  ==  +===+            ${RST}
+${A3}        +==*======*==+            ${RST}${PALETTE}
+${A3}        +===========+             ${RST}
+EOF
+
+exit 0

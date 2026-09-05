@@ -13,14 +13,22 @@ echo "[INSTALL] ForgeOS Provisioner → $DEST"
 
 systemctl stop forge-portal.service forge-display.service 2>/dev/null || true
 
-mkdir -p "$DEST"/{bin,network,web/static/css,display,state,tests} /var/log
-cp -r "$BASE_SRC/bin/."        "$DEST/bin/"
-cp -r "$BASE_SRC/network/."    "$DEST/network/"
-cp -r "$BASE_SRC/web/."        "$DEST/web/"
-cp -r "$BASE_SRC/display/."    "$DEST/display/"
-cp -r "$BASE_SRC/tests/."      "$DEST/tests/"
+mkdir -p "$DEST"/{bin,network,web/static/css,display,state,tests,branding} /var/log
+if [ "$BASE_SRC" != "$DEST" ]; then
+    cp -r "$BASE_SRC/bin/."        "$DEST/bin/"
+    cp -r "$BASE_SRC/network/."    "$DEST/network/"
+    cp -r "$BASE_SRC/web/."        "$DEST/web/"
+    cp -r "$BASE_SRC/display/."    "$DEST/display/"
+    cp -r "$BASE_SRC/tests/."      "$DEST/tests/"
+    cp -r "$BASE_SRC/branding/."   "$DEST/branding/"
+fi
 cp -r "$BASE_SRC/systemd/."    /etc/systemd/system/
-chmod +x "$DEST"/bin/*.sh "$DEST"/network/*.py "$DEST"/display/*.py "$DEST"/web/server.py "$DEST"/tests/*.sh
+chmod +x "$DEST"/bin/*.sh "$DEST"/network/*.py "$DEST"/display/*.py "$DEST"/web/server.py "$DEST"/tests/*.sh "$DEST"/branding/*.sh "$DEST"/branding/forge-banner
+
+# Aplica identidade visual (MOTD, hostname, banner)
+if [ -x "$DEST/branding/apply-branding.sh" ]; then
+    bash "$DEST/branding/apply-branding.sh" || echo "[INSTALL] AVISO: apply-branding.sh falhou"
+fi
 
 # Neutraliza autostart antigo que briga pelo rádio (hostapd/NM)
 if grep -q 'start_wifi_ap.sh' /etc/rc.local 2>/dev/null; then
