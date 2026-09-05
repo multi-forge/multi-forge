@@ -84,7 +84,7 @@ export function AboutSection() {
     const loadAppInfo = async () => {
       const isTauri = typeof window !== 'undefined' && Boolean((window as any).__TAURI_INTERNALS__);
       if (!isTauri) {
-        setAppVersion('2.0.0');
+        setAppVersion('2.1.0');
         setTauriVersion('2.3.0');
         setPlatform('Linux (ARM64)');
         setArch('aarch64');

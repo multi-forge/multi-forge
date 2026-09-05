@@ -1,6 +1,6 @@
 [package]
 name = "forge-imager"
-version = "2.0.0"
+version = "2.1.0"
 description = "Forge Imager - Flash OS images to SD cards and USB drives"
 authors = ["Forge Contributors"]
 edition = "2021"

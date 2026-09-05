@@ -209,8 +209,8 @@ export interface GitHubRelease {
 export async function getGithubRelease(version: string): Promise<GitHubRelease> {
   if (!isTauri) {
     return {
-      tag_name: 'v2.0.0',
-      name: 'Forge Imager 2.0.0',
+      tag_name: 'v2.1.0',
+      name: 'Forge Imager 2.1.0',
       body: 'MultiForge Release',
       html_url: 'https://github.com/multi-forge/multi-forge',
       published_at: '2026-08-16',
