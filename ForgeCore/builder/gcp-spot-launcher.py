@@ -123,8 +123,10 @@ def build_and_download():
     
     def exclude_filter(tarinfo):
         parts = tarinfo.name.replace("\\", "/").split("/")
-        excluded_dirs = {".git", "node_modules", "target", "dist", ".cargo"}
+        excluded_dirs = {".git", "node_modules", "target", "dist", ".cargo", "release_assets", "distro_output"}
         if any(p in excluded_dirs for p in parts):
+            return None
+        if tarinfo.name.endswith((".img", ".xz", ".img.gz", ".tar.gz", ".iso")):
             return None
         return tarinfo
 
@@ -159,7 +161,7 @@ def build_and_download():
     dest_dir = DOWNLOADS_DIR
     
     # Copia para pasta temporária com permissão no guest antes do scp
-    fix_perm = "sudo cp -r /root/distro_output /tmp/distro_output && sudo chmod -R 777 /tmp/distro_output"
+    fix_perm = "sudo cp /tmp/qemu-boot-test.log /root/distro_output/ 2>/dev/null || true; sudo cp -r /root/distro_output /tmp/distro_output && sudo chmod -R 777 /tmp/distro_output"
     subprocess.run([GCLOUD_CMD, "compute", "ssh", INSTANCE_NAME, f"--zone={ZONE}", f"--project={PROJECT}", f"--command={fix_perm}", "--quiet"], env=env)
     
     run_gcloud(["compute", "scp", "--recurse", f"{INSTANCE_NAME}:/tmp/distro_output/*", dest_dir, f"--zone={ZONE}", "--quiet"])
