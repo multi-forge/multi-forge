@@ -48,12 +48,13 @@ ForgeOS/
 |   |-- watchdog.sh          # Monitoramento de conectividade e rollback automatico (75s)
 |   `-- install.sh           # Instalador do sistema e configuracao de servicos systemd
 |-- web/
-|   |-- server.py            # Servidor HTTP REST (Python 3 standard library)
-|   |-- index.html           # Interface web SPA responsiva (Dark/Light mode)
-|   `-- static/              # Ativos estaticos e manifestos PWA
+|   |-- server.py            # Servidor HTTP REST seguro (Python 3 stdlib, zero segredos expostos)
+|   |-- index.html           # Portal cativo minimalista offline (13 KB, dark/light, EAP completo)
+|   |-- logo.png             # Logo oficial transparente
+|   `-- logo-sm.png          # Logo otimizado para o portal (15 KB)
 |-- display/
-|   |-- display_manager.py   # Renderizacao de tela HDMI via framebuffer Linux (/dev/fb0)
-|   `-- assets/              # Tipografia e recursos visuais
+|   |-- forge_kiosk.py       # Kiosk Engine v3.0 (/dev/fb0): máquina de estados, slide direcional anti-flicker e detecção L2
+|   `-- fonts/               # Tipografia Inter e JetBrains Mono embutidas
 |-- dtb/
 |   |-- meson-g12a-btv-e10-enterprise.dts  # Codigo-fonte do Device Tree
 |   |-- meson-g12a-btv-e10-enterprise.dtb  # Blob compilado pronto para boot
@@ -63,6 +64,8 @@ ForgeOS/
 |   |-- gcp-spot-launcher.py # Script de compilacao automatizada em instancia Spot no GCP
 |   `-- README.md            # Guia de geracao de imagens
 |-- docs/
+|   |-- DESIGN.md            # Documento técnico completo do Redesign v3.0 (Kiosk + Portal + Validação)
+|   |-- showcase.html        # Showcase visual com prancha de telas e transições
 |   `-- tweaks-and-patches.md # Manual tecnico detalhado dos patches aplicados
 `-- tests/
     |-- test_server.py       # Testes da API REST

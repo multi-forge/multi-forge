@@ -82,6 +82,16 @@ def get_ap_config():
     return config
 
 
+def _redact(obj):
+    # P0: never leak credentials (WPA psk / EAP identity+password) via the API.
+    # The portal is served on an open AP whose password is printed on the TV.
+    if isinstance(obj, dict):
+        return {k: ("***" if k in ("password", "psk", "identity", "passwd", "passphrase") else _redact(v)) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_redact(v) for v in obj]
+    return obj
+
+
 def status_payload():
     # 1. Query real wlan0 IPv4 address dynamically
     wlan_ips = []
@@ -146,8 +156,9 @@ def status_payload():
         "client_ssid": client_ssid,
         "client_ip": client_ip,
         "last_failed": bool(result and result.get("status") == "failed"),
-        "last_result": result,
-        "attempt": prov or {}
+        "last_result": _redact(result),
+        "attempt": _redact(prov) or {},
+        "progress": read_json(os.path.join(STATE, "progress.json"))
     }
 
 
@@ -763,7 +774,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(404, {"error": "not found"})
 
         # --- Direct file serving (favicon, logo, manifest, etc.) ---
-        if path in ("/favicon.png", "/logo.png", "/manifest.json"):
+        if path in ("/favicon.png", "/logo.png", "/logo-sm.png", "/manifest.json"):
             full = os.path.join(WEB, path.lstrip("/"))
             if os.path.isfile(full):
                 return self._serve_file(full)

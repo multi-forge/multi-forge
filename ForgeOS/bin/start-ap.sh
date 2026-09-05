@@ -23,7 +23,13 @@ pkill -f 'dhclient.*wlan0' 2>/dev/null || true
 pkill -f 'udhcpc.*wlan0' 2>/dev/null || true
 ip link set wlan0 down 2>/dev/null || true
 ip addr flush dev wlan0 2>/dev/null || true
-rm -f "$STATE/applying" "$STATE/result.json" 2>/dev/null || true
+rm -f "$STATE/applying" 2>/dev/null || true
+# Preserva "failed" para o kiosk exibir a tela de erro; só limpa
+# "connected" obsoleto (AP ativo + connected = estado pós-boot inválido).
+if grep -F -q '"status":"connected"' "$STATE/result.json" 2>/dev/null \
+|| grep -F -q '"status": "connected"' "$STATE/result.json" 2>/dev/null; then
+    rm -f "$STATE/result.json" 2>/dev/null || true
+fi
 
 if ! lsmod | grep -q '^8189fs '; then
     modprobe 8189fs rtw_power_mgnt=0 rtw_ips_mode=0 rtw_lps_level=0 2>/dev/null \

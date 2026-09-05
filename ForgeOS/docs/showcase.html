@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ForgeOS — Showcase do Redesign v3.0</title>
+<style>
+:root{--bg:#0A0E17;--card:#111827;--border:#263047;--blue:#2B9AF3;--green:#22C55E;--yellow:#EAB308;--red:#EF4444;--tx:#fff;--tx2:#F1F5F9;--mut:#9CABC4;--hint:#6B7A94}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx2);font-family:-apple-system,"Segoe UI",Roboto,sans-serif;max-width:1080px;margin:0 auto;padding:28px 18px 60px}
+h1{font-size:1.7rem;color:var(--tx)}h2{font-size:1.2rem;color:var(--tx);margin:30px 0 12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+p,li{font-size:.92rem;line-height:1.55;color:var(--tx2)}ul,ol{margin:8px 0 8px 22px}
+.meta{color:var(--mut);font-size:.85rem;margin:6px 0 4px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin:14px 0}
+.card h3{font-size:1.02rem;color:var(--tx);margin-bottom:8px}
+img.shot{width:100%;border-radius:12px;border:1px solid var(--border);margin:8px 0 4px}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:10px 0}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#0B101C;color:var(--tx)}
+code{background:#0B101C;padding:1px 6px;border-radius:6px;font-size:.82em}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.st{background:#0B101C;border:1px solid var(--blue);border-radius:10px;padding:8px 14px;font-size:.82rem;font-weight:700}
+.st small{display:block;font-weight:400;color:var(--mut);font-size:.72rem}
+.arr{color:var(--hint);font-weight:700}
+.ok{color:var(--green);font-weight:700}.warn{color:var(--yellow);font-weight:700}.bad{color:var(--red);font-weight:700}
+</style>
+</head>
+<body>
+
+<h1>ForgeOS — Redesign do Kiosk + Portal (v3.0)</h1>
+<p class="meta">2026-09-04 · BTV E10 (S905X2, Armbian, <code>/opt/forgeos</code>) · implantado e rodando no device.
+Screenshots = renders reais do motor novo no próprio ARM (<code>kiosk-v3-live.png</code> é o frame ao vivo do <code>/dev/fb0</code>).</p>
+
+<h2>0. Prancha única (todas as telas)</h2>
+<div class="card"><img class="shot" src="kit-screenshots.png" alt="Kit"></div>
+
+<h2>1. Máquina de estados (1 foco por vez)</h2>
+<div class="flow">
+  <div class="st">AP_SOLO<small>só QR Wi-Fi</small></div><span class="arr">→ celular associa →</span>
+  <div class="st">PEER<small>Wi-Fi + Instalador</small></div><span class="arr">→ POST /api/provision →</span>
+  <div class="st">APPLYING<small>associando...</small></div><span class="arr">→ IP DHCP →</span>
+  <div class="st">CONNECTED<small>ForgeHub + telemetria</small></div>
+</div>
+<p>Falha → <code>FAILED</code> (AP restaurado, tenta de novo). Transição com slide ease-out ~0,6&nbsp;s só ao trocar de estado; re-render 30&nbsp;s (pixel-shift anti-burn-in); dimming 35% após 5&nbsp;min parado. Detecção de celular: <code>max(leases dnsmasq, ARP REACHABLE em wlan0)</code> — sem hostapd (o AP é <code>wpa_supplicant mode=2</code> por causa do RTL8189FTV).</p>
+
+<h2>2. Screenshots</h2>
+<div class="card"><h3>Estado 1 — AP_SOLO: só o QR do Wi-Fi</h3><img class="shot" src="design-shots/shot-ap_solo.png" alt="AP_SOLO"></div>
+<div class="card"><h3>Estado 2 — PEER: celular detectado, instalador revelado</h3><img class="shot" src="design-shots/shot-peer.png" alt="PEER"></div>
+<div class="card"><h3>Transição — APPLYING</h3><img class="shot" src="design-shots/shot-applying.png" alt="APPLYING"></div>
+<div class="card"><h3>Estado 3 — CONNECTED: ForgeHub + telemetria</h3><img class="shot" src="design-shots/shot-connected.png" alt="CONNECTED"></div>
+<div class="card"><h3>Erro — FAILED</h3><img class="shot" src="design-shots/shot-failed.png" alt="FAILED"></div>
+<div class="card"><h3>Transição suave (slide cúbico anti-flicker entre estados)</h3><img class="shot" src="design-shots/slide-mid.png" alt="SLIDE"></div>
+<div class="card"><h3>Frame ao vivo do <code>/dev/fb0</code></h3><img class="shot" src="design-shots/kiosk-v3-live.png" alt="LIVE"></div>
+
+<h2>3. Portal: só seleção de Wi-Fi</h2>
+<table>
+<tr><th></th><th>Antes (SPA Cockpit)</th><th>Depois</th></tr>
+<tr><td><code>index.html</code></td><td>114.541 bytes</td><td><span class="ok">13.063 bytes (8,8× menor)</span></td></tr>
+<tr><td>Requisições externas</td><td>Google Fonts (morto sem uplink)</td><td><span class="ok">zero — 100% offline</span></td></tr>
+<tr><td>Escopo</td><td>serviços, logs, métricas, palette, sparklines, módulos</td><td><span class="ok">scan + conectar + status + restaurar AP</span></td></tr>
+<tr><td>Segurança</td><td>Open, WPA/WPA2-PSK</td><td><span class="ok">Open, WPA/WPA2-PSK + EAP completo</span> (PEAP/TTLS/PWD/TLS, phase2, identidade, anônima, domínio)</td></tr>
+</table>
+
+<h2>3b. Portal no celular + API ao vivo</h2>
+<div class="card"><h3>Lista de redes (dados reais do rádio)</h3><img class="shot" src="design-shots/portal-phone.png" alt="Portal redes"></div>
+<div class="card"><h3>Form EAP completo</h3><img class="shot" src="design-shots/portal-eap.png" alt="Portal EAP"></div>
+<p>Renders em Chromium 390×844 com <code>/api/status</code> + <code>/api/scan</code> capturados ao vivo (OpenWrt −32 dBm, eduroam EAP). API: 14 endpoints 200, <code>POST /api/provision</code> vazio → 400 (validação sem tocar o rádio), zero ocorrência de <code>password</code> no status.</p>
+
+<h2>4. P0 segurança (corrigido)</h2>
+<p><code>/api/status</code> serializava o <code>provision.json</code> <span class="bad">com senha em claro</span> — qualquer associado ao AP lia o Wi-Fi do dono. Fix: <code>_redact()</code> mascara <code>password/psk/identity/passwd/passphrase</code>; <code>provision.json</code> obsoleto apagado do disco.</p>
+
+<h2>5. Veredito Cog/WPE</h2>
+<p>Cog rodou mas o DRM falhou: <code>failed to create framebuffer: Invalid argument</code> (Mali-G31 sem KMS neste Armbian). Processo morto, unit revertida ao motor PIL. Navegador no kiosk: descartado.</p>
+
+<h2>6. Bloat removido × pendente</h2>
+<p><span class="ok">Removido do ar:</span> Cog, <code>provision.json</code> obsoleto, SPA 114 KB, segredos na API.<br>
+<span class="warn">Pendente:</span> <code>web/_app/</code> órfão, logos duplicados (<code>icon.png</code> = <code>forge-icon.png</code>, <code>logo.png</code> 300 KB), clone <code>/opt/multi-forge</code> no device, texto "75 s" do watchdog (código: 300 s).</p>
+
+<h2>7. Deploy + rollback</h2>
+<p>Backup: <code>/root/forge-backup-20260904/</code>. Novos: <code>display/forge_kiosk.py</code>, unit v3.0, portal mínimo. Smoke test 20 s no fb0 real antes da troca. Rollback do kiosk e do portal via cópias do backup (sem restart no caso do portal).</p>
+
+<h2>8. Falta validar com celular</h2>
+<ol>
+<li>Associar ao AP → confirmar <code>AP_SOLO → PEER</code> + slide na TV.</li>
+<li>Provisionar → confirmar <code>APPLYING → CONNECTED</code> com IP real.</li>
+<li>Escanear os 3 QRs e confirmar o conteúdo.</li>
+</ol>
+
+</body>
+</html>

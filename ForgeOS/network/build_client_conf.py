@@ -5,6 +5,7 @@ Suporta WPA-PSK e WPA-EAP (PEAP/TTLS — eduroam/802.1X).
 Uso: build_client_conf.py <provision.json> <saida.conf>
 """
 import json
+import os
 import sys
 
 
@@ -33,8 +34,11 @@ def main():
     ]
 
     if d.get("mode") == "psk":
-        lines.append(f'    psk={psk_value(d["password"])}')
-        lines.append('    key_mgmt=WPA-PSK')
+        if d.get("password"):
+            lines.append(f'    psk={psk_value(d["password"])}')
+            lines.append('    key_mgmt=WPA-PSK')
+        else:
+            lines.append('    key_mgmt=NONE')  # rede aberta
     elif d.get("mode") == "eap":
         method = d.get("method", "PEAP")
         phase2 = d.get("phase2", "MSCHAPV2")
@@ -46,8 +50,9 @@ def main():
         ]
         if method == "PEAP":
             lines.append('    phase1="peapver=0 peaplabel=0"')
-        phase2_map = {"MSCHAPV2": "auth=MSCHAPV2", "PAP": "auth=PAP"}
-        lines.append(f'    phase2="{phase2_map[phase2]}"')
+        phase2_map = {"MSCHAPV2": "auth=MSCHAPV2", "PAP": "auth=PAP", "GTC": "auth=GTC"}
+        if method in ("PEAP", "TTLS") and phase2 in phase2_map:
+            lines.append(f'    phase2="{phase2_map[phase2]}"')
         if d.get("anonymous_identity"):
             lines.append(f'    anonymous_identity="{esc(d["anonymous_identity"])}"')
         if d.get("domain"):
@@ -59,6 +64,7 @@ def main():
 
     with open(out_path, "w") as f:
         f.write("\n".join(lines) + "\n")
+    os.chmod(out_path, 0o600)  # senha em claro: só root lê
     print(f"[BUILD-CONF] {out_path} ({d.get('mode')} -> {d.get('ssid')})")
 
 
