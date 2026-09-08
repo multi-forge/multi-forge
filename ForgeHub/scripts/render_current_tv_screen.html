@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1920px;
+    height: 1080px;
+    background-color: #0f172a; /* slate-900 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #f8fafc;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 64px 32px 64px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+  }
+  .brand-title {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+  }
+  .badge-pill {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    color: #60a5fa;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+  }
+  .hw-tag {
+    font-size: 18px;
+    color: #94a3b8;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  /* Center Container */
+  .center-stage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+  }
+  .card {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 44px 56px 36px 56px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 680px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .blue-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #2563eb;
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.2);
+  }
+  .card-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+  }
+  .qr-box {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 20px;
+    border: 2px solid #e2e8f0;
+    margin-bottom: 24px;
+  }
+  .qr-img {
+    width: 270px;
+    height: 270px;
+    display: block;
+  }
+  .info-fields {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .info-chip {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 12px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .chip-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #64748b;
+  }
+  .chip-val {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: ui-monospace, monospace;
+    color: #0f172a;
+  }
+  .hint-text {
+    font-size: 14px;
+    color: #64748b;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 16px;
+    color: #94a3b8;
+  }
+  .footer-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .status-pulse {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #3b82f6;
+    box-shadow: 0 0 10px #3b82f6;
+  }
+  .footer-hw {
+    font-family: ui-monospace, monospace;
+    font-size: 15px;
+    color: #64748b;
+    display: flex;
+    gap: 20px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand-group">
+      <!-- Anvil & Flame SVG Logo -->
+      <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+        <path d="M16 2C16 2 12 7 12 11C12 13.5 13.8 15.5 16 16C18.2 15.5 20 13.5 20 11C20 7 16 2 16 2Z" fill="#F97316"/>
+        <path d="M16 7C16 7 14 10 14 12C14 13.1 14.9 14 16 14C17.1 14 18 13.1 18 12C18 10 16 7 16 7Z" fill="#FDE047"/>
+        <path d="M4 17C4 16.4 4.4 16 5 16H27C27.6 16 28 16.4 28 17V19C28 20.1 27.1 21 26 21H23L24 27H8L9 21H6C4.9 21 4 20.1 4 19V17Z" fill="#0EA5E9"/>
+        <rect x="6" y="27" width="20" height="3" rx="1.5" fill="#38BDF8"/>
+      </svg>
+      <div class="brand-title">ForgeOS</div>
+      <div class="badge-pill">P A R E A M E N T O</div>
+    </div>
+    <div class="hw-tag">BTV Express E10 | Amlogic S905X2 | Armbian 6.18</div>
+  </div>
+
+  <!-- Center Card -->
+  <div class="center-stage">
+    <div class="card">
+      <div class="card-header">
+        <div class="blue-dot"></div>
+        <div class="card-title">Conecte o celular ao Wi-Fi</div>
+      </div>
+
+      <!-- Real standard QR code image -->
+      <div class="qr-box">
+        <img class="qr-img" src="clean_qr.svg">
+      </div>
+
+      <div class="info-fields">
+        <div class="info-chip">
+          <div class="chip-label">Nome da Rede Wi-Fi (SSID)</div>
+          <div class="chip-val">MultiForge-Setup-E10</div>
+        </div>
+        <div class="info-chip">
+          <div class="chip-label">Senha WPA2</div>
+          <div class="chip-val">forgehub</div>
+        </div>
+      </div>
+
+      <div class="hint-text">
+        Aponte a câmera do seu celular para conectar.<br>
+        O instalador em <b>http://192.168.4.1:8080</b> abrirá automaticamente.
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-status">
+      <div class="status-pulse"></div>
+      <div>Ponto de acesso ativo no Canal 1 (2.412 GHz) | Aguardando conexão de celular...</div>
+    </div>
+    <div class="footer-hw">
+      <div>CPU: 42.0°C</div>
+      <div>RAM: 805 MB / 1.8 GB</div>
+      <div>IP: 192.168.4.1</div>
+      <div>MAC: 3C:7A:AA:39:F6:C2</div>
+    </div>
+  </div>
+
+</body>
+</html>
