@@ -1,0 +1,16 @@
+[Unit]
+Description=ForgeHub Go Daemon
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/forgehub
+Restart=always
+RestartSec=3
+LimitNOFILE=65536
+Environment="GIN_MODE=release"
+
+[Install]
+WantedBy=multi-user.target

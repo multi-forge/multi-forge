@@ -1,0 +1,8 @@
+# Compiled binaries and archives
+backend/forgehub-linux-*
+*.tar.gz
+*.zip
+
+# Frontend build & dependencies
+frontend/node_modules/
+frontend/dist/

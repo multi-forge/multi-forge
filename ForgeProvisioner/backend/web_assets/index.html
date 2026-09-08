@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -215,8 +215,7 @@ function initTheme(){
   var root = document.documentElement;
   var saved = null;
   try{ saved = localStorage.getItem("forge_theme"); }catch(e){}
-  var dark = saved ? saved === "dark"
-    : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  var dark = saved !== null ? saved === "dark" : true; // Default to Dark Mode first
   root.setAttribute("data-theme", dark ? "dark" : "light");
   syncThemeIcon(dark);
 }

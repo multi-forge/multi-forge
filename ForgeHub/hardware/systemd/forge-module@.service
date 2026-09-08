@@ -1,0 +1,15 @@
+[Unit]
+Description=ForgeHub Native Module: %i
+After=forgehub.service
+BindsTo=forgehub.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/forge-module-%i
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

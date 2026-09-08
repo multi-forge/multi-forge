@@ -1,0 +1,17 @@
+[Unit]
+Description=ForgeHub Framebuffer Kiosk Bridge
+After=systemd-user-sessions.service plymouth-quit-wait.service
+Conflicts=getty@tty1.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/forgehub/hardware/display/forge_kiosk.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+TTYPath=/dev/tty1
+OOMScoreAdjust=-500
+
+[Install]
+WantedBy=graphical.target multi-user.target
