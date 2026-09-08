@@ -97,7 +97,7 @@ def get_ip():
     return "192.168.1.153"
 
 def read_ap_config():
-    cfg = {"ssid": "MultiForge-Setup-E10", "password": "forgehub", "channel": 1}
+    cfg = {"ssid": "Forge-E10", "password": "forgehub", "channel": 1}
     for cf in ("/opt/multi-forge/ForgeOS/network/wpa_ap.conf", "/etc/hostapd/hostapd.conf"):
         try:
             with open(cf) as f:
@@ -125,7 +125,7 @@ def station_count():
 
 def get_state():
     info = {
-        "ssid": "MultiForge-Setup-E10",
+        "ssid": "Forge-E10",
         "password": "forgehub",
         "ip": get_ip(),
         "stations": station_count(),
@@ -251,7 +251,7 @@ def render_ap_solo(d, img, info, sx=0, sy=0):
     cx = W // 2 + sx
     render_header(d, "MultiForge Setup", "Ponto de Acesso de Configuração Ativo", None, sx, sy)
     
-    ssid = info.get("ssid", "MultiForge-Setup-E10")
+    ssid = info.get("ssid", "Forge-E10")
     pwd = info.get("password", "forgehub")
     qr = qr_tile(f"WIFI:S:{ssid};T:WPA;P:{pwd};;", size=350)
     render_qr_box(d, img, cx, 440 + sy, qr, 350)
@@ -337,7 +337,7 @@ def render_connected(d, img, info, sx=0, sy=0):
 def render_failed(d, img, info, sx=0, sy=0):
     cx = W // 2 + sx
     failed_ssid = info.get("target_ssid", "Wi-Fi")
-    ap_ssid = info.get("ssid", "MultiForge-Setup-E10")
+    ap_ssid = info.get("ssid", "Forge-E10")
     pwd = info.get("password", "forgehub")
     
     render_header(d, "Falha na Conexão", f"A rede '{failed_ssid}' não respondeu ou a senha está incorreta", ACCENT_RED, sx, sy)

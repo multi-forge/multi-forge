@@ -122,7 +122,7 @@ func TestConfigCRUD(t *testing.T) {
 	defer cleanupTempDB(db, tmpDir)
 
 	// 1. Set
-	if err := db.SetConfig("ap_ssid", "MultiForge-Setup-E10"); err != nil {
+	if err := db.SetConfig("ap_ssid", "Forge-E10"); err != nil {
 		t.Fatalf("SetConfig failed: %v", err)
 	}
 
@@ -131,7 +131,7 @@ func TestConfigCRUD(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetConfig failed: %v", err)
 	}
-	if val != "MultiForge-Setup-E10" {
+	if val != "Forge-E10" {
 		t.Fatalf("unexpected config value: %s", val)
 	}
 

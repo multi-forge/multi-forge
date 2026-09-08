@@ -55,7 +55,7 @@ while true; do
         fail_count=$((fail_count + CHECK_INTERVAL))
         echo "[watchdog] Client connection unverified ($fail_count/${TIMEOUT_SECS}s)..."
         if [ "$fail_count" -ge "$TIMEOUT_SECS" ]; then
-            echo "[watchdog] Timeout reached ($TIMEOUT_SECS s). Restoring AP MultiForge-Setup-E10..."
+            echo "[watchdog] Timeout reached ($TIMEOUT_SECS s). Restoring AP Forge-E10..."
             /usr/local/bin/forge-ap-ctrl start
             fail_count=0
         fi

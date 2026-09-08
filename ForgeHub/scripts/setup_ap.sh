@@ -21,7 +21,7 @@ mkdir -p /etc/hostapd
 cat > /etc/hostapd/hostapd.conf << 'EOF'
 interface=wlan0
 driver=nl80211
-ssid=MultiForge-Setup-E10
+ssid=Forge-E10
 hw_mode=g
 channel=6
 wmm_enabled=0
@@ -72,7 +72,7 @@ PID_FILE="/run/hostapd.pid"
 DNS_PID="/run/forge-dnsmasq.pid"
 
 start_ap() {
-    echo "[forge-ap-ctrl] Starting AP MultiForge-Setup-E10..."
+    echo "[forge-ap-ctrl] Starting AP Forge-E10..."
     
     # 1. Stop any competing supplicant or hostapd
     pkill -9 -f "wpa_supplicant.*wlan0" 2>/dev/null || true
@@ -112,7 +112,7 @@ start_ap() {
             iptables -A FORWARD -i "$WAN_IF" -o "$IFACE" -m state --state RELATED,ESTABLISHED -j ACCEPT
     fi
 
-    echo "[forge-ap-ctrl] AP MultiForge-Setup-E10 active on $AP_IP"
+    echo "[forge-ap-ctrl] AP Forge-E10 active on $AP_IP"
 }
 
 stop_ap() {

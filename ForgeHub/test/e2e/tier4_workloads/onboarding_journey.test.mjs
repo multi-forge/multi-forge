@@ -10,7 +10,7 @@ describe('Tier 4: Scenario 1 - Edge Appliance First-Boot Onboarding Journey', ()
     const apRes = await http.get('/api/ap');
     assertStatusCode(apRes, 200, 'Step 1: Read AP configuration');
     assert.equal(apRes.data.ip, '192.168.4.1');
-    assert.equal(apRes.data.ssid, 'MultiForge-Setup-E10');
+    assert.equal(apRes.data.ssid, 'Forge-E10');
 
     // 2. User verifies status via QR portal on 192.168.4.1:8080
     const statusRes = await http.get('/api/status');

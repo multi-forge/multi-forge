@@ -22,7 +22,7 @@ ctrl_interface=/var/run/wpa_supplicant
 ap_scan=1
 
 network={
-    ssid="MultiForge-Setup-E10"
+    ssid="Forge-E10"
     mode=2
     frequency=2437
     key_mgmt=WPA-PSK

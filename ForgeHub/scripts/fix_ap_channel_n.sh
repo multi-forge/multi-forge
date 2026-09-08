@@ -13,7 +13,7 @@ echo "=== [2/5] Updating hostapd.conf for 802.11n & pure WPA2-CCMP ==="
 cat > /etc/hostapd/hostapd.conf << 'EOF'
 interface=wlan0
 driver=nl80211
-ssid=MultiForge-Setup-E10
+ssid=Forge-E10
 hw_mode=g
 channel=1
 ieee80211n=1

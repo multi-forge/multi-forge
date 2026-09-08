@@ -23,7 +23,7 @@ export class ForgeHubTestServer {
       client_connected: false,
       client_ip: '',
       client_ssid: '',
-      ap_ssid: 'MultiForge-Setup-E10',
+      ap_ssid: 'Forge-E10',
       ap_ip: '192.168.4.1',
       device_model: 'BTV Express E10 (Amlogic S905X2)',
       active_provision_job: null,

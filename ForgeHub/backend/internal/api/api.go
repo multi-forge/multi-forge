@@ -173,7 +173,7 @@ func handleStatus(w http.ResponseWriter, r *http.Request) {
 		"client_ip":        cliIP,
 		"client_ssid":      cliSSID,
 		"ip":               "192.168.4.1",
-		"ap_ssid":          "MultiForge-Setup-E10",
+		"ap_ssid":          "Forge-E10",
 		"ap_ip":            "192.168.4.1",
 		"device_model":     "BTV Express E10 (Amlogic S905X2)",
 		"uptime":           getUptimeSeconds(),
@@ -789,7 +789,7 @@ func handleReset(w http.ResponseWriter, r *http.Request) {
 
 func handleAP(w http.ResponseWriter, r *http.Request) {
 	apConfig := map[string]interface{}{
-		"ssid":    "MultiForge-Setup-E10",
+		"ssid":    "Forge-E10",
 		"channel": 6,
 		"ip":      "192.168.4.1",
 	}
