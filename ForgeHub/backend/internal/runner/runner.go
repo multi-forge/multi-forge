@@ -19,6 +19,15 @@ import (
 var (
 	ErrInsufficientMemory = errors.New("insufficient_memory")
 	ErrNotFound           = errors.New("not_found")
+	ErrModuleStart        = errors.New("module_start_failed")
+	ErrUnsupportedType    = errors.New("unsupported_module_type")
+)
+
+// These variables allow the runner's interaction with the host to be tested
+// without starting real services on a development machine.
+var (
+	execCommandContext = exec.CommandContext
+	execLookPath       = exec.LookPath
 )
 
 type MemoryGuard struct {
@@ -137,20 +146,41 @@ func (hr *HybridRunner) Start(ctx context.Context, id string, simMem ...int) (st
 		return m, availMB, err
 	}
 
-	// Try running via systemd if installed on host with --no-block to prevent HTTP timeout
+	// Do not persist a "running" state until the host has confirmed that the
+	// module was actually started. A successful HTTP response must correspond to
+	// a runnable module, rather than only to a requested operation.
 	if m.Type == "systemd" {
 		unitName := fmt.Sprintf("forge-module@%s", id)
-		_ = exec.CommandContext(ctx, "systemctl", "start", "--no-block", unitName).Run()
-	} else if m.Type == "compose" {
-		if _, err := exec.LookPath("docker"); err == nil {
-			composeFile := filepath.Join(hr.baseDir, id, "compose.yaml")
-			_ = exec.CommandContext(ctx, "docker", "compose", "-f", composeFile, "up", "-d").Run()
+		if err := execCommandContext(ctx, "systemctl", "start", unitName).Run(); err != nil {
+			return m, availMB, fmt.Errorf("%w: start %s: %v", ErrModuleStart, unitName, err)
 		}
+		if err := execCommandContext(ctx, "systemctl", "is-active", "--quiet", unitName).Run(); err != nil {
+			return m, availMB, fmt.Errorf("%w: %s is not active: %v", ErrModuleStart, unitName, err)
+		}
+	} else if m.Type == "compose" {
+		if _, err := execLookPath("docker"); err != nil {
+			return m, availMB, fmt.Errorf("%w: docker is unavailable: %v", ErrModuleStart, err)
+		}
+		composeFile := filepath.Join(hr.baseDir, id, "compose.yaml")
+		if err := execCommandContext(ctx, "docker", "compose", "-f", composeFile, "up", "-d").Run(); err != nil {
+			return m, availMB, fmt.Errorf("%w: start compose module %s: %v", ErrModuleStart, id, err)
+		}
+		output, err := execCommandContext(ctx, "docker", "compose", "-f", composeFile, "ps", "--status", "running", "--services").Output()
+		if err != nil || len(strings.TrimSpace(string(output))) == 0 {
+			if err != nil {
+				return m, availMB, fmt.Errorf("%w: inspect compose module %s: %v", ErrModuleStart, id, err)
+			}
+			return m, availMB, fmt.Errorf("%w: compose module %s has no running services", ErrModuleStart, id)
+		}
+	} else {
+		return m, availMB, fmt.Errorf("%w: %q", ErrUnsupportedType, m.Type)
 	}
 
 	m.Status = "running"
 	if hr.db != nil {
-		_ = hr.db.SaveModule(&m)
+		if err := hr.db.SaveModule(&m); err != nil {
+			return m, availMB, fmt.Errorf("persist running state: %w", err)
+		}
 	}
 
 	return m, availMB, nil
