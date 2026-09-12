@@ -51,7 +51,7 @@ multi-forge/
 |   |-- web/            # Portal HTTP offline, REST API e interface de configuração SPA
 |   `-- install.sh      # Instalador da stack on-device (-> /opt/forgeos)
 `-- ForgeModules/       # Modulos operacionais para aplicacoes de borda
-    |-- totem/          # Mina - Assistente Virtual Academica (PyQt5 + ONNX)
+    |-- totem/          # M.A.B.I - Assistente Virtual Academica (PyQt5 + ONNX / IA Hibrida)
     `-- sub-modulos/    # Coletor Academico & RAG Agent (FastAPI + LangChain)
 ```
 
@@ -73,7 +73,7 @@ flowchart TD
 
     subgraph Modulos ["3. Execucao de Aplicacoes"]
         CLI --> HUB["Central de Modulos (ForgeHub)"]
-        HUB --> MOD1["Mina AI Totem"]
+        HUB --> MOD1["M.A.B.I AI Totem"]
         HUB --> MOD2["Coletor Web / RAG"]
     end
 ```
@@ -125,10 +125,10 @@ Recursos implementados:
 - **Assinaturas de Fingerprint:** Campos declarativos para autodeteccao por `cpuinfo`, `device_tree`, `usb` e `storage_model`.
 - **Integracao Continua:** Workflows de GitHub Actions que validam pull requests e compilam automaticamente novos lancamentos para distribuicao global gratuita via jsDelivr.
 
-### 3. ForgeOS (Sistema Embarcado)
+### 3. ForgeProvisioner (Sistema Embarcado)
 
 ```bash
-cd ForgeOS
+cd ForgeProvisioner
 
 # Instalacao da stack em instalacoes Armbian existentes:
 sudo bash install.sh
@@ -146,7 +146,7 @@ Recursos implementados:
 ### 4. ForgeModules (Aplicacoes)
 
 ```bash
-# Modulo Totem (Mina AI):
+# Modulo Totem (M.A.B.I):
 cd ForgeModules/totem
 python install.py --headless
 python main_cli.py
