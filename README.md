@@ -1,177 +1,412 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/gasiepgodoy/Hackathon-TV-Box-E10/main/Projeto%20Equipe%201/imagens/logo.png" alt="MultiForge Banner" width="100%" />
+﻿<p align="center">
+  <img src="imagens/logo.png" alt="Multi-Forge + M.A.B.I" width="100%" />
 </p>
 
-# MultiForge
+<p align="center">
+  <img src="https://img.shields.io/badge/BTV_E10-S905X2-blue" alt="BTV E10" />
+  <img src="https://img.shields.io/badge/offline--first-green" alt="offline first" />
+  <img src="https://img.shields.io/badge/1_TV_Box-sem_hardware_extra-orange" alt="1 box" />
+  <img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="MIT" />
+</p>
 
-Plataforma open-source para identificacao, compatibilizacao, gravacao, provisionamento e modularizacao de hardware ARM reaproveitado (TV Boxes e SBCs comerciais legadas).
+# M.A.B.I by Multi-Forge — Assistente Acadêmica com IA em TV Box Reaproveitada
 
----
-
-## Estado Funcional do Projeto
-
-| Componente | Stack | Entradas Principais | Status | Testes / Cobertura |
-|------------|-------|---------------------|--------|-------------------|
-| **[ForgeImager](ForgeImager/)** | Tauri v2, React 19, Rust | `src-tauri/src/main.rs`, `src-tauri/src/forgedb/`, `App.tsx`, `crates/forge-write-conf` | Producao (98%) | 46 testes unitarios Rust, CI Matrix (x64/ARM64 Linux, Windows, macOS) |
-| **[ForgeCore](ForgeCore/)** | Linux 6.18, DTB Enterprise, QEMU, GCP Spot | `builder/build-image.sh`, `builder/gcp-spot-launcher.py`, `builder/qemu-verify-boot.sh`, `dtb/` | Producao (100%) | Teste virtual QEMU ARM64, 0 erros no kernel/rootfs |
-| **[ForgeProvisioner](ForgeProvisioner/)** | Python 3, Framebuffer, Bash, systemd | `bin/start-ap.sh`, `web/server.py`, `display/forge_kiosk.py`, `bin/watchdog.sh`, `branding/` | Homologado (98%) | 34/34 testes de integracao e E2E, MOTD dinâmico |
-| **[ForgeDB](ForgeDB/)** | YAML, JSON Schema (Draft 2020-12), Node.js CI | `devices/btv/e10/device.yaml`, `schemas/*.schema.json`, `dist/catalog.json` | Operacional (100%) | Validacao automatizada via Ajv e GitHub Actions |
-| **[ForgeModules](ForgeModules/)** | Python (PyQt5, FastAPI, LangChain) | `totem/main_cli.py`, `totem/main_gui.py`, `sub-modulos/web-scraping/api/main.py` | Funcional (45%) | Execucao local e em container |
-
-> **Hardware Piloto Validado:** BTV Express E10 (Amlogic S905X2 / Meson G12A, 4x Cortex-A53 @ 1.8GHz, 2GB LPDDR4, 8GB eMMC, Realtek RTL8189FTV Wi-Fi SDIO, Armbian Linux 26.08 Trixie, kernel 6.18.44-ophub).
+> 1º Hackathon TV Box Unesp Sorocaba — Equipe 1
 
 ---
 
-## Arquitetura do Sistema
+## Resumo
 
-O projeto e estruturado em 5 componentes interdependentes:
+A **M.A.B.I** (Mina — Assistente Baseada em Inteligência) é uma assistente acadêmica com inteligência artificial que roda dentro de uma TV Box BTV E10 reaproveitada, transformada em totem interativo de acesso a informações universitárias.
 
-```text
-multi-forge/
-|-- ForgeDB/            # Base de dados declarativa de hardware, imagens e fingerprints
-|   |-- devices/        # Metadados de placas (SoCs, DTBs, pinouts, fingerprints de deteccao)
-|   |-- vendors/        # Metadados de fabricantes
-|   |-- schemas/        # Schemas JSON formais (Draft 2020-12)
-|   |-- scripts/        # Compilador do catalogo unificado (YAML -> dist/catalog.json)
-|   `-- dist/           # Catalogo compilado distribuido globalmente via jsDelivr CDN
-|-- ForgeImager/        # Gravador desktop (Tauri v2 + React 19 + Rust)
-|   |-- src-tauri/      # Comandos IPC em Rust, streaming I/O, EDL/QDL Sahara, modulo ForgeDB
-|   |-- crates/         # forge-write-conf (injecao ext4 em userspace sem root)
-|   `-- src/            # Interface grafica, catalogo dinamico, seletor de imagens
-|-- ForgeCore/          # Núcleo do SO, Kernel, DTBs, Distro Builder e Verificação Virtual QEMU
-|   |-- builder/        # Pipeline de compilação da imagem (.img.xz), Spot VM e teste QEMU
-|   |-- dtb/            # Device Tree Sources (.dts) e Blobs compilados (.dtb)
-|   `-- docs/           # Documentação de kernel, patches e arquitetura
-|-- ForgeProvisioner/   # Stack de provisionamento on-device, interface cativa e kiosk
-|   |-- bin/            # Scripts de controle de rede (start-ap.sh, apply-client.sh, watchdog.sh)
-|   |-- branding/       # Identidade visual, banner Neofetch e release metadata
-|   |-- display/        # Kiosk HDMI v3.0 direto em framebuffer (/dev/fb0)
-|   |-- network/        # Gestor de Wi-Fi cliente e AP autônomo
-|   |-- systemd/        # Unidades de serviço systemd do provisionador
-|   |-- web/            # Portal HTTP offline, REST API e interface de configuração SPA
-|   `-- install.sh      # Instalador da stack on-device (-> /opt/forgeos)
-`-- ForgeModules/       # Modulos operacionais para aplicacoes de borda
-    |-- totem/          # M.A.B.I - Assistente Virtual Academica (PyQt5 + ONNX / IA Hibrida)
-    `-- sub-modulos/    # Coletor Academico & RAG Agent (FastAPI + LangChain)
-```
+Para viabilizar a operação nesse hardware limitado (2 GB RAM, 8 GB eMMC), a equipe desenvolveu a **Multi-Forge**: uma plataforma completa de preparação, provisionamento e gerenciamento do equipamento — com Linux otimizado, conexão Wi-Fi pelo celular via QR Code, recuperação automática de falhas e sistema modular de aplicações.
+
+A solução combina duas frentes:
+
+| Frente | O que faz |
+|---|---|
+| **Multi-Forge** (infraestrutura) | Prepara a TV Box do zero: grava a imagem, configura Wi-Fi pelo celular, monitora a saúde do hardware e gerencia módulos de aplicação |
+| **M.A.B.I** (aplicação) | Assistente virtual com voz offline, interface gráfica em tela de TV, consulta a dados acadêmicos locais e recursos de IA conectados |
+
+**Repo principal (código completo):** https://github.com/multi-forge/multi-forge
+
+---
+
+## Membros da Equipe 1
+
+* [Brenda Biral](https://github.com/BrendaBiral) ([@BrendaBiral](https://github.com/BrendaBiral))
+* [Adriel Henrique Souza](https://github.com/AdrielH024) ([@AdrielH024](https://github.com/AdrielH024))
+* [Marcos Oliveira e Silva](https://github.com/marquinho20-bot) ([@marquinho20-bot](https://github.com/marquinho20-bot))
+* [Isaac Andrade](https://github.com/alguemaiYT) ([@alguemaiYT](https://github.com/alguemaiYT))
+
+---
+
+## Objetivo do projeto
+
+Validar que uma TV Box apreendida e reaproveitada pode funcionar como um **totem acadêmico autônomo**, capaz de:
+
+- Operar como ponto de acesso Wi-Fi para configuração inicial sem teclado, mouse ou monitor externo — apenas TV + celular;
+- Provisionar conexão com redes universitárias (incluindo eduroam com EAP/802.1X);
+- Recuperar-se automaticamente de falhas de conexão sem intervenção humana;
+- Hospedar uma assistente virtual acadêmica com reconhecimento de voz offline;
+- Servir como plataforma extensível para outros módulos de aplicação;
+- Funcionar dentro das restrições de 2 GB de RAM e armazenamento limitado.
+
+---
+
+## Motivação
+
+Projetos de inclusão digital e informação acadêmica normalmente dependem de computadores convencionais, terminais dedicados ou aplicativos mobile — todos com custo ou dependência de infraestrutura que limita a implantação.
+
+A Multi-Forge propõe reaproveitar TV Boxes apreendidas pela Anatel como computadores de borda de baixo custo. A M.A.B.I é a prova de que esse hardware, com as otimizações certas, pode entregar uma experiência útil e acessível.
+
+---
+
+## Arquitetura
+
+O sistema opera em quatro camadas independentes:
 
 ```mermaid
-flowchart TD
-    subgraph Preparacao ["1. Preparacao e Gravacao"]
-        FDB["ForgeDB (Metadados e Schemas)"] -->|"dist/catalog.json via jsDelivr"| FI["ForgeImager (Desktop Flasher)"]
-        HW["Hardware Conectado (USB/SD)"] -->|"Autodeteccao via Fingerprints"| FI
+flowchart TB
+    subgraph Desktop["1. Preparação — Desktop"]
+        FI["ForgeImager (Rust + Tauri)<br/>Grava a imagem no MicroSD<br/>Injeção de config Wi-Fi em ext4<br/>Verificação SHA-256"]
     end
 
-    subgraph Boot ["2. Inicializacao e Provisionamento (ForgeOS)"]
-        FI -->|"Gravacao SD/eMMC + Injecao Ext4"| AP["forge-ap (192.168.4.1)"]
-        AP --> PORTAL["forge-portal (:8080)"]
-        AP --> HDMI["forge-display (/dev/fb0)"]
-        PORTAL -->|"Configuracao Wi-Fi"| APPLY["apply-sta.sh"]
-        APPLY -->|"Timeout > 75s"| WD["watchdog.sh (Rollback)"]
-        APPLY -->|"Sucesso"| CLI["Modo Cliente Ativo"]
+    subgraph Borda["2. Borda — TV Box BTV E10 (S905X2)"]
+        subgraph OS["ForgeOS — Sistema Base"]
+            DTB["DTB Enterprise<br/>SDIO 25 MHz + CMA 64 MB<br/>ZRAM ZSTD + BBRv3"]
+            AP["Ponto de Acesso<br/>192.168.4.1<br/>wpa_supplicant mode=2"]
+            DISP["Tela HDMI /dev/fb0<br/>QR Code na TV (1080p)"]
+            PORTAL["Portal Web :8080<br/>Scan Wi-Fi, provisioning,<br/>telemetria, logs, módulos"]
+            WATCH["Watchdog 75 s<br/>Rollback automático para AP"]
+        end
+        subgraph Modules["ForgeModules — Aplicações"]
+            MABI["M.A.B.I (Mina)<br/>Voz offline (Sherpa-ONNX)<br/>GUI PyQt5 + SQLite"]
+            RAG["Coletor + RAG<br/>FastAPI + LangChain<br/>PostgreSQL/SQLite + Redis"]
+        end
     end
 
-    subgraph Modulos ["3. Execucao de Aplicacoes"]
-        CLI --> HUB["Central de Modulos (ForgeHub)"]
-        HUB --> MOD1["M.A.B.I AI Totem"]
-        HUB --> MOD2["Coletor Web / RAG"]
+    subgraph Dados["3. Dados"]
+        FDB["ForgeDB<br/>Catálogo de dispositivos<br/>JSON Schema Draft 2020-12<br/>CDN jsDelivr + fallback offline"]
     end
+
+    subgraph User["4. Usuário"]
+        TV["TV (HDMI)"]
+        CEL["Celular"]
+    end
+
+    FI -->|MicroSD| OS
+    DISP -->|QR na tela| TV
+    TV -->|Usuário lê QR| CEL
+    CEL -->|Acessa portal| AP
+    AP --> PORTAL
+    PORTAL -->|Provisiona Wi-Fi| WATCH
+    FDB -->|Manifesto de módulos| PORTAL
+```
+
+### Princípios de projeto
+
+- **Offline-first:** todo o provisionamento funciona sem internet — a box cria sua própria rede.
+- **Sem periféricos:** não precisa de teclado, mouse nem monitor. A TV mostra o QR, o celular faz o resto.
+- **Recuperação automática:** se a senha do Wi-Fi estiver errada ou a rede cair, o watchdog restaura o ponto de acesso em 75 segundos.
+- **Modular:** a M.A.B.I é um módulo como qualquer outro — pode ser substituída ou acompanhada por outras aplicações via `module.yaml`.
+
+---
+
+## Fluxos principais
+
+### Onboarding — Da caixa lacrada ao totem funcionando
+
+```
+  TV Box lacrada
+       ↓
+  Grava MicroSD com ForgeImager (PC)
+       ↓
+  Insere o cartão, liga HDMI + energia
+       ↓
+  TV mostra QR Code do ponto de acesso
+       ↓
+  Celular lê o QR → conecta no Wi-Fi "ForgeOS-Setup-E10"
+       ↓
+  Abre http://192.168.4.1:8080 → portal web
+       ↓
+  Escolhe a rede Wi-Fi da universidade
+       ↓
+  Box conecta → TV mostra telemetria (IP, temp, RAM)
+       ↓
+  M.A.B.I inicia e fica pronta para uso
+```
+
+### Provisionamento Wi-Fi (portal web no celular)
+
+1. O portal faz scan das redes próximas e mostra na tela do celular, com intensidade de sinal (RSSI) e tipo de segurança.
+2. O usuário escolhe a rede. Para redes WPA2-PSK, basta digitar a senha. Para redes EAP (eduroam), o portal pede método (PEAP/TTLS/PWD/TLS), identidade e credenciais.
+3. A box aplica as credenciais via `wpa_supplicant`, testa a conexão (verifica IP + gateway) e informa o resultado na TV.
+4. Se falhar, o watchdog restaura o ponto de acesso automaticamente em 75 segundos — sem precisar reiniciar.
+
+### Rollback automático (watchdog)
+
+```
+  Box conecta na rede solicitada
+       ↓
+  Watchdog monitora a cada 75 s:
+    - Verifica se há IP válido
+    - Testa alcance do gateway
+       ↓
+  Se falhar:
+    - Restaura modo AP (192.168.4.1)
+    - TV volta a mostrar QR
+    - Portal reabre para nova tentativa
+```
+
+### Interação com a M.A.B.I
+
+1. O usuário fala uma pergunta ao microfone conectado à TV Box.
+2. O Sherpa-ONNX faz o reconhecimento de voz **localmente**, sem enviar áudio para a nuvem.
+3. A M.A.B.I consulta os dados acadêmicos locais (SQLite) e, se disponível, complementa com recursos de IA conectados (LangChain + RAG).
+4. A resposta aparece na tela da TV (PyQt5) e é reproduzida por síntese de voz.
+
+---
+
+## Stack técnica
+
+| Camada | Tecnologia | Função |
+|---|---|---|
+| **Gravação** | Rust + Tauri v2 + React 19 | ForgeImager: grava imagem, injeta configuração em ext4 sem root no host |
+| **Kernel e boot** | Linux 6.18 ARM64, Armbian Trixie | DTB customizado com SDIO 25 MHz, CMA 64 MB, watchdog do SoC |
+| **Memória** | MGLRU + ZRAM ZSTD (50% da RAM) | Compressão 3:1, elimina desgaste da eMMC |
+| **Rede** | wpa_supplicant mode=2, BBRv3, fq | AP automático + suporte EAP completo |
+| **Portal web** | Python 3 (stdlib), HTML/CSS/JS | 13 KB, zero dependência externa, SPA responsiva |
+| **Display HDMI** | Pillow + framebuffer /dev/fb0 | QR Code 1080p direto na TV, sem servidor gráfico (X11/Wayland) |
+| **M.A.B.I (voz)** | Sherpa-ONNX, PyQt5, SQLite | Reconhecimento de voz offline + GUI em tela de TV |
+| **Coletor RAG** | FastAPI, LangChain, PostgreSQL/SQLite, Redis | Busca e indexação de dados acadêmicos |
+| **Catálogo** | JSON Schema Draft 2020-12, jsDelivr | ForgeDB: validação em CI, CDN + fallback offline |
+| **Testes** | unittest, Playwright | 34 testes (unitários + integração + E2E) |
+
+---
+
+## Telas reais (sem mock)
+
+### Tela HDMI (framebuffer /dev/fb0)
+
+A TV Box renderiza diretamente no framebuffer Linux — não precisa de servidor gráfico.
+
+| QR Code do ponto de acesso |
+| :---: |
+| ![HDMI QR](imagens/07_ForgeOS_HDMI_Dual_QR_Framebuffer_1080p.png) |
+
+### Portal web (`:8080`) — acessado pelo celular
+
+| Visão geral | Rede | Serviços |
+| :---: | :---: | :---: |
+| ![Overview](imagens/01_ForgeOS_Audit_Overview.png) | ![Rede](imagens/02_ForgeOS_Audit_Networking.png) | ![Serviços](imagens/03_ForgeOS_Audit_Services.png) |
+
+| Módulos | Logs RFC 5424 | Mobile |
+| :---: | :---: | :---: |
+| ![Módulos](imagens/04_ForgeOS_Audit_Modules_Hub.png) | ![Logs](imagens/05_ForgeOS_Audit_Logs_RFC5424.png) | ![Mobile](imagens/mobile_overview.png) |
+
+---
+
+## Hardware utilizado
+
+| Componente | Especificação |
+|---|---|
+| Dispositivo | BTV Express E10 (TV Box apreendida) |
+| Processador | Amlogic S905X2 (Meson G12A), 4× Cortex-A53 @ 1.80 GHz |
+| GPU | ARM Mali-G31 MP2 |
+| RAM | 2 GB LPDDR4 (1.85 GB visíveis) |
+| Armazenamento | 8 GB eMMC 5.1 + leitor MicroSD |
+| Wi-Fi | Realtek RTL8189FTV (SDIO, 2.4 GHz 802.11 b/g/n) |
+| Ethernet | Realtek RTL8211F (10/100 Mbps) |
+| Vídeo | HDMI 2.0a (1080p @ 60 Hz) |
+| Sistema | Armbian 26.08 Trixie (Debian 13 Minimal), kernel 6.18 ARM64 |
+
+---
+
+## Otimizações aplicadas
+
+A distribuição inclui patches em nível de kernel, device tree, rede e gerenciamento de memória para garantir estabilidade no hardware da TV Box:
+
+| Otimização | O que faz | Por que importa |
+|---|---|---|
+| DTB Enterprise (SDIO 25 MHz) | Trava a frequência do barramento Wi-Fi e desativa modo highspeed | Elimina erros de CRC e quedas de firmware do RTL8189FTV |
+| CMA 64 MB (vs. 256 MB padrão) | Reduz o buffer de vídeo contíguo | Libera 192 MB de RAM para aplicações |
+| ZRAM ZSTD (50% RAM) | Swap comprimido em RAM com taxa 3:1 | Elimina desgaste de escrita na eMMC |
+| MGLRU | Escalonador de memória multi-geração | Melhor aproveitamento de cache em 2 GB |
+| BBRv3 + fq | Controle de congestionamento do Google | Throughput mais estável em Wi-Fi instável |
+| Watchdog do SoC | `/dev/watchdog` nativo Amlogic | Reinício automático se o sistema travar |
+
+---
+
+## Serviços systemd
+
+| Unidade | Tipo | Função |
+|---|---|---|
+| `forge-ap.service` | oneshot | Configura wlan0, gateway 192.168.4.1 e inicia dnsmasq |
+| `forge-portal.service` | simple | Servidor HTTP na porta 8080 (scan, provisioning, telemetria) |
+| `forge-display.service` | simple | Renderiza tela HDMI no /dev/fb0 (QR + estados) |
+| `forge-watchdog.service` | simple | Monitora conectividade com rollback em 75 s |
+| `forge-fbcon-disable.service` | oneshot | Desativa cursor e blanking de tela no HDMI |
+
+---
+
+## API REST do portal
+
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `/api/status` | GET | Estado operacional (modo AP ou cliente, SSID, IP) |
+| `/api/scan` | GET | Varredura de redes Wi-Fi próximas com RSSI e tipo de segurança |
+| `/api/provision` | POST | Aplica credenciais Wi-Fi e aciona teste de conectividade |
+| `/api/reset` | POST | Reverte para modo ponto de acesso |
+| `/api/telemetry` | GET | Temperatura CPU, frequência, RAM, ZRAM, disco |
+| `/rest/modules` | GET | Lista de módulos cadastrados no ForgeDB e estado local |
+
+---
+
+## Estrutura do projeto
+
+```
+Projeto Equipe 1/
+├── readme.md                    # Este arquivo
+├── ForgeOS/                     # Sistema base da TV Box
+│   ├── bin/
+│   │   ├── start-ap.sh            # Inicialização do ponto de acesso
+│   │   ├── apply-sta.sh           # Aplicação de credenciais Wi-Fi
+│   │   └── watchdog.sh            # Monitoramento + rollback (75 s)
+│   ├── web/
+│   │   ├── server.py              # Servidor HTTP REST (stdlib Python)
+│   │   └── index.html             # Portal SPA responsivo
+│   ├── display/
+│   │   └── display_manager.py     # Renderização HDMI via /dev/fb0
+│   ├── dtb/
+│   │   ├── meson-g12a-btv-e10-enterprise.dts  # Device Tree (fonte)
+│   │   └── meson-g12a-btv-e10-enterprise.dtb  # DTB compilado
+│   ├── distro/
+│   │   ├── build-image.sh         # Pipeline de construção de imagem
+│   │   └── gcp-spot-launcher.py   # Compilação em instância Spot GCP
+│   ├── systemd/                   # Units dos serviços
+│   └── tests/                     # Testes do servidor e DTB
+│
+├── ForgeModules/                # Aplicações modulares
+│   ├── totem/                     # M.A.B.I (Mina)
+│   │   ├── main_gui.py             # Interface PyQt5 para TV
+│   │   ├── main_cli.py             # Modo terminal
+│   │   ├── src/                     # Core da assistente
+│   │   ├── models/                  # Modelos Sherpa-ONNX
+│   │   ├── keywords/                # Wake words
+│   │   └── module.yaml              # Manifesto para ForgeOS
+│   └── sub-modulos/
+│       └── web-scraping/            # Coletor RAG acadêmico
+│           ├── collector/             # Scraping assíncrono (aiohttp)
+│           ├── api/                   # FastAPI + rotas REST
+│           ├── agent/                 # LangChain + RAG
+│           ├── database/              # PostgreSQL + SQLAlchemy
+│           └── frontend/              # Dashboard web
+│
+├── ForgeDB/                     # Catálogo de dispositivos e módulos
+│   ├── devices/                   # Especificações de hardware
+│   ├── modules/                   # Catálogo de módulos (catalog.yaml)
+│   └── schemas/                   # JSON Schema para validação
+│
+├── ForgeImager/                 # Gravador desktop (Rust + Tauri + React)
+│   ├── src-tauri/                 # Backend Rust
+│   ├── crates/
+│   │   └── forge-write-conf/        # Injeção em ext4 sem mount
+│   └── src/                       # Frontend React
+│
+├── docs/                        # Auditorias e documentação técnica
+└── imagens/                     # Screenshots reais + logo
 ```
 
 ---
 
-## Guia de Uso por Componente
+## Como reproduzir
 
-### 1. ForgeImager (Aplicativo Desktop)
+### 1. Download da imagem
 
-```bash
-cd ForgeImager
+Imagem pré-compilada + ForgeImager:
+https://github.com/gasiepgodoy/Hackathon-TV-Box-E10/releases/tag/equipe1-v1.2.0
 
-# Instalacao de dependencias e execucao em desenvolvimento:
-npm install
-npm run tauri:dev
-
-# Compilacao rapida de depuracao:
-npm run tauri:build:dev
-
-# Compilacao de instaladores finais de producao (.exe, .msi, .deb, .AppImage, .dmg):
-npm run tauri:build
-```
-
-Recursos implementados:
-- **Autodeteccao de hardware:** Identificacao automatica de modelos de TV Box via casamento de assinaturas (fingerprints) de USB VID/PID, strings de modelos de eMMC e Device Tree.
-- **Catalogo Dinamico via CDN:** Consumo transparente de `dist/catalog.json` via jsDelivr CDN com fallback para cache local e snapshot embutido.
-- **Descompressao multithread:** Suporte em tempo real a `.xz`, `.gz`, `.zst`, `.bz2` com verificacao SHA-256 bloco a bloco.
-- **Injecao Userspace em Ext4:** Gravacao de parametros de primeiro boot diretamente em particoes ext4 via `forge-write-conf` sem necessidade de montagem no host.
-- **Recuperacao Qualcomm EDL:** Suporte a modo Sahara/Firehose para gravacao de placas Qualcomm em baixo nivel.
-
-### 2. ForgeDB (Banco de Hardware e Compilador de Catalogo)
+### 2. Gravação no MicroSD
 
 ```bash
-cd ForgeDB
+# Opção A: ForgeImager (interface gráfica)
+cd ForgeImager && pnpm install && pnpm tauri dev
 
-# Instalacao de dependencias do validador:
-npm install
-
-# Validar todos os descritores contra os schemas JSON (Draft 2020-12):
-npm run validate
-
-# Compilar o catalogo unificado para distribuicao:
-npm run build
+# Opção B: Linha de comando
+xzcat forgeos-btv-e10.img.xz | sudo dd of=/dev/sdX bs=4M status=progress && sync
 ```
 
-Recursos implementados:
-- **Schemas Formais v2:** Validadores JSON Schema Draft 2020-12 para dispositivos, imagens, fabricantes e catalogo compilado.
-- **Assinaturas de Fingerprint:** Campos declarativos para autodeteccao por `cpuinfo`, `device_tree`, `usb` e `storage_model`.
-- **Integracao Continua:** Workflows de GitHub Actions que validam pull requests e compilam automaticamente novos lancamentos para distribuicao global gratuita via jsDelivr.
+### 3. Primeiro boot
 
-### 3. ForgeProvisioner (Sistema Embarcado)
+1. Insira o MicroSD na BTV E10.
+2. Conecte o cabo HDMI na TV e ligue a energia.
+3. Aguarde ~30 segundos — a TV mostra o QR Code do ponto de acesso.
+4. No celular, leia o QR Code (ou conecte manualmente na rede `ForgeOS-Setup-E10`).
+5. Abra `http://192.168.4.1:8080` no navegador do celular.
+6. Escolha a rede Wi-Fi, insira as credenciais e aguarde a confirmação na TV.
 
-```bash
-cd ForgeProvisioner
+### 4. Acesso posterior
 
-# Instalacao da stack em instalacoes Armbian existentes:
-sudo bash install.sh
-
-# Execucao dos testes unitarios:
-python -m unittest discover -s tests -p "test_*.py" -v
-```
-
-Recursos implementados:
-- Ponto de acesso Wi-Fi via `wpa_supplicant` mode=2 para contornar limitacoes do driver Realtek RTL8189FTV.
-- Watchdog de rede com rollback automatico para modo AP em caso de credenciais incorretas ou perda de conexao.
-- Kiosk grafico HDMI 1080p desenhado diretamente no `/dev/fb0` com exibicao de QR Codes para conexao rapida.
-- Device Tree Enterprise com clock SDIO travado em 25 MHz, CMA reduzido para 64 MB (+192 MB de RAM disponivel) e watchdog de hardware ativo.
-
-### 4. ForgeModules (Aplicacoes)
-
-```bash
-# Modulo Totem (M.A.B.I):
-cd ForgeModules/totem
-python install.py --headless
-python main_cli.py
-
-# Modulo Web Scraping & RAG:
-cd ForgeModules/sub-modulos/web-scraping
-docker compose up -d
-```
+- **Portal web:** `http://<ip-da-box>:8080`
+- **SSH:** `ssh root@<ip-da-box>`
 
 ---
 
-## Documentacao Adicional
+## Demo — Roteiro da final (18/09, 3 minutos)
 
-- [Manual do ForgeImager](ForgeImager/README.md)
-- [Guia de Desenvolvimento do ForgeImager](ForgeImager/DEVELOPMENT.md)
-- [Manual do ForgeDB](ForgeDB/README.md)
-- [Guia de Contribuicao de Novos Dispositivos](ForgeDB/CONTRIBUTING.md)
-- [Documentacao Tecnica do ForgeCore](ForgeCore/README.md)
-- [Guia do ForgeProvisioner](ForgeProvisioner/README.md)
-- [Manual de Tweaks e Patches](ForgeCore/docs/tweaks-and-patches.md)
-- [Device Tree Sources e Compilacao](ForgeCore/dtb/README.md)
-- [Especificacoes Tecnicas BTV E10](docs/btv-e10.md)
+| Tempo | Ação | O que aparece |
+|---|---|---|
+| 0:00 | Box liga, TV mostra QR | Tela HDMI com QR do AP |
+| 0:30 | Celular conecta no AP, abre portal | Portal web no celular com scan de redes |
+| 1:00 | Provisiona a rede Wi-Fi | TV muda para tela de conexão → sucesso |
+| 1:30 | Mostra portal `:8080` com telemetria | Dashboard: CPU, RAM, temperatura, IP, módulos |
+| 2:00 | Mostra M.A.B.I respondendo uma pergunta | Assistente com voz na TV |
+| 2:30 | Erra a senha de propósito | Tela FAILED → watchdog restaura AP em 75 s |
 
 ---
 
-## Licenca
+## Diferenciais
 
-Projeto distribuido sob licenca MIT. Consulte o arquivo [LICENSE](LICENSE) para mais informacoes.
+| Diferencial | Descrição |
+|---|---|
+| **Zero periféricos** | Não precisa de teclado, mouse nem monitor externo — TV + celular bastam |
+| **Offline-first completo** | Provisionamento, portal, watchdog e M.A.B.I (voz) funcionam sem internet |
+| **EAP/802.1X nativo** | Suporte a PEAP, TTLS, PWD e TLS — conecta direto na eduroam |
+| **Rollback automático** | Watchdog de 75 s restaura AP sem intervenção, sem reiniciar |
+| **Gravação sem root** | ForgeImager injeta configuração em ext4 sem precisar de `mount` no host |
+| **Voz offline** | Sherpa-ONNX roda reconhecimento de fala no próprio ARM64, sem enviar áudio para a nuvem |
+| **Modular** | Qualquer aplicação pode ser adicionada como módulo via `module.yaml` + catálogo ForgeDB |
+| **DTB customizado** | Patches de hardware validados no dispositivo real (SDIO, CMA, watchdog) |
+| **Portal leve** | 13 KB, zero dependência externa, funciona em qualquer navegador mobile |
+
+---
+
+## Evidências técnicas
+
+- **DTB `meson-g12a-btv-e10-enterprise.dts`:** SDIO 25 MHz (RTL8189FTV), CMA 64 MB, watchdog habilitado.
+- **Portal 13 KB**, zero dependência externa, EAP completo (PEAP/TTLS/PWD/TLS).
+- **ForgeDB** validado em CI (JSON Schema Draft 2020-12) + CDN jsDelivr + fallback offline.
+- **34 testes** do Provisioner (unitários + integração + E2E Playwright).
+- **ForgeImager** com injeção userspace em ext4 (`forge-write-conf`) sem necessidade de mount.
+- **Compilação de imagem** automatizada em instância Spot do Google Cloud Platform.
+
+---
+
+## Estado atual
+
+| Componente | Estado |
+|---|---|
+| ForgeOS (AP, portal, watchdog, display) | ✅ Funcional e testado no hardware |
+| ForgeImager (gravação + injeção ext4) | ✅ Funcional (Windows, Linux, macOS) |
+| ForgeDB (catálogo + schemas) | ✅ Validado em CI |
+| M.A.B.I — voz offline + GUI | ✅ Estável |
+| Coletor RAG (web-scraping) | ✅ Homologado |
+| Suporte eduroam (EAP) | ✅ Testado |
+| Testes automatizados | ✅ 34 testes passando |
+
+---
+
+## Licença
+
+MIT — 1º Hackathon TV Box Unesp Sorocaba (2026).

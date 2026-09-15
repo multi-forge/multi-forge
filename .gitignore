@@ -95,3 +95,5 @@ multiforge_audit_plan.md
 
 ## Graphify (generated knowledge graph, regenerable via `graphify update .`)
 graphify-out/
+ForgeHub/bin/
+distro_output/

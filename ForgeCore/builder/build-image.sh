@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 WORK_DIR="/tmp/forgeos_distro_build"
 OUTPUT_DIR="${OUTPUT_DIR:-$REPO_ROOT/distro_output}"
-DISTRO_NAME="ForgeOS_BTV_E10_v1.2.0"
+DISTRO_NAME="ForgeOS_BTV_E10_v2.0.0"
 BASE_IMG_URL="https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_trixie_arm64_server_2026.08/Armbian_26.08.0_amlogic_s905x2_trixie_6.18.44_server_2026.08.15.img.gz"
 
 log() { echo -e "\033[1;34m[BUILDER]\033[0m $*"; }
@@ -117,6 +117,20 @@ cp -r "$REPO_ROOT/ForgeProvisioner/branding/."   "$MOUNT_ROOT/opt/forgeos/brandi
 cp -r "$REPO_ROOT/ForgeProvisioner/systemd/."    "$MOUNT_ROOT/etc/systemd/system/"
 cp -f "$REPO_ROOT/ForgeProvisioner/install.sh"   "$MOUNT_ROOT/opt/forgeos/install.sh"
 
+# Injetando ForgeHub Edge Daemon, Kiosk Obsidian & Modulos
+mkdir -p "$MOUNT_ROOT/opt/forgehub"/{hardware/display,hardware/network,hardware/systemd,modules} "$MOUNT_ROOT/opt/multiforge/modules" "$MOUNT_ROOT/usr/local/bin"
+cp -r "$REPO_ROOT/ForgeHub/hardware/." "$MOUNT_ROOT/opt/forgehub/hardware/" 2>/dev/null || true
+cp -r "$REPO_ROOT/ForgeHub/modules/."  "$MOUNT_ROOT/opt/multiforge/modules/" 2>/dev/null || true
+[ -f "$REPO_ROOT/ForgeHub/bin/forgehub" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forgehub" "$MOUNT_ROOT/usr/local/bin/"
+[ -f "$REPO_ROOT/ForgeHub/bin/forge-module-mina-ia" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forge-module-mina-ia" "$MOUNT_ROOT/usr/local/bin/"
+[ -f "$REPO_ROOT/ForgeHub/bin/forge-module-web-scraping" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forge-module-web-scraping" "$MOUNT_ROOT/usr/local/bin/"
+[ -f "$REPO_ROOT/ForgeHub/hardware/network/forge-ap-ctrl" ] && cp -f "$REPO_ROOT/ForgeHub/hardware/network/forge-ap-ctrl" "$MOUNT_ROOT/usr/local/bin/"
+cp -f "$REPO_ROOT/ForgeHub/hardware/systemd/"*.service "$MOUNT_ROOT/etc/systemd/system/" 2>/dev/null || true
+mkdir -p "$MOUNT_ROOT/etc/systemd/system/forge-kiosk.service.d"
+[ -f "$REPO_ROOT/ForgeHub/hardware/systemd/50-minimal-panels.conf" ] && cp -f "$REPO_ROOT/ForgeHub/hardware/systemd/50-minimal-panels.conf" "$MOUNT_ROOT/etc/systemd/system/forge-kiosk.service.d/"
+chmod +x "$MOUNT_ROOT"/usr/local/bin/forge* "$MOUNT_ROOT"/opt/forgehub/hardware/display/*.py 2>/dev/null || true
+
+
 chmod +x "$MOUNT_ROOT"/opt/forgeos/bin/*.sh \
          "$MOUNT_ROOT"/opt/forgeos/network/*.py \
          "$MOUNT_ROOT"/opt/forgeos/display/*.py \
@@ -144,7 +158,7 @@ chroot "$MOUNT_ROOT" /bin/bash -c "
     
     # Habilita os serviços do ForgeOS e SSH no boot
     systemctl daemon-reload 2>/dev/null || true
-    systemctl enable forge-ap.service forge-portal.service forge-display.service forge-watchdog.service forge-fbcon-disable.service ssh sshd 2>/dev/null || true
+    systemctl enable forgehub.service forge-kiosk.service forge-ap.service forge-portal.service forge-display.service forge-watchdog.service forge-fbcon-disable.service ssh sshd 2>/dev/null || true
     
     # Configura SSH com PermitRootLogin ativo
     mkdir -p /etc/ssh /etc/ssh/sshd_config.d
