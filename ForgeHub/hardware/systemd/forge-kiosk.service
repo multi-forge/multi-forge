@@ -1,11 +1,13 @@
 [Unit]
 Description=ForgeHub Framebuffer Kiosk Bridge
-After=systemd-user-sessions.service plymouth-quit-wait.service
+After=systemd-user-sessions.service plymouth-quit-wait.service network.target forgehub.service
 Conflicts=getty@tty1.service
 
 [Service]
 Type=simple
+ExecStartPre=-/usr/bin/setterm -cursor off
 ExecStart=/usr/bin/python3 /opt/forgehub/hardware/display/forge_kiosk.py
+ExecStopPost=-/usr/bin/setterm -cursor on
 Restart=always
 RestartSec=5
 StandardOutput=journal

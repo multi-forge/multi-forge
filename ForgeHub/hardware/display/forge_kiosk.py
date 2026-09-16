@@ -23,9 +23,10 @@ STATE_DIR = "/opt/multi-forge/ForgeOS/state"
 PORTAL_AP_URL = "http://192.168.4.1:8080"
 
 def F(name, size):
-    p = os.path.join(FONTS_DIR, name)
-    if Path(p).exists():
-        return ImageFont.truetype(p, size)
+    for base in (FONTS_DIR, "/opt/forgeos/display/fonts"):
+        p = os.path.join(base, name)
+        if Path(p).exists():
+            return ImageFont.truetype(p, size)
     for fb in (
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if "Bold" in name else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         "/usr/share/fonts/truetype/freefont/FreeSans.ttf"

@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 WORK_DIR="/tmp/forgeos_distro_build"
 OUTPUT_DIR="${OUTPUT_DIR:-$REPO_ROOT/distro_output}"
-DISTRO_NAME="ForgeOS_BTV_E10_v2.0.0"
+DISTRO_NAME="ForgeOS_BTV_E10_v2.0.1"
 BASE_IMG_URL="https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_trixie_arm64_server_2026.08/Armbian_26.08.0_amlogic_s905x2_trixie_6.18.44_server_2026.08.15.img.gz"
 
 log() { echo -e "\033[1;34m[BUILDER]\033[0m $*"; }
@@ -118,8 +118,9 @@ cp -r "$REPO_ROOT/ForgeProvisioner/systemd/."    "$MOUNT_ROOT/etc/systemd/system
 cp -f "$REPO_ROOT/ForgeProvisioner/install.sh"   "$MOUNT_ROOT/opt/forgeos/install.sh"
 
 # Injetando ForgeHub Edge Daemon, Kiosk Obsidian & Modulos
-mkdir -p "$MOUNT_ROOT/opt/forgehub"/{hardware/display,hardware/network,hardware/systemd,modules} "$MOUNT_ROOT/opt/multiforge/modules" "$MOUNT_ROOT/usr/local/bin"
+mkdir -p "$MOUNT_ROOT/opt/forgehub"/{hardware/display/fonts,hardware/network,hardware/systemd,modules} "$MOUNT_ROOT/opt/multiforge/modules" "$MOUNT_ROOT/usr/local/bin"
 cp -r "$REPO_ROOT/ForgeHub/hardware/." "$MOUNT_ROOT/opt/forgehub/hardware/" 2>/dev/null || true
+cp -r "$REPO_ROOT/ForgeProvisioner/display/fonts/." "$MOUNT_ROOT/opt/forgehub/hardware/display/fonts/" 2>/dev/null || true
 cp -r "$REPO_ROOT/ForgeHub/modules/."  "$MOUNT_ROOT/opt/multiforge/modules/" 2>/dev/null || true
 [ -f "$REPO_ROOT/ForgeHub/bin/forgehub" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forgehub" "$MOUNT_ROOT/usr/local/bin/"
 [ -f "$REPO_ROOT/ForgeHub/bin/forge-module-mina-ia" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forge-module-mina-ia" "$MOUNT_ROOT/usr/local/bin/"
@@ -150,23 +151,33 @@ PERCENT=50
 PRIORITY=100
 EOF
 
-log "8. Executando customização via Chroot ARM64 (QEMU User Static)..."
+log "8. Executando customização via Chroot ARM64..."
 cp /usr/bin/qemu-aarch64-static "$MOUNT_ROOT/usr/bin/" 2>/dev/null || true
+cp -L /etc/resolv.conf "$MOUNT_ROOT/etc/resolv.conf" 2>/dev/null || true
+mount --bind /dev "$MOUNT_ROOT/dev" 2>/dev/null || true
+mount --bind /proc "$MOUNT_ROOT/proc" 2>/dev/null || true
+mount --bind /sys "$MOUNT_ROOT/sys" 2>/dev/null || true
 
 chroot "$MOUNT_ROOT" /bin/bash -c "
     export DEBIAN_FRONTEND=noninteractive
     
-    # Habilita os serviços do ForgeOS e SSH no boot
+    # Atualiza repositórios e instala dependências essenciais de runtime para Kiosk/Display e Rede
+    apt-get update -qq || true
+    apt-get install -y -qq --no-install-recommends \
+        python3-pil python3-qrcode fonts-dejavu-core qrencode iw || true
+    
+    # Habilita os serviços oficiais do ForgeOS v2.0+ e SSH no boot
     systemctl daemon-reload 2>/dev/null || true
-    systemctl enable forgehub.service forge-kiosk.service forge-ap.service forge-portal.service forge-display.service forge-watchdog.service forge-fbcon-disable.service ssh sshd 2>/dev/null || true
+    systemctl enable forgehub.service forge-kiosk.service forge-ap.service forge-watchdog.service ssh sshd getty@tty2.service 2>/dev/null || true
+    
+    # Desativa e mascara serviços legados conflitantes
+    systemctl disable forge-portal.service forge-display.service forge-fbcon-disable.service NetworkManager wpa_supplicant hostapd 2>/dev/null || true
+    systemctl mask forge-portal.service forge-display.service forge-fbcon-disable.service 2>/dev/null || true
     
     # Configura SSH com PermitRootLogin ativo
     mkdir -p /etc/ssh /etc/ssh/sshd_config.d
     sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config 2>/dev/null || true
     echo 'PermitRootLogin yes' > /etc/ssh/sshd_config.d/01-root-login.conf 2>/dev/null || true
-    
-    # Desativa serviços conflitantes de rede comercial
-    systemctl disable NetworkManager wpa_supplicant hostapd 2>/dev/null || true
     
     # Define hostname oficial
     echo 'forgeos-btv' > /etc/hostname
@@ -181,6 +192,9 @@ chroot "$MOUNT_ROOT" /bin/bash -c "
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/log/*.log
 "
 
+umount -lf "$MOUNT_ROOT/dev" 2>/dev/null || true
+umount -lf "$MOUNT_ROOT/proc" 2>/dev/null || true
+umount -lf "$MOUNT_ROOT/sys" 2>/dev/null || true
 rm -f "$MOUNT_ROOT/usr/bin/qemu-aarch64-static"
 
 log "9. Desmontando e verificando integridade do filesystem..."
@@ -198,10 +212,10 @@ if [ -f "$SCRIPT_DIR/qemu-verify-boot.sh" ]; then
     }
 fi
 
-log "11. Comprimindo imagem validada com XZ multi-core (-T0 / -T32)..."
+log "11. Comprimindo imagem validada com XZ multi-core (-T0 / -6)..."
 FINAL_XZ="$OUTPUT_DIR/${DISTRO_NAME}.img.xz"
 rm -f "$FINAL_XZ"
-xz -T0 -9 -c "$RAW_IMG" > "$FINAL_XZ"
+xz -T0 -6 -c "$RAW_IMG" > "$FINAL_XZ"
 
 log "12. Gerando SHA256 Checksum..."
 cd "$OUTPUT_DIR"
