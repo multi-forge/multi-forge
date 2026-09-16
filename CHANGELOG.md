@@ -10,6 +10,9 @@
 - Acompanhamento do provisionamento pela interface e documentação em `ForgeHub/PROVISIONAMENTO.md`.
 
 ### Corrigido
+- Instalação do AP cria os arquivos Wi-Fi/DHCP ausentes, preserva configurações existentes e instala o controlador wpa_supplicant usado pela TV box.
+- Controlador do AP valida os arquivos antes de iniciar, interrompe em erros e aguarda confirmação de modo AP antes de anunciar sucesso.
+- Regra de retorno de tráfego do AP inclui o destino ACCEPT.
 - Aplicação de Wi-Fi passa um perfil privado ao script, evitando a ordem incorreta dos argumentos e a exposição de senhas na linha de comando.
 - Estado de conexão usa o IP retornado pela aplicação; remove confirmação fictícia de sucesso.
 - Tentativas simultâneas, inclusive EAP, são rejeitadas durante o provisionamento.

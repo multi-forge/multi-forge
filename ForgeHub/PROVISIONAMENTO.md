@@ -29,3 +29,9 @@ O script limita associação e DHCP a 55 segundos e solicita restauração do AP
 A versão foi implantada e os endpoints HTTP e assets foram verificados. Foram capturadas as telas desktop e mobile. Não foi feita associação real a uma rede nem teste automatizado completo de interação. O backend e apply_client.sh devem ser implantados juntos, pois o script agora recebe um arquivo de configuração, em vez dos argumentos antigos. O destino esperado do script é /opt/forgehub/hardware/network/apply_client.sh. O serviço forgehub foi atualizado com backup prévio. A árvore de trabalho original /opt/multi-forge foi preservada.
 
 Referência de configuração: https://android.googlesource.com/platform/external/wpa_supplicant_8/+/refs/heads/main/wpa_supplicant/wpa_supplicant.conf
+
+## Recuperação do AP
+
+Execute `sudo bash ForgeHub/scripts/setup_ap.sh` a partir deste repositório. O instalador preserva os arquivos existentes em `/opt/forgeos/network`, cria apenas os ausentes e instala o controlador versionado. Em instalação nova, o SSID padrão é `MultiForge-Setup-E10`; a senha gerada fica em `ap-password.txt` nesse diretório, acessível apenas a root. É possível fornecer `AP_SSID` e `AP_PASSWORD` pelo ambiente antes da primeira instalação. Não publique esse arquivo ou a configuração real da TV box.
+
+O instalador reinicia o AP e pausa temporariamente o watchdog, restaurando-o ao terminar. O controlador verifica DHCP/DNS e aguarda `mode=AP` e `wpa_state=COMPLETED`. A correção foi motivada pela ausência de `wpa_ap.conf` e `dnsmasq_portal.conf` na instalação, sem necessidade de substituir a ROM.

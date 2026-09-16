@@ -1,172 +1,55 @@
 #!/bin/bash
+# Install the RTL8189FTV wpa_supplicant AP stack without replacing saved credentials.
 set -euo pipefail
-
-echo "=== [1/6] Cleaning up conflicting legacy services ==="
-systemctl stop rtl8189_ap.service 2>/dev/null || true
-systemctl disable rtl8189_ap.service 2>/dev/null || true
-systemctl stop forge-display.service 2>/dev/null || true
-systemctl disable forge-display.service 2>/dev/null || true
-systemctl stop forge-ap.service 2>/dev/null || true
-systemctl disable forge-ap.service 2>/dev/null || true
-
-pkill -9 -f qr_screen.py 2>/dev/null || true
-pkill -9 -f /opt/forgeos/bin/watchdog.sh 2>/dev/null || true
-pkill -9 -f start_wifi_ap.sh 2>/dev/null || true
-pkill -9 -f wpa_supplicant 2>/dev/null || true
-pkill -9 -f hostapd 2>/dev/null || true
-pkill -9 -f dnsmasq 2>/dev/null || true
-
-echo "=== [2/6] Configuring hostapd.conf ==="
-mkdir -p /etc/hostapd
-cat > /etc/hostapd/hostapd.conf << 'EOF'
-interface=wlan0
-driver=nl80211
-ssid=Forge-E10
-hw_mode=g
-channel=6
-wmm_enabled=0
-macaddr_acl=0
-auth_algs=1
-ignore_broadcast_ssid=0
-wpa=2
-wpa_passphrase=forgehub
-wpa_key_mgmt=WPA-PSK
-wpa_pairwise=TKIP
-rsn_pairwise=CCMP
-EOF
-
-mkdir -p /etc/default
-cat > /etc/default/hostapd << 'EOF'
-DAEMON_CONF="/etc/hostapd/hostapd.conf"
-EOF
-
-echo "=== [3/6] Configuring dnsmasq captive portal ==="
-mkdir -p /opt/forgeos/network
-cat > /opt/forgeos/network/dnsmasq_portal.conf << 'EOF'
-interface=wlan0
-except-interface=lo
-bind-interfaces
-
-dhcp-range=192.168.4.10,192.168.4.250,255.255.255.0,12h
-dhcp-option=3,192.168.4.1
-dhcp-option=6,192.168.4.1
-dhcp-authoritative
-
-# Captive DNS
-no-resolv
-no-hosts
-address=/#/192.168.4.1
-EOF
-
-echo "=== [4/6] Creating robust /usr/local/bin/forge-ap-ctrl ==="
-cat > /usr/local/bin/forge-ap-ctrl << 'EOF'
-#!/bin/bash
-set -u
-
-ACTION="${1:-start}"
-IFACE="wlan0"
-AP_IP="192.168.4.1"
-CONF="/etc/hostapd/hostapd.conf"
-DNS_CONF="/opt/forgeos/network/dnsmasq_portal.conf"
-PID_FILE="/run/hostapd.pid"
-DNS_PID="/run/forge-dnsmasq.pid"
-
-start_ap() {
-    echo "[forge-ap-ctrl] Starting AP Forge-E10..."
-    
-    # 1. Stop any competing supplicant or hostapd
-    pkill -9 -f "wpa_supplicant.*wlan0" 2>/dev/null || true
-    pkill -9 -f "hostapd.*$CONF" 2>/dev/null || true
-    if [ -f "$DNS_PID" ]; then
-        kill -9 "$(cat "$DNS_PID")" 2>/dev/null || true
-        rm -f "$DNS_PID"
-    fi
-    pkill -f "dnsmasq.*$DNS_CONF" 2>/dev/null || true
-
-    # 2. Configure interface
-    ip link set "$IFACE" down 2>/dev/null || true
-    ip addr flush dev "$IFACE" 2>/dev/null || true
-    sleep 1
-    ip link set "$IFACE" up
-    ip addr add "$AP_IP/24" dev "$IFACE"
-
-    # 3. Start hostapd in background
-    hostapd -B -P "$PID_FILE" "$CONF"
-    sleep 1
-
-    # 4. Start captive dnsmasq
-    dnsmasq -C "$DNS_CONF" -x "$DNS_PID"
-
-    # 5. Routing & NAT
-    sysctl -w net.ipv4.ip_forward=1 >/dev/null 2>&1 || true
-    iptables -t nat -C PREROUTING -i "$IFACE" -p tcp --dport 80 -j DNAT --to-destination "$AP_IP:8080" 2>/dev/null || \
-        iptables -t nat -A PREROUTING -i "$IFACE" -p tcp --dport 80 -j DNAT --to-destination "$AP_IP:8080"
-
-    WAN_IF=$(ip route show default 2>/dev/null | awk '{print $5}' | head -n1)
-    if [ -n "$WAN_IF" ] && [ "$WAN_IF" != "$IFACE" ]; then
-        iptables -t nat -C POSTROUTING -o "$WAN_IF" -j MASQUERADE 2>/dev/null || \
-            iptables -t nat -A POSTROUTING -o "$WAN_IF" -j MASQUERADE
-        iptables -C FORWARD -i "$IFACE" -o "$WAN_IF" -j ACCEPT 2>/dev/null || \
-            iptables -A FORWARD -i "$IFACE" -o "$WAN_IF" -j ACCEPT
-        iptables -C FORWARD -i "$WAN_IF" -o "$IFACE" -m state --state RELATED,ESTABLISHED -j ACCEPT 2>/dev/null || \
-            iptables -A FORWARD -i "$WAN_IF" -o "$IFACE" -m state --state RELATED,ESTABLISHED -j ACCEPT
-    fi
-
-    echo "[forge-ap-ctrl] AP Forge-E10 active on $AP_IP"
+[ "$(id -u)" = 0 ] || { echo "Run as root" >&2; exit 1; }
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+HUB_DIR=$(dirname "$SCRIPT_DIR")
+for command in python3 wpa_supplicant wpa_cli dnsmasq ip iw iptables; do
+    command -v "$command" >/dev/null || { echo "Missing dependency: $command" >&2; exit 1; }
+done
+# Generate missing configuration before touching the running radio.
+python3 - <<'PY'
+from pathlib import Path
+import os, secrets, hashlib
+root = Path('/opt/forgeos/network')
+root.mkdir(parents=True, exist_ok=True)
+ap = root / 'wpa_ap.conf'
+if not ap.exists():
+    ssid = os.environ.get('AP_SSID', 'MultiForge-Setup-E10')
+    password = os.environ.get('AP_PASSWORD') or secrets.token_hex(8)
+    if not 1 <= len(ssid.encode()) <= 32 or any(ord(c) < 32 for c in ssid):
+        raise SystemExit('Invalid AP_SSID')
+    if not 8 <= len(password.encode()) <= 63:
+        raise SystemExit('AP_PASSWORD must contain 8-63 bytes')
+    psk = hashlib.pbkdf2_hmac('sha1', password.encode(), ssid.encode(), 4096, 32).hex()
+    config = ('ctrl_interface=/var/run/wpa_supplicant-ap\nap_scan=1\nnetwork={\n'
+              + '    ssid=' + ssid.encode().hex() + '\n    mode=2\n    key_mgmt=WPA-PSK\n'
+              + '    psk=' + psk + '\n    frequency=2437\n}\n')
+    fd = os.open(ap, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, 'w') as f: f.write(config)
+    credential = root / 'ap-password.txt'
+    fd = os.open(credential, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, 'w') as f: f.write(password + '\n')
+    print('AP password saved to /opt/forgeos/network/ap-password.txt (root only)')
+dns = root / 'dnsmasq_portal.conf'
+if not dns.exists():
+    config = ('interface=wlan0\nexcept-interface=lo\nbind-interfaces\n'
+              'dhcp-range=192.168.4.10,192.168.4.250,255.255.255.0,12h\n'
+              'dhcp-option=3,192.168.4.1\ndhcp-option=6,192.168.4.1\n'
+              'dhcp-authoritative\nno-resolv\nno-hosts\naddress=/#/192.168.4.1\n')
+    fd = os.open(dns, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, 'w') as f: f.write(config)
+PY
+dnsmasq --test -C /opt/forgeos/network/dnsmasq_portal.conf
+install -m 755 "$HUB_DIR/hardware/network/forge-ap-ctrl" /usr/local/bin/forge-ap-ctrl
+watchdog_active=0
+if systemctl is-active --quiet forge-watchdog; then
+    watchdog_active=1
+    systemctl stop forge-watchdog
+fi
+restore_watchdog() {
+    if [ "$watchdog_active" = 1 ]; then systemctl start forge-watchdog; fi
 }
-
-stop_ap() {
-    echo "[forge-ap-ctrl] Stopping AP..."
-    pkill -f "hostapd.*$CONF" 2>/dev/null || true
-    pkill -f "dnsmasq.*$DNS_CONF" 2>/dev/null || true
-    if [ -f "$DNS_PID" ]; then
-        kill "$(cat "$DNS_PID")" 2>/dev/null || true
-        rm -f "$DNS_PID"
-    fi
-    ip addr flush dev "$IFACE" 2>/dev/null || true
-    echo "[forge-ap-ctrl] AP stopped."
-}
-
-status_ap() {
-    iw dev "$IFACE" info 2>/dev/null || echo "Interface $IFACE down"
-    if pgrep -f "hostapd.*$CONF" >/dev/null; then
-        echo "hostapd: RUNNING"
-    else
-        echo "hostapd: STOPPED"
-    fi
-    if pgrep -f "dnsmasq.*$DNS_CONF" >/dev/null; then
-        echo "dnsmasq: RUNNING"
-    else
-        echo "dnsmasq: STOPPED"
-    fi
-}
-
-case "$ACTION" in
-    start)
-        start_ap
-        ;;
-    stop)
-        stop_ap
-        ;;
-    restart)
-        stop_ap
-        sleep 1
-        start_ap
-        ;;
-    status)
-        status_ap
-        ;;
-    *)
-        echo "Usage: $0 {start|stop|restart|status}"
-        exit 1
-        ;;
-esac
-EOF
-chmod +x /usr/local/bin/forge-ap-ctrl
-
-echo "=== [5/6] Starting forge-ap-ctrl ==="
+trap restore_watchdog EXIT
 /usr/local/bin/forge-ap-ctrl restart
-
-echo "=== [6/6] Verifying status ==="
 /usr/local/bin/forge-ap-ctrl status
-ip addr show wlan0
