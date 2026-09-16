@@ -11,7 +11,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-WORK_DIR="/tmp/forgeos_distro_build"
+WORK_DIR="${WORK_DIR:-/root/forgeos_distro_build}"
 OUTPUT_DIR="${OUTPUT_DIR:-$REPO_ROOT/distro_output}"
 DISTRO_NAME="ForgeOS_BTV_E10_v2.0.1"
 BASE_IMG_URL="https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_trixie_arm64_server_2026.08/Armbian_26.08.0_amlogic_s905x2_trixie_6.18.44_server_2026.08.15.img.gz"
