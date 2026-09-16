@@ -27,10 +27,10 @@ if [ -z "$IMAGE" ] || [ ! -f "$IMAGE" ]; then
 fi
 
 log "1. Verificando dependências QEMU System ARM64..."
-if ! command -v qemu-system-aarch64 >/dev/null 2>&1; then
-    log "Instalando qemu-system-arm..."
+if ! command -v qemu-system-aarch64 >/dev/null 2>&1 || [ ! -f /usr/share/qemu/efi-virtio.rom ]; then
+    log "Instalando qemu-system-arm e ipxe-qemu..."
     export DEBIAN_FRONTEND=noninteractive
-    apt-get update -qq && apt-get install -y -qq qemu-system-arm
+    apt-get update -qq && apt-get install -y -qq qemu-system-arm ipxe-qemu
 fi
 
 log "2. Extraindo Kernel e Initramfs da partição de boot da imagem..."

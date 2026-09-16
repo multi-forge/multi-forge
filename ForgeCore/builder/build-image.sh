@@ -153,10 +153,15 @@ EOF
 
 log "8. Executando customização via Chroot ARM64..."
 cp /usr/bin/qemu-aarch64-static "$MOUNT_ROOT/usr/bin/" 2>/dev/null || true
-cp -L /etc/resolv.conf "$MOUNT_ROOT/etc/resolv.conf" 2>/dev/null || true
+echo "nameserver 1.1.1.1" > "$MOUNT_ROOT/etc/resolv.conf"
+echo "nameserver 8.8.8.8" >> "$MOUNT_ROOT/etc/resolv.conf"
 mount --bind /dev "$MOUNT_ROOT/dev" 2>/dev/null || true
 mount --bind /proc "$MOUNT_ROOT/proc" 2>/dev/null || true
 mount --bind /sys "$MOUNT_ROOT/sys" 2>/dev/null || true
+
+# Pre-semeia cache do APT com pacotes baixados do host para máxima velocidade e redundância
+mkdir -p "$MOUNT_ROOT/var/cache/apt/archives"
+cp -n /var/cache/apt/archives/*.deb "$MOUNT_ROOT/var/cache/apt/archives/" 2>/dev/null || true
 
 chroot "$MOUNT_ROOT" /bin/bash -c "
     export DEBIAN_FRONTEND=noninteractive
@@ -164,7 +169,7 @@ chroot "$MOUNT_ROOT" /bin/bash -c "
     # Atualiza repositórios e instala dependências essenciais de runtime para Kiosk/Display e Rede
     apt-get update -qq || true
     apt-get install -y -qq --no-install-recommends \
-        python3-pil python3-qrcode fonts-dejavu-core qrencode iw || true
+        python3-pil python3-qrcode fonts-dejavu-core qrencode iw || apt-get install -y --no-install-recommends /var/cache/apt/archives/*.deb || true
     
     # Habilita os serviços oficiais do ForgeOS v2.0+ e SSH no boot
     systemctl daemon-reload 2>/dev/null || true
