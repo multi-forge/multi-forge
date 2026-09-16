@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 WORK_DIR="${WORK_DIR:-/root/forgeos_distro_build}"
 OUTPUT_DIR="${OUTPUT_DIR:-$REPO_ROOT/distro_output}"
-DISTRO_NAME="ForgeOS_BTV_E10_v2.0.1"
+DISTRO_NAME="ForgeOS_BTV_E10_v2.1.0"
 BASE_IMG_URL="https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_trixie_arm64_server_2026.08/Armbian_26.08.0_amlogic_s905x2_trixie_6.18.44_server_2026.08.15.img.gz"
 
 log() { echo -e "\033[1;34m[BUILDER]\033[0m $*"; }
@@ -103,7 +103,7 @@ cat <<EOF > "$MOUNT_ROOT/boot/uEnv.txt"
 LINUX=/zImage
 INITRD=/uInitrd
 FDT=/dtb/amlogic/meson-g12a-btv-e10-enterprise.dtb
-APPEND=root=UUID=${ROOT_UUID} rootflags=data=writeback rw rootwait rootfstype=ext4 console=ttyAML0,115200n8 console=tty0 no_console_suspend consoleblank=0 fsck.fix=yes fsck.repair=yes net.ifnames=0 max_loop=128 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1 video=HDMI-A-1:1920x1080@60e plymouth.enable=0
+APPEND=root=UUID=${ROOT_UUID} rootflags=data=writeback rw rootwait rootfstype=ext4 console=ttyAML0,115200n8 console=tty0 no_console_suspend consoleblank=0 fsck.fix=yes fsck.repair=yes net.ifnames=0 max_loop=128 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1 video=HDMI-A-1:1920x1080@60e plymouth.enable=0 quiet loglevel=3
 EOF
 
 log "6. Injetando Stack de Provisionamento ForgeProvisioner em /opt/forgeos/..."
@@ -153,7 +153,13 @@ EOF
 
 log "8. Executando customização via Chroot ARM64..."
 cp /usr/bin/qemu-aarch64-static "$MOUNT_ROOT/usr/bin/" 2>/dev/null || true
-echo "nameserver 1.1.1.1" > "$MOUNT_ROOT/etc/resolv.conf"
+if [ -f /run/systemd/resolve/resolv.conf ]; then
+    cp -f /run/systemd/resolve/resolv.conf "$MOUNT_ROOT/etc/resolv.conf"
+elif [ -f /etc/resolv.conf ]; then
+    cp -f /etc/resolv.conf "$MOUNT_ROOT/etc/resolv.conf"
+fi
+echo "nameserver 10.129.50.3" >> "$MOUNT_ROOT/etc/resolv.conf"
+echo "nameserver 1.1.1.1" >> "$MOUNT_ROOT/etc/resolv.conf"
 echo "nameserver 8.8.8.8" >> "$MOUNT_ROOT/etc/resolv.conf"
 mount --bind /dev "$MOUNT_ROOT/dev" 2>/dev/null || true
 mount --bind /proc "$MOUNT_ROOT/proc" 2>/dev/null || true
@@ -171,13 +177,13 @@ chroot "$MOUNT_ROOT" /bin/bash -c "
     apt-get install -y -qq --no-install-recommends \
         python3-pil python3-qrcode fonts-dejavu-core qrencode iw || apt-get install -y --no-install-recommends /var/cache/apt/archives/*.deb || true
     
-    # Habilita os serviços oficiais do ForgeOS v2.0+ e SSH no boot
+    # Habilita os serviços oficiais do ForgeOS v2.1+ e SSH no boot
     systemctl daemon-reload 2>/dev/null || true
     systemctl enable forgehub.service forge-kiosk.service forge-ap.service forge-watchdog.service ssh sshd getty@tty2.service 2>/dev/null || true
     
-    # Desativa e mascara serviços legados conflitantes
-    systemctl disable forge-portal.service forge-display.service forge-fbcon-disable.service NetworkManager wpa_supplicant hostapd 2>/dev/null || true
-    systemctl mask forge-portal.service forge-display.service forge-fbcon-disable.service 2>/dev/null || true
+    # Desativa e mascara serviços legados conflitantes e isola TTY1 exclusivamente para o Kiosk
+    systemctl disable forge-portal.service forge-display.service forge-fbcon-disable.service NetworkManager wpa_supplicant hostapd getty@tty1.service 2>/dev/null || true
+    systemctl mask forge-portal.service forge-display.service forge-fbcon-disable.service getty@tty1.service 2>/dev/null || true
     
     # Configura SSH com PermitRootLogin ativo
     mkdir -p /etc/ssh /etc/ssh/sshd_config.d
@@ -217,10 +223,10 @@ if [ -f "$SCRIPT_DIR/qemu-verify-boot.sh" ]; then
     }
 fi
 
-log "11. Comprimindo imagem validada com XZ multi-core (-T0 / -6)..."
+log "11. Comprimindo imagem validada com XZ multi-core (-T0 / -4)..."
 FINAL_XZ="$OUTPUT_DIR/${DISTRO_NAME}.img.xz"
 rm -f "$FINAL_XZ"
-xz -T0 -6 -c "$RAW_IMG" > "$FINAL_XZ"
+xz -T0 -4 -c "$RAW_IMG" > "$FINAL_XZ"
 
 log "12. Gerando SHA256 Checksum..."
 cd "$OUTPUT_DIR"
