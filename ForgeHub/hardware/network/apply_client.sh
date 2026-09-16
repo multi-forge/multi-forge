@@ -1,80 +1,48 @@
 #!/bin/bash
-set -u
+# Receives a root-only profile path. Credentials must never be command arguments.
+set -euo pipefail
+CONF_FILE=/etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+AP_CTRL=/usr/local/bin/forge-ap-ctrl
 
-if [ "$#" -lt 2 ]; then
-    echo "Usage: $0 <ssid> <auth_type> [password] [identity]"
-    exit 1
+if [ "${1:-}" = "--connect" ]; then
+    profile=$2
+    "$AP_CTRL" stop >/dev/null 2>&1
+    pkill -f 'wpa_supplicant.*wlan0' 2>/dev/null || true
+    ip addr flush dev wlan0
+    ip link set wlan0 up
+    install -m 600 "$profile" "$CONF_FILE"
+    wpa_supplicant -B -i wlan0 -c "$CONF_FILE" -P /run/wpa_supplicant_client.pid >&2
+    associated=0
+    for ((i=0; i<15; i++)); do
+        if wpa_cli -i wlan0 status 2>/dev/null | grep -q '^wpa_state=COMPLETED$'; then associated=1; break; fi
+        sleep 2
+    done
+    [ "$associated" = 1 ] || exit 1
+    if command -v dhclient >/dev/null; then
+        timeout 20 dhclient -1 -q wlan0 >&2
+    else
+        timeout 20 udhcpc -i wlan0 -n -q -t 5 >&2
+    fi
+    client_ip=$(ip -4 -o addr show dev wlan0 scope global | awk '{split($4,a,"/"); print a[1]; exit}')
+    [ -n "$client_ip" ] && [ "$client_ip" != 192.168.4.1 ] || exit 1
+    printf '%s\n' "$client_ip"
+    exit 0
 fi
 
-SSID=$1
-AUTH_TYPE=$2
-CONF_FILE="/etc/wpa_supplicant/wpa_supplicant-wlan0.conf"
-
-# 1. Cleanly stop AP mode
-if [ -x "/usr/local/bin/forge-ap-ctrl" ]; then
-    /usr/local/bin/forge-ap-ctrl stop 2>/dev/null || true
-fi
-
-# 2. Write client wpa_supplicant configuration
+[ "$#" = 1 ] && [ -f "$1" ] && [ -x "$AP_CTRL" ] || exit 1
+profile=$1
+backup="$(dirname "$profile")/previous.conf"
 mkdir -p /etc/wpa_supplicant
-cat > "$CONF_FILE" <<EOF
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
-country=US
-EOF
-
-if [ "$AUTH_TYPE" = "WPA2-PSK" ] || [ "$AUTH_TYPE" = "psk" ]; then
-    PASS="${3:-}"
-    wpa_passphrase "$SSID" "$PASS" >> "$CONF_FILE"
-elif [ "$AUTH_TYPE" = "EAP-PEAP" ] || [ "$AUTH_TYPE" = "eap" ]; then
-    PASS="${3:-}"
-    IDENTITY="${4:-}"
-    cat >> "$CONF_FILE" <<EOF
-network={
-    ssid="$SSID"
-    key_mgmt=WPA-EAP
-    eap=PEAP
-    identity="$IDENTITY"
-    password="$PASS"
-    phase2="auth=MSCHAPV2"
+if [ -f "$CONF_FILE" ]; then cp -p "$CONF_FILE" "$backup"; fi
+rollback() {
+    result=$?
+    if [ "$result" != 0 ]; then
+        pkill -f 'wpa_supplicant.*wlan0' 2>/dev/null || true
+        if [ -f "$backup" ]; then install -m 600 "$backup" "$CONF_FILE"; else rm -f "$CONF_FILE"; fi
+        "$AP_CTRL" restart >/dev/null 2>&1 || true
+    fi
+    rm -f "$backup"
 }
-EOF
-elif [ "$AUTH_TYPE" = "EAP-TTLS" ]; then
-    PASS="${3:-}"
-    IDENTITY="${4:-}"
-    cat >> "$CONF_FILE" <<EOF
-network={
-    ssid="$SSID"
-    key_mgmt=WPA-EAP
-    eap=TTLS
-    identity="$IDENTITY"
-    password="$PASS"
-    phase2="auth=MSCHAPV2"
-}
-EOF
-elif [ "$AUTH_TYPE" = "EAP-TLS" ]; then
-    IDENTITY="${3:-}"
-    cat >> "$CONF_FILE" <<EOF
-network={
-    ssid="$SSID"
-    key_mgmt=WPA-EAP
-    eap=TLS
-    identity="$IDENTITY"
-    client_cert="/etc/ssl/certs/client.crt"
-    private_key="/etc/ssl/private/client.key"
-}
-EOF
-fi
-
-# 3. Associate client
-pkill -9 -f "wpa_supplicant.*wlan0" 2>/dev/null || true
-ip link set wlan0 down 2>/dev/null || true
-ip addr flush dev wlan0 2>/dev/null || true
-sleep 1
-ip link set wlan0 up 2>/dev/null || true
-wpa_supplicant -B -i wlan0 -c "$CONF_FILE" -P /run/wpa_supplicant_client.pid
-
-# 4. Request DHCP lease
-dhclient -r wlan0 2>/dev/null || true
-dhclient -1 -v wlan0 2>/dev/null || udhcpc -i wlan0 -n -q 2>/dev/null || true
-EOF
+trap rollback EXIT
+# Bound association + DHCP, then restore AP on failure. No internet probe required.
+timeout --kill-after=3 55 bash "$0" --connect "$profile"

@@ -35,3 +35,17 @@ export interface WifiNetwork {
 }
 
 export type ViewType = 'dashboard' | 'store' | 'manager' | 'hardware';
+
+export interface WifiProvision {
+  ssid: string;
+  type: 'open' | 'psk' | 'sae' | 'owe' | 'eap';
+  password?: string;
+  identity?: string;
+  method?: 'PEAP' | 'TTLS' | 'PWD' | 'TLS';
+  phase2?: string;
+  anonymous_identity?: string;
+  domain?: string;
+  ca_cert?: string;
+  client_cert?: string;
+  private_key?: string;
+}

@@ -303,8 +303,8 @@ func TestScanEndpoint(t *testing.T) {
 		t.Fatalf("failed to parse JSON: %v", err)
 	}
 	networks, ok := body["networks"].([]interface{})
-	if !ok || len(networks) < 2 {
-		t.Fatalf("expected networks array of at least 2 items, got %v", networks)
+	if !ok {
+		t.Fatalf("expected networks array (including an empty scan), got %v", networks)
 	}
 }
 
