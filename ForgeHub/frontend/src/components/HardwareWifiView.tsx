@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Wifi, QrCode, AlertTriangle, Radio, RefreshCw, Shield, CheckCircle, Search, X } from 'lucide-react';
+import { Wifi, QrCode, AlertTriangle, Radio, RefreshCw, CheckCircle, Search, X } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import type { WifiProvision } from '../types';
 
 export const HardwareWifiView: React.FC = () => {
   const { wifiNetworks, fetchScan, provisionWifi, resetWifi } = useStore();
@@ -8,7 +9,28 @@ export const HardwareWifiView: React.FC = () => {
   const [ssid, setSsid] = useState('');
   const [password, setPassword] = useState('');
   const [identity, setIdentity] = useState('');
-  const [isEap, setIsEap] = useState(false);
+  const [security, setSecurity] = useState<WifiProvision['type']>('psk');
+  const [method, setMethod] = useState<NonNullable<WifiProvision['method']>>('PEAP');
+  const [phase2, setPhase2] = useState('MSCHAPV2');
+  const [anonymousIdentity, setAnonymousIdentity] = useState('');
+  const [domain, setDomain] = useState('');
+  const [certs, setCerts] = useState({ ca_cert: '', client_cert: '', private_key: '' });
+  const [fileErrors, setFileErrors] = useState<Record<string, string>>({});
+  const [pendingFiles, setPendingFiles] = useState(0);
+  const [certificateReset, setCertificateReset] = useState(0);
+  const [awaitingConnection, setAwaitingConnection] = useState(false);
+  const isEap = security === 'eap';
+  const fieldClass = 'w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500';
+  const readCertificate = async (key: keyof typeof certs, file?: File) => {
+    setCerts(old => ({ ...old, [key]: '' }));
+    setFileErrors(old => ({ ...old, [key]: '' }));
+    if (!file) return;
+    if (file.size > 32768) { setFileErrors(old => ({ ...old, [key]: 'O arquivo PEM deve ter no máximo 32 KB.' })); return; }
+    setPendingFiles(n => n + 1);
+    try { const value = await file.text(); setCerts(old => ({ ...old, [key]: value })); }
+    catch { setFileErrors(old => ({ ...old, [key]: 'Não foi possível ler o arquivo.' })); }
+    finally { setPendingFiles(n => n - 1); }
+  };
   const [connecting, setConnecting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -22,10 +44,42 @@ export const HardwareWifiView: React.FC = () => {
     fetchScan();
   }, [fetchScan]);
 
+  useEffect(() => {
+    if (!awaitingConnection) return;
+    let cancelled = false;
+    let busy = false;
+    const timer = window.setInterval(async () => {
+      if (busy) return;
+      busy = true;
+      try {
+        const response = await fetch('/api/status');
+        if (!response.ok) return;
+        const status = await response.json();
+        if (cancelled || status.provisioning) return;
+        if (status.client_connected) {
+          setIsSuccess(true);
+          setMessage(`Conectado a ${status.client_ssid}. IP: ${status.client_ip}`);
+          setAwaitingConnection(false);
+        } else if (status.provisioning_error) {
+          setIsSuccess(false);
+          setMessage(status.provisioning_error);
+          setAwaitingConnection(false);
+        }
+      } catch { /* The AP can disappear while the radio switches networks. */ }
+      finally { busy = false; }
+    }, 2000);
+    const timeout = window.setTimeout(() => {
+      setAwaitingConnection(false);
+      setIsSuccess(false);
+      setMessage('Não foi possível confirmar a conexão nesta página. Conecte-se à nova rede e acesse a TV box pelo novo endereço, ou retorne ao ponto de acesso se a tentativa falhou.');
+    }, 90000);
+    return () => { cancelled = true; window.clearInterval(timer); window.clearTimeout(timeout); };
+  }, [awaitingConnection]);
+
   const handleSelectNetwork = (netSSID: string, enc: string) => {
     setSsid(netSSID);
-    const eap = enc === 'eap' || netSSID.toLowerCase().includes('eduroam');
-    setIsEap(eap);
+    setSecurity((['open', 'psk', 'sae', 'owe', 'eap'].includes(enc) ? enc : 'psk') as WifiProvision['type']);
+    setPassword(''); setIdentity(''); setMessage(null);
   };
 
   const handleConnect = async (e: React.FormEvent) => {
@@ -33,14 +87,22 @@ export const HardwareWifiView: React.FC = () => {
     setConnecting(true);
     setMessage(null);
 
-    const res = await provisionWifi(ssid, password, isEap ? 'eap' : 'psk', isEap ? identity : undefined);
+    const res = await provisionWifi({ ssid, type: security,
+      ...((security === 'psk' || security === 'sae' || (isEap && method !== 'TLS')) ? { password } : {}),
+      ...(isEap ? { identity, method, phase2, anonymous_identity: anonymousIdentity,
+        ...(method !== 'PWD' ? { domain, ca_cert: certs.ca_cert } : {}),
+        ...(method === 'TLS' ? { client_cert: certs.client_cert, private_key: certs.private_key } : {}) } : {}),
+    });
     setConnecting(false);
     setIsSuccess(res.ok);
     setMessage(res.message || (res.ok ? 'Configuração enviada com sucesso!' : 'Falha na configuração'));
 
     if (res.ok) {
+      setAwaitingConnection(true);
       setPassword('');
       setIdentity('');
+      setCerts({ ca_cert: '', client_cert: '', private_key: '' });
+      setCertificateReset(n => n + 1);
     }
   };
 
@@ -155,48 +217,56 @@ export const HardwareWifiView: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="eap-checkbox"
-                  checked={isEap}
-                  onChange={(e) => setIsEap(e.target.checked)}
-                  className="rounded bg-slate-950 border-slate-700 text-blue-600 focus:ring-0"
-                />
-                <label htmlFor="eap-checkbox" className="text-xs text-slate-400 flex items-center gap-1 cursor-pointer">
-                  <Shield className="w-3.5 h-3.5 text-indigo-400" /> Rede Institucional 802.1X EAP (ex: eduroam)
+              <label className="text-sm text-slate-400">Segurança
+                <select aria-label="Segurança" className={fieldClass} value={security} onChange={e => setSecurity(e.target.value as WifiProvision['type'])}>
+                  <option value="psk">WPA / WPA2 Pessoal</option><option value="sae">WPA3 Pessoal (SAE)</option>
+                  <option value="open">Aberta (sem senha)</option><option value="owe">Aberta aprimorada (OWE)</option>
+                  <option value="eap">Empresarial / 802.1X (EAP)</option>
+                </select>
+              </label>
+              {isEap && <>
+                <label className="text-sm text-slate-400">Método EAP
+                  <select className={fieldClass} value={method} onChange={e => { setMethod(e.target.value as NonNullable<WifiProvision['method']>); setPhase2('MSCHAPV2'); }}>
+                    <option>PEAP</option><option>TTLS</option><option>PWD</option><option>TLS</option>
+                  </select>
                 </label>
-              </div>
+                {(method === 'PEAP' || method === 'TTLS') && <label className="text-sm text-slate-400">Autenticação interna
+                  <select className={fieldClass} value={phase2} onChange={e => setPhase2(e.target.value)}>
+                    <option>MSCHAPV2</option><option>GTC</option>{method === 'TTLS' && <option>PAP</option>}
+                  </select>
+                </label>}
+                <label className="text-sm text-slate-400">Identidade / usuário
+                  <input required className={fieldClass} value={identity} onChange={e => setIdentity(e.target.value)} placeholder="usuario@instituicao.br" autoComplete="username" />
+                </label>
+                {method !== 'PWD' && <>
+                  <label className="text-sm text-slate-400">Domínio do servidor de autenticação
+                    <input required className={fieldClass} value={domain} onChange={e => setDomain(e.target.value)} placeholder="instituicao.br" />
+                  </label>
+                  <label className="text-sm text-slate-400">Certificado CA (.pem, opcional se a CA já for confiável no sistema)
+                    <input key={`ca-${certificateReset}`} type="file" accept=".pem,.crt,.cer" className={fieldClass} onChange={e => void readCertificate('ca_cert', e.target.files?.[0])} />
+                  </label>
+                </>}
+                {(method === 'PEAP' || method === 'TTLS') && <label className="text-sm text-slate-400">Identidade anônima (opcional)
+                  <input className={fieldClass} value={anonymousIdentity} onChange={e => setAnonymousIdentity(e.target.value)} placeholder="anonymous@instituicao.br" />
+                </label>}
+                {method === 'TLS' && <>
+                  <label className="text-sm text-slate-400">Certificado do cliente (.pem)
+                    <input key={`cert-${certificateReset}`} required type="file" accept=".pem,.crt" className={fieldClass} onChange={e => void readCertificate('client_cert', e.target.files?.[0])} />
+                  </label>
+                  <label className="text-sm text-slate-400">Chave privada do cliente (.pem, sem senha)
+                    <input key={`key-${certificateReset}`} required type="file" accept=".pem,.key" className={fieldClass} onChange={e => void readCertificate('private_key', e.target.files?.[0])} />
+                  </label>
+                </>}
+              </>}
+              {(security === 'psk' || security === 'sae' || (isEap && method !== 'TLS')) && <label className="text-sm text-slate-400">Senha
+                <input type="password" required className={fieldClass} value={password} onChange={e => setPassword(e.target.value)} autoComplete="new-password" />
+              </label>}
+              <p className="text-xs text-slate-500">Para rede oculta, digite o SSID. WPA3 e OWE dependem do adaptador e do driver. Em redes EAP, use os dados e certificados fornecidos pela instituição.</p>
+              {isEap && Object.values(fileErrors).some(Boolean) && <p role="alert" className="text-xs text-rose-400">{Object.values(fileErrors).filter(Boolean).join(' ')}</p>}
 
-              {isEap && (
-                <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-1">Identidade / Usuário Institucional</label>
-                  <input 
-                    type="text" 
-                    required
-                    value={identity}
-                    onChange={e => setIdentity(e.target.value)}
-                    placeholder="usuario@unesp.br"
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500"
-                  />
-                </div>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">Senha (PSK / EAP Pass)</label>
-                <input 
-                  type="password"
-                  required
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 flex gap-3 text-amber-400 text-xs">
                 <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
-                <p>O aparelho tentará a associação por 60 segundos. Se falhar, o modo AP (192.168.4.1) será automaticamente restaurado por contingência de hardware.</p>
+                <p>Ao aplicar, o ponto de acesso será interrompido. Se a conexão falhar, ele será restaurado. Após conectar, use o endereço da TV box na nova rede.</p>
               </div>
 
               {message && (
@@ -204,16 +274,16 @@ export const HardwareWifiView: React.FC = () => {
                   isSuccess ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border border-rose-500/20 text-rose-400'
                 }`}>
                   {isSuccess && <CheckCircle className="w-4 h-4 shrink-0" />}
-                  <span>{message}</span>
+                  <span role="status">{message}</span>
                 </div>
               )}
 
               <button 
                 type="submit" 
-                disabled={connecting}
+                disabled={connecting || awaitingConnection || pendingFiles > 0 || (isEap && Object.values(fileErrors).some(Boolean))}
                 className="mt-1 w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white py-2.5 rounded-lg text-sm font-medium transition-colors flex justify-center items-center gap-2 shadow"
               >
-                {connecting ? 'Aplicando e Conectando...' : <><Wifi className="w-4 h-4" /> Salvar e Conectar</>}
+                {connecting || awaitingConnection ? 'Aguardando conexão...' : <><Wifi className="w-4 h-4" /> Salvar e Conectar</>}
               </button>
             </form>
           </div>

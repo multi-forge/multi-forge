@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Telemetry, Module, ViewType, WifiNetwork } from '../types';
+import { Telemetry, Module, ViewType, WifiNetwork, WifiProvision } from '../types';
 
 interface AppState {
   view: ViewType;
@@ -17,7 +17,7 @@ interface AppState {
   installModule: (id: string) => void;
   startModule: (id: string) => Promise<{ ok: boolean; error?: string }>;
   stopModule: (id: string) => Promise<{ ok: boolean; error?: string }>;
-  provisionWifi: (ssid: string, password?: string, type?: string, identity?: string) => Promise<{ ok: boolean; message?: string }>;
+  provisionWifi: (config: WifiProvision) => Promise<{ ok: boolean; message?: string }>;
   resetWifi: () => Promise<void>;
 }
 
@@ -78,13 +78,7 @@ export const useStore = create<AppState>((set) => ({
       tier: 'stable',
     },
   ],
-  wifiNetworks: [
-    { ssid: 'OpenWrt', bssid: '88:c3:97:d5:81:91', rssi: -54, channel: 6, encryption: 'psk' },
-    { ssid: 'IFSP-Servidores', bssid: '80:03:84:0f:1c:18', rssi: -72, channel: 11, encryption: 'eap' },
-    { ssid: 'IFSP-IOT', bssid: '80:03:84:4f:1c:18', rssi: -72, channel: 11, encryption: 'psk' },
-    { ssid: 'eduroam', bssid: '80:03:84:0f:1c:19', rssi: -72, channel: 11, encryption: 'eap' },
-    { ssid: 'IFSP-Servidores-Temp', bssid: '80:03:84:8f:1c:18', rssi: -72, channel: 11, encryption: 'psk' },
-  ],
+  wifiNetworks: [],
   activeTerminalModuleId: null,
   loading: false,
   error: null,
@@ -174,12 +168,12 @@ export const useStore = create<AppState>((set) => ({
     }
   },
 
-  provisionWifi: async (ssid: string, password?: string, type?: string, identity?: string) => {
+  provisionWifi: async (config: WifiProvision) => {
     try {
       const res = await fetch('/api/provision', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ssid, password, type: type || 'psk', identity }),
+        body: JSON.stringify(config),
       });
       const data = await res.json();
       if (!res.ok) {

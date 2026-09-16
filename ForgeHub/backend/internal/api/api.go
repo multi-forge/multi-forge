@@ -1,13 +1,13 @@
 package api
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net"
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
@@ -33,16 +33,11 @@ var (
 	clientConnectedState bool
 	clientIPState        string
 	clientSSIDState      string
+	provisioningError    string
 	daemonStartTime      = time.Now()
 
 	cachedScanMu       sync.RWMutex
-	cachedScanNetworks = []map[string]interface{}{
-		{"ssid": "OpenWrt", "bssid": "88:c3:97:d5:81:91", "rssi": -54, "channel": 6, "encryption": "psk"},
-		{"ssid": "IFSP-Servidores", "bssid": "80:03:84:0f:1c:18", "rssi": -72, "channel": 11, "encryption": "eap"},
-		{"ssid": "IFSP-IOT", "bssid": "80:03:84:4f:1c:18", "rssi": -72, "channel": 11, "encryption": "psk"},
-		{"ssid": "eduroam", "bssid": "80:03:84:0f:1c:19", "rssi": -72, "channel": 11, "encryption": "eap"},
-		{"ssid": "IFSP-Servidores-Temp", "bssid": "80:03:84:8f:1c:18", "rssi": -72, "channel": 11, "encryption": "psk"},
-	}
+	cachedScanNetworks = []map[string]interface{}{}
 
 	cachedServicesMu sync.RWMutex
 	cachedServices   = []map[string]interface{}{
@@ -161,25 +156,27 @@ func handleStatus(w http.ResponseWriter, r *http.Request) {
 	isConn := clientConnectedState
 	cliIP := clientIPState
 	cliSSID := clientSSIDState
+	provError := provisioningError
 	provMu.Unlock()
 
 	m := telemetry.GetMetrics()
 
 	status := map[string]interface{}{
-		"ap_active":        true,
-		"provisioning":     isProv,
-		"client_connected": isConn,
-		"wifi_connected":   isConn,
-		"client_ip":        cliIP,
-		"client_ssid":      cliSSID,
-		"ip":               "192.168.4.1",
-		"ap_ssid":          "Forge-E10",
-		"ap_ip":            "192.168.4.1",
-		"device_model":     "BTV Express E10 (Amlogic S905X2)",
-		"uptime":           getUptimeSeconds(),
-		"free_ram_mb":      m.RAMFreeMB,
-		"total_ram_mb":     m.RAMTotalMB,
-		"used_ram_mb":      m.RAMUsedMB,
+		"ap_active":          true,
+		"provisioning":       isProv,
+		"client_connected":   isConn,
+		"wifi_connected":     isConn,
+		"client_ip":          cliIP,
+		"client_ssid":        cliSSID,
+		"provisioning_error": provError,
+		"ip":                 "192.168.4.1",
+		"ap_ssid":            "Forge-E10",
+		"ap_ip":              "192.168.4.1",
+		"device_model":       "BTV Express E10 (Amlogic S905X2)",
+		"uptime":             getUptimeSeconds(),
+		"free_ram_mb":        m.RAMFreeMB,
+		"total_ram_mb":       m.RAMTotalMB,
+		"used_ram_mb":        m.RAMUsedMB,
 	}
 
 	// P0 security redaction guaranteed: no password, psk, secret
@@ -212,7 +209,7 @@ func initWifiScanner() {
 func refreshWifiScan() {
 	// Try iwlist wlan0 scan (works on real Linux Wi-Fi drivers like RTL8189FTV)
 	if out, err := exec.Command("iwlist", "wlan0", "scan").Output(); err == nil && len(out) > 0 {
-		if nets := parseIwlistScan(string(out)); len(nets) >= 2 {
+		if nets := parseIwlistScan(string(out)); len(nets) > 0 {
 			cachedScanMu.Lock()
 			cachedScanNetworks = nets
 			cachedScanMu.Unlock()
@@ -222,7 +219,7 @@ func refreshWifiScan() {
 
 	// Fallback to wpa_cli -i wlan0 scan_results if available
 	if out, err := exec.Command("wpa_cli", "-i", "wlan0", "scan_results").Output(); err == nil && len(out) > 0 {
-		if nets := parseWpaCliScan(string(out)); len(nets) >= 2 {
+		if nets := parseWpaCliScan(string(out)); len(nets) > 0 {
 			cachedScanMu.Lock()
 			cachedScanNetworks = nets
 			cachedScanMu.Unlock()
@@ -296,7 +293,7 @@ func parseIwlistScan(raw string) []map[string]interface{} {
 		enc := "psk"
 		if strings.Contains(cellBlock, "Encryption key:off") {
 			enc = "open"
-		} else if strings.Contains(cellBlock, "802.1x") || strings.Contains(cellBlock, "802.1X") || strings.Contains(cellBlock, "EAP") || strings.EqualFold(ssid, "eduroam") {
+		} else if strings.Contains(cellBlock, "802.1x") || strings.Contains(cellBlock, "802.1X") || strings.Contains(cellBlock, "EAP") {
 			enc = "eap"
 		} else {
 			enc = "psk"
@@ -335,6 +332,10 @@ func parseWpaCliScan(raw string) []map[string]interface{} {
 		enc := "open"
 		if strings.Contains(flags, "EAP") {
 			enc = "eap"
+		} else if strings.Contains(flags, "SAE") && !strings.Contains(flags, "PSK") {
+			enc = "sae"
+		} else if strings.Contains(flags, "OWE") {
+			enc = "owe"
 		} else if strings.Contains(flags, "PSK") || strings.Contains(flags, "WPA") {
 			enc = "psk"
 		}
@@ -634,138 +635,103 @@ func handleServices(w http.ResponseWriter, r *http.Request) {
 	sendJSON(w, http.StatusOK, map[string]interface{}{"services": res})
 }
 
+// Injected in tests so API validation never reconfigures the host network.
+var wifiApplyScript = "/opt/forgehub/hardware/network/apply_client.sh"
+var wifiProfileRoot = "/etc/wpa_supplicant/forge-profiles"
+
 func handleProvision(w http.ResponseWriter, r *http.Request) {
-	var body map[string]interface{}
+	var body wifiProvision
+	r.Body = http.MaxBytesReader(w, r.Body, 128*1024)
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sendJSON(w, http.StatusBadRequest, map[string]string{
-			"error":   "invalid_json",
-			"message": "Corpo da requisição não é um JSON válido",
-		})
+		sendJSON(w, 400, map[string]string{"error": "invalid_json", "message": "JSON inválido ou muito grande"})
 		return
 	}
-
-	secType, _ := body["type"].(string)
-
-	provMu.Lock()
-	provGen++
-	myGen := provGen
-	if provisioningActive && secType != "eap" {
-		provMu.Unlock()
-		sendJSON(w, http.StatusConflict, map[string]string{
-			"error":   "conflict",
-			"message": "Provisionamento já em andamento",
-		})
+	if _, err := buildWifiConfig(body, "/profile"); err != nil {
+		sendJSON(w, 400, map[string]string{"error": "validation_error", "message": err.Error()})
 		return
+	}
+	provMu.Lock()
+	if provisioningActive {
+		provMu.Unlock()
+		sendJSON(w, 409, map[string]string{"error": "conflict", "message": "Provisionamento já em andamento"})
+		return
+	}
+	if st, err := os.Stat(wifiApplyScript); err != nil || st.Mode()&0111 == 0 {
+		provMu.Unlock()
+		sendJSON(w, 503, map[string]string{"error": "unavailable", "message": "Provisionador Wi-Fi não instalado"})
+		return
+	}
+	if err := os.MkdirAll(wifiProfileRoot, 0700); err != nil {
+		provMu.Unlock()
+		sendJSON(w, 500, map[string]string{"error": "profile_storage"})
+		return
+	}
+	dir, err := os.MkdirTemp(wifiProfileRoot, "profile-")
+	if err != nil {
+		provMu.Unlock()
+		sendJSON(w, 500, map[string]string{"error": "profile_storage"})
+		return
+	}
+	config, _ := buildWifiConfig(body, dir)
+	files := map[string]string{"client.conf": config}
+	if body.Type == "eap" && body.Method != "PWD" {
+		if body.CACert != "" {
+			files["ca.pem"] = body.CACert
+		}
+		if body.Method == "TLS" {
+			files["client.pem"] = body.ClientCert
+			files["client.key"] = body.PrivateKey
+		}
+	}
+	for name, content := range files {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte(content), 0600); err != nil {
+			os.RemoveAll(dir)
+			provMu.Unlock()
+			sendJSON(w, 500, map[string]string{"error": "profile_storage"})
+			return
+		}
 	}
 	provisioningActive = true
+	clientConnectedState = false
+	clientSSIDState = ""
+	clientIPState = ""
+	provisioningError = ""
+	provGen++
+	myGen := provGen
+	script := wifiApplyScript
 	provMu.Unlock()
-
-	ssid, _ := body["ssid"].(string)
-	if strings.TrimSpace(ssid) == "" {
-		provMu.Lock()
-		provisioningActive = false
-		provMu.Unlock()
-		sendJSON(w, http.StatusBadRequest, map[string]string{
-			"error":   "validation_error",
-			"message": "SSID obrigatório e não pode ser vazio",
-		})
-		return
-	}
-
-	if strings.ContainsAny(ssid, "\n\r\t") {
-		provMu.Lock()
-		provisioningActive = false
-		provMu.Unlock()
-		sendJSON(w, http.StatusBadRequest, map[string]string{
-			"error":   "validation_error",
-			"message": "SSID contém caracteres de controle inválidos",
-		})
-		return
-	}
-
-	password, _ := body["password"].(string)
-
-	if secType == "eap" {
-		identity, _ := body["identity"].(string)
-		if strings.TrimSpace(identity) == "" {
-			provMu.Lock()
-			provisioningActive = false
-			provMu.Unlock()
-			sendJSON(w, http.StatusBadRequest, map[string]string{
-				"error":   "missing_identity",
-				"message": "Identidade institucional EAP é obrigatória para este tipo de autenticação",
-			})
-			return
-		}
-	} else {
-		// WPA-PSK validation
-		if len(password) < 8 {
-			provMu.Lock()
-			provisioningActive = false
-			provMu.Unlock()
-			sendJSON(w, http.StatusBadRequest, map[string]string{
-				"error":   "invalid_password",
-				"message": "A senha WPA-PSK deve ter entre 8-63 caracteres",
-			})
-			return
-		}
-		if len(password) > 63 {
-			// Check if 64-char hex key
-			if len(password) == 64 {
-				if _, err := hex.DecodeString(password); err != nil {
-					provMu.Lock()
-					provisioningActive = false
-					provMu.Unlock()
-					sendJSON(w, http.StatusBadRequest, map[string]string{
-						"error":   "invalid_password",
-						"message": "Chave de 64 caracteres deve ser hexadecimal válida",
-					})
-					return
-				}
-			} else {
-				provMu.Lock()
-				provisioningActive = false
-				provMu.Unlock()
-				sendJSON(w, http.StatusBadRequest, map[string]string{
-					"error":   "invalid_password",
-					"message": "A senha WPA-PSK excede o limite de 63 caracteres",
-				})
-				return
-			}
-		}
-	}
-
-	// Trigger async application with automatic reset after window
 	go func() {
-		applyScript := "/opt/forgehub/hardware/network/apply_client.sh"
-		if _, err := os.Stat(applyScript); err == nil {
-			_ = exec.Command(applyScript, ssid, password, secType).Run()
+		// Only a private config path appears in argv, never a password or private key.
+		out, err := exec.Command(script, filepath.Join(dir, "client.conf")).Output()
+		ip := strings.TrimSpace(string(out))
+		ok := err == nil && net.ParseIP(ip) != nil && ip != "192.168.4.1"
+		if !ok {
+			os.RemoveAll(dir)
 		}
-		time.Sleep(300 * time.Millisecond)
 		provMu.Lock()
 		defer provMu.Unlock()
 		if provGen != myGen {
 			return
 		}
 		provisioningActive = false
-		if ssid != "invalid-network" && ssid != "fail-assoc" {
-			clientConnectedState = true
-			clientSSIDState = ssid
-			clientIPState = "192.168.1.153"
+		clientConnectedState = ok
+		if ok {
+			clientSSIDState = body.SSID
+			clientIPState = ip
+		} else {
+			provisioningError = "Falha ao conectar. O ponto de acesso foi solicitado novamente."
 		}
 	}()
-
-	// Respond with strict P0 redaction (never echoing password or credentials)
-	sendJSON(w, http.StatusOK, map[string]interface{}{
-		"ok":          true,
-		"status":      "applying",
-		"timeout_sec": 60,
-		"message":     "Provisioning queued with 60s auto-rollback to AP mode on failure",
-	})
+	sendJSON(w, 200, map[string]interface{}{"ok": true, "status": "applying", "message": "Configuração enviada. Aguarde a confirmação da conexão; o ponto de acesso poderá ser interrompido."})
 }
 
 func handleReset(w http.ResponseWriter, r *http.Request) {
 	provMu.Lock()
+	if provisioningActive {
+		provMu.Unlock()
+		sendJSON(w, 409, map[string]string{"error": "Provisionamento em andamento"})
+		return
+	}
 	provGen++
 	provisioningActive = false
 	clientConnectedState = false
