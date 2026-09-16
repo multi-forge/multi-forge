@@ -63,7 +63,7 @@ BOOT_CMD=(
     -M virt
     -cpu cortex-a53
     -smp 4
-    -m 2048
+    -m 1024
     -kernel /tmp/qemu-vmlinuz
     -initrd /tmp/qemu-initrd
     -append "root=/dev/vda2 rootfstype=ext4 rw console=ttyAMA0 panic=1"
