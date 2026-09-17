@@ -66,15 +66,18 @@ BOOT_CMD=(
     -m 1024
     -kernel /tmp/qemu-vmlinuz
     -initrd /tmp/qemu-initrd
-    -append "root=/dev/vda2 rootfstype=ext4 rw console=ttyAMA0 panic=1"
+    -append "root=/dev/vda2 rootfstype=ext4 rw console=ttyAMA0 systemd.journald.forward_to_console=1 panic=1"
     -drive "file=$IMAGE,format=raw,if=virtio"
+    -device ramfb
+    -netdev user,id=net0,hostfwd=tcp::2222-:22
+    -device virtio-net-pci,netdev=net0
     -nographic
     -no-reboot
 )
 
 timeout "${TIMEOUT_SEC}s" "${BOOT_CMD[@]}" > "$LOG_FILE" 2>&1 || true
 
-log "4. Analisando telemetria de boot capturada..."
+log "4. Analisando telemetria e integridade dos serviços capturados..."
 if grep -q "Linux version" "$LOG_FILE"; then
     KERNEL_VER=$(grep "Linux version" "$LOG_FILE" | head -n1)
     ok "Kernel inicializado com sucesso: $KERNEL_VER"
@@ -87,13 +90,30 @@ fi
 if grep -qi "systemd" "$LOG_FILE" || grep -qi "Welcome to" "$LOG_FILE"; then
     ok "Rootfs montado e Systemd inicializado com sucesso!"
 else
-    log "Aviso: systemd ainda em inicialização dentro de ${TIMEOUT_SEC}s (emulação QEMU pura sem KVM)."
+    log "Aviso: systemd ainda em inicialização dentro de ${TIMEOUT_SEC}s."
 fi
 
 if grep -qi "Kernel panic" "$LOG_FILE"; then
     err "CRÍTICO: Kernel Panic detectado durante o boot virtual!"
     grep -C 5 -i "Kernel panic" "$LOG_FILE"
     exit 1
+fi
+
+# Auditoria de Falhas de Software (Gate de Validação da Release)
+if grep -qi "ModuleNotFoundError" "$LOG_FILE" || grep -qi "Traceback (most recent call last)" "$LOG_FILE"; then
+    err "CRÍTICO: Exceção Python detectada nos serviços de display/kiosk!"
+    grep -C 3 -i "ModuleNotFoundError" "$LOG_FILE" || grep -C 5 -i "Traceback" "$LOG_FILE"
+    exit 1
+fi
+
+if grep -q "Failed to start forge-kiosk.service" "$LOG_FILE" || grep -q "forge-kiosk.service: Main process exited" "$LOG_FILE"; then
+    err "CRÍTICO: forge-kiosk.service falhou ao inicializar no boot!"
+    grep -C 3 -i "forge-kiosk" "$LOG_FILE"
+    exit 1
+fi
+
+if grep -qi "Started .*Kiosk" "$LOG_FILE" || grep -qi "Started forge-kiosk.service" "$LOG_FILE"; then
+    ok "Kiosk de Framebuffer inicializado com sucesso no userspace!"
 fi
 
 ok "===================================================================="

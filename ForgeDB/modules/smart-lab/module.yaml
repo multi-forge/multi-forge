@@ -1,0 +1,24 @@
+# ForgeDB Module Manifest — smart-lab
+id: smart-lab
+name: "Gestão Inteligente de Bancadas & Laboratórios"
+version: "1.0.0"
+description: "Monitoramento e controle de ocupação e energia para as bancadas de laboratório de Controle e Automação (ECA) e Química/Ambiental do câmpus."
+category: other
+icon: "⚡"
+author: "G.E.R.A — UNESP Sorocaba"
+license: MIT
+
+requirements:
+  min_ram_mb: 128
+  min_storage_mb: 100
+  python: ">=3.9"
+
+source:
+  type: local
+  path: "ForgeModules/smart-lab"
+
+lifecycle:
+  install: "pip install -r requirements.txt"
+  start: "python3 app.py"
+  stop: "pkill -f 'smart-lab'"
+  healthcheck: "curl -f http://localhost:8084/status"

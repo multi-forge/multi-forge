@@ -1,24 +1,64 @@
 # ForgeDB Module Catalog — Central registry of all ForgeOS modules
-version: "1.0"
-updated: "2026-08-29"
+version: "1.2"
+updated: "2026-09-16"
 
 modules:
   - id: totem
     name: "Mina — Assistente Virtual Acadêmica"
-    version: "1.0.0"
+    version: "2.0.0"
     category: ai
     icon: "🤖"
-    description: "Quiosque de voz inteligente com PyQt5, Picovoice Porcupine, TTS/STT e classificador de intenções acadêmicas (MABI)."
+    description: "Quiosque inteligente com interface gráfica interativa, reconhecimento de voz offline (Sherpa-ONNX), síntese vocal e base de conhecimento acadêmica da UNESP Sorocaba (salas, docentes, aulas de ECA/Ambiental e cantina)."
     source_path: "ForgeModules/totem"
     tier: stable
     promoted: true
 
   - id: web-scraping
-    name: "Coletor Acadêmico & RAG Agent"
-    version: "1.0.0"
+    name: "Coletor Acadêmico & RAG Local"
+    version: "1.1.0"
     category: data
     icon: "🕸️"
-    description: "Pipeline assíncrono de coleta de dados universitários com FastAPI, LangChain RAG, PostgreSQL, Redis e dashboard."
+    description: "Pipeline assíncrono de coleta de dados universitários do ICTS Sorocaba com FastAPI, busca vetorial local RAG, grade de horários oficiais e dashboard em tempo real."
     source_path: "ForgeModules/sub-modulos/web-scraping"
-    tier: beta
+    tier: stable
+    promoted: false
+
+  - id: iot-telemetry
+    name: "MultiForge IoT & Telemetria Ambiental"
+    version: "1.0.0"
+    category: system
+    icon: "🌡️"
+    description: "Hub de sensoriamento IoT para laboratórios e estufas do ICTS Sorocaba. Broker MQTT Mosquitto leve, coleta de sensores (temperatura, umidade, CO2) e métricas em tempo real."
+    source_path: "ForgeModules/iot-telemetry"
+    tier: stable
+    promoted: true
+
+  - id: digital-signage
+    name: "Mural Digital & InfoScreen Sorocaba"
+    version: "1.0.0"
+    category: media
+    icon: "📺"
+    description: "Sistema de sinalização digital para corredores e saguão do câmpus. Exibe grade de aulas de ECA e Ambiental, avisos de estágio, eventos e horários de ônibus em 1080p."
+    source_path: "ForgeModules/digital-signage"
+    tier: stable
+    promoted: false
+
+  - id: smart-lab
+    name: "Gestão Inteligente de Bancadas & Laboratórios"
+    version: "1.0.0"
+    category: other
+    icon: "⚡"
+    description: "Monitoramento e controle de ocupação e energia para as bancadas de laboratório de Controle e Automação (ECA) e Química/Ambiental do câmpus."
+    source_path: "ForgeModules/smart-lab"
+    tier: stable
+    promoted: false
+
+  - id: eduroam-probe
+    name: "Sonda de Diagnóstico Eduroam & Conectividade"
+    version: "1.0.0"
+    category: networking
+    icon: "📶"
+    description: "Auditoria contínua da qualidade do sinal Wi-Fi institucional (WPA2-Enterprise / eduroam), latência DNS e telemetria de rede para suporte de TI da UNESP."
+    source_path: "ForgeModules/eduroam-probe"
+    tier: stable
     promoted: false

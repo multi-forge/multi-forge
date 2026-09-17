@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 WORK_DIR="${WORK_DIR:-/root/forgeos_distro_build}"
 OUTPUT_DIR="${OUTPUT_DIR:-$REPO_ROOT/distro_output}"
-DISTRO_NAME="ForgeOS_BTV_E10_v2.1.0"
+DISTRO_NAME="ForgeOS_BTV_E10_v2.2.0"
 BASE_IMG_URL="https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_trixie_arm64_server_2026.08/Armbian_26.08.0_amlogic_s905x2_trixie_6.18.44_server_2026.08.15.img.gz"
 
 log() { echo -e "\033[1;34m[BUILDER]\033[0m $*"; }
@@ -194,9 +194,9 @@ chroot "$MOUNT_ROOT" /bin/bash -c "
     echo 'forgeos-btv' > /etc/hostname
     sed -i 's/127.0.1.1.*/127.0.1.1\tforgeos-btv/' /etc/hosts 2>/dev/null || true
     
-    # Define senhas padrão 'forge' para root e kali
-    echo 'root:forge' | chpasswd 2>/dev/null || true
-    echo 'kali:forge' | chpasswd 2>/dev/null || true
+    # Define senhas padrão 'kali' para root e kali (dev/debug)
+    echo 'root:kali' | chpasswd 2>/dev/null || true
+    echo 'kali:kali' | chpasswd 2>/dev/null || true
     
     # Limpa caches de pacotes e logs
     apt-get clean 2>/dev/null || true

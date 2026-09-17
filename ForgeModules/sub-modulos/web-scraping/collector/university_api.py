@@ -11,36 +11,39 @@ from shared.logging_config import get_logger
 
 logger = get_logger(__name__)
 
-# Grade horária semanal simulada / realística para o curso de Ciência da Computação da FC-UNESP Bauru
-# O horário oficial é distribuído em termos: 1º, 3º, 5º e 7º termos.
+# Grade horária semanal oficial do Câmpus de Sorocaba (ICTS — UNESP)
+# Cursos: Engenharia de Controle e Automação (ECA) e Engenharia Ambiental (EA)
 CLASSES_SCHEDULE = {
     0: [  # Segunda-feira
-        {"time": (8.0, 11.6), "subject": "Cálculo Diferencial e Integral I", "room": "Sala 1 (BCC 1º Termo)", "teacher": "Prof. João"},
-        {"time": (8.0, 11.6), "subject": "Estruturas de Dados II", "room": "Lab 3 (BCC 3º Termo)", "teacher": "Prof. Julia"},
-        {"time": (14.0, 17.6), "subject": "Algoritmos e Programação", "room": "Lab 1 (BCC 1º Termo)", "teacher": "Prof. Maria"},
-        {"time": (14.0, 17.6), "subject": "Engenharia de Software", "room": "Sala 2 (BCC 5º Termo)", "teacher": "Prof. Carlos"},
-        {"time": (19.0, 22.0), "subject": "Ética e Computação", "room": "Sala 3 (BCC 7º Termo)", "teacher": "Prof. Ana"},
+        {"time": (8.0, 11.6), "subject": "Cálculo Diferencial e Integral I", "room": "Sala 1 (ECA 1º Termo)", "teacher": "Profa. Maria"},
+        {"time": (8.0, 11.6), "subject": "Química Geral e Inorgânica", "room": "Lab 1 (Ambiental 1º Termo)", "teacher": "Profa. Ana Costa"},
+        {"time": (14.0, 17.6), "subject": "Algoritmos e Programação para Engenharia", "room": "Lab Info 1 (ECA 1º Termo)", "teacher": "Prof. Eduardo"},
+        {"time": (14.0, 17.6), "subject": "Geologia e Pedologia Geral", "room": "Sala 2 (Ambiental 3º Termo)", "teacher": "Profa. Juliana"},
+        {"time": (19.0, 22.0), "subject": "Controle de Sistemas Lineares", "room": "Lab 3 (ECA 7º Termo)", "teacher": "Prof. Marcos Paulo"},
     ],
     1: [  # Terça-feira
-        {"time": (8.0, 9.6), "subject": "Geometria Analítica e Álgebra Linear", "room": "Sala 2 (BCC 1º Termo)", "teacher": "Prof. Pedro"},
-        {"time": (10.0, 11.6), "subject": "Introdução à Computação", "room": "Sala 4 (BCC 1º Termo)", "teacher": "Prof. Ana"},
-        {"time": (14.0, 17.6), "subject": "Sistemas Operacionais", "room": "Lab 5 (BCC 5º Termo)", "teacher": "Prof. Lucas"},
-        {"time": (14.0, 17.6), "subject": "Redes de Computadores", "room": "Lab 2 (BCC 7º Termo)", "teacher": "Prof. Marcos"},
+        {"time": (8.0, 11.6), "subject": "Física Geral I (Mecânica)", "room": "Sala 2 (ECA / Amb 1º Termo)", "teacher": "Prof. Roberto"},
+        {"time": (14.0, 16.0), "subject": "Introdução à Engenharia de Controle e Automação", "room": "Sala 1 (ECA 1º Termo)", "teacher": "Prof. Eduardo"},
+        {"time": (14.0, 17.6), "subject": "Ecologia Básica e Aplicada", "room": "Sala 3 (Ambiental 3º Termo)", "teacher": "Profa. Juliana"},
+        {"time": (16.0, 18.0), "subject": "Sistemas Supervisórios e SCADA", "room": "Lab 2 (ECA 7º Termo)", "teacher": "Prof. José Silva"},
     ],
     2: [  # Quarta-feira
-        {"time": (8.0, 11.6), "subject": "Física Geral I", "room": "Sala 1 (BCC 1º Termo)", "teacher": "Prof. Marcos"},
-        {"time": (14.0, 17.6), "subject": "Estrutura de Dados I", "room": "Lab 3 (BCC 3º Termo)", "teacher": "Prof. Julia"},
-        {"time": (14.0, 17.6), "subject": "Inteligência Artificial", "room": "Lab 4 (BCC 7º Termo)", "teacher": "Prof. Fernando"},
+        {"time": (8.0, 11.6), "subject": "Circuitos Elétricos I", "room": "Lab 2 (ECA 3º Termo)", "teacher": "Prof. José Silva"},
+        {"time": (8.0, 11.6), "subject": "Microbiologia Ambiental", "room": "Lab 1 (Ambiental 3º Termo)", "teacher": "Profa. Ana Costa"},
+        {"time": (14.0, 17.6), "subject": "Eletrônica Analógica", "room": "Lab 2 (ECA 5º Termo)", "teacher": "Prof. Eduardo"},
+        {"time": (14.0, 17.6), "subject": "Recursos Hídricos e Hidrologia", "room": "Sala 2 (Ambiental 5º Termo)", "teacher": "Profa. Juliana"},
     ],
     3: [  # Quinta-feira
-        {"time": (8.0, 11.6), "subject": "Álgebra Linear Aplicada", "room": "Sala 2 (BCC 3º Termo)", "teacher": "Prof. Pedro"},
-        {"time": (14.0, 17.6), "subject": "Circuitos Digitais", "room": "Lab 2 (BCC 3º Termo)", "teacher": "Prof. Ricardo"},
-        {"time": (19.0, 21.0), "subject": "Banco de Dados II", "room": "Lab 1 (BCC 5º Termo)", "teacher": "Prof. Sandra"},
+        {"time": (8.0, 11.6), "subject": "Sistemas de Controle I", "room": "Lab 3 (ECA 5º Termo)", "teacher": "Prof. Marcos Paulo"},
+        {"time": (8.0, 11.6), "subject": "Álgebra Linear e Geometria Analítica", "room": "Sala 1 (ECA / Amb 1º Termo)", "teacher": "Profa. Maria"},
+        {"time": (14.0, 17.6), "subject": "Tratamento de Água e Efluentes", "room": "Lab 1 (Ambiental 5º Termo)", "teacher": "Profa. Ana Costa"},
+        {"time": (14.0, 17.6), "subject": "Microcontroladores e Sistemas Embarcados", "room": "Lab 2 (ECA 5º Termo)", "teacher": "Prof. José Silva"},
     ],
     4: [  # Sexta-feira
-        {"time": (8.0, 11.6), "subject": "Cálculo Diferencial e Integral II", "room": "Sala 1 (BCC 3º Termo)", "teacher": "Prof. João"},
-        {"time": (14.0, 17.6), "subject": "Banco de Dados I", "room": "Lab 1 (BCC 3º Termo)", "teacher": "Prof. Sandra"},
-        {"time": (14.0, 17.6), "subject": "Compiladores", "room": "Sala 3 (BCC 5º Termo)", "teacher": "Prof. Roberto"},
+        {"time": (8.0, 11.6), "subject": "Instrumentação Industrial e Sensores", "room": "Lab 2 (ECA 5º Termo)", "teacher": "Prof. Eduardo"},
+        {"time": (8.0, 11.6), "subject": "Física Geral II (Eletromagnetismo)", "room": "Sala 2 (ECA 3º Termo)", "teacher": "Prof. Roberto"},
+        {"time": (14.0, 17.6), "subject": "Gestão e Auditoria Ambiental", "room": "Sala 4 (Ambiental 7º Termo)", "teacher": "Profa. Juliana"},
+        {"time": (14.0, 17.6), "subject": "Robótica Industrial e Manipuladores", "room": "Lab 3 (ECA 7º Termo)", "teacher": "Prof. Marcos Paulo"},
     ],
     5: [],  # Sábado
     6: []   # Domingo

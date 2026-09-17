@@ -1,0 +1,26 @@
+# ForgeDB Module Manifest — iot-telemetry
+id: iot-telemetry
+name: "MultiForge IoT & Telemetria Ambiental"
+version: "1.0.0"
+description: "Hub de sensoriamento IoT para laboratórios e estufas do ICTS Sorocaba. Broker MQTT Mosquitto leve, coleta de sensores e métricas em tempo real."
+category: system
+icon: "🌡️"
+author: "G.E.R.A — UNESP Sorocaba"
+license: MIT
+
+requirements:
+  min_ram_mb: 128
+  min_storage_mb: 100
+  system_packages:
+    - mosquitto
+    - mosquitto-clients
+
+source:
+  type: local
+  path: "ForgeModules/iot-telemetry"
+
+lifecycle:
+  install: "systemctl enable mosquitto"
+  start: "systemctl start mosquitto"
+  stop: "systemctl stop mosquitto"
+  healthcheck: "systemctl is-active mosquitto"

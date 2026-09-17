@@ -1,0 +1,27 @@
+# ForgeDB Module Manifest — eduroam-probe
+id: eduroam-probe
+name: "Sonda de Diagnóstico Eduroam & Conectividade"
+version: "1.0.0"
+description: "Auditoria contínua da qualidade do sinal Wi-Fi institucional (WPA2-Enterprise / eduroam), latência DNS e telemetria de rede para suporte de TI da UNESP."
+category: networking
+icon: "📶"
+author: "G.E.R.A — UNESP Sorocaba"
+license: MIT
+
+requirements:
+  min_ram_mb: 64
+  min_storage_mb: 50
+  system_packages:
+    - iw
+    - iputils-ping
+    - dnsutils
+
+source:
+  type: local
+  path: "ForgeModules/eduroam-probe"
+
+lifecycle:
+  install: "chmod +x probe.sh"
+  start: "./probe.sh --daemon"
+  stop: "pkill -f 'eduroam-probe'"
+  healthcheck: "cat /var/log/eduroam-probe.status"

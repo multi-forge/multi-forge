@@ -1,0 +1,24 @@
+# ForgeDB Module Manifest — digital-signage
+id: digital-signage
+name: "Mural Digital & InfoScreen Sorocaba"
+version: "1.0.0"
+description: "Sistema de sinalização digital para corredores e saguão do câmpus. Exibe grade de aulas de ECA e Ambiental, avisos de estágio, eventos e horários de ônibus em 1080p."
+category: media
+icon: "📺"
+author: "G.E.R.A — UNESP Sorocaba"
+license: MIT
+
+requirements:
+  min_ram_mb: 256
+  min_storage_mb: 150
+  python: ">=3.9"
+
+source:
+  type: local
+  path: "ForgeModules/digital-signage"
+
+lifecycle:
+  install: "pip install -r requirements.txt"
+  start: "python3 main.py"
+  stop: "pkill -f 'digital-signage'"
+  healthcheck: "curl -f http://localhost:8083/health"

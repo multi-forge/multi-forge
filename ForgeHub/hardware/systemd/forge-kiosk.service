@@ -7,7 +7,7 @@ Conflicts=getty@tty1.service
 Type=simple
 # Reserva e isola tty1: alterna para VT1, desliga cursor piscante, limpa terminal e desativa blanking
 ExecStartPre=-/bin/sh -c 'chvt 1 && setterm -cursor off -blank 0 -powersave off > /dev/tty1 2>/dev/null || true'
-ExecStart=/usr/bin/python3 /opt/forgehub/hardware/display/forge_kiosk.py
+ExecStart=/usr/bin/python3 /opt/forgehub/hardware/display/kiosk_bridge.py
 ExecStopPost=-/bin/sh -c 'setterm -cursor on -blank 10 > /dev/tty1 2>/dev/null || true'
 Restart=always
 RestartSec=5
