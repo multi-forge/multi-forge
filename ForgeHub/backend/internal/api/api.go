@@ -91,40 +91,7 @@ func handleMethodNotAllowed(w http.ResponseWriter, r *http.Request) {
 }
 
 func seedDefaultModules() {
-	defaultMods := []store.ModuleRecord{
-		{
-			ID:          "mina-ia",
-			Name:        "Mina — Assistente Virtual Acadêmica",
-			Version:     "1.0.0",
-			Type:        "systemd",
-			Category:    "ai",
-			Icon:        "bot",
-			Description: "Quiosque de voz inteligente offline com PyQt5, Sherpa-ONNX e wake-word local.",
-			Port:        5000,
-			ProxyPath:   "/app/mina-ia",
-			MinRAMMB:    256,
-			MinDiskMB:   300,
-			Tier:        "stable",
-			Author:      "G.E.R.A — UNESP Sorocaba",
-			Status:      "stopped",
-		},
-		{
-			ID:          "web-scraping",
-			Name:        "Coletor Acadêmico & RAG Agent",
-			Version:     "1.0.0",
-			Type:        "compose",
-			Category:    "data",
-			Icon:        "database",
-			Description: "Pipeline assíncrono de coleta e RAG com FastAPI, PostgreSQL e Redis.",
-			Port:        8000,
-			ProxyPath:   "/app/web-scraping",
-			MinRAMMB:    512,
-			MinDiskMB:   600,
-			Tier:        "stable",
-			Author:      "G.E.R.A — UNESP Sorocaba",
-			Status:      "stopped",
-		},
-	}
+	defaultMods := []store.ModuleRecord{}
 
 	for _, m := range defaultMods {
 		if _, exists := hybridRunner.GetManifest(m.ID); !exists {
@@ -413,11 +380,17 @@ func handleEvents(w http.ResponseWriter, r *http.Request) {
 
 func handleStore(w http.ResponseWriter, r *http.Request) {
 	catalog := hybridRunner.ListManifests()
+	if catalog == nil {
+		catalog = []store.ModuleRecord{}
+	}
 	sendJSON(w, http.StatusOK, map[string]interface{}{"catalog": catalog})
 }
 
 func handleModules(w http.ResponseWriter, r *http.Request) {
 	modules := hybridRunner.ListManifests()
+	if modules == nil {
+		modules = []store.ModuleRecord{}
+	}
 	sendJSON(w, http.StatusOK, map[string]interface{}{"modules": modules})
 }
 
