@@ -1,0 +1,7 @@
+id: digital-signage
+name: "Mural Digital & InfoScreen Sorocaba"
+version: "1.0.0"
+category: media
+icon: "📺"
+author: "G.E.R.A — UNESP Sorocaba"
+description: "Sinalização digital para saguão e murais do ICTS Sorocaba."

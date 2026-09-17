@@ -1,0 +1,7 @@
+id: iot-telemetry
+name: "MultiForge IoT & Telemetria Ambiental"
+version: "1.0.0"
+category: system
+icon: "🌡️"
+author: "G.E.R.A — UNESP Sorocaba"
+description: "Hub de telemetria ambiental para estufas e laboratórios do ICTS Sorocaba."

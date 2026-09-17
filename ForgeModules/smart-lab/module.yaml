@@ -1,0 +1,7 @@
+id: smart-lab
+name: "Gestão Inteligente de Bancadas & Laboratórios"
+version: "1.0.0"
+category: other
+icon: "⚡"
+author: "G.E.R.A — UNESP Sorocaba"
+description: "Controle de ocupação e energia de bancadas do ICTS."

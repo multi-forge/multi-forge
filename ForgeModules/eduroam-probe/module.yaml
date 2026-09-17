@@ -1,0 +1,7 @@
+id: eduroam-probe
+name: "Sonda de Diagnóstico Eduroam & Conectividade"
+version: "1.0.0"
+category: networking
+icon: "📶"
+author: "G.E.R.A — UNESP Sorocaba"
+description: "Auditoria contínua da qualidade do sinal Wi-Fi eduroam no câmpus."
