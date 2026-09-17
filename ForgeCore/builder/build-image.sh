@@ -118,10 +118,11 @@ cp -r "$REPO_ROOT/ForgeProvisioner/systemd/."    "$MOUNT_ROOT/etc/systemd/system
 cp -f "$REPO_ROOT/ForgeProvisioner/install.sh"   "$MOUNT_ROOT/opt/forgeos/install.sh"
 
 # Injetando ForgeHub Edge Daemon, Kiosk Obsidian & Modulos
-mkdir -p "$MOUNT_ROOT/opt/forgehub"/{hardware/display/fonts,hardware/network,hardware/systemd,modules} "$MOUNT_ROOT/opt/multiforge/modules" "$MOUNT_ROOT/usr/local/bin"
+mkdir -p "$MOUNT_ROOT/opt/forgehub"/{hardware/display/fonts,hardware/network,hardware/systemd,modules} "$MOUNT_ROOT/opt/multiforge/modules" "$MOUNT_ROOT/opt/forgedb/modules" "$MOUNT_ROOT/usr/local/bin"
 cp -r "$REPO_ROOT/ForgeHub/hardware/." "$MOUNT_ROOT/opt/forgehub/hardware/" 2>/dev/null || true
 cp -r "$REPO_ROOT/ForgeProvisioner/display/fonts/." "$MOUNT_ROOT/opt/forgehub/hardware/display/fonts/" 2>/dev/null || true
-cp -r "$REPO_ROOT/ForgeHub/modules/."  "$MOUNT_ROOT/opt/multiforge/modules/" 2>/dev/null || true
+cp -r "$REPO_ROOT/ForgeModules/."      "$MOUNT_ROOT/opt/multiforge/modules/" 2>/dev/null || true
+cp -r "$REPO_ROOT/ForgeDB/modules/."   "$MOUNT_ROOT/opt/forgedb/modules/" 2>/dev/null || true
 [ -f "$REPO_ROOT/ForgeHub/bin/forgehub" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forgehub" "$MOUNT_ROOT/usr/local/bin/"
 [ -f "$REPO_ROOT/ForgeHub/bin/forge-module-mina-ia" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forge-module-mina-ia" "$MOUNT_ROOT/usr/local/bin/"
 [ -f "$REPO_ROOT/ForgeHub/bin/forge-module-web-scraping" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forge-module-web-scraping" "$MOUNT_ROOT/usr/local/bin/"
