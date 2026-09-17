@@ -16,6 +16,26 @@
   ],
   "images": [
     {
+      "id": "forgeos-btv-e10-v2.2.0",
+      "board_slug": "btv-e10",
+      "variant": "server-kiosk",
+      "distribution": "ForgeOS",
+      "release": "v2.2.0",
+      "kernel_branch": "current",
+      "kernel_version": "6.18.44-ophub",
+      "application": "edge-appliance",
+      "promoted": true,
+      "stability": "stable",
+      "format": "sd",
+      "download": {
+        "file_url": "https://github.com/multi-forge/multi-forge/releases/download/v2.2.0/ForgeOS_BTV_E10_v2.2.0.img.xz",
+        "direct_url": "https://github.com/multi-forge/multi-forge/releases/download/v2.2.0/ForgeOS_BTV_E10_v2.2.0.img.xz",
+        "sha_url": "https://github.com/multi-forge/multi-forge/releases/download/v2.2.0/ForgeOS_BTV_E10_v2.2.0.img.xz.sha256",
+        "size_bytes": 738523064,
+        "updated_at": "2026-09-17"
+      }
+    },
+    {
       "id": "forgeos-btv-e10-v2.1.0",
       "board_slug": "btv-e10",
       "variant": "server-kiosk",
@@ -24,7 +44,7 @@
       "kernel_branch": "current",
       "kernel_version": "6.18.44-ophub",
       "application": "edge-appliance",
-      "promoted": true,
+      "promoted": false,
       "stability": "stable",
       "format": "sd",
       "download": {
