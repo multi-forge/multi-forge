@@ -33,6 +33,7 @@ IMAGE_PROJECT = "ubuntu-os-cloud"
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DOWNLOADS_DIR = os.path.join(os.environ.get("USERPROFILE", r"C:\Users\Aluno"), "Downloads")
 GCLOUD_CANDIDATES = [
+    r"C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd",
     r"C:\Users\Aluno\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd",
     os.path.join(os.environ.get("LOCALAPPDATA", r"C:\Users\Aluno\AppData\Local"), "Google", "Cloud SDK", "google-cloud-sdk", "bin", "gcloud.cmd"),
     os.path.join(os.environ.get("USERPROFILE", r"C:\Users\Aluno"), "google-cloud-sdk", "bin", "gcloud.cmd"),
@@ -174,7 +175,7 @@ def delete_spot_vm():
     env = os.environ.copy()
     env["CLOUDSDK_PYTHON"] = sys.executable
     subprocess.run(
-        [GCLOUD_CMD, "compute", "instances", "delete", INSTANCE_NAME, f"--zone={ZONE}", f"--project={PROJECT}", "--quiet"],
+        [GCLOUD_CMD, "compute", "instances", "delete", INSTANCE_NAME, f"--zone={ZONE}", f"--project={PROJECT}", "--delete-disks=all", "--quiet"],
         capture_output=True, text=True, env=env
     )
     ok("Instância deletada. Zero cobrança contínua!")
