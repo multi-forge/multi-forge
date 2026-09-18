@@ -93,6 +93,12 @@ multiforge_audit_plan.md
 *.iso
 *.xz
 
+## Go (ForgeHub backend)
+ForgeHub/backend/forgehub
+ForgeHub/backend/forgehub.exe
+*.test
+*.out
+
 ## Graphify (generated knowledge graph, regenerable via `graphify update .`)
 graphify-out/
 ForgeHub/bin/
