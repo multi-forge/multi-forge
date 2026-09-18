@@ -7,8 +7,17 @@ AP_CTRL=/usr/local/bin/forge-ap-ctrl
 
 if [ "${1:-}" = "--connect" ]; then
     profile=$2
-    "$AP_CTRL" stop >/dev/null 2>&1
+    "$AP_CTRL" stop >/dev/null 2>&1 || true
+    # A previous unclean termination leaves a stale control socket that
+    # blocks any new supplicant on this interface. Safe to drop: no
+    # supplicant is running here yet (killed below if it were).
+    rm -f "/var/run/wpa_supplicant/${IFACE}" "/run/wpa_supplicant/${IFACE}"
     pkill -f "wpa_supplicant.*${IFACE}" 2>/dev/null || true
+    # NetworkManager would fight a foreign supplicant for the radio:
+    # hand the interface over for the duration of the client session.
+    if command -v nmcli >/dev/null 2>&1; then
+        nmcli device set "$IFACE" managed no >/dev/null 2>&1 || true
+    fi
     ip addr flush dev "$IFACE"
     ip link set "$IFACE" up
     install -m 600 "$profile" "$CONF_FILE"
@@ -39,7 +48,11 @@ rollback() {
     result=$?
     if [ "$result" != 0 ]; then
         pkill -f "wpa_supplicant.*${IFACE}" 2>/dev/null || true
+        rm -f "/var/run/wpa_supplicant/${IFACE}" "/run/wpa_supplicant/${IFACE}"
         if [ -f "$backup" ]; then install -m 600 "$backup" "$CONF_FILE"; else rm -f "$CONF_FILE"; fi
+        if command -v nmcli >/dev/null 2>&1; then
+            nmcli device set "$IFACE" managed yes >/dev/null 2>&1 || true
+        fi
         "$AP_CTRL" restart >/dev/null 2>&1 || true
     fi
     rm -f "$backup"
