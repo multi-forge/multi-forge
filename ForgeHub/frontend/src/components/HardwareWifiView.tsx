@@ -281,8 +281,8 @@ export const HardwareWifiView: React.FC = () => {
                   {method !== 'PWD' && (
                     <>
                       <div>
-                        <label className="block text-xs font-semibold text-forge-text-secondary uppercase mb-1">Domínio de Autenticação</label>
-                        <input required className={fieldClass} value={domain} onChange={e => setDomain(e.target.value)} placeholder="unesp.br" />
+                        <label className="block text-xs font-semibold text-forge-text-secondary uppercase mb-1">Domínio de Autenticação (vazio = sem validação)</label>
+                        <input className={fieldClass} value={domain} onChange={e => setDomain(e.target.value)} placeholder="unesp.br" />
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-forge-text-secondary uppercase mb-1">Certificado CA (.pem opcional)</label>

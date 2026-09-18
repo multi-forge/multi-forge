@@ -53,7 +53,6 @@ func TestWifiRejectsInvalidProfiles(t *testing.T) {
 		{SSID: "Home\nnetwork={", Type: "open"}, {SSID: "Home", Type: "psk", Password: "short"},
 		{SSID: "Home", Type: "psk", Password: strings.Repeat("z", 64)},
 		{SSID: "Home", Type: "psk", Password: "secret12\nkey_mgmt=NONE"},
-		{SSID: "Campus", Type: "eap", Method: "PEAP", Phase2: "MSCHAPV2", Identity: "student", Password: "secret"},
 		{SSID: "Campus", Type: "eap", Method: "PEAP", Phase2: "PAP", Identity: "student", Password: "secret", Domain: "example.edu"},
 		{SSID: "Campus", Type: "eap", Method: "PEAP", Phase2: "MSCHAPV2", Identity: "student", Password: "secret", Domain: "example.edu", CACert: "bad cert"},
 		{SSID: "Campus", Type: "eap", Method: "TLS", Identity: "student", Domain: "example.edu"},
@@ -66,6 +65,22 @@ func TestWifiRejectsInvalidProfiles(t *testing.T) {
 	conf, err := buildWifiConfig(wifiProvision{SSID: `Home"\`, Type: "psk", Password: `pass"\word`}, "/profile")
 	if err != nil || !strings.Contains(conf, `psk="pass\"\\word"`) {
 		t.Fatal("quoted credentials not escaped")
+	}
+}
+
+func TestWifiNoServerValidation(t *testing.T) {
+	// eduroam roots whose CA is not in the system bundle (e.g. local
+	// federation CAs): empty domain opts out of server validation,
+	// mirroring the "do not validate" choice of phone guides.
+	conf, err := buildWifiConfig(wifiProvision{SSID: "eduroam", Type: "eap", Method: "PEAP", Phase2: "MSCHAPV2", Identity: "AV12350X", Password: "secret123"}, "/profile")
+	if err != nil {
+		t.Fatalf("bare eduroam profile rejected: %v", err)
+	}
+	if strings.Contains(conf, "domain_suffix_match") || strings.Contains(conf, "ca_cert") {
+		t.Fatalf("no-validation profile must not constrain the server: %s", conf)
+	}
+	if !strings.Contains(conf, `identity="AV12350X"`) || !strings.Contains(conf, `phase2="auth=MSCHAPV2"`) {
+		t.Fatalf("identity/phase2 missing: %s", conf)
 	}
 }
 

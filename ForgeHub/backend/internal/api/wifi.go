@@ -126,18 +126,25 @@ func buildWifiConfig(p wifiProvision, profileDir string) (string, error) {
 			}
 		}
 		if p.Method != "PWD" {
+			// Server validation is optional: an empty domain means the
+			// user chose not to validate (e.g. eduroam roots whose CA is
+			// not in the system bundle, as offered by phone guides as
+			// "do not validate"). In that case no CA constraint is
+			// emitted either, otherwise TLS would still fail.
 			domain := strings.TrimPrefix(p.Domain, ".")
-			if domain == "" || strings.ContainsAny(domain, " /\\\";:") {
-				return fail("Informe o domínio do servidor EAP fornecido pela instituição")
-			}
-			add("domain_suffix_match", wifiQuote(domain))
-			if p.CACert != "" {
-				if !validCertificate(p.CACert) {
-					return fail("Certificado CA PEM inválido")
+			if domain != "" {
+				if strings.ContainsAny(domain, " /\\\";:") {
+					return fail("Domínio do servidor EAP inválido")
 				}
-				add("ca_cert", wifiQuote(filepath.Join(profileDir, "ca.pem")))
-			} else {
-				add("ca_cert", `"/etc/ssl/certs/ca-certificates.crt"`)
+				add("domain_suffix_match", wifiQuote(domain))
+				if p.CACert != "" {
+					if !validCertificate(p.CACert) {
+						return fail("Certificado CA PEM inválido")
+					}
+					add("ca_cert", wifiQuote(filepath.Join(profileDir, "ca.pem")))
+				} else {
+					add("ca_cert", `"/etc/ssl/certs/ca-certificates.crt"`)
+				}
 			}
 		}
 	default:
