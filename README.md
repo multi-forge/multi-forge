@@ -415,7 +415,8 @@ xzcat forgeos-btv-e10.img.xz | sudo dd of=/dev/sdX bs=4M status=progress && sync
 
 ## Artigo
 
-[Leia o artigo do projeto no Overleaf](https://www.overleaf.com/read/gbwypjdbnhwg#d3352f).
+- [📄 Artigo em PDF (neste repositório)](docs/artigo-multiforge.pdf)
+- [Leia/editável no Overleaf](https://www.overleaf.com/read/gbwypjdbnhwg#d3352f)
 
 ---
 
