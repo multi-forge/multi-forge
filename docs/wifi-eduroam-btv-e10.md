@@ -82,6 +82,19 @@ Descobertas:
 
 ## 4. Build e deploy do forgehub
 
+Pré-requisitos do `ForgeCore/builder/build-image.sh` (a nova imagem usa
+a base ophub 6.18.44):
+
+- `ForgeHub/bin/forgehub`: binário ARM64 (`GOOS=linux GOARCH=arm64`,
+  `-trimpath -ldflags="-s -w"`); sem ele a imagem sai sem o daemon
+  (o builder avisa).
+- `ForgeCore/builder/drivers/<kver>/8189fs.ko`: módulo pré-compilado
+  para o kernel da base (o builder injeta + `depmod`; sem ele, sem
+  Wi-Fi interno).
+- Pacotes de runtime instalados no chroot: `iw`, `wpasupplicant`,
+  `isc-dhcp-client` (DHCP do provisionamento), `dnsmasq` (AP).
+- Serviço `rtl8189fs.service` habilitado no boot.
+
 Frontend: `npm run build` em `ForgeHub/frontend` → copiar
 `dist/{index.html,assets/*}` para
 `ForgeHub/backend/cmd/forgehub/web_assets/` (o binário embute via
