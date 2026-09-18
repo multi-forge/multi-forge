@@ -33,6 +33,7 @@ requirements:
     - "onnxruntime"
     - "miniaudio"
     - "edge-tts"
+    - "pypdf>=5.0.0"
 
 source:
   type: local
