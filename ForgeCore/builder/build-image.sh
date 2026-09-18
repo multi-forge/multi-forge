@@ -123,14 +123,26 @@ cp -r "$REPO_ROOT/ForgeHub/hardware/." "$MOUNT_ROOT/opt/forgehub/hardware/" 2>/d
 cp -r "$REPO_ROOT/ForgeProvisioner/display/fonts/." "$MOUNT_ROOT/opt/forgehub/hardware/display/fonts/" 2>/dev/null || true
 cp -r "$REPO_ROOT/ForgeModules/."      "$MOUNT_ROOT/opt/multiforge/modules/" 2>/dev/null || true
 cp -r "$REPO_ROOT/ForgeDB/modules/."   "$MOUNT_ROOT/opt/forgedb/modules/" 2>/dev/null || true
-[ -f "$REPO_ROOT/ForgeHub/bin/forgehub" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forgehub" "$MOUNT_ROOT/usr/local/bin/"
+[ -f "$REPO_ROOT/ForgeHub/bin/forgehub" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forgehub" "$MOUNT_ROOT/usr/local/bin/" || log "AVISO: ForgeHub/bin/forgehub ausente — compile antes (ForgeHub/backend: GOOS=linux GOARCH=arm64 go build ./cmd/forgehub) e a imagem sairá sem o daemon do portal."
 [ -f "$REPO_ROOT/ForgeHub/bin/forge-module-mina-ia" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forge-module-mina-ia" "$MOUNT_ROOT/usr/local/bin/"
 [ -f "$REPO_ROOT/ForgeHub/bin/forge-module-web-scraping" ] && cp -f "$REPO_ROOT/ForgeHub/bin/forge-module-web-scraping" "$MOUNT_ROOT/usr/local/bin/"
 [ -f "$REPO_ROOT/ForgeHub/hardware/network/forge-ap-ctrl" ] && cp -f "$REPO_ROOT/ForgeHub/hardware/network/forge-ap-ctrl" "$MOUNT_ROOT/usr/local/bin/"
 cp -f "$REPO_ROOT/ForgeHub/hardware/systemd/"*.service "$MOUNT_ROOT/etc/systemd/system/" 2>/dev/null || true
 mkdir -p "$MOUNT_ROOT/etc/systemd/system/forge-kiosk.service.d"
 [ -f "$REPO_ROOT/ForgeHub/hardware/systemd/50-minimal-panels.conf" ] && cp -f "$REPO_ROOT/ForgeHub/hardware/systemd/50-minimal-panels.conf" "$MOUNT_ROOT/etc/systemd/system/forge-kiosk.service.d/"
-chmod +x "$MOUNT_ROOT"/usr/local/bin/forge* "$MOUNT_ROOT"/opt/forgehub/hardware/display/*.py 2>/dev/null || true
+chmod +x "$MOUNT_ROOT"/usr/local/bin/forge* "$MOUNT_ROOT"/opt/forgehub/hardware/display/*.py "$MOUNT_ROOT"/opt/forgehub/hardware/network/*.sh "$MOUNT_ROOT"/opt/forgehub/hardware/network/forge-ap-ctrl 2>/dev/null || true
+
+# Driver Wi-Fi RTL8189FTV pré-compilado para o kernel da imagem base.
+# Esperado em ForgeCore/builder/drivers/<kver>/8189fs.ko (ver docs/wifi-eduroam-btv-e10.md).
+IMG_KVER=$(ls "$MOUNT_ROOT/lib/modules" 2>/dev/null | head -n 1 || true)
+DRIVER_KO="$REPO_ROOT/ForgeCore/builder/drivers/${IMG_KVER}/8189fs.ko"
+if [[ -n "$IMG_KVER" && -f "$DRIVER_KO" ]]; then
+    log "Injetando 8189fs.ko pré-compilado para o kernel $IMG_KVER..."
+    mkdir -p "$MOUNT_ROOT/lib/modules/$IMG_KVER/kernel/drivers/net/wireless"
+    cp -f "$DRIVER_KO" "$MOUNT_ROOT/lib/modules/$IMG_KVER/kernel/drivers/net/wireless/8189fs.ko"
+else
+    log "AVISO: driver 8189fs ausente para o kernel '${IMG_KVER:-?}' — a imagem sairá sem Wi-Fi interno. Gere via docs/wifi-eduroam-btv-e10.md."
+fi
 
 
 chmod +x "$MOUNT_ROOT"/opt/forgeos/bin/*.sh \
@@ -176,11 +188,11 @@ chroot "$MOUNT_ROOT" /bin/bash -c "
     # Atualiza repositórios e instala dependências essenciais de runtime para Kiosk/Display e Rede
     apt-get update -qq || true
     apt-get install -y -qq --no-install-recommends \
-        python3-pil python3-qrcode fonts-dejavu-core qrencode iw || apt-get install -y --no-install-recommends /var/cache/apt/archives/*.deb || true
+        python3-pil python3-qrcode fonts-dejavu-core qrencode iw wpasupplicant isc-dhcp-client dnsmasq || apt-get install -y --no-install-recommends /var/cache/apt/archives/*.deb || true
     
     # Habilita os serviços oficiais do ForgeOS v2.1+ e SSH no boot
     systemctl daemon-reload 2>/dev/null || true
-    systemctl enable forgehub.service forge-kiosk.service forge-ap.service forge-watchdog.service ssh sshd getty@tty2.service 2>/dev/null || true
+    systemctl enable rtl8189fs.service forgehub.service forge-kiosk.service forge-ap.service forge-watchdog.service ssh sshd getty@tty2.service 2>/dev/null || true
     
     # Desativa e mascara serviços legados conflitantes e isola TTY1 exclusivamente para o Kiosk
     systemctl disable forge-portal.service forge-display.service forge-fbcon-disable.service NetworkManager wpa_supplicant hostapd getty@tty1.service 2>/dev/null || true
@@ -198,6 +210,9 @@ chroot "$MOUNT_ROOT" /bin/bash -c "
     # Define senhas padrão 'kali' para root e kali (dev/debug)
     echo 'root:kali' | chpasswd 2>/dev/null || true
     echo 'kali:kali' | chpasswd 2>/dev/null || true
+    
+    # Regenera dependências de módulos (cobre o 8189fs.ko injetado)
+    depmod -a \$(ls /lib/modules 2>/dev/null | head -n 1) 2>/dev/null || true
     
     # Limpa caches de pacotes e logs
     apt-get clean 2>/dev/null || true
