@@ -108,13 +108,33 @@ curl -s http://127.0.0.1:8080/api/scan    # redes reais
 curl -s http://127.0.0.1:8080/api/status  # sem hardcode
 ```
 
-## 5. Pendências conhecidas
+## 5. Provisionamento pelo portal — testado live em 2026-09-18
+
+Fluxo de usuário via API (`POST /api/provision` + poll `/api/status`):
+
+- `POST {"ssid":"eduroam","type":"eap","method":"PEAP",
+  "phase2":"MSCHAPV2","identity":"AV12350X","password":"…","domain":""}`
+  → `{"ok":true,"status":"applying"}`, depois
+  `client_connected:true`, `client_ip:10.129.75.94`, `wifi_connected:true`,
+  com ping e HTTPS pela `wlan1` OK — **duas vezes, via portal**.
+- `POST /api/reset` limpa o estado (`restored_to_ap`); o AP não sobe
+  nesta box (sem `dnsmasq` instalado — `ap-ctrl` aborta; status segue
+  honesto com `ap_active:false`).
+- Achados do teste que viraram correção no `apply_client.sh`:
+  socket de controle obsoleto bloqueava novo supplicant (limpeza
+  automática); entrega da interface ao NM (`managed no`) durante a
+  sessão cliente e devolução no rollback; `|| true` no stop do AP.
+- Uma segunda tentativa imediata após reset falhou uma vez (contenção
+  rádio/servidor) e passou na seguinte — intervalo entre tentativas
+  é saudável; o portal reporta o erro honestamente.
+
+## 6. Pendências conhecidas
 
 - Instalar a CA do eduroam/IFSP e reativar a validação do servidor.
 - Migrar o provisionamento da UI para o NetworkManager (o fluxo atual
-  via `wpa_supplicant` cru conflita com a `wlan1` gerenciada e a box
-  não tem cliente DHCP para esse caminho) — provisionamento live
-  **não** foi testado por esse motivo.
+  via `wpa_supplicant` cru funciona mas disputa o rádio com o NM).
+- A imagem precisa de cliente DHCP para o fluxo cru (`apt install
+  isc-dhcp-client` foi feito na box; incluir no builder).
 - `TestWifiTLSCertificates` e `TestWifiProvisionLifecycle` falham no
   Windows (paths `/bin/sh`); passam no CI Linux — pré-existente,
   verificado no HEAD.
