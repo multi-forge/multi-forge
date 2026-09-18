@@ -34,8 +34,13 @@ type ModuleManifest struct {
 	MinRAMMB    int    `json:"min_ram_mb"`
 	MinDiskMB   int    `json:"min_disk_mb"`
 	Tier        string `json:"tier"`
-	Author      string `json:"author"`
-	Status      string `json:"status"` // "running", "stopped", "error", "installing"
+	Author      string   `json:"author"`
+	Status      string   `json:"status"` // "running", "stopped", "error", "installing"
+	Featured    bool     `json:"featured,omitempty"`
+	Priority    int      `json:"priority,omitempty"`
+	Popularity  int      `json:"popularity,omitempty"`
+	Stage       string   `json:"stage,omitempty"` // "installed", "available", "dev", "incompatible"
+	Tags        []string `json:"tags,omitempty"`
 }
 
 // ModuleRecord type alias for backward compatibility

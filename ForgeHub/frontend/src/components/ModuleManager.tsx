@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { Play, Square, ExternalLink, TerminalSquare, AlertCircle, Search, X } from 'lucide-react';
+import { StatusBadge } from './StatusBadge';
+import { ModuleConfigModal } from './ModuleConfigModal';
+import { 
+  Play, 
+  Square, 
+  ExternalLink, 
+  TerminalSquare, 
+  AlertCircle, 
+  Search, 
+  X, 
+  Sliders
+} from 'lucide-react';
 
 export const ModuleManager: React.FC = () => {
   const { modules, startModule, stopModule, setActiveTerminal } = useStore();
@@ -8,6 +19,7 @@ export const ModuleManager: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'running' | 'stopped'>('all');
   const [actionError, setActionError] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [configModuleId, setConfigModuleId] = useState<string | null>(null);
 
   const runningCount = modules.filter(m => m.status === 'running').length;
   const stoppedCount = modules.filter(m => m.status !== 'running').length;
@@ -46,164 +58,200 @@ export const ModuleManager: React.FC = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full h-full overflow-y-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full h-full overflow-y-auto space-y-6 scrollbar-thin animate-fade-in">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-slate-100">Módulos do Sistema</h2>
-          <p className="text-xs text-slate-400 mt-1">Gerencie stacks de execução híbrida (Systemd & Compose)</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-forge-text tracking-tight">
+            Aplicações do Sistema
+          </h1>
+          <p className="text-xs sm:text-sm text-forge-text-secondary mt-0.5">
+            Gerencie e monitore stacks de execução híbrida (Systemd & Docker Compose).
+          </p>
         </div>
 
-        {/* Status Filter Badges */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-900 border border-slate-800 rounded-lg text-xs">
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1.5 p-1 bg-forge-surface border border-forge-border rounded-lg text-xs self-start sm:self-auto">
           <button
             onClick={() => setStatusFilter('all')}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-md font-medium transition-all ${
               statusFilter === 'all'
-                ? 'bg-cyan-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                ? 'bg-forge-primary text-forge-bg font-semibold shadow-sm'
+                : 'text-forge-text-secondary hover:text-forge-text hover:bg-forge-surface-2'
             }`}
           >
-            Todos ({modules.length})
+            Todas ({modules.length})
           </button>
           <button
             onClick={() => setStatusFilter('running')}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-md font-medium transition-all ${
               statusFilter === 'running'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                ? 'bg-emerald-500 text-white font-semibold shadow-sm'
+                : 'text-forge-text-secondary hover:text-forge-text hover:bg-forge-surface-2'
             }`}
           >
-            Ativos ({runningCount})
+            Ativas ({runningCount})
           </button>
           <button
             onClick={() => setStatusFilter('stopped')}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-md font-medium transition-all ${
               statusFilter === 'stopped'
-                ? 'bg-slate-700 text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                ? 'bg-forge-surface-3 text-forge-text font-semibold shadow-sm'
+                : 'text-forge-text-secondary hover:text-forge-text hover:bg-forge-surface-2'
             }`}
           >
-            Parados ({stoppedCount})
+            Paradas ({stoppedCount})
           </button>
         </div>
       </div>
 
-      {/* Dynamic Search Bar */}
-      <div className="relative mb-6">
-        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-forge-text-muted" />
         <input
           type="text"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          placeholder="Buscar módulos por nome, id, tipo (systemd/compose) ou descrição..."
-          className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/80 transition-colors shadow-inner"
+          placeholder="Buscar aplicações por nome, id, tipo ou descrição..."
+          className="w-full bg-forge-surface border border-forge-border rounded-xl pl-10 pr-10 py-2.5 text-xs sm:text-sm text-forge-text placeholder-forge-text-muted focus:outline-none focus:border-forge-primary transition-colors shadow-inner"
         />
         {searchTerm && (
           <button
             type="button"
             onClick={() => setSearchTerm('')}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 p-1"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-forge-text-muted hover:text-forge-text p-1"
           >
             <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
+      {/* Error Alert */}
       {actionError && (
-        <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex items-center gap-3">
+        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex items-center gap-3">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <span>{actionError}</span>
         </div>
       )}
-      
+
+      {/* Modules List */}
       <div className="grid grid-cols-1 gap-4">
         {filteredModules.length > 0 ? (
-          filteredModules.map(m => (
-          <div key={m.id} className="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-5 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between shadow">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-1">
-                <h3 className="font-medium text-lg text-slate-200">{m.name}</h3>
-                <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
-                  m.status === 'running' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
-                  m.status === 'error' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
-                  'bg-slate-800 text-slate-400 border border-slate-700'
-                }`}>
-                  {m.status.toUpperCase()}
-                </span>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-950 text-slate-400 border border-slate-800">
-                  {m.type || 'systemd'}
-                </span>
-              </div>
-              <p className="text-sm text-slate-400">{m.description}</p>
-              <div className="flex items-center gap-4 mt-2 text-xs text-slate-500 font-mono">
-                <span>RAM Mínima: {m.ramReq} MB</span>
-                <span>Porta: {m.port || 5000}</span>
-                <span>Rota: {m.proxy_path || `/app/${m.id}`}</span>
-              </div>
-            </div>
-            
-            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-              {m.status === 'running' ? (
-                <button 
-                  onClick={() => handleStop(m.id)}
-                  disabled={loadingId === m.id}
-                  className="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 flex items-center gap-1.5 text-xs font-medium transition-colors" 
-                  title="Parar Módulo"
-                >
-                  <Square className="w-3.5 h-3.5 fill-current" /> Parar
-                </button>
-              ) : (
-                <button 
-                  onClick={() => handleStart(m.id)}
-                  disabled={loadingId === m.id}
-                  className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 flex items-center gap-1.5 text-xs font-medium transition-colors" 
-                  title="Iniciar Módulo"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current" /> Iniciar
-                </button>
-              )}
+          filteredModules.map(m => {
+            const isRunning = m.status === 'running';
 
-              <a 
-                href={`/app/${m.id}/`}
-                target="_blank"
-                rel="noreferrer"
-                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-medium transition-colors ${
-                  m.status === 'running' 
-                    ? 'bg-blue-600 hover:bg-blue-500 text-white' 
-                    : 'bg-slate-800 text-slate-600 cursor-not-allowed pointer-events-none'
-                }`}
+            return (
+              <div 
+                key={m.id} 
+                className="forge-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between transition-all hover:border-forge-border-hover"
               >
-                <ExternalLink className="w-3.5 h-3.5" /> Abrir App
-              </a>
+                <div className="flex-1 space-y-1">
+                  <div className="flex flex-wrap items-center gap-2.5 mb-1">
+                    <span className="text-xl p-1.5 rounded-lg bg-forge-surface-2 border border-forge-border">
+                      {m.icon || '⚙️'}
+                    </span>
+                    <h3 className="font-semibold text-base sm:text-lg text-forge-text">{m.name}</h3>
+                    <StatusBadge status={isRunning ? 'running' : m.status === 'error' ? 'error' : 'stopped'} />
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-forge-surface-2 text-forge-text-muted border border-forge-border">
+                      {m.type || 'systemd'}
+                    </span>
+                  </div>
 
-              <button 
-                onClick={() => setActiveTerminal(m.id)}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 text-xs font-medium transition-colors" 
-                title="Logs em Tempo Real"
-              >
-                <TerminalSquare className="w-3.5 h-3.5" /> Logs
-              </button>
-            </div>
-          </div>
-          ))
+                  <p className="text-xs sm:text-sm text-forge-text-secondary max-w-2xl leading-relaxed">
+                    {m.description}
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-4 pt-1 text-xs text-forge-text-muted font-mono">
+                    <span>RAM Requerida: {m.ramReq} MB</span>
+                    <span>Porta: {m.port || 5000}</span>
+                    <span>Rota: {m.proxy_path || `/app/${m.id}`}</span>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-forge-border">
+                  {isRunning ? (
+                    <button 
+                      onClick={() => handleStop(m.id)}
+                      disabled={loadingId === m.id}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 flex items-center gap-1.5 text-xs font-medium transition-colors" 
+                      title="Parar Aplicação"
+                    >
+                      <Square className="w-3.5 h-3.5 fill-current" />
+                      <span>{loadingId === m.id ? 'Parando...' : 'Parar'}</span>
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => handleStart(m.id)}
+                      disabled={loadingId === m.id}
+                      className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 flex items-center gap-1.5 text-xs font-medium transition-colors" 
+                      title="Iniciar Aplicação"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <span>{loadingId === m.id ? 'Iniciando...' : 'Iniciar'}</span>
+                    </button>
+                  )}
+
+                  <a 
+                    href={`/app/${m.id}/`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-medium transition-colors ${
+                      isRunning 
+                        ? 'bg-forge-primary hover:bg-forge-primary-hover text-forge-bg font-semibold shadow-sm' 
+                        : 'bg-forge-surface-2 text-forge-text-muted border border-forge-border cursor-not-allowed pointer-events-none'
+                    }`}
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Abrir App</span>
+                  </a>
+
+                  <button 
+                    onClick={() => setActiveTerminal(m.id)}
+                    className="px-3 py-1.5 rounded-lg bg-forge-surface-2 hover:bg-forge-surface-3 text-forge-text border border-forge-border flex items-center gap-1.5 text-xs font-medium transition-colors" 
+                    title="Logs em Tempo Real"
+                  >
+                    <TerminalSquare className="w-3.5 h-3.5 text-forge-text-muted" />
+                    <span>Logs</span>
+                  </button>
+
+                  <button 
+                    onClick={() => setConfigModuleId(m.id)}
+                    className="px-3 py-1.5 rounded-lg bg-forge-surface-2 hover:bg-forge-surface-3 text-forge-primary border border-forge-border hover:border-forge-primary/40 flex items-center gap-1.5 text-xs font-medium transition-colors shadow-sm" 
+                    title="Configurar Parâmetros de Execução"
+                  >
+                    <Sliders className="w-3.5 h-3.5" />
+                    <span>Configurar</span>
+                  </button>
+                </div>
+              </div>
+            );
+          })
         ) : (
-          <div className="py-12 text-center text-slate-500 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
+          <div className="py-16 text-center text-forge-text-muted bg-forge-surface/30 rounded-xl border border-dashed border-forge-border">
             {searchTerm || statusFilter !== 'all' ? (
               <div className="flex flex-col items-center gap-2">
-                <span>Nenhum módulo encontrado para os filtros selecionados.</span>
+                <span>Nenhuma aplicação encontrada para os filtros selecionados.</span>
                 <button
                   onClick={() => { setSearchTerm(''); setStatusFilter('all'); }}
-                  className="text-xs text-cyan-400 hover:underline mt-1 font-medium"
+                  className="text-xs text-forge-primary hover:underline mt-1 font-medium"
                 >
                   Limpar filtros
                 </button>
               </div>
             ) : (
-              <span>Nenhum módulo registrado no catálogo.</span>
+              <span>Nenhuma aplicação registrada no sistema.</span>
             )}
           </div>
         )}
       </div>
+
+      <ModuleConfigModal
+        isOpen={!!configModuleId}
+        moduleId={configModuleId}
+        onClose={() => setConfigModuleId(null)}
+        onStart={handleStart}
+      />
     </div>
   );
 };

@@ -1,0 +1,52 @@
+# ForgeDB Module Manifest — mina-ia (Mina)
+id: mina-ia
+name: "Mina — Assistente Virtual Acadêmica"
+version: "2.0.0"
+description: "Quiosque inteligente com interface gráfica interativa (main_gui), reconhecimento de voz offline (Sherpa-ONNX), síntese vocal e base de conhecimento acadêmica da UNESP Sorocaba."
+category: ai
+icon: "🤖"
+author: "G.E.R.A — UNESP Sorocaba"
+license: MIT
+
+requirements:
+  min_ram_mb: 256
+  min_storage_mb: 300
+  python: ">=3.9"
+  system_packages:
+    - build-essential
+    - python3-dev
+    - python3-pip
+    - python3-pyqt5
+    - python3-pyqt5.qtsvg
+    - libasound2-dev
+    - portaudio19-dev
+  pip_packages:
+    - "PyQt5>=5.15.0"
+    - "qasync>=0.27.0"
+    - "colorlog==6.9.0"
+    - "pillow==11.3.0"
+    - "requests==2.32.3"
+    - "aiohttp==3.12.13"
+    - "cryptography==44.0.1"
+    - "numpy"
+    - "sounddevice"
+    - "onnxruntime"
+    - "miniaudio"
+    - "edge-tts"
+
+source:
+  type: local
+  path: "ForgeModules/mina"
+
+lifecycle:
+  install: "python install.py"
+  install_headless: "python install.py --skip-sys-deps"
+  start: "python launcher.py --cli"
+  start_gui: "python launcher.py -w --frame"
+  start_gui_fullscreen: "python launcher.py -f"
+  stop: "pkill -f 'launcher.py|main_gui.py|main_cli.py'"
+  healthcheck: "pgrep -f 'launcher.py|main_gui.py|main_cli.py' > /dev/null"
+  systemd_unit: "forge-module@mina-ia.service"
+
+conflicts_with:
+  - web-scraping

@@ -91,12 +91,70 @@ func handleMethodNotAllowed(w http.ResponseWriter, r *http.Request) {
 }
 
 func seedDefaultModules() {
-	defaultMods := []store.ModuleRecord{}
+	// Purge phantom/invisible mock modules from bbolt database
+	phantomIDs := []string{
+		"calendario-academico",
+		"documentos-formularios",
+		"file-server-lite",
+		"horarios-unesp",
+		"kiosk-web",
+		"painel-campus",
+		"terminal-admin",
+		"transporte-linha307",
+	}
+	if dbInstance != nil {
+		for _, pid := range phantomIDs {
+			_ = dbInstance.DeleteModule(pid)
+		}
+	}
+
+	defaultMods := []store.ModuleRecord{
+		{
+			ID:          "mina-ia",
+			Name:        "Mina — Assistente Virtual Acadêmica",
+			Version:     "2.0.0",
+			Type:        "systemd",
+			Category:    "AI",
+			Icon:        "🤖",
+			Description: "Quiosque inteligente com interface gráfica interativa (main_gui), reconhecimento de voz offline (Sherpa-ONNX), síntese vocal e base de conhecimento acadêmica da UNESP Sorocaba.",
+			Port:        5000,
+			ProxyPath:   "/app/mina-ia",
+			MinRAMMB:    256,
+			MinDiskMB:   300,
+			Tier:        "stable",
+			Author:      "G.E.R.A — UNESP Sorocaba",
+			Status:      "stopped",
+			Featured:    true,
+			Priority:    100,
+			Popularity:  95,
+			Stage:       "installed",
+			Tags:        []string{"Voz", "Offline", "Quiosque", "RAG", "MABI"},
+		},
+		{
+			ID:          "web-scraping",
+			Name:        "Coletor Acadêmico & RAG Agent",
+			Version:     "1.0.0",
+			Type:        "systemd",
+			Category:    "Data",
+			Icon:        "🕸️",
+			Description: "Pipeline assíncrono de coleta e indexação RAG de portais acadêmicos com FastAPI e armazenamento local.",
+			Port:        8010,
+			ProxyPath:   "/app/web-scraping",
+			MinRAMMB:    256,
+			MinDiskMB:   300,
+			Tier:        "stable",
+			Author:      "Multi-Forge",
+			Status:      "stopped",
+			Featured:    false,
+			Priority:    80,
+			Popularity:  70,
+			Stage:       "installed",
+			Tags:        []string{"Scraping", "Indexador", "RAG"},
+		},
+	}
 
 	for _, m := range defaultMods {
-		if _, exists := hybridRunner.GetManifest(m.ID); !exists {
-			_ = hybridRunner.RegisterManifest(m)
-		}
+		_ = hybridRunner.RegisterManifest(m)
 	}
 }
 
@@ -117,6 +175,70 @@ func getUptimeSeconds() int {
 	return up
 }
 
+// apFixedIP is the address the ForgeOS access point owns when it is up.
+const apFixedIP = "192.168.4.1"
+
+// detectAP reports whether the local access point is actually running.
+// The AP is considered active only when apFixedIP is assigned to a local
+// interface; values are read from the system, never hardcoded as active.
+func detectAP() (active bool, ssid, ip string) {
+	out, err := exec.Command("ip", "-4", "-o", "addr", "show").Output()
+	if err != nil {
+		return false, "", ""
+	}
+	for _, line := range strings.Split(string(out), "\n") {
+		fields := strings.Fields(line)
+		if len(fields) < 4 {
+			continue
+		}
+		addr := strings.SplitN(fields[3], "/", 2)[0]
+		if addr == apFixedIP {
+			return true, readAPSSID(), apFixedIP
+		}
+	}
+	return false, "", ""
+}
+
+// readAPSSID returns the configured AP SSID when readable, or "" when the
+// AP is down or its configuration is unavailable.
+func readAPSSID() string {
+	for _, path := range []string{"/opt/forgeos/network/wpa_ap.conf", "/etc/hostapd/hostapd.conf"} {
+		raw, err := os.ReadFile(path)
+		if err != nil {
+			continue
+		}
+		for _, line := range strings.Split(string(raw), "\n") {
+			line = strings.TrimSpace(line)
+			if strings.HasPrefix(line, "ssid=") {
+				if ssid := strings.TrimSpace(strings.TrimPrefix(line, "ssid=")); ssid != "" {
+					return ssid
+				}
+			}
+		}
+	}
+	return "Forge-E10"
+}
+
+// primaryIPv4 returns the first global (non-AP) IPv4 address, or "".
+func primaryIPv4() string {
+	out, err := exec.Command("ip", "-4", "-o", "addr", "show", "scope", "global").Output()
+	if err != nil {
+		return ""
+	}
+	for _, line := range strings.Split(string(out), "\n") {
+		fields := strings.Fields(line)
+		if len(fields) < 4 {
+			continue
+		}
+		if addr := strings.SplitN(fields[3], "/", 2)[0]; addr != "" && addr != apFixedIP {
+			if net.ParseIP(addr) != nil {
+				return addr
+			}
+		}
+	}
+	return ""
+}
+
 func handleStatus(w http.ResponseWriter, r *http.Request) {
 	provMu.Lock()
 	isProv := provisioningActive
@@ -128,17 +250,23 @@ func handleStatus(w http.ResponseWriter, r *http.Request) {
 
 	m := telemetry.GetMetrics()
 
+	apActive, apSSID, apIP := detectAP()
+	nodeIP := apIP
+	if !apActive {
+		nodeIP = primaryIPv4()
+	}
+
 	status := map[string]interface{}{
-		"ap_active":          true,
+		"ap_active":          apActive,
 		"provisioning":       isProv,
 		"client_connected":   isConn,
 		"wifi_connected":     isConn,
 		"client_ip":          cliIP,
 		"client_ssid":        cliSSID,
 		"provisioning_error": provError,
-		"ip":                 "192.168.4.1",
-		"ap_ssid":            "Forge-E10",
-		"ap_ip":              "192.168.4.1",
+		"ip":                 nodeIP,
+		"ap_ssid":            apSSID,
+		"ap_ip":              apIP,
 		"device_model":       "BTV Express E10 (Amlogic S905X2)",
 		"uptime":             getUptimeSeconds(),
 		"free_ram_mb":        m.RAMFreeMB,
@@ -174,25 +302,168 @@ func initWifiScanner() {
 }
 
 func refreshWifiScan() {
-	// Try iwlist wlan0 scan (works on real Linux Wi-Fi drivers like RTL8189FTV)
-	if out, err := exec.Command("iwlist", "wlan0", "scan").Output(); err == nil && len(out) > 0 {
-		if nets := parseIwlistScan(string(out)); len(nets) > 0 {
-			cachedScanMu.Lock()
-			cachedScanNetworks = nets
-			cachedScanMu.Unlock()
+	for _, iface := range discoverWifiIfaces() {
+		// Primary: `iw dev <iface> scan` (present on ForgeOS images,
+		// works with in-tree and out-of-tree drivers like RTL8189FTV).
+		if out, err := exec.Command("iw", "dev", iface, "scan").Output(); err == nil && len(out) > 0 {
+			if nets := parseIwScan(string(out)); len(nets) > 0 {
+				cachedScanMu.Lock()
+				cachedScanNetworks = nets
+				cachedScanMu.Unlock()
+				return
+			}
+		}
+
+		// Legacy: iwlist <iface> scan (wireless-tools, when installed).
+		if out, err := exec.Command("iwlist", iface, "scan").Output(); err == nil && len(out) > 0 {
+			if nets := parseIwlistScan(string(out)); len(nets) > 0 {
+				cachedScanMu.Lock()
+				cachedScanNetworks = nets
+				cachedScanMu.Unlock()
+				return
+			}
+		}
+
+		// Fallback to wpa_cli -i <iface> scan_results if available.
+		if out, err := exec.Command("wpa_cli", "-i", iface, "scan_results").Output(); err == nil && len(out) > 0 {
+			if nets := parseWpaCliScan(string(out)); len(nets) > 0 {
+				cachedScanMu.Lock()
+				cachedScanNetworks = nets
+				cachedScanMu.Unlock()
+				return
+			}
+		}
+	}
+}
+
+// discoverWifiIfaces returns wireless interface names to scan, most
+// suitable first. Honors WIFI_IFACE when set, then prefers interfaces
+// that are UP, then any interface exposing /sys/class/net/<if>/wireless.
+func discoverWifiIfaces() []string {
+	seen := map[string]bool{}
+	var ifaces []string
+	add := func(name string) {
+		name = strings.TrimSpace(name)
+		if name == "" || seen[name] {
 			return
 		}
+		seen[name] = true
+		ifaces = append(ifaces, name)
 	}
 
-	// Fallback to wpa_cli -i wlan0 scan_results if available
-	if out, err := exec.Command("wpa_cli", "-i", "wlan0", "scan_results").Output(); err == nil && len(out) > 0 {
-		if nets := parseWpaCliScan(string(out)); len(nets) > 0 {
-			cachedScanMu.Lock()
-			cachedScanNetworks = nets
-			cachedScanMu.Unlock()
-			return
+	if env := strings.TrimSpace(os.Getenv("WIFI_IFACE")); env != "" {
+		add(env)
+	}
+
+	up, down := []string{}, []string{}
+	entries, err := os.ReadDir("/sys/class/net")
+	if err != nil {
+		add("wlan0")
+		return ifaces
+	}
+	for _, e := range entries {
+		name := e.Name()
+		if _, err := os.Stat("/sys/class/net/" + name + "/wireless"); err != nil {
+			continue
+		}
+		state := ""
+		if raw, err := os.ReadFile("/sys/class/net/" + name + "/operstate"); err == nil {
+			state = strings.TrimSpace(string(raw))
+		}
+		if state == "up" || state == "dormant" {
+			up = append(up, name)
+		} else {
+			down = append(down, name)
 		}
 	}
+	sort.Strings(up)
+	sort.Strings(down)
+	for _, name := range up {
+		add(name)
+	}
+	for _, name := range down {
+		add(name)
+	}
+	if len(ifaces) == 0 {
+		add("wlan0")
+	}
+	return ifaces
+}
+
+// parseIwScan parses `iw dev <iface> scan` output into the shared
+// network map format (ssid, bssid, rssi dBm, channel, encryption).
+func parseIwScan(raw string) []map[string]interface{} {
+	var networks []map[string]interface{}
+	var cur map[string]interface{}
+	var bssFlags []string
+	flush := func() {
+		if cur == nil {
+			return
+		}
+		if ssid, _ := cur["ssid"].(string); ssid != "" {
+			enc := "open"
+			joined := strings.ToLower(strings.Join(bssFlags, "\n"))
+			switch {
+			case strings.Contains(joined, "eap") || strings.Contains(joined, "802.1x"):
+				enc = "eap"
+			case strings.Contains(joined, "sae") && !strings.Contains(joined, "psk"):
+				enc = "sae"
+			case strings.Contains(joined, "owe"):
+				enc = "owe"
+			case strings.Contains(joined, "psk") || strings.Contains(joined, "rsn") || strings.Contains(joined, "wpa"):
+				enc = "psk"
+			}
+			cur["encryption"] = enc
+			networks = append(networks, cur)
+		}
+		cur = nil
+		bssFlags = nil
+	}
+
+	bssRegex := regexp.MustCompile(`(?m)^\s*BSS ([0-9A-Fa-f:]{17})`)
+	for _, line := range strings.Split(raw, "\n") {
+		if m := bssRegex.FindStringSubmatch(line); m != nil {
+			flush()
+			cur = map[string]interface{}{
+				"bssid":      strings.ToLower(m[1]),
+				"ssid":       "",
+				"rssi":       -70,
+				"channel":    0,
+				"encryption": "open",
+			}
+			continue
+		}
+		if cur == nil {
+			continue
+		}
+		trimmed := strings.TrimSpace(line)
+		switch {
+		case strings.HasPrefix(trimmed, "SSID:"):
+			cur["ssid"] = strings.TrimSpace(strings.TrimPrefix(trimmed, "SSID:"))
+		case strings.HasPrefix(trimmed, "signal:"):
+			fields := strings.Fields(trimmed)
+			if len(fields) >= 2 {
+				if val, err := strconv.ParseFloat(fields[1], 64); err == nil {
+					rssi := int(val)
+					if rssi < -100 {
+						rssi = -100
+					} else if rssi > -20 {
+						rssi = -20
+					}
+					cur["rssi"] = rssi
+				}
+			}
+		case strings.HasPrefix(trimmed, "DS Parameter set: channel"):
+			if ch, err := strconv.Atoi(strings.TrimSpace(strings.TrimPrefix(trimmed, "DS Parameter set: channel"))); err == nil {
+				cur["channel"] = ch
+			}
+		case strings.HasPrefix(trimmed, "RSN:") || strings.HasPrefix(trimmed, "WPA:") || strings.Contains(trimmed, "Authentication suites"):
+			bssFlags = append(bssFlags, trimmed)
+		}
+	}
+	flush()
+
+	return deduplicateAndFormatNetworks(networks)
 }
 
 func parseIwlistScan(raw string) []map[string]interface{} {
@@ -330,36 +601,13 @@ func deduplicateAndFormatNetworks(parsedNets []map[string]interface{}) []map[str
 	}
 
 	var result []map[string]interface{}
-	hasPSK, hasEAP := false, false
 	for _, n := range bestBySSID {
-		enc, _ := n["encryption"].(string)
-		if enc == "psk" {
-			hasPSK = true
-		}
-		if enc == "eap" {
-			hasEAP = true
-		}
 		result = append(result, n)
 	}
 
-	if !hasPSK {
-		result = append(result, map[string]interface{}{
-			"ssid":       "OpenWrt",
-			"bssid":      "88:c3:97:d5:81:91",
-			"rssi":       -54,
-			"channel":    6,
-			"encryption": "psk",
-		})
-	}
-	if !hasEAP {
-		result = append(result, map[string]interface{}{
-			"ssid":       "eduroam",
-			"bssid":      "80:03:84:0f:1c:19",
-			"rssi":       -58,
-			"channel":    11,
-			"encryption": "eap",
-		})
-	}
+	// NOTE: never inject placeholder networks here. When the radio reports
+	// nothing, the API must return an empty list so the UI can show the
+	// honest "no networks detected" state instead of fake data.
 
 	sort.Slice(result, func(i, j int) bool {
 		rI, _ := result[i]["rssi"].(int)
@@ -727,10 +975,12 @@ func handleReset(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleAP(w http.ResponseWriter, r *http.Request) {
+	active, _, _ := detectAP()
 	apConfig := map[string]interface{}{
 		"ssid":    "Forge-E10",
 		"channel": 6,
 		"ip":      "192.168.4.1",
+		"active":  active,
 	}
 	sendJSON(w, http.StatusOK, apConfig)
 }

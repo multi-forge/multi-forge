@@ -66,8 +66,18 @@ func TestStatusEndpoint(t *testing.T) {
 	}
 
 	// Verify mandatory fields
-	if _, ok := body["ap_active"].(bool); !ok {
+	if apActive, ok := body["ap_active"].(bool); !ok {
 		t.Fatalf("ap_active must be boolean")
+	} else if apActive {
+		// On hardware with the AP up, the fixed AP address/SSID apply.
+		if body["ap_ip"] != "192.168.4.1" {
+			t.Fatalf("expected ap_ip 192.168.4.1 when AP active, got %v", body["ap_ip"])
+		}
+		if ssid, ok := body["ap_ssid"].(string); !ok || ssid == "" {
+			t.Fatalf("ap_ssid must be non-empty when AP active, got %v", body["ap_ssid"])
+		}
+	} else if body["ap_ip"] != "" {
+		t.Fatalf("expected empty ap_ip when AP inactive, got %v", body["ap_ip"])
 	}
 	if _, ok := body["provisioning"].(bool); !ok {
 		t.Fatalf("provisioning must be boolean")
@@ -81,9 +91,6 @@ func TestStatusEndpoint(t *testing.T) {
 	uptime, ok := body["uptime"].(float64)
 	if !ok || uptime < 0 {
 		t.Fatalf("uptime must be non-negative number, got %v", body["uptime"])
-	}
-	if body["ap_ip"] != "192.168.4.1" {
-		t.Fatalf("expected ap_ip 192.168.4.1, got %v", body["ap_ip"])
 	}
 	freeRAM, ok := body["free_ram_mb"].(float64)
 	if !ok || freeRAM <= 0 {
@@ -278,6 +285,71 @@ func TestWifiScanParsing(t *testing.T) {
 	}
 	if !hasPSK || !hasEAP {
 		t.Fatalf("expected both PSK and EAP networks, got hasPSK=%v, hasEAP=%v", hasPSK, hasEAP)
+	}
+}
+
+func TestIwScanParsing(t *testing.T) {
+	rawIw := `BSS 80:03:84:0f:32:48(on wlan1)
+	TSF: 123456789 usec (0d, 00:02:03)
+	freq: 2437
+	beacon interval: 100 TUs
+	capability: ESS Privacy ShortPreamble ShortSlotTime (0x0431)
+	signal: -62.00 dBm
+	last seen: 1000 ms ago
+	SSID: IFSP-Servidores
+	RSN:	 * Version: 1
+		 * Authentication suites: 802.1x
+	BSS 80:03:84:4f:32:48(on wlan1)
+	TSF: 123456790 usec (0d, 00:02:03)
+	freq: 2437
+	signal: -55.00 dBm
+	SSID: IFSP-IOT
+	RSN:	 * Version: 1
+		 * Authentication suites: PSK
+	BSS 80:03:84:0f:32:49(on wlan1)
+	TSF: 123456791 usec (0d, 00:02:03)
+	freq: 2462
+	signal: -71.00 dBm
+	SSID: eduroam
+	DS Parameter set: channel 11
+	RSN:	 * Version: 1
+		 * Authentication suites: 802.1x
+	BSS 88:c3:97:d5:81:91(on wlan1)
+	TSF: 123456792 usec (0d, 00:02:03)
+	freq: 2437
+	signal: -80.00 dBm
+	SSID: OpenWrt
+`
+	nets := parseIwScan(rawIw)
+	if len(nets) != 4 {
+		t.Fatalf("expected 4 networks, got %d", len(nets))
+	}
+	bySSID := map[string]map[string]interface{}{}
+	for _, n := range nets {
+		bySSID[n["ssid"].(string)] = n
+	}
+	if bySSID["eduroam"]["encryption"] != "eap" {
+		t.Fatalf("eduroam must be eap, got %v", bySSID["eduroam"]["encryption"])
+	}
+	if bySSID["IFSP-IOT"]["encryption"] != "psk" {
+		t.Fatalf("IFSP-IOT must be psk, got %v", bySSID["IFSP-IOT"]["encryption"])
+	}
+	if bySSID["OpenWrt"]["encryption"] != "open" {
+		t.Fatalf("OpenWrt must be open, got %v", bySSID["OpenWrt"]["encryption"])
+	}
+	if rssi := bySSID["eduroam"]["rssi"].(int); rssi != -71 {
+		t.Fatalf("eduroam rssi must be -71, got %d", rssi)
+	}
+	if ch := bySSID["IFSP-Servidores"]["channel"].(int); ch != 0 {
+		t.Fatalf("channel without DS set defaults to 0, got %d", ch)
+	}
+	if ch := bySSID["eduroam"]["channel"].(int); ch != 11 {
+		t.Fatalf("eduroam channel must be 11, got %d", ch)
+	}
+	// No placeholder networks may ever be injected: parsed output must
+	// contain exactly the BSS entries from the scan.
+	if len(bySSID) != 4 {
+		t.Fatalf("unexpected networks injected: %v", bySSID)
 	}
 }
 

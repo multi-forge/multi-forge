@@ -8,12 +8,28 @@ export default {
   theme: {
     extend: {
       colors: {
-        slate: {
-          850: '#182234',
-          900: '#0f172a',
-          950: '#0B0F17'
-        }
-      }
+        forge: {
+          bg: 'var(--bg-primary)',
+          surface: 'var(--bg-surface)',
+          'surface-2': 'var(--bg-surface-secondary)',
+          'surface-3': 'var(--bg-surface-tertiary)',
+          border: 'var(--border-subtle)',
+          'border-hover': 'var(--border-default)',
+          primary: 'var(--accent)',
+          'primary-hover': 'var(--accent-hover)',
+          'primary-dim': 'var(--accent-dim)',
+          accent: 'var(--accent-secondary)',
+          text: 'var(--text-primary)',
+          'text-secondary': 'var(--text-secondary)',
+          'text-muted': 'var(--text-muted)',
+        },
+      },
+      width: {
+        'sidebar': '240px',
+      },
+      spacing: {
+        'sidebar': '240px',
+      },
     },
   },
   plugins: [],

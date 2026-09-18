@@ -1,9 +1,11 @@
 import { create } from 'zustand';
-import { Telemetry, Module, ViewType, WifiNetwork, WifiProvision } from '../types';
+import { Telemetry, Module, ViewType, ThemeMode, WifiNetwork, WifiProvision } from '../types';
 
 interface AppState {
   view: ViewType;
   setView: (view: ViewType) => void;
+  theme: ThemeMode;
+  toggleTheme: () => void;
   telemetry: Telemetry;
   connected: boolean;
   modules: Module[];
@@ -11,6 +13,8 @@ interface AppState {
   activeTerminalModuleId: string | null;
   loading: boolean;
   error: string | null;
+  sidebarCollapsed: boolean;
+  setSidebarCollapsed: (collapsed: boolean) => void;
   setActiveTerminal: (id: string | null) => void;
   fetchModules: () => Promise<void>;
   fetchScan: () => Promise<void>;
@@ -25,16 +29,53 @@ const getInitialView = (): ViewType => {
   if (typeof window !== 'undefined') {
     const params = new URLSearchParams(window.location.search);
     const v = params.get('view') || window.location.hash.replace('#', '');
-    if (v === 'hardware' || v === 'manager' || v === 'store' || v === 'dashboard') {
+    const validViews: ViewType[] = ['home', 'apps', 'marketplace', 'hardware', 'network', 'logs', 'settings'];
+    if (validViews.includes(v as ViewType)) {
       return v as ViewType;
     }
+    // Backward compat mapping
+    if (v === 'dashboard') return 'home';
+    if (v === 'store') return 'marketplace';
+    if (v === 'manager') return 'apps';
   }
-  return 'dashboard';
+  return 'home';
 };
+
+const getInitialTheme = (): ThemeMode => {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('forge_theme');
+    if (stored === 'light' || stored === 'dark') return stored;
+  }
+  return 'dark';
+};
+
+const applyTheme = (theme: ThemeMode) => {
+  if (typeof document !== 'undefined') {
+    const html = document.documentElement;
+    if (theme === 'light') {
+      html.classList.remove('dark');
+      html.classList.add('light');
+    } else {
+      html.classList.remove('light');
+      html.classList.add('dark');
+    }
+    localStorage.setItem('forge_theme', theme);
+  }
+};
+
+// Apply initial theme
+const initialTheme = getInitialTheme();
+applyTheme(initialTheme);
 
 export const useStore = create<AppState>((set) => ({
   view: getInitialView(),
   setView: (view) => set({ view }),
+  theme: initialTheme,
+  toggleTheme: () => set((state) => {
+    const next: ThemeMode = state.theme === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    return { theme: next };
+  }),
   telemetry: {
     cpu: 0,
     ram: 0,
@@ -82,6 +123,8 @@ export const useStore = create<AppState>((set) => ({
   activeTerminalModuleId: null,
   loading: false,
   error: null,
+  sidebarCollapsed: false,
+  setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
   setActiveTerminal: (id) => set({ activeTerminalModuleId: id }),
 
   fetchModules: async () => {
@@ -98,12 +141,18 @@ export const useStore = create<AppState>((set) => ({
           ramReq: m.min_ram_mb || 256,
           cpuReq: 15,
           diskReq: m.min_disk_mb || 300,
-          category: m.category || 'tools',
-          installed: true,
+          category: m.category || 'Utilities',
+          installed: m.stage === 'installed' || m.id === 'mina-ia' || m.id === 'web-scraping',
           port: m.port,
           proxy_path: m.proxy_path,
           version: m.version,
           tier: m.tier,
+          icon: m.icon,
+          featured: m.featured || m.id === 'mina-ia',
+          priority: m.priority ?? (m.id === 'mina-ia' ? 100 : 0),
+          popularity: m.popularity ?? (m.id === 'mina-ia' ? 95 : 50),
+          stage: m.stage || ((m.id === 'mina-ia' || m.id === 'web-scraping') ? 'installed' : 'available'),
+          tags: m.tags || [],
         }));
         set({ modules: mapped, error: null });
       }
@@ -138,7 +187,6 @@ export const useStore = create<AppState>((set) => ({
       if (!res.ok) {
         return { ok: false, error: data.message || data.error || 'Failed to start module' };
       }
-      // Update local state
       set((state) => ({
         modules: state.modules.map((m) =>
           m.id === id ? { ...m, status: 'running' } : m
@@ -218,11 +266,17 @@ export const initSSETelemetry = () => {
             cpu: d.cpu_percent ?? d.cpu_pct ?? 0,
             ram: d.ram_used_mb ?? 0,
             ramTotal: d.ram_total_mb ?? 1805,
-            temp: d.temp_celsius ?? d.cpu_temp ?? 42,
+            temp: d.temp_celsius ?? d.cpu_temp ?? 36.5,
             disk: d.disk_used_gb ?? 0,
             diskTotal: d.disk_total_gb ?? 29,
             netTx: d.net_tx_kbps ?? d.tx_kbs ?? 0,
             netRx: d.net_rx_kbps ?? d.rx_kbs ?? 0,
+            cpuCores: d.cpu_cores,
+            memoryDetails: d.memory_details,
+            disks: d.disks,
+            interfaces: d.interfaces,
+            topProcesses: d.top_processes,
+            systemInfo: d.system_info,
           },
         });
       } catch (err) {
