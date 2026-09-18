@@ -91,12 +91,70 @@ func handleMethodNotAllowed(w http.ResponseWriter, r *http.Request) {
 }
 
 func seedDefaultModules() {
-	defaultMods := []store.ModuleRecord{}
+	// Purge phantom/invisible mock modules from bbolt database
+	phantomIDs := []string{
+		"calendario-academico",
+		"documentos-formularios",
+		"file-server-lite",
+		"horarios-unesp",
+		"kiosk-web",
+		"painel-campus",
+		"terminal-admin",
+		"transporte-linha307",
+	}
+	if dbInstance != nil {
+		for _, pid := range phantomIDs {
+			_ = dbInstance.DeleteModule(pid)
+		}
+	}
+
+	defaultMods := []store.ModuleRecord{
+		{
+			ID:          "mina-ia",
+			Name:        "Mina — Assistente Virtual Acadêmica",
+			Version:     "2.0.0",
+			Type:        "systemd",
+			Category:    "AI",
+			Icon:        "🤖",
+			Description: "Quiosque inteligente com interface gráfica interativa (main_gui), reconhecimento de voz offline (Sherpa-ONNX), síntese vocal e base de conhecimento acadêmica da UNESP Sorocaba.",
+			Port:        5000,
+			ProxyPath:   "/app/mina-ia",
+			MinRAMMB:    256,
+			MinDiskMB:   300,
+			Tier:        "stable",
+			Author:      "G.E.R.A — UNESP Sorocaba",
+			Status:      "stopped",
+			Featured:    true,
+			Priority:    100,
+			Popularity:  95,
+			Stage:       "installed",
+			Tags:        []string{"Voz", "Offline", "Quiosque", "RAG", "MABI"},
+		},
+		{
+			ID:          "web-scraping",
+			Name:        "Coletor Acadêmico & RAG Agent",
+			Version:     "1.0.0",
+			Type:        "systemd",
+			Category:    "Data",
+			Icon:        "🕸️",
+			Description: "Pipeline assíncrono de coleta e indexação RAG de portais acadêmicos com FastAPI e armazenamento local.",
+			Port:        8010,
+			ProxyPath:   "/app/web-scraping",
+			MinRAMMB:    256,
+			MinDiskMB:   300,
+			Tier:        "stable",
+			Author:      "Multi-Forge",
+			Status:      "stopped",
+			Featured:    false,
+			Priority:    80,
+			Popularity:  70,
+			Stage:       "installed",
+			Tags:        []string{"Scraping", "Indexador", "RAG"},
+		},
+	}
 
 	for _, m := range defaultMods {
-		if _, exists := hybridRunner.GetManifest(m.ID); !exists {
-			_ = hybridRunner.RegisterManifest(m)
-		}
+		_ = hybridRunner.RegisterManifest(m)
 	}
 }
 
