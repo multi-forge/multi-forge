@@ -21,7 +21,7 @@ O **MultiForge** é uma plataforma open-source de preparação, provisionamento 
 
 Na BTV E10 (2 GB de RAM e 8 GB de eMMC), a plataforma reúne Linux otimizado, configuração Wi-Fi pelo celular via QR Code na TV, monitoramento do equipamento e recuperação automática de falhas de conexão. Assim, a infraestrutura de implantação fica separada das aplicações que o dispositivo executa.
 
-**Módulo principal: M.A.B.I (Mina — Assistente Baseada em Inteligência).** A assistente acadêmica transforma a TV Box em um totem interativo de acesso a informações universitárias, com reconhecimento de voz offline, interface gráfica na TV e consulta a dados acadêmicos locais. O coletor acadêmico RAG complementa essa aplicação com recursos de busca e indexação; funcionalidades conectadas dependem dos serviços disponíveis.
+**Módulo principal: M.A.B.I (Mina — Assistente Baseada em Inteligência).** A assistente acadêmica transforma a TV Box em um totem interativo de acesso a informações universitárias, com interface interativa na TV e consulta a dados acadêmicos locais. O coletor acadêmico RAG complementa essa aplicação com recursos de busca e indexação; funcionalidades conectadas dependem dos serviços disponíveis.
 
 ### Componentes da plataforma
 
@@ -54,7 +54,7 @@ Validar que uma TV Box apreendida e reaproveitada pode funcionar como um **totem
 - Operar como ponto de acesso Wi-Fi para configuração inicial sem teclado, mouse ou monitor externo — apenas TV + celular;
 - Provisionar conexão com redes universitárias (incluindo eduroam com EAP/802.1X);
 - Recuperar-se automaticamente de falhas de conexão sem intervenção humana;
-- Hospedar uma assistente virtual acadêmica com reconhecimento de voz offline;
+- Hospedar uma assistente virtual acadêmica com interface interativa na TV;
 - Servir como plataforma extensível para outros módulos de aplicação;
 - Funcionar dentro das restrições de 2 GB de RAM e armazenamento limitado.
 
@@ -87,7 +87,7 @@ flowchart TB
             WATCH["Watchdog 75 s<br/>Rollback automático para AP"]
         end
         subgraph Modules["ForgeModules — Aplicações"]
-            MABI["M.A.B.I (Mina)<br/>Voz offline (Sherpa-ONNX)<br/>GUI PyQt5 + SQLite"]
+            MABI["M.A.B.I (Mina)<br/>Assistente acadêmica<br/>GUI PyQt5 + SQLite"]
             RAG["Coletor + RAG<br/>FastAPI + LangChain<br/>PostgreSQL/SQLite + Redis"]
         end
     end
@@ -167,10 +167,9 @@ flowchart TB
 
 ### Interação com a M.A.B.I
 
-1. O usuário fala uma pergunta ao microfone conectado à TV Box.
-2. O Sherpa-ONNX faz o reconhecimento de voz **localmente**, sem enviar áudio para a nuvem.
-3. A M.A.B.I consulta os dados acadêmicos locais (SQLite) e, se disponível, complementa com recursos de IA conectados (LangChain + RAG).
-4. A resposta aparece na tela da TV (PyQt5) e é reproduzida por síntese de voz.
+1. O usuário envia uma pergunta pela interface na TV.
+2. A M.A.B.I consulta os dados acadêmicos locais (SQLite) e, se disponível, complementa com recursos de IA conectados (LangChain + RAG).
+3. A resposta aparece na tela da TV (PyQt5).
 
 ---
 
@@ -184,7 +183,7 @@ flowchart TB
 | **Rede** | wpa_supplicant mode=2, BBRv3, fq | AP automático + suporte EAP completo |
 | **Portal web** | Python 3 (stdlib), HTML/CSS/JS | 13 KB, zero dependência externa, SPA responsiva |
 | **Display HDMI** | Pillow + framebuffer /dev/fb0 | QR Code 1080p direto na TV, sem servidor gráfico (X11/Wayland) |
-| **M.A.B.I (voz)** | Sherpa-ONNX, PyQt5, SQLite | Reconhecimento de voz offline + GUI em tela de TV |
+| **M.A.B.I** | PyQt5, SQLite | Assistente acadêmica + GUI em tela de TV |
 | **Coletor RAG** | FastAPI, LangChain, PostgreSQL/SQLite, Redis | Busca e indexação de dados acadêmicos |
 | **Catálogo** | JSON Schema Draft 2020-12, jsDelivr | ForgeDB: validação em CI, CDN + fallback offline |
 | **Testes** | unittest, Playwright | 34 testes (unitários + integração + E2E) |
@@ -298,8 +297,7 @@ Projeto Equipe 1/
 │   │   ├── main_gui.py             # Interface PyQt5 para TV
 │   │   ├── main_cli.py             # Modo terminal
 │   │   ├── src/                     # Core da assistente
-│   │   ├── models/                  # Modelos Sherpa-ONNX
-│   │   ├── keywords/                # Wake words
+│   │   ├── models/                  # Modelos da assistente
 │   │   └── module.yaml              # Manifesto para ForgeOS
 │   └── sub-modulos/
 │       └── web-scraping/            # Coletor RAG acadêmico
@@ -367,7 +365,7 @@ xzcat forgeos-btv-e10.img.xz | sudo dd of=/dev/sdX bs=4M status=progress && sync
 | 0:30 | Celular conecta no AP, abre portal | Portal web no celular com scan de redes |
 | 1:00 | Provisiona a rede Wi-Fi | TV muda para tela de conexão → sucesso |
 | 1:30 | Mostra portal `:8080` com telemetria | Dashboard: CPU, RAM, temperatura, IP, módulos |
-| 2:00 | Mostra M.A.B.I respondendo uma pergunta | Assistente com voz na TV |
+| 2:00 | Mostra M.A.B.I respondendo uma pergunta | Assistente respondendo na TV |
 | 2:30 | Erra a senha de propósito | Tela FAILED → watchdog restaura AP em 75 s |
 
 ---
@@ -377,11 +375,10 @@ xzcat forgeos-btv-e10.img.xz | sudo dd of=/dev/sdX bs=4M status=progress && sync
 | Diferencial | Descrição |
 |---|---|
 | **Zero periféricos** | Não precisa de teclado, mouse nem monitor externo — TV + celular bastam |
-| **Offline-first completo** | Provisionamento, portal, watchdog e M.A.B.I (voz) funcionam sem internet |
+| **Offline-first** | Provisionamento, portal e watchdog funcionam sem internet |
 | **EAP/802.1X nativo** | Suporte a PEAP, TTLS, PWD e TLS — conecta direto na eduroam |
 | **Rollback automático** | Watchdog de 75 s restaura AP sem intervenção, sem reiniciar |
 | **Gravação sem root** | ForgeImager injeta configuração em ext4 sem precisar de `mount` no host |
-| **Voz offline** | Sherpa-ONNX roda reconhecimento de fala no próprio ARM64, sem enviar áudio para a nuvem |
 | **Modular** | Qualquer aplicação pode ser adicionada como módulo via `module.yaml` + catálogo ForgeDB |
 | **DTB customizado** | Patches de hardware validados no dispositivo real (SDIO, CMA, watchdog) |
 | **Portal leve** | 13 KB, zero dependência externa, funciona em qualquer navegador mobile |
@@ -406,7 +403,7 @@ xzcat forgeos-btv-e10.img.xz | sudo dd of=/dev/sdX bs=4M status=progress && sync
 | ForgeOS (AP, portal, watchdog, display) | ✅ Funcional e testado no hardware |
 | ForgeImager (gravação + injeção ext4) | ✅ Funcional (Windows, Linux, macOS) |
 | ForgeDB (catálogo + schemas) | ✅ Validado em CI |
-| M.A.B.I — voz offline + GUI | ✅ Estável |
+| M.A.B.I — assistente acadêmica + GUI | ✅ Estável |
 | Coletor RAG (web-scraping) | ✅ Homologado |
 | Suporte eduroam (EAP) | ✅ Testado |
 | Testes automatizados | ✅ 34 testes passando |
